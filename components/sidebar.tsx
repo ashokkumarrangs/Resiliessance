@@ -40,7 +40,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
 
         <div className="pt-10 px-8 pb-6 bg-card">
           <div className="text-3xl font-black tracking-tighter text-foreground leading-none">
-            HEYYY
+            Resiliessance
           </div>
           <div className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-[2px]">Life OS • Zenith</div>
         </div>

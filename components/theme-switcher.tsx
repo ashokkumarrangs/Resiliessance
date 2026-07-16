@@ -16,7 +16,7 @@ export function ThemeSwitcher() {
 
   useEffect(() => {
     // Load saved theme or default to nordic
-    const saved = localStorage.getItem("artha_ui_theme") || "nordic";
+    const saved = localStorage.getItem("resiliessance_ui_theme") || "nordic";
     console.log("🎨 ThemeSwitcher: Initializing theme ->", saved);
     setActiveTheme(saved);
     document.documentElement.setAttribute("data-theme", saved);
@@ -26,7 +26,7 @@ export function ThemeSwitcher() {
     console.log("🎨 ThemeSwitcher: Changing theme to ->", tId);
     setActiveTheme(tId);
     document.documentElement.setAttribute("data-theme", tId);
-    localStorage.setItem("artha_ui_theme", tId);
+    localStorage.setItem("resiliessance_ui_theme", tId);
     setIsOpen(false);
   };
 

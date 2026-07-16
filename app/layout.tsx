@@ -11,7 +11,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata = {
-  title: "Life OS",
+  title: "Resiliessance",
   description: "Personal Operating System by Heyyy",
 };
 

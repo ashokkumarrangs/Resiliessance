@@ -20,7 +20,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
       </button>
       
       <div className="absolute left-1/2 -translate-x-1/2 text-2xl font-black tracking-tighter">
-        HEYYY
+        Resiliessance
       </div>
       
       <div className="text-[9px] font-black text-slate-400 text-right uppercase tracking-widest leading-tight">

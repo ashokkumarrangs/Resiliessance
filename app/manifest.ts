@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Life OS',
-    short_name: 'LifeOS',
+    name: 'Resiliessance',
+    short_name: 'Resiliessance',
     description: 'Personal Operating System by Heyyy',
     start_url: '/',
     display: 'standalone',
