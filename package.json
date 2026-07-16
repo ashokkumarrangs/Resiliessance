@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "NEXT_PUBLIC_SUPABASE_URL=https://fczojtagcquzrtazddem.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjem9qdGFnY3F1enJ0YXpkZGVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4Mzg3NzksImV4cCI6MjA5MjQxNDc3OX0.CAGa6yINZm-UzElBOLbOrzazznGv4uC7ywej9J3Z9_Q next build && npx @opennextjs/cloudflare",
+    "build": "next build && npx @opennextjs/cloudflare build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
