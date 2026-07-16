@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "osapp",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2024-11-18",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "osapp"
+    }
+  ],
+  "vars": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://fczojtagcquzrtazddem.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjem9qdGFnY3F1enJ0YXpkZGVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4Mzg3NzksImV4cCI6MjA5MjQxNDc3OX0.CAGa6yINZm-UzElBOLbOrzazznGv4uC7ywej9J3Z9_Q"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
