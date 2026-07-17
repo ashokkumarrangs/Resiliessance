@@ -1,5 +1,5 @@
 -- RUN IN SUPABASE SQL EDITOR
--- Create budget_plans table for Artha
+-- Create budget_plans table
 
 CREATE TABLE IF NOT EXISTS public.budget_plans (
   id BIGSERIAL PRIMARY KEY,

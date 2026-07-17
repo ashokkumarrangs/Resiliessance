@@ -1,5 +1,5 @@
 -- ============================================================
--- ARTHA LIFE OS — COMPREHENSIVE SEED DATA SCRIPT
+-- LIFE OS — COMPREHENSIVE SEED DATA SCRIPT
 -- Coverage: Last 6 months (Jan 2026 – Jun 2026)
 -- Scenarios: All sections, all edge cases, all UI states
 -- Date generated: 2026-06-27

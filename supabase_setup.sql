@@ -1,4 +1,4 @@
--- ARTHA (LIFE OS) SUPABASE SETUP SCRIPT (CONSOLIDATED)
+-- (LIFE OS) SUPABASE SETUP SCRIPT (CONSOLIDATED)
 -- Run this in your Supabase SQL Editor (https://supabase.com/dashboard/project/_/sql)
 
 -- 1. LIQUIDITY (Accounts & Wallets)

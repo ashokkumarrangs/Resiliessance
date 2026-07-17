@@ -1,6 +1,6 @@
-# Artha OS: Future Pro-Feature Roadmap & Proposals
+# Life OS: Future Pro-Feature Roadmap & Proposals
 
-This document acts as a blueprint and comprehensive checklist for premium, high-utility features to extend the **Artha Personal Operating System**.
+This document acts as a blueprint and comprehensive checklist for premium, high-utility features to extend the **Personal Operating System**.
 
 ---
 
@@ -16,7 +16,7 @@ This document acts as a blueprint and comprehensive checklist for premium, high-
 9. [Vehicle Trip Log & Business Tax Mileage Calculator (Vehicles Pro)](#9-vehicle-trip-log--business-tax-mileage-calculator-vehicles-pro)
 10. [Personal Library, Courses & Media Log (Knowledge Inventory)](#10-personal-library-courses--media-log-knowledge-inventory)
 11. [Sidecar Integration: Morning WhatsApp/Telegram Digest](#11-sidecar-integration-morning-whatsapptelegram-digest)
-12. [Artha Database Auditor & JSON Export Backups (Admin Panel)](#12-artha-database-auditor--json-export-backups-admin-panel)
+12. [Database Auditor & JSON Export Backups (Admin Panel)](#12-database-auditor--json-export-backups-admin-panel)
 
 ---
 
@@ -139,7 +139,7 @@ This document acts as a blueprint and comprehensive checklist for premium, high-
 
 ---
 
-## 12. 💾 Artha Database Auditor & JSON Export Backups (Admin Panel)
+## 12. 💾 Database Auditor & JSON Export Backups (Admin Panel)
 - **Concept**: A secure database maintenance tab.
 - **Core Benefits**:
   - Shows table size metrics, row counts, and schema health tests.

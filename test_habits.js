@@ -5,7 +5,7 @@ require('dotenv').config({ path: '.env.local' });
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 async function testAggregation() {
-  const selectedDate = '2026-04-27'; // Use today's date in Artha timeline
+  const selectedDate = '2026-04-27'; // Use today's date in timeline
   
   // 1. Fetch configs
   const { data: configs } = await supabase.from('habit_config').select('*');

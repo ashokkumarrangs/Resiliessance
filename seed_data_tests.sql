@@ -1,5 +1,5 @@
 -- ============================================================
--- ARTHA LIFE OS — SEED DATA VERIFICATION TESTS
+-- LIFE OS — SEED DATA VERIFICATION TESTS
 -- Run AFTER seed_data_6months.sql to validate all scenarios
 -- ============================================================
 

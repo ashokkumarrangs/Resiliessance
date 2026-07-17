@@ -3,7 +3,7 @@ ALTER TABLE public.event_log ENABLE ROW LEVEL SECURITY;
 
 -- Add policies for public (anon) access
 -- Note: In a production app, you'd restrict this to authenticated users.
--- For Artha locally, we usually allow all for ease of use.
+-- For local development, we usually allow all for ease of use.
 
 DROP POLICY IF EXISTS "Allow public read access" ON public.event_log;
 CREATE POLICY "Allow public read access" ON public.event_log

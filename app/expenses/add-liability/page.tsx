@@ -27,7 +27,7 @@ function AddLiabilityContent() {
     date: format(new Date(), 'yyyy-MM-dd'),
     amount: "",
     type: "Principal",
-    account: "Paid", // Artha uses 'Paid'/'Received' for context in history_liabilities
+    account: "Paid", // Uses 'Paid'/'Received' for context in history_liabilities
     party: "",
     party_type: "",
     notes: ""

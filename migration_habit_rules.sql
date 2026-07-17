@@ -1,5 +1,5 @@
--- ARTHA HABIT RULES MIGRATION SCRIPT
--- Run this in your Supabase SQL Editor if you already have the Artha tables.
+-- HABIT RULES MIGRATION SCRIPT
+-- Run this in your Supabase SQL Editor if you already have the tables.
 
 DO $$ 
 BEGIN 

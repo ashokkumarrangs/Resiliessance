@@ -29,8 +29,8 @@ export const EXPENSE_TABS = [
 ];
 
 export const HABIT_TABS = [
-  { title: "Viewer", href: "/habits/view", icon: <Eye size={16} /> },
   { title: "Logs", href: "/habits/daily-log", icon: <FileCheck size={16} /> },
+  { title: "Viewer", href: "/habits/view", icon: <Eye size={16} /> },
   { title: "Add", href: "/habits/add", icon: <PlusCircle size={16} /> },
   { title: "Manage", href: "/habits/manage", icon: <Sliders size={16} /> },
 ];

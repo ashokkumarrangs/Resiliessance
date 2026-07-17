@@ -65,7 +65,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           <div className="h-px bg-slate-50 my-2 mx-4" />
 
           {/* Habits */}
-          <NavItem href="/habits/view" icon={<CheckCircle2 size={20} />} title="Habits" onClick={onClose} />
+          <NavItem href="/habits/daily-log" icon={<CheckCircle2 size={20} />} title="Habits" onClick={onClose} />
 
           <div className="h-px bg-slate-50 my-2 mx-4" />
 

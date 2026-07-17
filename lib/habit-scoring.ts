@@ -1,5 +1,5 @@
 /**
- * Artha Habits Scoring Engine
+ * Habits Scoring Engine
  * Evaluates the status of a habit based on its configuration and the logged value.
  */
 

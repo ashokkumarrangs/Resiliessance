@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /Users/ashokkumar/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node /Users/ashokkumar/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/bin/pnpm.cjs "$@"

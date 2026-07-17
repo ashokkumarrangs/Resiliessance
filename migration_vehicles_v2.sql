@@ -1,4 +1,4 @@
--- ARTHA VEHICLE MODULE MIGRATION (V2)
+-- VEHICLE MODULE MIGRATION (V2)
 -- Run this in your Supabase SQL Editor (https://supabase.com/dashboard/project/_/sql)
 
 -- 1. VEHICLE CONFIG (Master table for fleet)
