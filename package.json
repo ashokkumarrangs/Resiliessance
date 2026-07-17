@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build && npx @opennextjs/cloudflare build",
+    "build": "next build",
+    "pages:build": "npx @opennextjs/cloudflare build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
