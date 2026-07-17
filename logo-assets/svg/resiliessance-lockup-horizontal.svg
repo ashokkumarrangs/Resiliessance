@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="130" viewBox="0 0 560 130"><defs><linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#2563EB"></stop><stop offset="1" stop-color="#0D9488"></stop></linearGradient></defs>
+  <path d="M105 72 C 84 94 50 94 50 72 C 50 50 84 50 105 72 C 124 92 148 92 160 76 C 168 65 170 52 178 36" fill="none" stroke="url(#g)" stroke-width="13" stroke-linecap="round"></path>
+  <path d="M163 34 L 180 32 L 178 50" fill="none" stroke="#0D9488" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"></path>
+  <text x="215" y="82" font-family="Outfit, sans-serif" font-size="46" fill="#0F172A"><tspan font-weight="600">resili</tspan><tspan font-weight="400" opacity="0.78">essance</tspan></text></svg>

@@ -19,8 +19,9 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
         <Menu size={22} />
       </button>
       
-      <div className="absolute left-1/2 -translate-x-1/2 text-2xl font-black tracking-tighter">
-        Resiliessance
+      <div className="absolute left-1/2 -translate-x-1/2 text-2xl font-black tracking-tighter flex items-center gap-2">
+        <img src="/logo.svg" alt="Resiliessance Logo" className="w-6 h-6 rounded-md object-contain" />
+        <span>Resiliessance</span>
       </div>
       
       <div className="text-[9px] font-black text-slate-400 text-right uppercase tracking-widest leading-tight">

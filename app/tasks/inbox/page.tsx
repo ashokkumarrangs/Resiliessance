@@ -737,7 +737,7 @@ export default function TaskManagerPage() {
                 <List size={32} />
               </div>
               <h3 className="text-foreground font-black">Workspace is empty</h3>
-              <p className="text-muted-foreground/60 font-medium text-sm mt-2">Start adding tasks to organize your Life OS</p>
+              <p className="text-muted-foreground/60 font-medium text-sm mt-2">Start adding tasks to organize your Resiliessance</p>
             </div>
           )}
         </div>

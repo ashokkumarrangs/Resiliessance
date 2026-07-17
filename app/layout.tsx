@@ -2,7 +2,6 @@ import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Shell from "@/components/shell";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 
 const dmSans = DM_Sans({ 
   subsets: ["latin", "latin-ext"], 
@@ -30,15 +29,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("antialiased", dmSans.variable)}>
+    <html lang="en" data-theme="ocean" suppressHydrationWarning className={cn("antialiased", dmSans.variable)}>
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body className="bg-background sm:shadow-2xl sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl sm:mx-auto min-h-screen">
         <Shell>{children}</Shell>
-        <ThemeSwitcher />
         <Toaster position="top-center" richColors />
       </body>
 
