@@ -181,7 +181,7 @@ export default function QuickAddLauncherPage() {
             >
               {/* Top Row: Icon and Category Tag */}
               <div className="flex justify-between items-start w-full mb-3">
-                <div className={`p-2.5 rounded-lg bg-muted/20 ${item.colorClass} group-hover:scale-110 transition-transform`}>
+                <div className="p-2.5 rounded-lg bg-primary/10 text-primary group-hover:scale-110 transition-transform">
                   {item.icon}
                 </div>
                 <span className="text-[9px] text-muted-foreground/60 font-bold uppercase tracking-wider">
