@@ -45,7 +45,6 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
               Resiliessance
             </div>
           </div>
-          <div className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-[2px]">Personal OS</div>
         </div>
 
         <ul className="list-none m-0 py-4 px-4 space-y-1">
