@@ -34,6 +34,7 @@ export default function DailyEntryPage() {
   // Form State
   const [formData, setFormData] = useState({
     date: format(new Date(), 'yyyy-MM-dd'),
+    time: format(new Date(), 'HH:mm'),
     amount: "",
     type: "Expense",
     account: "",
@@ -263,6 +264,7 @@ export default function DailyEntryPage() {
 
       const payload = {
         date: formData.date,
+        time: formData.time,
         amount: amount,
         type: formData.type,
         account: formData.account,
@@ -390,10 +392,10 @@ export default function DailyEntryPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-6">
         
         <div className="bg-card rounded-2xl p-8 shadow-sm border border-border/40 space-y-7">
-          {/* Row 1: Date | Amount */}
+          {/* Row 1: Date | Time */}
           <div className="grid grid-cols-2 gap-7">
             <div className="space-y-2">
-      <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+              <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                 <CalendarDays size={16} className="shrink-0" />
                 Date
               </label>
@@ -406,21 +408,16 @@ export default function DailyEntryPage() {
               />
             </div>
             <div className="space-y-2">
-      <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
-                <Banknote size={16} className="shrink-0" />
-                Amount
+              <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                Time
               </label>
-              <div className="relative group">
-                <input
-                  type="number"
-                  placeholder="0.00"
-                  value={formData.amount}
-                  onChange={(e) => handleChange('amount', e.target.value)}
-                  className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-black text-primary focus:ring-2 focus:ring-accent/20 shadow-inner group-hover:bg-muted/80 transition-all appearance-none"
-                  required
-                />
-                <Banknote size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-accent transition-colors" />
-              </div>
+              <input
+                type="time"
+                value={formData.time}
+                onChange={(e) => handleChange('time', e.target.value)}
+                className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none"
+                required
+              />
             </div>
           </div>
 
@@ -451,24 +448,43 @@ export default function DailyEntryPage() {
                 </div>
               </div>
               
-              <div className="space-y-2">
-          <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
-                  <StickyNote size={16} className="shrink-0" />
-                  Notes
-                </label>
-                <input 
-                  type="text"
-                  value={formData.notes}
-                  onChange={(e) => handleChange('notes', e.target.value)}
-                  className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-semibold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner outline-none" 
-                  placeholder="Record details of this transfer..."
-                />
+              <div className="grid grid-cols-2 gap-7">
+                <div className="space-y-2">
+                  <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                    <Banknote size={16} className="shrink-0" />
+                    Amount
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type="number"
+                      placeholder="0.00"
+                      value={formData.amount}
+                      onChange={(e) => handleChange('amount', e.target.value)}
+                      className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-black text-primary focus:ring-2 focus:ring-accent/20 shadow-inner group-hover:bg-muted/80 transition-all appearance-none"
+                      required
+                    />
+                    <Banknote size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-accent transition-colors" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                    <StickyNote size={16} className="shrink-0" />
+                    Notes
+                  </label>
+                  <input 
+                    type="text"
+                    value={formData.notes}
+                    onChange={(e) => handleChange('notes', e.target.value)}
+                    className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-semibold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner outline-none" 
+                    placeholder="Record details of this transfer..."
+                  />
+                </div>
               </div>
             </>
           ) : (
             <>
               {/* Expense/Income Layout */}
-              {/* Row 2: Account | Tags */}
+              {/* Row 2: Account | Amount */}
               <div className="grid grid-cols-2 gap-7 relative z-30">
                 <div className="space-y-2">
                   <SearchableSelect 
@@ -481,13 +497,21 @@ export default function DailyEntryPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <SearchableSelect 
-                    label="Tags"
-                    headerIcon={<Tags size={16} className="shrink-0" />}
-                    value={formData.tags}
-                    onChange={(val) => handleChange('tags', val)}
-                    options={options.tags}
-                  />
+                  <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                    <Banknote size={16} className="shrink-0" />
+                    Amount
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type="number"
+                      placeholder="0.00"
+                      value={formData.amount}
+                      onChange={(e) => handleChange('amount', e.target.value)}
+                      className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-black text-primary focus:ring-2 focus:ring-accent/20 shadow-inner group-hover:bg-muted/80 transition-all appearance-none"
+                      required
+                    />
+                    <Banknote size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-accent transition-colors" />
+                  </div>
                 </div>
               </div>
 
@@ -535,7 +559,7 @@ export default function DailyEntryPage() {
                 </div>
               </div>
 
-              {/* Row 5: Place | Notes */}
+              {/* Row 5: Place | Tags */}
               <div className="grid grid-cols-2 gap-7 relative">
                 <div className="space-y-2">
                   <SearchableSelect 
@@ -547,21 +571,33 @@ export default function DailyEntryPage() {
                   />
                 </div>
                 <div className="space-y-2">
-            <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
-                    <StickyNote size={16} className="shrink-0" />
-                    Notes
-                  </label>
-                  <input 
-                    type="text"
-                    value={formData.notes}
-                    onChange={(e) => handleChange('notes', e.target.value)}
-                    className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-semibold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner outline-none" 
-                    placeholder="Record any specific details..."
+                  <SearchableSelect 
+                    label="Tags"
+                    headerIcon={<Tags size={16} className="shrink-0" />}
+                    value={formData.tags}
+                    onChange={(val) => handleChange('tags', val)}
+                    options={options.tags}
                   />
                 </div>
               </div>
+
+              {/* Row 6: Notes */}
+              <div className="space-y-2">
+                <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                  <StickyNote size={16} className="shrink-0" />
+                  Notes
+                </label>
+                <input 
+                  type="text"
+                  value={formData.notes}
+                  onChange={(e) => handleChange('notes', e.target.value)}
+                  className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-semibold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner outline-none" 
+                  placeholder="Record any specific details..."
+                />
+              </div>
             </>
           )}
+
 
           <div className="flex justify-center pt-8">
             <SaveButton type="submit" isSaving={isSubmitting} disabled={isSubmitting} label={formData.type === 'Transfer' ? "Save Transfer" : formData.type === 'Income' ? "Save Income" : "Save Expense"} className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />

@@ -60,9 +60,43 @@ export default function ActivityTimelinePage() {
     }
   };
 
-  const formatTime = (timestampStr: string) => {
+  const parseTimeString = (timeStr: string | null) => {
+    if (!timeStr) return null;
+    const parts = timeStr.split(':');
+    if (parts.length >= 2) {
+      let hours = parseInt(parts[0], 10);
+      const minutes = parseInt(parts[1], 10);
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+      return `${hours}:${minutesStr} ${ampm}`;
+    }
+    return null;
+  };
+
+  const getSortMs = (dateStr: string, timeStr?: string | null, fallbackTimestamp?: string | null) => {
+    if (timeStr) {
+      const d = new Date(`${dateStr}T${timeStr}:00`);
+      if (!isNaN(d.getTime())) return d.getTime();
+    }
+    if (fallbackTimestamp) {
+      const d = new Date(fallbackTimestamp);
+      if (!isNaN(d.getTime())) return d.getTime();
+    }
+    const d = new Date(`${dateStr}T00:00:00`);
+    return d.getTime();
+  };
+
+
+  const formatTime = (timestampStr: string | null, customTimeStr?: string | null) => {
+    if (customTimeStr) {
+      const parsed = parseTimeString(customTimeStr);
+      if (parsed) return parsed;
+    }
     if (!timestampStr) return null;
     try {
+      if (timestampStr.length <= 10) return null;
       const date = new Date(timestampStr);
       let hours = date.getHours();
       const minutes = date.getMinutes();
@@ -75,6 +109,7 @@ export default function ActivityTimelinePage() {
       return null;
     }
   };
+
 
   const fetchTimelineData = async (dateStr: string) => {
     setIsTimelineLoading(true);
@@ -95,7 +130,8 @@ export default function ActivityTimelinePage() {
         { data: petLogs },
         { data: petProfiles },
         { data: inventoryItems },
-        { data: inventoryLocations }
+        { data: inventoryLocations },
+        { data: habitsConfig }
       ] = await Promise.all([
         supabase.from('history_expenses').select('*').eq('date', dateStr),
         supabase.from('habit_data').select('*').eq('date', dateStr),
@@ -112,10 +148,14 @@ export default function ActivityTimelinePage() {
         supabase.from('pet_logs').select('*').eq('date', dateStr),
         supabase.from('pet_profile').select('id, name'),
         supabase.from('inventory_items').select('*'),
-        supabase.from('inventory_locations').select('id, name')
+        supabase.from('inventory_locations').select('id, name'),
+        supabase.from('habit_config').select('habit_name, input_type')
       ]);
 
+
       const formattedEvents: any[] = [];
+      const habitConfigMap = new Map(habitsConfig?.map((hc: any) => [hc.habit_name, hc.input_type]) || []);
+
 
       // 1. Finance
       if (expenses) {
@@ -123,7 +163,8 @@ export default function ActivityTimelinePage() {
           formattedEvents.push({
             id: e.id,
             timestamp: e.created_at || e.date,
-            time: formatTime(e.created_at),
+            sortMs: getSortMs(dateStr, e.time, e.created_at),
+            time: formatTime(e.created_at, e.time),
             type: "Expenses",
             title: e.particular || e.category || 'Spent on something',
             value: `Rs ${parseFloat(e.amount).toLocaleString()}`,
@@ -136,26 +177,32 @@ export default function ActivityTimelinePage() {
       // 2. Habits
       if (habits) {
         habits.forEach(h => {
-          formattedEvents.push({
-            id: h.id,
-            timestamp: h.created_at || h.date,
-            time: formatTime(h.created_at),
-            type: "Habits",
-            title: h.habit,
-            value: h.value || h.status || 'Done',
-            icon: <CheckCircle2 size={14} />,
-            colorClass: "bg-emerald-500 text-white"
-          });
+          const inputType = habitConfigMap.get(h.habit);
+          if (inputType === 'time' && h.value) {
+            formattedEvents.push({
+              id: h.id,
+              timestamp: h.created_at || h.date,
+              sortMs: getSortMs(dateStr, h.value, h.created_at),
+              time: formatTime(null, h.value),
+              type: "Habits",
+              title: h.habit,
+              value: "Completed",
+              icon: <CheckCircle2 size={14} />,
+              colorClass: "bg-emerald-500 text-white"
+            });
+          }
         });
       }
 
       // 3. Event Log
       if (events) {
         events.forEach(ev => {
+          const cleanTime = ev.time ? ev.time.substring(0, 5) : null;
           formattedEvents.push({
             id: ev.id,
             timestamp: ev.created_at || ev.date,
-            time: formatTime(ev.created_at),
+            sortMs: getSortMs(dateStr, cleanTime, ev.created_at),
+            time: formatTime(null, cleanTime),
             type: "Habits",
             title: ev.event,
             value: `${ev.value || '1'} count(s)`,
@@ -165,6 +212,9 @@ export default function ActivityTimelinePage() {
         });
       }
 
+
+
+
       // 4. Skills Focus
       if (skillLogs && skillsConfig) {
         const skillMap = new Map(skillsConfig.map((s: any) => [s.id, s.name]));
@@ -173,7 +223,8 @@ export default function ActivityTimelinePage() {
           formattedEvents.push({
             id: s.id,
             timestamp: s.created_at || s.date,
-            time: formatTime(s.created_at),
+            sortMs: getSortMs(dateStr, s.time, s.created_at),
+            time: formatTime(s.created_at, s.time),
             type: "Skills",
             title: `Practiced: ${name}`,
             value: `${s.duration_minutes} mins`,
@@ -185,11 +236,11 @@ export default function ActivityTimelinePage() {
 
       // 5. Workouts
       if (workouts) {
-        const workoutMap: Record<string, { day: string; weight: number; reps: number; sets: number }> = {};
+        const workoutMap: Record<string, { day: string; weight: number; reps: number; sets: number; time: string | null; duration: number | null }> = {};
         workouts.forEach(w => {
           const key = w.workout_day;
           if (!workoutMap[key]) {
-            workoutMap[key] = { day: w.workout_day, weight: 0, reps: 0, sets: 0 };
+            workoutMap[key] = { day: w.workout_day, weight: 0, reps: 0, sets: 0, time: w.time, duration: w.duration_minutes };
           }
           workoutMap[key].sets += 1;
           workoutMap[key].weight += (parseFloat(w.weight) || 0) * (parseInt(w.reps) || 0);
@@ -199,15 +250,18 @@ export default function ActivityTimelinePage() {
           formattedEvents.push({
             id: `workout-${index}`,
             timestamp: dateStr,
-            time: null,
+            sortMs: getSortMs(dateStr, w.time),
+            time: formatTime(null, w.time),
             type: "Workout",
             title: w.day,
-            value: `${w.sets} Sets`,
+            value: `${w.sets} Sets (${w.duration || 30} mins)`,
             icon: <Activity size={14} />,
             colorClass: "bg-violet-500 text-white"
           });
         });
       }
+
+
 
       // 6. Vehicles
       const vehicleMap = new Map(vehicles?.map(v => [v.id, v.vehicle_name]) || []);
@@ -217,7 +271,8 @@ export default function ActivityTimelinePage() {
           formattedEvents.push({
             id: f.id,
             timestamp: f.created_at || f.date,
-            time: formatTime(f.created_at),
+            sortMs: getSortMs(dateStr, f.time, f.created_at),
+            time: formatTime(f.created_at, f.time),
             type: "Vehicles",
             title: `${name}: Refueled`,
             value: `₹${f.total_cost || f.amount || 0} (${f.quantity_litres || f.liters || 0}L)`,
@@ -232,7 +287,8 @@ export default function ActivityTimelinePage() {
           formattedEvents.push({
             id: s.id,
             timestamp: s.created_at || s.date,
-            time: formatTime(s.created_at),
+            sortMs: getSortMs(dateStr, s.time, s.created_at),
+            time: formatTime(s.created_at, s.time),
             type: "Vehicles",
             title: `${name}: Serviced`,
             value: `${s.service_type || 'Service'} (₹${s.cost || s.amount})`,
@@ -247,7 +303,8 @@ export default function ActivityTimelinePage() {
           formattedEvents.push({
             id: m.id,
             timestamp: m.created_at || m.date,
-            time: formatTime(m.created_at),
+            sortMs: getSortMs(dateStr, m.time, m.created_at),
+            time: formatTime(m.created_at, m.time),
             type: "Vehicles",
             title: `${name}: Odometer Recorded`,
             value: `${m.odometer} km`,
@@ -257,17 +314,20 @@ export default function ActivityTimelinePage() {
         });
       }
 
+
+
       // 7. General Tasks completed today
       if (tasks) {
         const todayCompleted = tasks.filter(t => {
-          if (!t.created_at) return false;
-          return t.created_at.split("T")[0] === dateStr;
+          if (!t.completed_at) return false;
+          return t.completed_at.split("T")[0] === dateStr;
         });
         todayCompleted.forEach(t => {
           formattedEvents.push({
             id: t.id,
-            timestamp: t.created_at,
-            time: formatTime(t.created_at),
+            timestamp: t.completed_at,
+            sortMs: getSortMs(dateStr, null, t.completed_at),
+            time: formatTime(t.completed_at),
             type: "Tasks",
             title: t.task,
             value: `Completed`,
@@ -280,14 +340,15 @@ export default function ActivityTimelinePage() {
       // 8. SquareShift completed today
       if (actionTasks) {
         const todaySquareShiftCompleted = actionTasks.filter(t => {
-          if (!t.created_at) return false;
-          return t.created_at.split("T")[0] === dateStr;
+          if (!t.completed_at) return false;
+          return t.completed_at.split("T")[0] === dateStr;
         });
         todaySquareShiftCompleted.forEach(t => {
           formattedEvents.push({
             id: t.id,
-            timestamp: t.created_at,
-            time: formatTime(t.created_at),
+            timestamp: t.completed_at,
+            sortMs: getSortMs(dateStr, null, t.completed_at),
+            time: formatTime(t.completed_at),
             type: "Tasks",
             title: t.text,
             value: `Completed`,
@@ -297,6 +358,8 @@ export default function ActivityTimelinePage() {
         });
       }
 
+
+
       // 9. Pets
       const petMap = new Map(petProfiles?.map(p => [p.id, p.name]) || []);
       if (petLogs) {
@@ -305,7 +368,8 @@ export default function ActivityTimelinePage() {
           formattedEvents.push({
             id: pl.id,
             timestamp: pl.created_at || pl.date,
-            time: formatTime(pl.created_at),
+            sortMs: getSortMs(dateStr, pl.time, pl.created_at),
+            time: formatTime(pl.created_at, pl.time),
             type: "Pets",
             title: `${name} - ${pl.type || 'Log'}`,
             value: pl.notes || pl.detail || "Logged activity details",
@@ -325,7 +389,8 @@ export default function ActivityTimelinePage() {
             formattedEvents.push({
               id: `inv-acq-${item.id}`,
               timestamp: item.created_at || dateStr,
-              time: formatTime(item.created_at),
+              sortMs: getSortMs(dateStr, item.acquired_time, item.created_at),
+              time: formatTime(item.created_at, item.acquired_time),
               type: "Inventory",
               title: item.name,
               value: `Acquired at ${locName}`,
@@ -338,7 +403,8 @@ export default function ActivityTimelinePage() {
             formattedEvents.push({
               id: `inv-lent-${item.id}`,
               timestamp: item.lent_date,
-              time: null,
+              sortMs: getSortMs(dateStr, item.lent_time),
+              time: formatTime(null, item.lent_time),
               type: "Inventory",
               title: item.name,
               value: `Lent to ${item.origin_person || 'Someone'}`,
@@ -351,6 +417,7 @@ export default function ActivityTimelinePage() {
             formattedEvents.push({
               id: `inv-ret-${item.id}`,
               timestamp: item.retired_at,
+              sortMs: getSortMs(dateStr, null, item.retired_at),
               time: formatTime(item.retired_at),
               type: "Inventory",
               title: item.name,
@@ -363,11 +430,9 @@ export default function ActivityTimelinePage() {
       }
 
       // Sort events chronologically
-      formattedEvents.sort((a, b) => {
-        const timeA = a.timestamp || "";
-        const timeB = b.timestamp || "";
-        return timeA.localeCompare(timeB);
-      });
+      formattedEvents.sort((a, b) => (a.sortMs || 0) - (b.sortMs || 0));
+
+
 
       setTimelineEvents(formattedEvents);
     } catch (err) {

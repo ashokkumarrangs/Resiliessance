@@ -41,6 +41,7 @@ export default function VehicleFuelServicePage() {
 
   const [fuelData, setFuelData] = useState({
     date: format(new Date(), 'yyyy-MM-dd'),
+    time: format(new Date(), 'HH:mm'),
     odometer: '',
     liters: '',
     amount: '',
@@ -157,7 +158,7 @@ export default function VehicleFuelServicePage() {
 
       if (error) throw error;
       toast.success('Fuel log saved successfully!');
-      setFuelData({ ...fuelData, odometer: '', liters: '', amount: '', station: '' });
+      setFuelData({ ...fuelData, odometer: '', liters: '', amount: '', station: '', time: format(new Date(), 'HH:mm') });
     } catch (err: any) {
       toast.error(err.message || 'Failed to save fuel log');
     } finally {
@@ -269,11 +270,22 @@ export default function VehicleFuelServicePage() {
                           <Input type="date" value={fuelData.date} onChange={e => setFuelData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
                        </div>
                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Gauge className="w-3 h-3" /> Odometer</label>
-                          <Input type="number" placeholder="Readings" value={fuelData.odometer} onChange={e => setFuelData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold text-center" />
+                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1">Time</label>
+                          <Input type="time" value={fuelData.time} onChange={e => setFuelData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
                        </div>
                     </div>
  
+                    <div className="grid grid-cols-2 gap-4">
+                       <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Gauge className="w-3 h-3" /> Odometer</label>
+                          <Input type="number" placeholder="Readings" value={fuelData.odometer} onChange={e => setFuelData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold text-center" />
+                       </div>
+                       <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1">Fuel Station</label>
+                          <Input placeholder="HP, Shell, Indian Oil..." value={fuelData.station} onChange={e => setFuelData(p =>({...p, station: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
+                       </div>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-4">
                        <div className="space-y-1">
                           <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1">Liters</label>
@@ -284,11 +296,7 @@ export default function VehicleFuelServicePage() {
                           <Input type="number" placeholder="Amt" value={fuelData.amount} onChange={e => setFuelData(p =>({...p, amount: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold text-center text-primary" />
                        </div>
                     </div>
- 
-                    <div className="space-y-1">
-                       <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1">Fuel Station</label>
-                       <Input placeholder="HP, Shell, Indian Oil..." value={fuelData.station} onChange={e => setFuelData(p =>({...p, station: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold shadow-sm" />
-                    </div>
+
 
                     <div className="flex justify-center pt-8">
                      <SaveButton onClick={handleFuelSave} isSaving={saving} label="Save Fuel Log" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />

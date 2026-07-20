@@ -59,6 +59,7 @@ export default function VehicleFuelServicePage() {
   
   const [mileageData, setMileageData] = useState({
     date: format(new Date(), 'yyyy-MM-dd'),
+    time: format(new Date(), 'HH:mm'),
     odometer: '',
     notes: ''
   });
@@ -195,7 +196,7 @@ export default function VehicleFuelServicePage() {
       }]);
       if (error) throw error;
       toast.success('Mileage log saved successfully!');
-      setMileageData({ ...mileageData, odometer: '', notes: '' });
+      setMileageData({ ...mileageData, odometer: '', notes: '', time: format(new Date(), 'HH:mm') });
     } catch (err: any) {
       toast.error(err.message || 'Failed to save mileage log');
     } finally {
@@ -259,10 +260,16 @@ export default function VehicleFuelServicePage() {
                           <Input type="date" value={mileageData.date} onChange={e => setMileageData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
                        </div>
                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Gauge className="w-3 h-3" /> Odometer</label>
-                          <Input type="number" placeholder="Readings" value={mileageData.odometer} onChange={e => setMileageData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold text-center" />
+                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1">Time</label>
+                          <Input type="time" value={mileageData.time} onChange={e => setMileageData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
                        </div>
                     </div>
+ 
+                    <div className="space-y-1">
+                       <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Gauge className="w-3 h-3" /> Odometer</label>
+                       <Input type="number" placeholder="Readings" value={mileageData.odometer} onChange={e => setMileageData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold text-center" />
+                    </div>
+
  
                     <div className="space-y-1">
                        <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1">Notes</label>

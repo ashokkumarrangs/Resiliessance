@@ -113,12 +113,16 @@ export default function InventoryPage() {
   const [newItemCategory, setNewItemCategory] = useState("");
   const [newItemPrice, setNewItemPrice] = useState("");
   const [newItemNotes, setNewItemNotes] = useState("");
+  const [newItemDate, setNewItemDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [newItemTime, setNewItemTime] = useState(format(new Date(), 'HH:mm'));
 
   const [retireReason, setRetireReason] = useState<RetiredReason>('worn_out');
   const [retireToPerson, setRetireToPerson] = useState("");
+  const [retireTime, setRetireTime] = useState(format(new Date(), 'HH:mm'));
   
   const [lendToPerson, setLendToPerson] = useState("");
   const [lendDueDate, setLendDueDate] = useState("");
+  const [lendTime, setLendTime] = useState(format(new Date(), 'HH:mm'));
 
   // --- Data Fetching ---
 
@@ -316,7 +320,9 @@ export default function InventoryPage() {
         category: newItemCategory || null,
         purchase_price: newItemPrice ? parseFloat(newItemPrice) : null,
         notes: newItemNotes || null,
-        status: 'active'
+        status: 'active',
+        acquired_date: newItemDate,
+        acquired_time: newItemTime
       });
       if (error) throw error;
       toast.success("Item added");
@@ -324,6 +330,11 @@ export default function InventoryPage() {
       setNewItemName("");
       setNewItemOrigin('bought');
       setNewItemOriginPerson("");
+      setNewItemPrice("");
+      setNewItemCategory("");
+      setNewItemNotes("");
+      setNewItemDate(format(new Date(), 'yyyy-MM-dd'));
+      setNewItemTime(format(new Date(), 'HH:mm'));
       fetchData();
     } catch (e: any) { 
       console.error(e);
@@ -334,16 +345,18 @@ export default function InventoryPage() {
   const handleRetireItem = async () => {
     if (!selectedItem) return;
     try {
+      const combinedDateTime = `${format(new Date(), 'yyyy-MM-dd')}T${retireTime}:00`;
       const { error } = await supabase.from('inventory_items').update({
         status: 'retired',
         retired_reason: retireReason,
-        retired_at: new Date().toISOString(),
+        retired_at: new Date(combinedDateTime).toISOString(),
         retired_to_person: retireToPerson || null
       }).eq('id', selectedItem.id);
       if (error) throw error;
       toast.success(`Item retired: ${retireReason.replace('_', ' ')}`);
       setShowRetireModal(false);
       setSelectedItem(null);
+      setRetireTime(format(new Date(), 'HH:mm'));
       fetchData();
     } catch (e: any) { 
       console.error(e);
@@ -358,12 +371,14 @@ export default function InventoryPage() {
         status: 'lent_out',
         lent_to_person: lendToPerson,
         lent_date: new Date().toISOString().split('T')[0],
+        lent_time: lendTime,
         return_due_date: lendDueDate || null
       }).eq('id', selectedItem.id);
       if (error) throw error;
       toast.success(`Lent to ${lendToPerson}`);
       setShowLendModal(false);
       setSelectedItem(null);
+      setLendTime(format(new Date(), 'HH:mm'));
       fetchData();
     } catch (e: any) { 
       console.error(e);
@@ -917,6 +932,26 @@ export default function InventoryPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Acquired Date</label>
+                <input 
+                  type="date" 
+                  value={newItemDate}
+                  onChange={e => setNewItemDate(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0"
+                />
+              </div>
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Acquired Time</label>
+                <input 
+                  type="time" 
+                  value={newItemTime}
+                  onChange={e => setNewItemTime(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
                 <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Category</label>
                 <input 
                   type="text" 
@@ -937,6 +972,7 @@ export default function InventoryPage() {
                 />
               </div>
             </div>
+
             <button 
               onClick={handleAddItem}
               disabled={!newItemName}
@@ -965,6 +1001,15 @@ export default function InventoryPage() {
                   </button>
                 ))}
               </div>
+            </div>
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+              <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 block mb-2">Time of retirement</label>
+              <input 
+                type="time" 
+                value={retireTime}
+                onChange={e => setRetireTime(e.target.value)}
+                className="w-full bg-transparent border-none p-0 text-sm font-black focus:ring-0"
+              />
             </div>
             {(retireReason === 'gifted_out' || retireReason === 'sold') && (
               <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
@@ -1003,14 +1048,25 @@ export default function InventoryPage() {
                 className="w-full bg-transparent border-none p-0 text-lg font-black focus:ring-0"
               />
             </div>
-            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
-              <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 block mb-2">Return Due Date (Optional)</label>
-              <input 
-                type="date" 
-                value={lendDueDate}
-                onChange={e => setLendDueDate(e.target.value)}
-                className="w-full bg-transparent border-none p-0 text-sm font-black focus:ring-0"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 block mb-2">Lent Time</label>
+                <input 
+                  type="time" 
+                  value={lendTime}
+                  onChange={e => setLendTime(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-sm font-black focus:ring-0"
+                />
+              </div>
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 block mb-2">Return Due Date</label>
+                <input 
+                  type="date" 
+                  value={lendDueDate}
+                  onChange={e => setLendDueDate(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-sm font-black focus:ring-0"
+                />
+              </div>
             </div>
             <button 
               onClick={handleLendItem}

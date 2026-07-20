@@ -31,9 +31,11 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
   const [entryCategory, setEntryCategory] = useState("Grooming");
   const [entrySubCategory, setEntrySubCategory] = useState("");
   const [entryDate, setEntryDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [entryTime, setEntryTime] = useState(format(new Date(), "HH:mm"));
   const [entryNotes, setEntryNotes] = useState("");
   const [entryNextDate, setEntryNextDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   // Dynamic Options state
   const [dynamicOptions, setDynamicOptions] = useState<Record<string, string[]>>(DEFAULT_CATEGORIES);
@@ -101,8 +103,10 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
           category: entryCategory,
           log_type: entrySubCategory,
           date: entryDate,
+          time: entryTime,
           notes: entryNotes,
        };
+
        if (entryCategory === 'Wellness' && entryNextDate) {
           payload.next_due_date = entryNextDate;
        }
@@ -118,6 +122,8 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
        setEntrySubCategory("");
        setEntryNotes("");
        setEntryNextDate("");
+       setEntryTime(format(new Date(), "HH:mm"));
+
        fetchDashboardData();
     } catch (e) {
        toast.error("An error occurred");
@@ -232,17 +238,28 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
                     </div>
                   </div>
 
-                  {/* Date */}
-                  <div>
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1.5 block">
-                      {entryCategory === 'Wellness' ? 'Event / Administered Date' : 'Date'}
-                    </label>
-                    <input 
-                       type="date" 
-                       value={entryDate} 
-                       onChange={e => setEntryDate(e.target.value)} 
-                       className="w-full bg-muted p-3.5 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm" 
-                    />
+                  {/* Date & Time */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="col-span-2">
+                      <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1.5 block">
+                        {entryCategory === 'Wellness' ? 'Event / Administered Date' : 'Date'}
+                      </label>
+                      <input 
+                         type="date" 
+                         value={entryDate} 
+                         onChange={e => setEntryDate(e.target.value)} 
+                         className="w-full bg-muted p-3.5 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm" 
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1.5 block">Time</label>
+                      <input 
+                         type="time" 
+                         value={entryTime} 
+                         onChange={e => setEntryTime(e.target.value)} 
+                         className="w-full bg-muted p-3.5 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm" 
+                      />
+                    </div>
                   </div>
                 </div>
 

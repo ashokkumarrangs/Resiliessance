@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { SectionNav } from "@/components/SectionNav";
+import { TaskCompletionModal } from "@/components/TaskCompletionModal";
 
 interface Task {
   id: string;
@@ -100,9 +101,20 @@ export default function TaskManagerPage() {
     }
   };
 
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+
   const toggleStatus = async (task: Task) => {
     const nextStatus = task.status === 'Completed' ? 'Pending' : 'Completed';
-    const completedAt = nextStatus === 'Completed' ? new Date().toISOString() : null;
+    if (nextStatus === 'Completed') {
+      setActiveTask(task);
+      setTaskModalOpen(true);
+    } else {
+      await executeStatusChange(task, 'Pending', null);
+    }
+  };
+
+  const executeStatusChange = async (task: Task, nextStatus: string, completedAt: string | null) => {
     const oldTasks = [...tasks];
     setTasks(tasks.map(t => t.id === task.id ? { ...t, status: nextStatus, completed_at: completedAt } : t));
     try {
@@ -742,7 +754,19 @@ export default function TaskManagerPage() {
           )}
         </div>
       )}
+
+      <TaskCompletionModal 
+        isOpen={taskModalOpen} 
+        onClose={() => { setTaskModalOpen(false); setActiveTask(null); }} 
+        onConfirm={(completedAt) => {
+          if (activeTask) {
+            executeStatusChange(activeTask, 'Completed', completedAt);
+          }
+        }} 
+        taskTitle={activeTask?.task || ""} 
+      />
     </div>
     </div>
   );
 }
+

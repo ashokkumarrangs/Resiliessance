@@ -66,20 +66,27 @@ export default function DayAtAGlancePage() {
         {data:skillLogsData},
         {data:skillsConfig},
       ] = await Promise.all([
-        supabase.from("habit_config").select("habit_name,group_name").eq("is_active", true),
+        supabase.from("habit_config").select("habit_name,group_name"),
         supabase.from("habit_data").select("habit_name,value").eq("date", date),
-        supabase.from("tasks").select("id,task,status,is_high_priority").eq("is_today", true),
-        supabase.from("workout_log").select("workout_day,exercise,sets,reps,weight").eq("date", date),
+        supabase.from("tasks").select("id,task,status,is_high_priority,completed_at,is_today"),
+        supabase.from("workout_log").select("workout_day,workout_name,set_no,reps,weight").eq("date", date),
         supabase.from("history_expenses").select("category,amount,type,notes,created_at").eq("date", date).order("created_at"),
         supabase.from("skill_logs").select("skill_id,duration_minutes,created_at").eq("date", date),
-        supabase.from("skills").select("id,name"),
+        supabase.from("skill_items").select("id,name"),
       ]);
 
       const doneHabits = new Set(
         (habitData||[]).filter((h:any)=>h.value&&h.value!=="0"&&h.value!=="false").map((h:any)=>h.habit_name)
       );
       setHabits((habitConfigs||[]).map((h:any)=>({...h, done:doneHabits.has(h.habit_name)})));
-      setTasks(tasksData||[]);
+      
+      const isDateToday = date === todayStr();
+      const filteredTasks = (tasksData || []).filter((t: any) => {
+        if (t.completed_at && t.completed_at.startsWith(date)) return true;
+        if (isDateToday && t.status === "Pending" && t.is_today) return true;
+        return false;
+      });
+      setTasks(filteredTasks);
       setWorkouts(workoutData||[]);
       setExpenses(expenseData||[]);
 
@@ -89,6 +96,7 @@ export default function DayAtAGlancePage() {
         name: skillMap.get(sl.skill_id)||"Skill Focus",
         duration_minutes: sl.duration_minutes||0,
       })));
+
 
       setLoading(false);
     }
@@ -199,11 +207,18 @@ export default function DayAtAGlancePage() {
               <TimelineSection color="emerald" icon={<Dumbbell size={15} className="text-emerald-600"/>} label="Workout"
                 items={
                   workoutLogged
-                    ?[{label:`${workouts[0]?.workout_day} — ${workouts.length} exercises`, done:true,
-                        sub:workouts.map(w=>w.exercise).join(", ")}]
+                    ?(() => {
+                        const uniqueExs = Array.from(new Set(workouts.map(w => w.workout_name).filter(Boolean)));
+                        return [{
+                          label: `${workouts[0]?.workout_day} — ${uniqueExs.length} exercise(s)`,
+                          done: true,
+                          sub: uniqueExs.join(", ")
+                        }];
+                      })()
                     :[{label:"No workout logged today", done:false, sub:""}]
                 }
               />
+
 
               {/* 4 — Finance */}
               <TimelineSection color="indigo" icon={<Wallet size={15} className="text-indigo-500"/>} label="Finance" items={[]}

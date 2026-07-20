@@ -30,6 +30,8 @@ export default function WorkoutPage() {
   const router = useRouter();
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [workoutDay, setWorkoutDay] = useState("");
+  const [time, setTime] = useState(format(new Date(), "HH:mm"));
+  const [duration, setDuration] = useState("30");
   const [exercises, setExercises] = useState<Exercise[]>([]);
   
   // History data for dynamic dropdowns and PRs
@@ -123,6 +125,8 @@ export default function WorkoutPage() {
 
       if (data && data.length > 0) {
         setWorkoutDay(data[0].workout_day || "");
+        setTime(data[0].time || format(new Date(), "HH:mm"));
+        setDuration(String(data[0].duration_minutes || "30"));
         
         const grouped: Record<string, Exercise> = {};
         data.forEach((row) => {
@@ -228,7 +232,9 @@ export default function WorkoutPage() {
           set_no: idx + 1,
           weight: parseFloat(set.weight) || 0,
           reps: parseInt(set.reps) || 0,
-          notes: ex.notes
+          notes: ex.notes,
+          time,
+          duration_minutes: parseInt(duration) || 30
         }))
       );
 
@@ -271,30 +277,57 @@ export default function WorkoutPage() {
         <div className="space-y-6 w-full">
         <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="w-full space-y-6">
           <div className="bg-card rounded-md p-7 shadow-sm border border-border/40 space-y-7">
-          <div className="grid grid-cols-2 gap-7">
-            <div className="space-y-2">
-              <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
-                <CalendarDays size={16} className="shrink-0" /> Date
-              </label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
-              />
+            <div className="grid grid-cols-2 gap-7">
+              <div className="space-y-2">
+                <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                  <CalendarDays size={16} className="shrink-0" /> Date
+                </label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <SearchableSelect 
+                  label="Workout Day"
+                  headerIcon={<Flame size={16} className="shrink-0" />}
+                  value={workoutDay}
+                  onChange={setWorkoutDay}
+                  options={dayHistory}
+                  createLabel="Workout Day"
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <SearchableSelect 
-                label="Workout Day"
-                headerIcon={<Flame size={16} className="shrink-0" />}
-                value={workoutDay}
-                onChange={setWorkoutDay}
-                options={dayHistory}
-                createLabel="Workout Day"
-              />
+
+            <div className="grid grid-cols-2 gap-7">
+              <div className="space-y-2">
+                <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                  Workout Time
+                </label>
+                <input
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                  Duration (minutes)
+                </label>
+                <input
+                  type="number"
+                  placeholder="30"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                />
+              </div>
             </div>
           </div>
-        </div>
+
 
         {isLoading ? (
           <LoadingScreen message="Recalibrating metrics..." />

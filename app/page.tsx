@@ -7,11 +7,43 @@ import { format, differenceInDays, subDays, differenceInYears, differenceInMonth
 import Link from "next/link";
 import { Currency } from "@/components/currency";
 import { toast } from "sonner";
+import { TaskCompletionModal } from "@/components/TaskCompletionModal";
+
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Good Morning! 🌅");
   const [dateStr, setDateStr] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
+  // Modal state for Task completion
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [activeTask, setActiveTask] = useState<{ id: string; name: string; type: 'general' | 'squareshift' } | null>(null);
+
+  const triggerTaskCompletion = (id: string, name: string, type: 'general' | 'squareshift') => {
+    setActiveTask({ id, name, type });
+    setTaskModalOpen(true);
+  };
+
+  const confirmTaskCompletion = async (completedAt: string) => {
+    if (!activeTask) return;
+    try {
+      if (activeTask.type === 'general') {
+        const { error } = await supabase.from('tasks').update({ status: 'Completed', completed_at: completedAt }).eq('id', activeTask.id);
+        if (error) throw error;
+        toast.success(`Task "${activeTask.name}" marked completed! ✅`);
+      } else {
+        const { error } = await supabase.from('action_tasks').update({ completed: true, completed_at: completedAt }).eq('id', activeTask.id);
+        if (error) throw error;
+        toast.success(`SquareShift task "${activeTask.name}" marked completed! ✅`);
+      }
+      fetchDashboardData();
+    } catch (err: any) {
+      toast.error(`Failed to update task: ${err.message}`);
+    } finally {
+      setActiveTask(null);
+    }
+  };
+
 
   
   // Stats State
@@ -113,25 +145,11 @@ export default function DashboardPage() {
   };
 
   const handleCompleteTask = async (taskId: string, taskName: string) => {
-    try {
-      const { error } = await supabase.from('tasks').update({ status: 'Completed' }).eq('id', taskId);
-      if (error) throw error;
-      toast.success(`Task "${taskName}" marked completed! ✅`);
-      fetchDashboardData();
-    } catch (err: any) {
-      toast.error(`Failed to update task: ${err.message}`);
-    }
+    triggerTaskCompletion(taskId, taskName, 'general');
   };
 
   const handleCompleteSquareShiftTask = async (taskId: string, taskText: string) => {
-    try {
-      const { error } = await supabase.from('action_tasks').update({ completed: true }).eq('id', taskId);
-      if (error) throw error;
-      toast.success(`SquareShift task "${taskText}" marked completed! ✅`);
-      fetchDashboardData();
-    } catch (err: any) {
-      toast.error(`Failed to update SquareShift task: ${err.message}`);
-    }
+    triggerTaskCompletion(taskId, taskText, 'squareshift');
   };
 
   const fetchDashboardData = async () => {
@@ -1230,9 +1248,17 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      <TaskCompletionModal 
+        isOpen={taskModalOpen} 
+        onClose={() => setTaskModalOpen(false)} 
+        onConfirm={confirmTaskCompletion} 
+        taskTitle={activeTask?.name || ""} 
+      />
     </div>
   );
 }
+
 
 function MetricCard({ href, label, value, icon, color }: { href: string; label: string; value: React.ReactNode; icon: React.ReactNode; color: string }) {
   return (

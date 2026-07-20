@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from 'sonner';
+import { SearchableSelect } from '@/components/SearchableSelect';
 
 interface Vehicle {
   id: string;
@@ -50,10 +51,12 @@ export default function VehicleFuelServicePage() {
 
   const [serviceData, setServiceData] = useState({
     date: format(new Date(), 'yyyy-MM-dd'),
+    time: format(new Date(), 'HH:mm'),
     odometer: '',
     amount: '',
     service_center: '',
     details: '',
+    notes: '',
     next_service_date: '',
   });
   
@@ -63,9 +66,34 @@ export default function VehicleFuelServicePage() {
     notes: ''
   });
 
+  const [serviceOptions, setServiceOptions] = useState({
+    service_centers: [] as string[],
+    details: [] as string[]
+  });
+
   useEffect(() => {
     fetchVehicles();
+    fetchServiceOptions();
   }, []);
+
+  const fetchServiceOptions = async () => {
+    try {
+      const { data } = await supabase
+        .from('vehicle_service_logs')
+        .select('service_center, details')
+        .order('id', { ascending: false });
+      if (data) {
+        const centers = Array.from(new Set(data.map(d => d.service_center).filter(Boolean)));
+        const detailsList = Array.from(new Set(data.map(d => d.details).filter(Boolean)));
+        setServiceOptions({
+          service_centers: centers,
+          details: detailsList
+        });
+      }
+    } catch (e) {
+      console.error('Failed to load service options:', e);
+    }
+  };
 
   const fetchVehicles = async () => {
     setLoading(true);
@@ -173,7 +201,8 @@ export default function VehicleFuelServicePage() {
       }
 
       toast.success('Service log saved successfully!');
-      setServiceData({ ...serviceData, odometer: '', amount: '', service_center: '', details: '', next_service_date: '' });
+      setServiceData({ ...serviceData, odometer: '', amount: '', service_center: '', details: '', notes: '', next_service_date: '', time: format(new Date(), 'HH:mm') });
+      fetchServiceOptions();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save service log');
     } finally {
@@ -257,34 +286,56 @@ export default function VehicleFuelServicePage() {
                           <Input type="date" value={serviceData.date} onChange={e => setServiceData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
                        </div>
                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Gauge className="w-3 h-3" /> Odometer</label>
-                          <Input type="number" placeholder="Readings" value={serviceData.odometer} onChange={e => setServiceData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold text-center" />
+                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1">Time</label>
+                          <Input type="time" value={serviceData.time} onChange={e => setServiceData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
                        </div>
                     </div>
  
-                    <div className="space-y-1">
-                       <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><CreditCard className="w-3 h-3" /> Total Paid</label>
-                       <Input type="number" placeholder="Service Amount" value={serviceData.amount} onChange={e => setServiceData(p =>({...p, amount: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-black text-lg text-primary" />
-                    </div>
- 
                     <div className="grid grid-cols-2 gap-4">
+                       <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Gauge className="w-3 h-3" /> Odometer</label>
+                          <Input type="number" placeholder="Readings" value={serviceData.odometer} onChange={e => setServiceData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold text-center" />
+                       </div>
+                       <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><CreditCard className="w-3 h-3" /> Total Paid</label>
+                          <Input type="number" placeholder="Service Amount" value={serviceData.amount} onChange={e => setServiceData(p =>({...p, amount: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-black text-lg text-primary text-center" />
+                       </div>
+                    </div>
+
+ 
+                    <div className="grid grid-cols-2 gap-4 relative z-30">
                       <div className="space-y-1">
-                         <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1">Service Center</label>
-                         <Input placeholder="Authorized Center" value={serviceData.service_center} onChange={e => setServiceData(p =>({...p, service_center: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
+                         <SearchableSelect 
+                           label="Service Center"
+                           value={serviceData.service_center}
+                           onChange={val => setServiceData(p =>({...p, service_center: val}))}
+                           options={serviceOptions.service_centers}
+                           placeholder="Select or Type Center"
+                         />
                       </div>
                       <div className="space-y-1">
-                         <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1">Next Service Date</label>
-                         <Input type="date" value={serviceData.next_service_date} onChange={e => setServiceData(p =>({...p, next_service_date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
+                         <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1 block mb-2">Next Service Date</label>
+                         <Input type="date" value={serviceData.next_service_date} onChange={e => setServiceData(p =>({...p, next_service_date: e.target.value}))} className="h-11 rounded-lg border border-border bg-muted/30 font-bold" />
                       </div>
                     </div>
 
-                    <div className="space-y-1">
-                       <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1">Work Details</label>
-                       <textarea 
-                         className="w-full rounded-md border border-border bg-muted/30 font-bold p-4 min-h-24 outline-none focus:ring-2 ring-accent/10 text-foreground shadow-inner"
-                         placeholder="Oil change, Filter replacement, Tires, etc."
+                    <div className="space-y-1 relative z-20">
+                       <SearchableSelect 
+                         label="Work Details"
                          value={serviceData.details}
-                         onChange={e => setServiceData(p =>({...p, details: e.target.value}))}
+                         onChange={val => setServiceData(p =>({...p, details: val}))}
+                         options={serviceOptions.details}
+                         placeholder="Select or Type Work"
+                       />
+                    </div>
+
+                    <div className="space-y-1">
+                       <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1">Notes</label>
+                       <Input 
+                         placeholder="Enter service notes or extra details..." 
+                         value={serviceData.notes} 
+                         onChange={e => setServiceData(p =>({...p, notes: e.target.value}))} 
+                         className="h-11 rounded-lg border border-border bg-muted/30 font-bold" 
                        />
                     </div>
 

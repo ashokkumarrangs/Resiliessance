@@ -79,6 +79,7 @@ export default function SkillsPage() {
 
   // Log form
   const [logDate, setLogDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [logTime, setLogTime] = useState(format(new Date(), "HH:mm"));
   const [logDuration, setLogDuration] = useState("45");
   const [logNotes, setLogNotes] = useState("");
   const [logMood, setLogMood] = useState<"great"|"good"|"okay"|"hard">("good");
@@ -155,6 +156,7 @@ export default function SkillsPage() {
   const openLogModal = (skill: SkillItem) => {
     setLogTargetSkill(skill);
     setLogDate(format(new Date(), "yyyy-MM-dd"));
+    setLogTime(format(new Date(), "HH:mm"));
     setLogDuration("45"); setLogNotes(""); setLogMood("good");
     setShowLogModal(true);
   };
@@ -165,10 +167,12 @@ export default function SkillsPage() {
     const { error } = await supabase.from("skill_logs").insert({
       skill_id: logTargetSkill.id,
       date: logDate,
+      time: logTime,
       duration_minutes: parseInt(logDuration) || 30,
       notes: logNotes || null,
       mood: logMood,
     });
+
     setSaving(false);
     if (error) { toast.error("Failed to save session"); return; }
     toast.success("Session logged! 💪");
@@ -558,17 +562,27 @@ export default function SkillsPage() {
               <button onClick={() => setShowLogModal(false)} className="p-2 hover:bg-muted rounded-xl"><X size={16}/></button>
             </div>
 
-            {/* Date */}
-            <div>
-              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Date</label>
-              <input type="date" value={logDate} onChange={e => setLogDate(e.target.value)}
-                className="mt-1 w-full bg-muted/30 border border-border/30 rounded-xl px-3 py-2.5 text-[13px] font-bold text-foreground" />
+            {/* Date & Time */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Date</label>
+                <input type="date" value={logDate} onChange={e => setLogDate(e.target.value)}
+                  className="mt-1 w-full bg-muted/30 border border-border/30 rounded-xl px-3 py-2.5 text-[13px] font-bold text-foreground" />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Time</label>
+                <input type="time" value={logTime} onChange={e => setLogTime(e.target.value)}
+                  className="mt-1 w-full bg-muted/30 border border-border/30 rounded-xl px-3 py-2.5 text-[13px] font-bold text-foreground" />
+              </div>
             </div>
+
 
             {/* Duration */}
             <div>
               <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Duration (minutes)</label>
               <div className="flex gap-2 mt-1">
+                <input type="number" value={logDuration} onChange={e => setLogDuration(e.target.value)} placeholder="mins"
+                  className="w-20 bg-muted/30 border border-border/30 rounded-xl px-3 py-1.5 text-[13px] font-bold text-foreground text-center" />
                 {["15","30","45","60","90"].map(d => {
                   const isActive = logDuration === d;
                   return (
@@ -579,6 +593,7 @@ export default function SkillsPage() {
                 })}
               </div>
             </div>
+
 
             {/* Mood */}
             <div>
