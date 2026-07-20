@@ -193,7 +193,7 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
         
         <div className="space-y-6 w-full">
           {/* Profile Card */}
-          <div className="bg-gradient-to-r from-amber-500/90 to-orange-500/90 rounded-3xl p-6 text-white shadow-xl flex items-center gap-6 relative overflow-hidden">
+          <div className="bg-gradient-to-r from-primary to-accent/80 rounded-3xl p-6 text-white shadow-xl flex items-center gap-6 relative overflow-hidden">
              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-xl"></div>
              <div className="absolute bottom-0 left-10 w-24 h-24 bg-black/10 rounded-full -mb-10 blur-lg"></div>
              <div className="w-24 h-24 bg-white/20 backdrop-blur-md rounded-full border-4 border-white/30 flex items-center justify-center shrink-0 shadow-inner z-10">
@@ -216,65 +216,59 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
                 <h3 className="text-2xl font-black">New Log Entry</h3>
              </div>
 
-             <div className="space-y-5 relative z-10">
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Category */}
-                  <div>
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1.5 block">Category</label>
-                    <div className="relative">
-                      <select 
-                        value={entryCategory} 
-                        onChange={e => { setEntryCategory(e.target.value); setEntrySubCategory(""); }} 
-                        className="w-full bg-muted p-3.5 pr-10 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none shadow-sm"
-                      >
-                        <option value="Grooming">Grooming</option>
-                        <option value="Activities">Activities</option>
-                        <option value="Wellness">Wellness</option>
-                        <option value="Training">Training</option>
-                      </select>
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-                         <Activity size={16} />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Date & Time */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="col-span-2">
-                      <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1.5 block">
-                        {entryCategory === 'Wellness' ? 'Event / Administered Date' : 'Date'}
-                      </label>
-                      <input 
-                         type="date" 
-                         value={entryDate} 
-                         onChange={e => setEntryDate(e.target.value)} 
-                         className="w-full bg-muted p-3.5 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm" 
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1.5 block">Time</label>
-                      <input 
-                         type="time" 
-                         value={entryTime} 
-                         onChange={e => setEntryTime(e.target.value)} 
-                         className="w-full bg-muted p-3.5 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm" 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Subcategory (Creatable) */}
-                <div className="bg-background rounded-xl p-1 border shadow-sm">
-                   <SearchableSelect
-                      label="Subcategory / Log Type"
+             <div className="space-y-4 relative z-10 w-full min-w-0">
+                {/* Row 1: Category & Subcategory */}
+                <div className="flex w-full gap-3 relative z-30">
+                  <div className="flex-1 min-w-0 space-y-1.5">
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">Category</label>
+                    <SearchableSelect 
+                      label="Category"
                       hideLabel
-                      options={currentOptions}
-                      value={entrySubCategory}
-                      onChange={setEntrySubCategory}
-                      placeholder={`Select or type new ${entryCategory} log...`}
-                      createLabel="Create new: {search}"
-                   />
+                      value={entryCategory}
+                      onChange={val => { setEntryCategory(val); setEntrySubCategory(""); }}
+                      options={['Grooming', 'Activities', 'Wellness', 'Training']}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0 space-y-1.5">
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">Subcategory</label>
+                    <div className="bg-background rounded-xl p-0.5 border shadow-sm">
+                       <SearchableSelect
+                          label="Subcategory / Log Type"
+                          hideLabel
+                          options={currentOptions}
+                          value={entrySubCategory}
+                          onChange={setEntrySubCategory}
+                          placeholder={`Select/Type...`}
+                          createLabel="Create: {search}"
+                       />
+                    </div>
+                  </div>
                 </div>
+
+                {/* Row 2: Date & Time */}
+                <div className="flex w-full gap-3 relative z-20">
+                  <div className="flex-1 min-w-0 space-y-1.5">
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">
+                      {entryCategory === 'Wellness' ? 'Administered Date' : 'Date'}
+                    </label>
+                    <input 
+                       type="date" 
+                       value={entryDate} 
+                       onChange={e => setEntryDate(e.target.value)} 
+                       className="w-full min-w-0 bg-muted p-3 h-11 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm text-sm" 
+                    />
+                  </div>
+                  <div className="w-[100px] shrink-0 space-y-1.5">
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">Time</label>
+                    <input 
+                       type="time" 
+                       value={entryTime} 
+                       onChange={e => setEntryTime(e.target.value)} 
+                       className="w-full min-w-0 bg-muted p-3 h-11 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm text-sm text-center px-1" 
+                    />
+                  </div>
+                </div>
+             </div>
 
                 {/* Next Planned Date (Conditional) */}
                 {entryCategory === 'Wellness' && (
