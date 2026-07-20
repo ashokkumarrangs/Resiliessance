@@ -291,7 +291,7 @@ export default function WorkoutPage() {
               </div>
               <div className="space-y-2 min-w-0">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
-                  Workout Time
+                  Time
                 </label>
                 <input
                   type="time"
@@ -315,7 +315,7 @@ export default function WorkoutPage() {
               </div>
               <div className="space-y-2 min-w-0">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
-                  Duration (minutes)
+                  Duration
                 </label>
                 <input
                   type="number"
