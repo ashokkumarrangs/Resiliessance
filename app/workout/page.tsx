@@ -277,8 +277,8 @@ export default function WorkoutPage() {
         <div className="space-y-6 w-full">
         <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="w-full space-y-6">
           <div className="bg-card rounded-md p-7 shadow-sm border border-border/40 space-y-7 relative z-40">
-            <div className="grid grid-cols-[1.3fr_0.7fr] gap-3 relative z-30">
-              <div className="space-y-2">
+            <div className="grid grid-cols-[1.3fr_0.7fr] gap-3 relative z-30 w-full min-w-0">
+              <div className="space-y-2 min-w-0">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   <CalendarDays size={16} className="shrink-0" /> Date
                 </label>
@@ -286,10 +286,10 @@ export default function WorkoutPage() {
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                  className="w-full min-w-0 h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 min-w-0">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   Workout Time
                 </label>
@@ -297,13 +297,13 @@ export default function WorkoutPage() {
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="w-full h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                  className="w-full min-w-0 h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-[1.3fr_0.7fr] gap-3 relative z-20">
-              <div className="space-y-2">
+            <div className="grid grid-cols-[1.3fr_0.7fr] gap-3 relative z-20 w-full min-w-0">
+              <div className="space-y-2 min-w-0">
                 <SearchableSelect 
                   label="Workout Day"
                   headerIcon={<Flame size={16} className="shrink-0" />}
@@ -313,7 +313,7 @@ export default function WorkoutPage() {
                   createLabel="Workout Day"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 min-w-0">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   Duration (minutes)
                 </label>
@@ -323,7 +323,7 @@ export default function WorkoutPage() {
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
                   inputMode="numeric"
-                  className="w-full h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                  className="w-full min-w-0 h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
                 />
               </div>
             </div>

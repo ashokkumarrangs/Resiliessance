@@ -72,7 +72,7 @@ export function SearchableSelect({
             setIsTyping(false);
             setIsManualEntry(false);
           }, 200)}
-          className={`w-full h-11 bg-muted border-none rounded-lg px-4 pr-10 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30 font-sans ${!isManualEntry ? 'cursor-pointer' : ''}`}
+          className={`w-full min-w-0 h-11 bg-muted border-none rounded-lg px-4 pr-10 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30 font-sans ${!isManualEntry ? 'cursor-pointer' : ''}`}
         />
         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-accent transition-colors">
           {icon || <ChevronDown size={16} />}
