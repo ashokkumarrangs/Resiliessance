@@ -67,7 +67,7 @@ export default function DayAtAGlancePage() {
         {data:skillsConfig},
       ] = await Promise.all([
         supabase.from("habit_config").select("habit_name,group_name"),
-        supabase.from("habit_data").select("habit_name,value").eq("date", date),
+        supabase.from("habit_data").select("habit,value").eq("date", date),
         supabase.from("tasks").select("id,task,status,is_high_priority,completed_at,is_today"),
         supabase.from("workout_log").select("workout_day,workout_name,set_no,reps,weight").eq("date", date),
         supabase.from("history_expenses").select("category,amount,type,notes,created_at").eq("date", date).order("created_at"),
@@ -76,7 +76,7 @@ export default function DayAtAGlancePage() {
       ]);
 
       const doneHabits = new Set(
-        (habitData||[]).filter((h:any)=>h.value&&h.value!=="0"&&h.value!=="false").map((h:any)=>h.habit_name)
+        (habitData||[]).filter((h:any)=>h.value && h.value !== "0" && h.value !== "false" && h.value !== "No").map((h:any)=>h.habit)
       );
       setHabits((habitConfigs||[]).map((h:any)=>({...h, done:doneHabits.has(h.habit_name)})));
       

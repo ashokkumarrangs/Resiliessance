@@ -277,7 +277,7 @@ export default function WorkoutPage() {
         <div className="space-y-6 w-full">
         <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="w-full space-y-6">
           <div className="bg-card rounded-md p-7 shadow-sm border border-border/40 space-y-7">
-            <div className="grid grid-cols-2 gap-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-7 relative z-30">
               <div className="space-y-2">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   <CalendarDays size={16} className="shrink-0" /> Date
@@ -301,7 +301,8 @@ export default function WorkoutPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-7">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-7 relative z-20">
               <div className="space-y-2">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   Workout Time
@@ -322,10 +323,12 @@ export default function WorkoutPage() {
                   placeholder="30"
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
+                  inputMode="numeric"
                   className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
                 />
               </div>
             </div>
+
           </div>
 
 
@@ -366,11 +369,13 @@ export default function WorkoutPage() {
                       )}
                     </div>
                     <button
+                      type="button"
                       onClick={() => handleRemoveExercise(exIdx)}
                       className="p-2.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-md transition-all shrink-0 mt-1"
                     >
                       <Trash2 size={18} />
                     </button>
+
                   </div>
 
                   <div className="space-y-3 mb-4">
@@ -396,6 +401,7 @@ export default function WorkoutPage() {
                               placeholder="kg"
                               value={set.weight}
                               onChange={(e) => updateSet(exIdx, setIdx, "weight", e.target.value)}
+                              inputMode="decimal"
                               className={`w-full h-12 bg-muted border-none focus:ring-2 shadow-inner font-black text-lg text-center rounded-md transition-all ${isPR ? 'text-amber-600 focus:ring-amber-500/20' : 'text-foreground focus:ring-accent/20'}`}
                             />
                             {isPR && <Trophy size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-amber-500 animate-pulse pointer-events-none" />}
@@ -405,14 +411,17 @@ export default function WorkoutPage() {
                             placeholder="reps"
                             value={set.reps}
                             onChange={(e) => updateSet(exIdx, setIdx, "reps", e.target.value)}
+                            inputMode="numeric"
                             className="w-full h-12 bg-muted border-none focus:ring-2 focus:ring-accent/20 shadow-inner text-foreground font-black text-lg text-center rounded-md"
                           />
                           <button
+                            type="button"
                             onClick={() => handleRemoveSet(exIdx, setIdx)}
                             className="h-12 flex items-center justify-center text-muted-foreground/30 hover:text-rose-500 transition-colors"
                           >
                             <X size={18} />
                           </button>
+
                         </div>
                       );
                     })}
@@ -420,11 +429,13 @@ export default function WorkoutPage() {
 
                   <div className="flex items-center justify-between mt-5 pt-5 border-t border-border/40">
                     <button
+                      type="button"
                       onClick={() => handleAddSet(exIdx)}
                       className="text-xs font-black uppercase tracking-widest text-accent hover:text-primary transition-colors flex items-center gap-1.5"
                     >
                       <PlusCircle size={14} /> Add Set
                     </button>
+
                     {currentVol > 0 && (
                       <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">
                         Vol: {currentVol.toLocaleString()}kg
@@ -436,12 +447,14 @@ export default function WorkoutPage() {
             })}
 
             <button
+              type="button"
               onClick={handleAddExercise}
               className="w-full h-14 bg-card border-2 border-dashed border-border/60 text-muted-foreground rounded-md font-black flex items-center justify-center gap-2 hover:bg-muted hover:text-foreground transition-all"
             >
               <Dumbbell size={18} />
               <span>Add Exercise</span>
             </button>
+
 
             <div className="flex justify-center pt-8">
               <SaveButton onClick={handleSave} isSaving={isSaving} label="Save Workout" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
