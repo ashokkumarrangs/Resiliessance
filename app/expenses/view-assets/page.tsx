@@ -58,7 +58,13 @@ export default function ViewAssetsPage() {
         
         <PageHeader title="View Assets"  >
         <div className="flex items-center gap-2">
-
+          <button 
+            onClick={fetchAssets} 
+            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
+            title="Refresh"
+          >
+            <RefreshCw className={`w-4 h-4 md:w-[18px] md:h-[18px] ${isLoading ? "animate-spin" : ""}`} />
+          </button>
           <Link 
             href="/reports/finance" 
             className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
@@ -68,6 +74,7 @@ export default function ViewAssetsPage() {
           </Link>
         </div>
       </PageHeader>
+
         <div className="-mt-2 mb-6">
           <SectionNav tabs={EXPENSE_TABS} activePath="/expenses/view-assets" />
         </div>
@@ -82,37 +89,30 @@ export default function ViewAssetsPage() {
             }}
             className="!mb-0 !mx-0"
           />
-          <div className="absolute right-0">
-            <button 
-              onClick={fetchAssets} 
-              className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-              title="Refresh"
-            >
-              <RefreshCw className={`w-4 h-4 md:w-[18px] md:h-[18px] ${isLoading ? "animate-spin" : ""}`} />
-            </button>
-          </div>
         </div>
+
 
         <div className="space-y-8 w-full">
 
-      <div className="grid grid-cols-3 gap-3 mb-8">
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 text-center">
-          <div className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight">Total Assets</div>
-          <div className="text-xl font-black text-primary">{assets.length}</div>
+      <div className="grid grid-cols-3 gap-2 md:gap-3 mb-8">
+        <div className="bg-card rounded-2xl p-3 md:p-5 shadow-sm border border-border/40 text-center overflow-hidden flex flex-col justify-center min-w-0">
+          <div className="text-[9px] md:text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight truncate">Total Assets</div>
+          <div className="text-sm sm:text-xl font-black text-primary truncate">{assets.length}</div>
         </div>
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 text-center">
-          <div className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight">Investment</div>
-          <div className="text-sm font-black text-foreground"><Currency value={totalBuyVal} /></div>
+        <div className="bg-card rounded-2xl p-3 md:p-5 shadow-sm border border-border/40 text-center overflow-hidden flex flex-col justify-center min-w-0">
+          <div className="text-[9px] md:text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight truncate">Investment</div>
+          <div className="text-sm sm:text-xl font-black text-foreground truncate"><Currency value={totalBuyVal} /></div>
         </div>
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 text-center flex flex-col justify-center items-center">
-          <div className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight">Current Value</div>
-          <div className="text-xl font-black text-emerald-500 leading-none mb-1"><Currency value={totalCurrVal} /></div>
-          <div className={`text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1 ${profitPct >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+        <div className="bg-card rounded-2xl p-3 md:p-5 shadow-sm border border-border/40 text-center overflow-hidden flex flex-col justify-center items-center min-w-0">
+          <div className="text-[9px] md:text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight truncate">Current Value</div>
+          <div className="text-sm sm:text-xl font-black text-emerald-500 leading-none mb-1 truncate"><Currency value={totalCurrVal} /></div>
+          <div className={`text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-md flex items-center gap-1 shrink-0 ${profitPct >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
             {profitPct >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
             {Math.abs(profitPct).toFixed(1)}%
           </div>
         </div>
       </div>
+
 
       <div className="grid grid-cols-2 gap-4">
         {isLoading ? (

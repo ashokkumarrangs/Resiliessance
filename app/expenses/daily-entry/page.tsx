@@ -460,7 +460,9 @@ export default function DailyEntryPage() {
                       placeholder="0.00"
                       value={formData.amount}
                       onChange={(e) => handleChange('amount', e.target.value)}
+                      inputMode="decimal"
                       className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-black text-primary focus:ring-2 focus:ring-accent/20 shadow-inner group-hover:bg-muted/80 transition-all appearance-none"
+
                       required
                     />
                     <Banknote size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-accent transition-colors" />
@@ -507,7 +509,9 @@ export default function DailyEntryPage() {
                       placeholder="0.00"
                       value={formData.amount}
                       onChange={(e) => handleChange('amount', e.target.value)}
+                      inputMode="decimal"
                       className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-black text-primary focus:ring-2 focus:ring-accent/20 shadow-inner group-hover:bg-muted/80 transition-all appearance-none"
+
                       required
                     />
                     <Banknote size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-accent transition-colors" />

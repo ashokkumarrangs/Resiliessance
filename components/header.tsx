@@ -24,7 +24,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
         <span>Resiliessance</span>
       </div>
       
-      <div className="text-[9px] font-black text-slate-400 text-right uppercase tracking-widest leading-tight">
+      <div className="hidden sm:block text-[9px] font-black text-slate-400 text-right uppercase tracking-widest leading-tight">
         {dateStr}
       </div>
     </header>

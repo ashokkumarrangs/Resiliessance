@@ -56,7 +56,13 @@ export default function LiquidityPage() {
       <div className="max-w-lg mx-auto w-full p-4 md:p-6">
         <PageHeader title="Liquidity"  >
         <div className="flex items-center gap-2">
-
+          <button 
+            onClick={fetchAccounts}
+            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
+            title="Refresh"
+          >
+            <RefreshCw className={`w-4 h-4 md:w-[18px] md:h-[18px] ${isLoading ? "animate-spin" : ""}`} />
+          </button>
           <Link 
             href="/reports/finance" 
             className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
@@ -66,6 +72,7 @@ export default function LiquidityPage() {
           </Link>
         </div>
       </PageHeader>
+
         <div className="-mt-2 mb-6">
           <SectionNav tabs={EXPENSE_TABS} activePath="/expenses/liquidity" />
         </div>
@@ -78,33 +85,26 @@ export default function LiquidityPage() {
             }}
             className="!mb-0 !mx-0"
           />
-          <div className="absolute right-0">
-            <button 
-              onClick={fetchAccounts}
-              className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-              title="Refresh"
-            >
-              <RefreshCw className={`w-4 h-4 md:w-[18px] md:h-[18px] ${isLoading ? "animate-spin" : ""}`} />
-            </button>
-          </div>
         </div>
+
 
         <div className="space-y-8 w-full">
 
-      <div className="grid grid-cols-3 gap-3 mb-8">
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 text-center">
-          <div className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5">Accounts</div>
-          <div className="text-xl font-black text-primary">{accounts.length}</div>
+      <div className="grid grid-cols-3 gap-2 md:gap-3 mb-8">
+        <div className="bg-card rounded-2xl p-3 md:p-5 shadow-sm border border-border/40 text-center overflow-hidden flex flex-col justify-center min-w-0">
+          <div className="text-[9px] md:text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 truncate">Accounts</div>
+          <div className="text-sm sm:text-xl font-black text-primary truncate">{accounts.length}</div>
         </div>
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 text-center">
-          <div className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5">Total</div>
-          <div className="text-xl font-black text-emerald-500"><Currency value={totalBalance} /></div>
+        <div className="bg-card rounded-2xl p-3 md:p-5 shadow-sm border border-border/40 text-center overflow-hidden flex flex-col justify-center min-w-0">
+          <div className="text-[9px] md:text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 truncate">Total</div>
+          <div className="text-sm sm:text-xl font-black text-emerald-500 truncate"><Currency value={totalBalance} /></div>
         </div>
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 text-center">
-          <div className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5">Avg</div>
-          <div className="text-xl font-black text-foreground"><Currency value={avgBalance} /></div>
+        <div className="bg-card rounded-2xl p-3 md:p-5 shadow-sm border border-border/40 text-center overflow-hidden flex flex-col justify-center min-w-0">
+          <div className="text-[9px] md:text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 truncate">Avg</div>
+          <div className="text-sm sm:text-xl font-black text-foreground truncate"><Currency value={avgBalance} /></div>
         </div>
       </div>
+
 
       <div className="grid grid-cols-2 gap-4">
         {isLoading ? (

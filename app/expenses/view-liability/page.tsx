@@ -53,7 +53,13 @@ export default function ViewLiabilityPage() {
         
         <PageHeader title="View Liabilities"  >
         <div className="flex items-center gap-2">
-
+          <button 
+            onClick={fetchLiabilities} 
+            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
+            title="Refresh"
+          >
+            <RefreshCw className={`w-4 h-4 md:w-[18px] md:h-[18px] ${isLoading ? "animate-spin" : ""}`} />
+          </button>
           <Link 
             href="/reports/finance" 
             className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
@@ -63,6 +69,7 @@ export default function ViewLiabilityPage() {
           </Link>
         </div>
       </PageHeader>
+
         <div className="-mt-2 mb-6">
           <SectionNav tabs={EXPENSE_TABS} activePath="/expenses/view-liability" />
         </div>
@@ -76,36 +83,29 @@ export default function ViewLiabilityPage() {
             }}
             className="!mb-0 !mx-0"
           />
-          <div className="absolute right-0">
-            <button 
-              onClick={fetchLiabilities} 
-              className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-              title="Refresh"
-            >
-              <RefreshCw className={`w-4 h-4 md:w-[18px] md:h-[18px] ${isLoading ? "animate-spin" : ""}`} />
-            </button>
-          </div>
         </div>
+
 
         <div className="space-y-8 w-full">
 
-      <div className="grid grid-cols-3 gap-3 mb-8">
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 text-center">
-          <div className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight">Parties</div>
-          <div className="text-xl font-black text-primary">{liabilities.length}</div>
+      <div className="grid grid-cols-3 gap-2 md:gap-3 mb-8">
+        <div className="bg-card rounded-2xl p-3 md:p-5 shadow-sm border border-border/40 text-center overflow-hidden flex flex-col justify-center min-w-0">
+          <div className="text-[9px] md:text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight truncate">Parties</div>
+          <div className="text-sm sm:text-xl font-black text-primary truncate">{liabilities.length}</div>
         </div>
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 text-center">
-          <div className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight">Borrowed</div>
-          <div className="text-sm font-black text-foreground"><Currency value={totalBorrowed} /></div>
+        <div className="bg-card rounded-2xl p-3 md:p-5 shadow-sm border border-border/40 text-center overflow-hidden flex flex-col justify-center min-w-0">
+          <div className="text-[9px] md:text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight truncate">Borrowed</div>
+          <div className="text-sm sm:text-xl font-black text-foreground truncate"><Currency value={totalBorrowed} /></div>
         </div>
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 text-center flex flex-col justify-center items-center">
-          <div className="text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight">Remaining</div>
-          <div className="text-xl font-black text-rose-500 leading-none mb-1"><Currency value={totalRemaining} /></div>
-          <div className="text-[9px] font-black px-2 py-0.5 rounded bg-rose-500/10 text-rose-500">
+        <div className="bg-card rounded-2xl p-3 md:p-5 shadow-sm border border-border/40 text-center overflow-hidden flex flex-col justify-center items-center min-w-0">
+          <div className="text-[9px] md:text-[10px] text-muted-foreground/60 font-black uppercase tracking-widest mb-1.5 leading-tight truncate">Remaining</div>
+          <div className="text-sm sm:text-xl font-black text-rose-500 leading-none mb-1 truncate"><Currency value={totalRemaining} /></div>
+          <div className="text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-500 shrink-0">
             DEBT
           </div>
         </div>
       </div>
+
 
       <div className="grid grid-cols-2 gap-4">
         {isLoading ? (

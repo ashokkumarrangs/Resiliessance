@@ -410,7 +410,7 @@ function BudgetPlanContent() {
               >
                 {/* Category Row */}
                 <div className="p-5 cursor-pointer" onClick={() => toggleExpand(cat)}>
-                   <div className="flex items-center justify-between mb-3">
+                   <div className="flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between mb-3">
                       <h2 className="text-[20px] font-medium text-foreground tracking-tighter leading-none">
                         {cat}
                       </h2>
@@ -444,7 +444,7 @@ function BudgetPlanContent() {
                       const subPercent = catValue > 0 ? Math.round((item.currentPlan / catValue) * 100) : 0;
                       return (
                         <div key={sub} className="flex flex-col gap-2">
-                          <div className="flex items-center justify-between">
+                          <div className="flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex flex-col gap-0.5">
                               <span className="text-[14px] font-medium text-foreground tracking-tight leading-none">{sub}</span>
                             </div>
@@ -523,6 +523,7 @@ function TripleBox({
          readOnly={readOnly}
          onChange={(e) => onChange?.('currentPlan', e.target.value)}
          placeholder="0"
+         inputMode="decimal"
          className={`${isCategory ? 'w-[90px] h-12 text-sm' : 'w-[80px] h-10 text-xs'} bg-card rounded-lg border border-border/40 text-center font-black focus:ring-2 focus:ring-indigo-600/10 transition-all outline-none ${highlight || 'text-foreground'} shadow-inner`}
        />
     </div>
