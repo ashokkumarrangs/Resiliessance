@@ -305,13 +305,13 @@ export default function HabitDailyPage() {
                                    </div>
                                 </div>
                               ) : (
-                                <div className="w-32 flex justify-end">
+                                <div className="w-24 flex justify-end">
                                   {habit.input_type === 'boolean' ? (
                                     <div className="relative group w-full">
                                       <Select 
                                         value={dailyData[habit.habit_name] || ''} 
                                         onChange={(e) => handleInputChange(habit.habit_name, e.target.value)}
-                                        className="w-full h-10 bg-muted border-none rounded-lg px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all text-center"
+                                        className="w-full h-10 bg-muted border-none rounded-lg pl-2 pr-6 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all text-center"
                                       >
                                         <option value="" disabled>—</option>
                                         <option value="Yes">Yes</option>
@@ -319,6 +319,7 @@ export default function HabitDailyPage() {
                                       </Select>
                                       <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-primary transition-colors" />
                                     </div>
+
                                   ) : habit.input_type === 'duration' ? (
                                     <div className="flex items-center gap-1 w-full justify-end">
                                       <input 
@@ -329,7 +330,8 @@ export default function HabitDailyPage() {
                                           const current = parseDurationStr(dailyData[habit.habit_name] || '');
                                           handleInputChange(habit.habit_name, formatDurationStr(e.target.value, current.mins));
                                         }}
-                                        className="w-12 h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 p-1 text-foreground"
+                                        inputMode="numeric"
+                                        className="w-9 h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 p-0.5 text-foreground"
                                         min="0"
                                       />
                                       <span className="text-[9px] font-bold opacity-40">h</span>
@@ -341,19 +343,21 @@ export default function HabitDailyPage() {
                                           const current = parseDurationStr(dailyData[habit.habit_name] || '');
                                           handleInputChange(habit.habit_name, formatDurationStr(current.hrs, e.target.value));
                                         }}
-                                        className="w-12 h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 p-1 text-foreground"
+                                        inputMode="numeric"
+                                        className="w-9 h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 p-0.5 text-foreground"
                                         min="0"
                                         max="59"
                                       />
                                       <span className="text-[9px] font-bold opacity-40">m</span>
                                     </div>
+
                                   ) : habit.input_type === 'time' ? (
                                     <div className="relative group w-full">
                                       <Input 
                                         type="time"
                                         value={dailyData[habit.habit_name] || ''}
                                         onChange={(e) => handleInputChange(habit.habit_name, e.target.value)}
-                                        className="w-full h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all px-8 text-foreground"
+                                        className="w-full h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all px-2 text-foreground"
                                       />
                                       <Clock size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-primary transition-colors" />
                                     </div>
@@ -364,9 +368,11 @@ export default function HabitDailyPage() {
                                       onChange={(e) => handleInputChange(habit.habit_name, e.target.value)}
                                       className="w-full h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 text-foreground"
                                       placeholder="--"
+                                      inputMode={habit.input_type === 'number' ? 'decimal' : undefined}
                                     />
                                   )}
                                 </div>
+
                               )}
                               <span className="text-[9px] font-black uppercase opacity-30 w-6 text-right truncate">{habit.unit || 'pt'}</span>
                            </div>
