@@ -176,10 +176,10 @@ export default function WorkoutPage() {
 
   const handleAddSet = (exerciseIndex: number) => {
     const updated = [...exercises];
-    const previousSet = updated[exerciseIndex].sets[updated[exerciseIndex].sets.length - 1];
-    updated[exerciseIndex].sets.push(previousSet ? { ...previousSet } : { weight: "", reps: "" });
+    updated[exerciseIndex].sets.push({ weight: "", reps: "" });
     setExercises(updated);
   };
+
 
   const handleRemoveSet = (exerciseIndex: number, setIndex: number) => {
     const updated = [...exercises];
@@ -290,20 +290,6 @@ export default function WorkoutPage() {
                 />
               </div>
               <div className="space-y-2">
-                <SearchableSelect 
-                  label="Workout Day"
-                  headerIcon={<Flame size={16} className="shrink-0" />}
-                  value={workoutDay}
-                  onChange={setWorkoutDay}
-                  options={dayHistory}
-                  createLabel="Workout Day"
-                />
-              </div>
-            </div>
-
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-7 relative z-20">
-              <div className="space-y-2">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   Workout Time
                 </label>
@@ -312,6 +298,19 @@ export default function WorkoutPage() {
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
                   className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-7 relative z-20">
+              <div className="space-y-2">
+                <SearchableSelect 
+                  label="Workout Day"
+                  headerIcon={<Flame size={16} className="shrink-0" />}
+                  value={workoutDay}
+                  onChange={setWorkoutDay}
+                  options={dayHistory}
+                  createLabel="Workout Day"
                 />
               </div>
               <div className="space-y-2">
@@ -328,6 +327,7 @@ export default function WorkoutPage() {
                 />
               </div>
             </div>
+
 
           </div>
 

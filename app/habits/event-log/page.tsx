@@ -329,76 +329,78 @@ export default function HabitEventLogPage() {
                            </div>
                         </h2>
                        <div className="flex items-center gap-2">
-                          <div className="bg-card text-foreground border border-border/40 px-3 py-1 rounded-md text-lg font-black min-w-10 text-center shadow-sm">
+                          <div className="h-8 min-w-[36px] px-2 flex items-center justify-center bg-card text-foreground border border-border/40 rounded-md text-xs font-black shadow-sm">
                              {agg.count}
                           </div>
-                          <div className={`px-4 py-1.5 rounded-md text-sm font-black tracking-widest ${colorKey === 'count' || colorKey === 'boolean' ? 'bg-primary/20' : 'bg-muted'}`}>
-                             {agg.valueDisplay || (habit.input_type === 'text' ? '--' : '0')} {habit.input_type !== 'text' && habit.unit}
+                          <div className={`h-8 min-w-[40px] px-2.5 flex items-center justify-center rounded-md border border-border/40 text-xs font-black tracking-wider shadow-sm ${colorKey === 'count' || colorKey === 'boolean' ? 'bg-primary/20 text-primary border-primary/10' : 'bg-muted text-foreground'}`}>
+                             {agg.valueDisplay || (habit.input_type === 'text' ? '--' : '0')}{habit.input_type !== 'text' && habit.unit ? ` ${habit.unit}` : ''}
                           </div>
                        </div>
                     </div>
 
-                    {/* Dynamic Input Area */}
-                     <div className="flex items-end gap-3 min-h-[60px]">
-                        <div className="w-20 flex flex-col justify-end">
-                           <label className="text-[10px] font-black uppercase opacity-30 mb-1 ml-1">Time</label>
-                           <Input 
-                             type="time"
-                             value={formTimes[habit.habit_name] || ''}
-                             onChange={(e) => setFormTimes(prev => ({ ...prev, [habit.habit_name]: e.target.value }))}
-                             className="bg-muted/50 border-none h-11 rounded-md font-bold text-center p-1 text-foreground"
-                           />
-                        </div>
 
-                        <div className="flex-[2] flex flex-col justify-end">
-                           <label className="text-[10px] font-black uppercase opacity-30 mb-1 ml-1">Notes</label>
-                           <Input 
-                             placeholder="Details..." 
-                             value={formNotes[habit.habit_name] || ''}
-                             onChange={(e) => setFormNotes(prev => ({ ...prev, [habit.habit_name]: e.target.value }))}
-                             className="bg-muted/50 border-none h-11 rounded-md font-bold shadow-inner placeholder:text-muted-foreground/30 text-foreground"
-                           />
-                        </div>
+                     {/* Dynamic Input Area */}
+                      <div className="flex items-end gap-2.5 min-h-[50px] w-full">
+                         <div className="w-[70px] flex flex-col justify-end">
+                            <label className="text-[9px] font-black uppercase opacity-30 mb-1 ml-1 leading-none">Time</label>
+                            <Input 
+                              type="time"
+                              value={formTimes[habit.habit_name] || ''}
+                              onChange={(e) => setFormTimes(prev => ({ ...prev, [habit.habit_name]: e.target.value }))}
+                              className="bg-muted/50 border-none h-9 min-h-[36px] rounded-md font-bold text-center py-0 px-1 text-foreground text-xs"
+                            />
+                         </div>
 
-                        {habit.input_type === 'boolean' ? (
-                          <div className="flex-1 flex flex-col justify-end">
-                             <label className="text-[10px] font-black uppercase opacity-30 mb-1 ml-1">Value</label>
-                             <div className="relative group">
-                               <Select 
-                                 value={formValues[habit.habit_name] || 'Yes'} 
-                                 onChange={(e) => setFormValues(prev => ({ ...prev, [habit.habit_name]: e.target.value }))}
-                                 className="w-full h-11 bg-muted/50 border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all"
-                               >
-                                 <option value="Yes">Yes</option>
-                                 <option value="No">No</option>
-                               </Select>
-                               <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-primary transition-colors" />
-                             </div>
-                          </div>
-                        ) : (
-                          <div className="flex-1 flex flex-col justify-end relative">
-                             <label className="text-[10px] font-black uppercase opacity-30 mb-1 ml-1">
-                               {habit.input_type === 'time' ? 'Time' : habit.input_type === 'duration' ? 'Duration' : 'Value'}
-                             </label>
-                             <Input 
-                               type={habit.input_type === 'time' || habit.input_type === 'duration' ? 'time' : habit.input_type === 'number' ? 'number' : 'text'} 
-                               placeholder={habit.input_type === 'text' ? 'Enter text...' : habit.input_type === 'duration' ? 'HH:MM' : '0'}
-                               value={formValues[habit.habit_name] || ''}
-                               onChange={(e) => setFormValues(prev => ({ ...prev, [habit.habit_name]: e.target.value }))}
-                               className="bg-muted/50 border-none h-11 rounded-md font-black text-center shadow-inner text-foreground placeholder:text-muted-foreground/20"
-                             />
-                          </div>
-                        )}
+                         <div className="flex-[2] flex flex-col justify-end">
+                            <label className="text-[9px] font-black uppercase opacity-30 mb-1 ml-1 leading-none">Notes</label>
+                            <Input 
+                              placeholder="Details..." 
+                              value={formNotes[habit.habit_name] || ''}
+                              onChange={(e) => setFormNotes(prev => ({ ...prev, [habit.habit_name]: e.target.value }))}
+                              className="bg-muted/50 border-none h-9 min-h-[36px] rounded-md font-bold shadow-inner placeholder:text-muted-foreground/30 text-foreground text-xs py-0 px-2"
+                            />
+                         </div>
 
-                        <Button 
-                           onClick={() => handleLogEvent(habit.habit_name)}
-                           disabled={logging[habit.habit_name]}
-                           className="flex-1 h-11 rounded-md bg-primary hover:bg-primary/90 shadow-lg text-primary-foreground font-black text-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-tighter"
-                        >
-                           {logging[habit.habit_name] ? <RefreshCw className="animate-spin w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                           ADD
-                        </Button>
-                     </div>
+                         {habit.input_type === 'boolean' ? (
+                           <div className="flex-1 flex flex-col justify-end">
+                              <label className="text-[9px] font-black uppercase opacity-30 mb-1 ml-1 leading-none">Value</label>
+                              <div className="relative group">
+                                <Select 
+                                  value={formValues[habit.habit_name] || 'Yes'} 
+                                  onChange={(e) => setFormValues(prev => ({ ...prev, [habit.habit_name]: e.target.value }))}
+                                  className="w-full h-9 min-h-[36px] bg-muted/50 border-none rounded-md pl-1.5 pr-5 text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all py-0"
+                                >
+                                  <option value="Yes">Yes</option>
+                                  <option value="No">No</option>
+                                </Select>
+                                <ChevronDown size={10} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-primary transition-colors" />
+                              </div>
+                           </div>
+                         ) : (
+                           <div className="flex-1 flex flex-col justify-end relative">
+                              <label className="text-[9px] font-black uppercase opacity-30 mb-1 ml-1 leading-none">
+                                {habit.input_type === 'time' ? 'Time' : habit.input_type === 'duration' ? 'Duration' : 'Value'}
+                              </label>
+                              <Input 
+                                type={habit.input_type === 'time' || habit.input_type === 'duration' ? 'time' : habit.input_type === 'number' ? 'number' : 'text'} 
+                                placeholder={habit.input_type === 'text' ? 'Enter...' : habit.input_type === 'duration' ? 'HH:MM' : '0'}
+                                value={formValues[habit.habit_name] || ''}
+                                onChange={(e) => setFormValues(prev => ({ ...prev, [habit.habit_name]: e.target.value }))}
+                                inputMode={habit.input_type === 'number' ? 'decimal' : undefined}
+                                className="bg-muted/50 border-none h-9 min-h-[36px] rounded-md font-black text-center shadow-inner text-foreground placeholder:text-muted-foreground/20 text-xs py-0 px-1"
+                              />
+                           </div>
+                         )}
+
+                         <Button 
+                            onClick={() => handleLogEvent(habit.habit_name)}
+                            disabled={logging[habit.habit_name]}
+                            className="flex-1 h-9 min-h-[36px] py-0 rounded-md bg-primary hover:bg-primary/90 shadow-lg text-primary-foreground font-black text-xs active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 uppercase tracking-tighter"
+                         >
+                            {logging[habit.habit_name] ? <RefreshCw className="animate-spin w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                            ADD
+                         </Button>
+                      </div>
 
                      {/* Log List Section */}
                      {rawEvents.filter(e => e.event === habit.habit_name).length > 0 && (

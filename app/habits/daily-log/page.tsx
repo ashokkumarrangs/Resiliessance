@@ -292,33 +292,34 @@ export default function HabitDailyPage() {
 
                            <div className="flex items-center gap-1.5 shrink-0 ml-auto">
                               {habit.frequency === 'event' ? (
-                                <div className="flex items-center gap-1">
-                                   <div className="bg-muted/50 rounded-lg h-10 w-16 flex flex-col items-center justify-center shadow-inner border border-border/5">
-                                     <span className="text-[8px] font-black uppercase opacity-30 leading-none mb-0.5">Logs</span>
-                                     <div className="text-xs font-black text-primary leading-none">{eventAggregates[habit.habit_name]?.count || 0}</div>
+                                <div className="flex items-center gap-1 w-20 justify-end">
+                                   <div className="bg-muted/50 rounded-lg h-8 w-[36px] flex flex-col items-center justify-center shadow-inner border border-border/5">
+                                     <span className="text-[7px] font-black uppercase opacity-30 leading-none mb-0.5">Logs</span>
+                                     <div className="text-[10px] font-black text-primary leading-none">{eventAggregates[habit.habit_name]?.count || 0}</div>
                                    </div>
-                                   <div className="bg-muted/50 rounded-lg h-10 w-20 flex flex-col items-center justify-center shadow-inner border border-border/5">
-                                     <span className="text-[8px] font-black uppercase opacity-30 leading-none mb-0.5">Value</span>
-                                     <div className={`text-xs font-black text-accent leading-none px-1 truncate max-w-full`}>
+                                   <div className="bg-muted/50 rounded-lg h-8 w-[40px] flex flex-col items-center justify-center shadow-inner border border-border/5">
+                                     <span className="text-[7px] font-black uppercase opacity-30 leading-none mb-0.5">Val</span>
+                                     <div className="text-[10px] font-black text-accent leading-none px-0.5 truncate max-w-full">
                                        {eventAggregates[habit.habit_name]?.valueDisplay || (habit.input_type === 'text' ? '--' : '0')}
                                      </div>
                                    </div>
                                 </div>
                               ) : (
-                                <div className="w-24 flex justify-end">
+                                <div className="w-20 flex justify-end">
                                   {habit.input_type === 'boolean' ? (
                                     <div className="relative group w-full">
                                       <Select 
                                         value={dailyData[habit.habit_name] || ''} 
                                         onChange={(e) => handleInputChange(habit.habit_name, e.target.value)}
-                                        className="w-full h-10 bg-muted border-none rounded-lg pl-2 pr-6 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all text-center"
+                                        className="w-full h-8 bg-muted border-none rounded-lg pl-2 pr-6 text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all text-center"
                                       >
                                         <option value="" disabled>—</option>
                                         <option value="Yes">Yes</option>
                                         <option value="No">No</option>
                                       </Select>
-                                      <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-primary transition-colors" />
+                                      <ChevronDown size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-primary transition-colors" />
                                     </div>
+
 
                                   ) : habit.input_type === 'duration' ? (
                                     <div className="flex items-center gap-1 w-full justify-end">
@@ -331,7 +332,7 @@ export default function HabitDailyPage() {
                                           handleInputChange(habit.habit_name, formatDurationStr(e.target.value, current.mins));
                                         }}
                                         inputMode="numeric"
-                                        className="w-9 h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 p-0.5 text-foreground"
+                                        className="w-7 h-8 rounded-lg bg-muted border-none text-center font-bold text-xs focus:ring-2 focus:ring-primary/10 p-0.5 text-foreground"
                                         min="0"
                                       />
                                       <span className="text-[9px] font-bold opacity-40">h</span>
@@ -344,12 +345,13 @@ export default function HabitDailyPage() {
                                           handleInputChange(habit.habit_name, formatDurationStr(current.hrs, e.target.value));
                                         }}
                                         inputMode="numeric"
-                                        className="w-9 h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 p-0.5 text-foreground"
+                                        className="w-7 h-8 rounded-lg bg-muted border-none text-center font-bold text-xs focus:ring-2 focus:ring-primary/10 p-0.5 text-foreground"
                                         min="0"
                                         max="59"
                                       />
                                       <span className="text-[9px] font-bold opacity-40">m</span>
                                     </div>
+
 
                                   ) : habit.input_type === 'time' ? (
                                     <div className="relative group w-full">
@@ -357,21 +359,22 @@ export default function HabitDailyPage() {
                                         type="time"
                                         value={dailyData[habit.habit_name] || ''}
                                         onChange={(e) => handleInputChange(habit.habit_name, e.target.value)}
-                                        className="w-full h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all px-2 text-foreground"
+                                        className="w-full h-8 rounded-lg bg-muted border-none text-center font-bold text-xs focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all px-2 text-foreground"
                                       />
-                                      <Clock size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-primary transition-colors" />
+                                      <Clock size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-primary transition-colors" />
                                     </div>
                                   ) : (
                                     <Input 
                                       type={habit.input_type === 'number' ? 'number' : 'text'}
                                       value={dailyData[habit.habit_name] || ''}
                                       onChange={(e) => handleInputChange(habit.habit_name, e.target.value)}
-                                      className="w-full h-10 rounded-lg bg-muted border-none text-center font-bold text-sm focus:ring-2 focus:ring-primary/10 text-foreground"
+                                      className="w-full h-8 rounded-lg bg-muted border-none text-center font-bold text-xs focus:ring-2 focus:ring-primary/10 text-foreground"
                                       placeholder="--"
                                       inputMode={habit.input_type === 'number' ? 'decimal' : undefined}
                                     />
                                   )}
                                 </div>
+
 
                               )}
                               <span className="text-[9px] font-black uppercase opacity-30 w-6 text-right truncate">{habit.unit || 'pt'}</span>
