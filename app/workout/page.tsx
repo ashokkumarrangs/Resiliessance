@@ -276,8 +276,8 @@ export default function WorkoutPage() {
 
         <div className="space-y-6 w-full">
         <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="w-full space-y-6">
-          <div className="bg-card rounded-md p-7 shadow-sm border border-border/40 space-y-7">
-            <div className="grid grid-cols-2 gap-4 relative z-30">
+          <div className="bg-card rounded-md p-7 shadow-sm border border-border/40 space-y-7 relative z-40">
+            <div className="grid grid-cols-[1.3fr_0.7fr] gap-3 relative z-30">
               <div className="space-y-2">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   <CalendarDays size={16} className="shrink-0" /> Date
@@ -286,7 +286,7 @@ export default function WorkoutPage() {
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
-                  className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                  className="w-full h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
                 />
               </div>
               <div className="space-y-2">
@@ -297,13 +297,12 @@ export default function WorkoutPage() {
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                  className="w-full h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
                 />
               </div>
             </div>
 
-
-            <div className="grid grid-cols-2 gap-4 relative z-20">
+            <div className="grid grid-cols-[1.3fr_0.7fr] gap-3 relative z-20">
               <div className="space-y-2">
                 <SearchableSelect 
                   label="Workout Day"
@@ -324,7 +323,7 @@ export default function WorkoutPage() {
                   value={duration}
                   onChange={(e) => setDuration(e.target.value)}
                   inputMode="numeric"
-                  className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                  className="w-full h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
                 />
               </div>
             </div>
