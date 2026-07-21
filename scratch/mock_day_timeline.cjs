@@ -2,7 +2,7 @@
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = 'https://mfkzyryotmsmevnweuws.supabase.co';
-const supabaseAnonKey = 'sb_publishable_L8D6NdhFuOrztKy-_zzylw_cuIdp8ZW';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ma3p5cnlvdG1zbWV2bndldXdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0MjM4MTksImV4cCI6MjA5Nzk5OTgxOX0.er7t42Dh7UkAN-Udda1dOMiXvpbylv8-RWyqXBDy6cA';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const testDate = '2026-07-18';
