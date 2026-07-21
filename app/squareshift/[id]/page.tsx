@@ -55,7 +55,8 @@ export default function SquareShiftProjectPage() {
     if (e) e.preventDefault();
     if (!newTaskText.trim()) return;
     const { data, error } = await supabase.from('action_tasks').insert({
-        text: newTaskText,
+        id: crypto.randomUUID(),
+        text: newTaskText.trim(),
         project_id: projectId,
         completed: false,
         sort_order: tasks.length
@@ -88,10 +89,13 @@ export default function SquareShiftProjectPage() {
   const createProject = async () => {
       const name = prompt("New project name:");
       if (name && name.trim()) {
-          const { data, error } = await supabase.from('action_projects').insert({ name, sort_order: projects.length }).select();
+          const newId = crypto.randomUUID();
+          const { data, error } = await supabase.from('action_projects').insert({ id: newId, name: name.trim(), sort_order: projects.length }).select();
           if (data && !error) {
               setProjects([...projects, data[0]]);
               router.push(`/squareshift/${data[0].id}`);
+          } else if (error) {
+              console.error("Error creating project:", error);
           }
       }
   };

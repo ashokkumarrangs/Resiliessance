@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Bookmark, Check, ChevronDown, ChevronRight, Edit3, Eye, EyeOff, FileText, Flame, GripVertical, Inbox, LayoutGrid, List, Plus, PlusSquare, Search, Star, Trash2, X , BarChart2 } from "lucide-react";
+import { Bookmark, Check, ChevronDown, ChevronRight, Edit3, Eye, EyeOff, FileText, Flame, GripVertical, Inbox, LayoutGrid, List, Plus, PlusSquare, Search, Star, Trash2, X, BarChart2, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -36,12 +36,104 @@ export default function TaskManagerPage() {
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [expandedNotes, setExpandedNotes] = useState<Set<string>>(new Set());
   
+  const [activeMenuTaskId, setActiveMenuTaskId] = useState<string | null>(null);
+  
   // Drag and drop state
   const [draggedTaskIndex, setDraggedTaskIndex] = useState<number | null>(null);
 
   useEffect(() => {
     loadTasks();
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.dropdown-trigger') && !target.closest('.dropdown-menu')) {
+        setActiveMenuTaskId(null);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
   }, []);
+
+  const renderDropdown = (task: Task) => {
+    const isOpen = activeMenuTaskId === task.id;
+    return (
+      <div className="relative flex justify-end">
+        <button 
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setActiveMenuTaskId(isOpen ? null : task.id);
+          }}
+          className="p-1.5 text-muted-foreground/50 hover:text-primary hover:bg-muted rounded-md transition-colors cursor-pointer dropdown-trigger flex items-center justify-center"
+        >
+          <MoreVertical size={16} />
+        </button>
+        
+        {isOpen && (
+          <div className="absolute right-0 top-full mt-1.5 w-44 bg-card border border-border/40 rounded-xl shadow-xl z-50 py-1.5 dropdown-menu animate-in fade-in slide-in-from-top-1">
+            <button
+              type="button"
+              onClick={() => { toggleFlag(task.id, 'is_today', !task.is_today); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <Star size={13} className={task.is_today ? "text-amber-500 fill-amber-500" : "text-muted-foreground/40"} />
+              {task.is_today ? "Remove Today" : "Move to Today"}
+            </button>
+            <button
+              type="button"
+              onClick={() => { toggleFlag(task.id, 'is_week', !task.is_week); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <Bookmark size={13} className={task.is_week ? "text-emerald-500 fill-emerald-500" : "text-muted-foreground/40"} />
+              {task.is_week ? "Remove Week" : "Move to Week"}
+            </button>
+            <button
+              type="button"
+              onClick={() => { toggleFlag(task.id, 'is_high_priority', !task.is_high_priority); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <Flame size={13} className={task.is_high_priority ? "text-rose-500 fill-rose-500" : "text-muted-foreground/40"} />
+              {task.is_high_priority ? "Normal Priority" : "High Priority"}
+            </button>
+            <div className="h-px bg-border/40 my-1"></div>
+            <button
+              type="button"
+              onClick={() => { toggleNotes(task.id); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <FileText size={13} className="text-muted-foreground/40" />
+              Notes
+            </button>
+            {view === 'all' && (
+              <button
+                type="button"
+                onClick={() => { setAddingSubtaskToId(task.id); setNewSubtaskName(""); setActiveMenuTaskId(null); }}
+                className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+              >
+                <PlusSquare size={13} className="text-muted-foreground/40" />
+                Add Sub-task
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => { handleRename(task); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <Edit3 size={13} className="text-muted-foreground/40" />
+              Rename
+            </button>
+            <div className="h-px bg-border/40 my-1"></div>
+            <button
+              type="button"
+              onClick={() => { handleDelete(task.id); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center gap-2"
+            >
+              <Trash2 size={13} className="text-rose-500" />
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const loadTasks = async () => {
     setIsLoading(true);
@@ -69,13 +161,14 @@ export default function TaskManagerPage() {
       const nextSortOrder = filtered.length > 0 ? Math.max(...filtered.map(t => t.sort_order || 0)) + 1 : 0;
       
       const { data, error } = await supabase.from('tasks').insert({
+        id: crypto.randomUUID(),
         parent_id: parentId,
         task: name,
         status: 'Pending',
-        is_today: false,
+        is_today: !parentId,
         is_week: false,
         is_high_priority: false,
-        is_inbox: view === 'inbox' && !parentId,
+        is_inbox: false,
         sort_order: nextSortOrder
       }).select().single();
 
@@ -303,7 +396,7 @@ export default function TaskManagerPage() {
                     const isRoot = depth === 0;
 
                     const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60';
-                    const gridClass = isRoot ? 'grid-cols-[24px_22px_1fr_24px_100px_64px]' : 'grid-cols-[24px_22px_1fr_24px_100px_64px]';
+                    const gridClass = 'grid-cols-[24px_22px_1fr_24px_40px]';
 
                     return (
                         <div key={task.id} className="w-full">
@@ -347,41 +440,9 @@ export default function TaskManagerPage() {
                                     )}
                                 </div>
 
-                                {/* Flags */}
-                                <div className="flex items-center gap-1 justify-end">
-                                    {view === 'inbox' && isRoot ? (
-                                        <button 
-                                            onClick={() => toggleFlag(task.id, 'is_inbox', false)}
-                                            className="px-2 py-1 bg-primary/10 text-primary hover:bg-primary/20 text-[10px] font-bold rounded-md transition-colors cursor-pointer whitespace-nowrap"
-                                        >
-                                            Move
-                                        </button>
-                                    ) : (
-                                        <>
-                                            <button onClick={() => toggleFlag(task.id, 'is_today', !task.is_today)} className={`shrink-0 ${task.is_today ? 'text-amber-500' : 'text-muted-foreground/20 hover:text-amber-500 transition-colors'}`}>
-                                                <Star size={12} fill={task.is_today ? "currentColor" : "none"} />
-                                            </button>
-                                            <button onClick={() => toggleFlag(task.id, 'is_week', !task.is_week)} className={`shrink-0 ${task.is_week ? 'text-emerald-500' : 'text-muted-foreground/20 hover:text-emerald-500 transition-colors'}`}>
-                                                <Bookmark size={12} fill={task.is_week ? "currentColor" : "none"} />
-                                            </button>
-                                            <button onClick={() => toggleFlag(task.id, 'is_high_priority', !task.is_high_priority)} className={`shrink-0 rounded-sm p-0.5 ${task.is_high_priority ? 'text-rose-500 hover:bg-rose-500/10' : 'text-muted-foreground/20 hover:text-rose-500 transition-colors'}`}>
-                                                <Flame size={12} fill={task.is_high_priority ? "currentColor" : "none"} />
-                                            </button>
-                                            {view !== 'all' && (
-                                                <button onClick={() => toggleFlag(task.id, view === 'today' ? 'is_today' : 'is_week', false)} className="p-1 text-muted-foreground/40 hover:text-rose-500 cursor-pointer ml-1">
-                                                    <X size={14} />
-                                                </button>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity bg-card">
-                                    <button onClick={() => toggleNotes(task.id)} className="p-1 text-muted-foreground/40 hover:text-primary hover:bg-muted rounded-md cursor-pointer"><FileText size={13} /></button>
-                                    <button onClick={() => { setAddingSubtaskToId(task.id); setNewSubtaskName(""); }} className="p-1 text-muted-foreground/40 hover:text-primary hover:bg-primary/10 rounded-md cursor-pointer"><PlusSquare size={13} /></button>
-                                    <button onClick={() => handleRename(task)} className="p-1 text-muted-foreground/40 hover:text-primary hover:bg-muted rounded-md cursor-pointer"><Edit3 size={13} /></button>
-                                    <button onClick={() => handleDelete(task.id)} className="p-1 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-md cursor-pointer"><Trash2 size={13} /></button>
+                                {/* Dropdown Actions */}
+                                <div className="flex items-center justify-end relative z-30">
+                                    {renderDropdown(task)}
                                 </div>
                             </div>
 
@@ -442,7 +503,7 @@ export default function TaskManagerPage() {
                         const hasChildren = tasks.some(t => t.parent_id === task.id);
                         const isCollapsed = collapsed.has(task.id);
                         const isRoot = depth === 0;
-                        const gridClass = isRoot ? 'grid-cols-[24px_22px_1fr_24px_100px_64px]' : 'grid-cols-[24px_22px_1fr_24px_100px_64px]';
+                        const gridClass = 'grid-cols-[24px_22px_1fr_24px_40px]';
 
                         return (
                             <div key={task.id} className="w-full">
@@ -481,8 +542,8 @@ export default function TaskManagerPage() {
                                     <div className="flex items-center gap-1 justify-end">
                                     </div>
                                     
-                                    <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity bg-transparent">
-                                        <button onClick={() => handleDelete(task.id)} className="p-1 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-md cursor-pointer"><Trash2 size={13} /></button>
+                                    <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity bg-transparent relative z-30">
+                                        {renderDropdown(task)}
                                     </div>
                                 </div>
                                 
@@ -532,7 +593,7 @@ export default function TaskManagerPage() {
                 {pending.map((task, idx) => {
                     const isRoot = true;
                     const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60';
-                    const gridClass = 'grid-cols-[24px_22px_1fr_100px_64px]';
+                    const gridClass = 'grid-cols-[24px_22px_1fr_40px]';
 
                     return (
                         <div key={task.id} className="w-full">
@@ -564,38 +625,9 @@ export default function TaskManagerPage() {
                                     </span>
                                 </div>
 
-                                {/* Flags */}
-                                <div className="flex items-center gap-1 justify-end">
-                                    {view === 'inbox' && isRoot ? (
-                                        <button 
-                                            onClick={() => toggleFlag(task.id, 'is_inbox', false)}
-                                            className="px-2 py-1 bg-primary/10 text-primary hover:bg-primary/20 text-[10px] font-bold rounded-md transition-colors cursor-pointer whitespace-nowrap"
-                                        >
-                                            Move
-                                        </button>
-                                    ) : (
-                                        <>
-                                            <button onClick={() => toggleFlag(task.id, 'is_today', !task.is_today)} className={`shrink-0 ${task.is_today ? 'text-amber-500' : 'text-muted-foreground/20 hover:text-amber-500 transition-colors'}`}>
-                                                <Star size={12} fill={task.is_today ? "currentColor" : "none"} />
-                                            </button>
-                                            <button onClick={() => toggleFlag(task.id, 'is_week', !task.is_week)} className={`shrink-0 ${task.is_week ? 'text-emerald-500' : 'text-muted-foreground/20 hover:text-emerald-500 transition-colors'}`}>
-                                                <Bookmark size={12} fill={task.is_week ? "currentColor" : "none"} />
-                                            </button>
-                                            <button onClick={() => toggleFlag(task.id, 'is_high_priority', !task.is_high_priority)} className={`shrink-0 rounded-sm p-0.5 ${task.is_high_priority ? 'text-rose-500 hover:bg-rose-500/10' : 'text-muted-foreground/20 hover:text-rose-500 transition-colors'}`}>
-                                                <Flame size={12} fill={task.is_high_priority ? "currentColor" : "none"} />
-                                            </button>
-                                            <button onClick={() => toggleFlag(task.id, view === 'today' ? 'is_today' : 'is_week', false)} className="p-1 text-muted-foreground/40 hover:text-rose-500 cursor-pointer ml-1">
-                                                <X size={14} />
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity bg-card">
-                                    <button onClick={() => toggleNotes(task.id)} className="p-1 text-muted-foreground/40 hover:text-primary hover:bg-muted rounded-md cursor-pointer"><FileText size={13} /></button>
-                                    <button onClick={() => handleRename(task)} className="p-1 text-muted-foreground/40 hover:text-primary hover:bg-muted rounded-md cursor-pointer"><Edit3 size={13} /></button>
-                                    <button onClick={() => handleDelete(task.id)} className="p-1 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-md cursor-pointer"><Trash2 size={13} /></button>
+                                {/* Dropdown Actions */}
+                                <div className="flex items-center justify-end relative z-30">
+                                    {renderDropdown(task)}
                                 </div>
                             </div>
                             
@@ -625,7 +657,7 @@ export default function TaskManagerPage() {
                         <div className="h-px flex-1 bg-border/20"></div>
                     </div>
                     {completed.map(task => {
-                        const gridClass = 'grid-cols-[24px_22px_1fr_100px_64px]';
+                        const gridClass = 'grid-cols-[24px_22px_1fr_40px]';
 
                         return (
                             <div key={task.id} className="w-full">
@@ -652,8 +684,8 @@ export default function TaskManagerPage() {
                                     <div className="flex items-center gap-1 justify-end">
                                     </div>
                                     
-                                    <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity bg-transparent">
-                                        <button onClick={() => handleDelete(task.id)} className="p-1 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-md cursor-pointer"><Trash2 size={13} /></button>
+                                    <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity bg-transparent relative z-30">
+                                        {renderDropdown(task)}
                                     </div>
                                 </div>
                             </div>
@@ -731,12 +763,11 @@ export default function TaskManagerPage() {
         <div className="space-y-4 mt-6">
           {/* Headers */}
           {tasks.length > 0 && (
-              <div className={`grid gap-2 px-3 text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest ${ view === 'all' ? "grid-cols-[24px_22px_1fr_24px_100px_64px]" : "grid-cols-[24px_22px_1fr_100px_64px]" }`}>
+              <div className={`grid gap-2 px-3 text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest ${ view === 'all' ? "grid-cols-[24px_22px_1fr_24px_40px]" : "grid-cols-[24px_22px_1fr_40px]" }`}>
                 <span></span>
                 <span></span>
                 <span>Task</span>
                 {view === 'all' && <span></span>}
-                <span></span>
                 <span className="text-right">Actions</span>
               </div>
           )}

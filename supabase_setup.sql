@@ -264,14 +264,14 @@ CREATE TABLE IF NOT EXISTS public.inventory_items (
 
 -- 12. SQUARESHIFT (Action Items)
 CREATE TABLE IF NOT EXISTS public.action_projects (
-  id TEXT PRIMARY KEY,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   name TEXT NOT NULL,
   sort_order INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS public.action_tasks (
-  id TEXT PRIMARY KEY,
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   project_id TEXT REFERENCES public.action_projects(id) ON DELETE CASCADE, -- Null means Quick Notes
   text TEXT NOT NULL,
   due DATE,
