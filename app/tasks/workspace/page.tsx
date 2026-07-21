@@ -579,6 +579,7 @@ export default function TaskManagerPage() {
     return (
         <div className="space-y-3">
             <div className="space-y-2">
+                {pending.map((task, idx) => {
                     const isRoot = true;
                     const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60';
                     const gridClass = 'grid-cols-[24px_22px_1fr_40px]';

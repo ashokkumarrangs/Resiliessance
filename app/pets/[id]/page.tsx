@@ -305,7 +305,6 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
                   {isSubmitting ? "Saving..." : "Save Entry"}
                 </button>
              </div>
-          </div>
           
           {/* Recent History Preview */}
           <div className="px-2">
