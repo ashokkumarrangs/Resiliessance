@@ -38,7 +38,12 @@ export function TaskCompletionModal({
     } else if (option === "1h") {
       completedAtISO = subHours(new Date(), 1).toISOString();
     } else if (option === "custom" && customDateTime) {
-      completedAtISO = new Date(customDateTime).toISOString();
+      try {
+        completedAtISO = new Date(customDateTime).toISOString();
+      } catch (err) {
+        console.error("Invalid custom date time:", err);
+        completedAtISO = new Date().toISOString();
+      }
     }
 
     onConfirm(completedAtISO);
