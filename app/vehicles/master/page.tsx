@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from "next/link";
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { ArrowLeftCircle, Car, Edit3, Plus, RefreshCw, Save, Trash2 , BarChart2 } from "lucide-react";
+import { ArrowLeftCircle, Car, Edit3, Plus, RefreshCw, Save, Trash2 , BarChart2, Hash, Calendar, Gauge, Fuel, Info } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { SectionNav } from "@/components/SectionNav";
@@ -155,78 +155,78 @@ export default function VehicleMasterPage() {
         {/* Form Card */}
         <Card className="rounded-md shadow-zenith border border-white/20 overflow-hidden">
           <CardContent className="p-7 space-y-6 bg-card">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground/60 tracking-widest px-1">Vehicle Name</label>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Car className="w-3.5 h-3.5" /> Vehicle Name</label>
               <Input 
                 placeholder="Blue Swift, Duke 390..." 
-                className="h-12 rounded-md border-none bg-muted font-black tracking-tight shadow-inner"
+                className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full"
                 value={formData.vehicle_name}
                 onChange={e => setFormData(p => ({...p, vehicle_name: e.target.value}))}
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground/60 tracking-widest px-1">Registration No.</label>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Hash className="w-3.5 h-3.5" /> Registration No.</label>
               <Input 
                 placeholder="KA-01-XX-0000" 
-                className="h-12 rounded-md border-none bg-muted font-black tracking-widest shadow-inner"
+                className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full uppercase tracking-wider"
                 value={formData.registration_number}
                 onChange={e => setFormData(p => ({...p, registration_number: e.target.value}))}
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground/60 tracking-widest px-1">Initial Odometer (km)</label>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Gauge className="w-3.5 h-3.5" /> Initial Odometer (km)</label>
               <Input 
                 type="number"
                 placeholder="Mileage at start" 
-                className="h-12 rounded-md border-none bg-muted font-black tracking-tight shadow-inner"
+                className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full"
                 value={formData.initial_odometer}
                 onChange={e => setFormData(p => ({...p, initial_odometer: e.target.value}))}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground/60 tracking-widest px-1">Insurance Expiry</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Calendar className="w-3.5 h-3.5" /> Insurance Expiry</label>
                 <Input 
                   type="date" 
-                  className="h-12 rounded-md border-none bg-muted font-black tracking-tight shadow-inner"
+                  className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full"
                   value={formData.insurance_expiry}
                   onChange={e => setFormData(p => ({...p, insurance_expiry: e.target.value}))}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground/60 tracking-widest px-1">Next Service Date</label>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Calendar className="w-3.5 h-3.5" /> Next Service Date</label>
                 <Input 
                   type="date" 
-                  className="h-12 rounded-md border-none bg-muted font-black tracking-tight shadow-inner"
+                  className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full"
                   value={formData.next_service_date}
                   onChange={e => setFormData(p => ({...p, next_service_date: e.target.value}))}
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground/60 tracking-widest px-1">Type</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Info className="w-3.5 h-3.5" /> Type</label>
                 <Select value={formData.vehicle_type} onValueChange={v => setFormData(p => ({...p, vehicle_type: v}))}>
-                  <SelectTrigger className="h-12 rounded-md border-none bg-muted font-black shadow-inner">
+                  <SelectTrigger className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full flex items-center justify-between text-foreground">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-md border-border/40">
-                    <SelectItem value="Car" className="font-black tracking-tight">Car</SelectItem>
-                    <SelectItem value="Bike" className="font-black tracking-tight">Bike</SelectItem>
-                    <SelectItem value="Scooter" className="font-black tracking-tight">Scooter</SelectItem>
+                    <SelectItem value="Car" className="font-bold tracking-tight">Car</SelectItem>
+                    <SelectItem value="Bike" className="font-bold tracking-tight">Bike</SelectItem>
+                    <SelectItem value="Scooter" className="font-bold tracking-tight">Scooter</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground/60 tracking-widest px-1">Fuel Type</label>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Fuel className="w-3.5 h-3.5" /> Fuel Type</label>
                 <Select value={formData.fuel_type} onValueChange={v => setFormData(p => ({...p, fuel_type: v}))}>
-                  <SelectTrigger className="h-12 rounded-md border-none bg-muted font-black shadow-inner">
+                  <SelectTrigger className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full flex items-center justify-between text-foreground">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-md border-border/40">
-                    <SelectItem value="Petrol" className="font-black tracking-tight">Petrol</SelectItem>
-                    <SelectItem value="Diesel" className="font-black tracking-tight">Diesel</SelectItem>
-                    <SelectItem value="EV" className="font-black tracking-tight">EV</SelectItem>
+                    <SelectItem value="Petrol" className="font-bold tracking-tight">Petrol</SelectItem>
+                    <SelectItem value="Diesel" className="font-bold tracking-tight">Diesel</SelectItem>
+                    <SelectItem value="EV" className="font-bold tracking-tight">EV</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

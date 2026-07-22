@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from "next/link";
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Calendar, CreditCard, Gauge, RefreshCw, Save , BarChart2 } from "lucide-react";
+import { Calendar, CreditCard, Gauge, RefreshCw, Save , BarChart2, Clock, FileText } from "lucide-react";
 import { format } from 'date-fns';
 import { PageHeader } from "@/components/PageHeader";
 import { SaveButton } from "@/components/ui/SaveButton";
@@ -254,35 +254,35 @@ export default function VehicleFuelServicePage() {
              <Card className="rounded-md border border-white/20 shadow-zenith overflow-hidden bg-card">
 
                  <CardContent className="p-8 space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                       <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Calendar className="w-3 h-3" /> Date</label>
-                          <Input type="date" value={mileageData.date} onChange={e => setMileageData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
-                       </div>
-                       <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1">Time</label>
-                          <Input type="time" value={mileageData.time} onChange={e => setMileageData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
-                       </div>
-                    </div>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Calendar className="w-3.5 h-3.5" /> Date</label>
+                           <Input type="date" value={mileageData.date} onChange={e => setMileageData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        </div>
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Clock className="w-3.5 h-3.5" /> Time</label>
+                           <Input type="time" value={mileageData.time} onChange={e => setMileageData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        </div>
+                     </div>
+  
+                     <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Gauge className="w-3.5 h-3.5" /> Odometer</label>
+                        <Input type="number" placeholder="Readings" value={mileageData.odometer} onChange={e => setMileageData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                     </div>
  
-                    <div className="space-y-1">
-                       <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Gauge className="w-3 h-3" /> Odometer</label>
-                       <Input type="number" placeholder="Readings" value={mileageData.odometer} onChange={e => setMileageData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold text-center" />
-                    </div>
-
- 
-                    <div className="space-y-1">
-                       <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1">Notes</label>
-                       <textarea 
-                         className="w-full rounded-md border border-border bg-muted/30 font-bold p-4 min-h-24 outline-none focus:ring-2 ring-primary/10 text-foreground shadow-inner"
-                         placeholder="Trip to city, casual drive, etc."
-                         value={mileageData.notes}
-                         onChange={e => setMileageData(p =>({...p, notes: e.target.value}))}
-                       />
-                    </div>
- 
-                    <div className="flex justify-center pt-8">
-                     <SaveButton onClick={handleMileageSave} isSaving={saving} label="Save Mileage Log" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
+  
+                     <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none mb-1.5"><FileText className="w-3.5 h-3.5" /> Notes</label>
+                        <textarea 
+                          className="w-full rounded-md border border-border bg-muted/30 font-bold p-4 min-h-24 outline-none focus:ring-2 ring-primary/10 text-foreground shadow-inner text-sm placeholder:text-muted-foreground/50"
+                          placeholder="Trip to city, casual drive, etc."
+                          value={mileageData.notes}
+                          onChange={e => setMileageData(p =>({...p, notes: e.target.value}))}
+                        />
+                     </div>
+  
+                     <div className="flex justify-center pt-8">
+                      <SaveButton onClick={handleMileageSave} isSaving={saving} label="Save Mileage Log" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
                   </div>
                  </CardContent>
              </Card>

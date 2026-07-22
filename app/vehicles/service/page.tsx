@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from "next/link";
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Calendar, CreditCard, Gauge, RefreshCw, Save , BarChart2 } from "lucide-react";
+import { Calendar, CreditCard, Gauge, RefreshCw, Save , BarChart2, Clock, Store, FileText, Wrench } from "lucide-react";
 import { format } from 'date-fns';
 import { PageHeader } from "@/components/PageHeader";
 import { SaveButton } from "@/components/ui/SaveButton";
@@ -280,67 +280,66 @@ export default function VehicleFuelServicePage() {
              <Card className="rounded-md border border-white/20 shadow-zenith overflow-hidden bg-card">
 
                  <CardContent className="p-8 space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                       <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Calendar className="w-3 h-3" /> Date</label>
-                          <Input type="date" value={serviceData.date} onChange={e => setServiceData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
-                       </div>
-                       <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1">Time</label>
-                          <Input type="time" value={serviceData.time} onChange={e => setServiceData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold" />
-                       </div>
-                    </div>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Calendar className="w-3.5 h-3.5" /> Date</label>
+                           <Input type="date" value={serviceData.date} onChange={e => setServiceData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        </div>
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Clock className="w-3.5 h-3.5" /> Time</label>
+                           <Input type="time" value={serviceData.time} onChange={e => setServiceData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        </div>
+                     </div>
+  
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Gauge className="w-3.5 h-3.5" /> Odometer</label>
+                           <Input type="number" placeholder="Readings" value={serviceData.odometer} onChange={e => setServiceData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        </div>
+                        <div className="space-y-1">
+                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><CreditCard className="w-3.5 h-3.5" /> Total Paid</label>
+                           <Input type="number" placeholder="Service Amount" value={serviceData.amount} onChange={e => setServiceData(p =>({...p, amount: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        </div>
+                     </div>
  
-                    <div className="grid grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-30">
                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><Gauge className="w-3 h-3" /> Odometer</label>
-                          <Input type="number" placeholder="Readings" value={serviceData.odometer} onChange={e => setServiceData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold text-center" />
+                          <SearchableSelect 
+                            label="Service Center"
+                            value={serviceData.service_center}
+                            onChange={val => setServiceData(p =>({...p, service_center: val}))}
+                            options={serviceOptions.service_centers}
+                            placeholder="Select or Type Center"
+                          />
                        </div>
                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1"><CreditCard className="w-3 h-3" /> Total Paid</label>
-                          <Input type="number" placeholder="Service Amount" value={serviceData.amount} onChange={e => setServiceData(p =>({...p, amount: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-black text-lg text-primary text-center" />
+                          <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none mb-1.5"><Calendar className="w-3.5 h-3.5" /> Next Service Date</label>
+                          <Input type="date" value={serviceData.next_service_date} onChange={e => setServiceData(p =>({...p, next_service_date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
                        </div>
-                    </div>
-
+                     </div>
  
-                    <div className="grid grid-cols-2 gap-4 relative z-30">
-                      <div className="space-y-1">
-                         <SearchableSelect 
-                           label="Service Center"
-                           value={serviceData.service_center}
-                           onChange={val => setServiceData(p =>({...p, service_center: val}))}
-                           options={serviceOptions.service_centers}
-                           placeholder="Select or Type Center"
-                         />
-                      </div>
-                      <div className="space-y-1">
-                         <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1 block mb-2">Next Service Date</label>
-                         <Input type="date" value={serviceData.next_service_date} onChange={e => setServiceData(p =>({...p, next_service_date: e.target.value}))} className="h-11 rounded-lg border border-border bg-muted/30 font-bold" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-1 relative z-20">
-                       <SearchableSelect 
-                         label="Work Details"
-                         value={serviceData.details}
-                         onChange={val => setServiceData(p =>({...p, details: val}))}
-                         options={serviceOptions.details}
-                         placeholder="Select or Type Work"
-                       />
-                    </div>
-
-                    <div className="space-y-1">
-                       <label className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest px-1">Notes</label>
-                       <Input 
-                         placeholder="Enter service notes or extra details..." 
-                         value={serviceData.notes} 
-                         onChange={e => setServiceData(p =>({...p, notes: e.target.value}))} 
-                         className="h-11 rounded-lg border border-border bg-muted/30 font-bold" 
-                       />
-                    </div>
-
-                    <div className="flex justify-center pt-8">
-                     <SaveButton onClick={handleServiceSave} isSaving={saving} label="Save Service Log" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
+                     <div className="space-y-1 relative z-20">
+                        <SearchableSelect 
+                          label="Work Details"
+                          value={serviceData.details}
+                          onChange={val => setServiceData(p =>({...p, details: val}))}
+                          options={serviceOptions.details}
+                          placeholder="Select or Type Work"
+                        />
+                     </div>
+ 
+                     <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none mb-1.5"><FileText className="w-3.5 h-3.5" /> Notes</label>
+                        <Input 
+                          placeholder="Enter service notes or extra details..." 
+                          value={serviceData.notes} 
+                          onChange={e => setServiceData(p =>({...p, notes: e.target.value}))} 
+                          className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" 
+                        />
+                     </div>
+ 
+                     <div className="flex justify-center pt-8">
+                      <SaveButton onClick={handleServiceSave} isSaving={saving} label="Save Service Log" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
                   </div>
                  </CardContent>
              </Card>
