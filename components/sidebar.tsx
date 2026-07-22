@@ -23,7 +23,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
   const DrawerOverlay = () => (
     <div
       onClick={onClose}
-      className={`absolute inset-0 bg-black/55 z-50 transition-opacity duration-300 ${
+      className={`fixed inset-0 bg-black/55 z-50 transition-opacity duration-300 ${
         isOpen ? "opacity-100 block" : "opacity-0 hidden pointer-events-none"
       }`}
     />
@@ -33,7 +33,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
     <>
       <DrawerOverlay />
       <nav
-        className={`absolute top-0 left-0 h-full w-[min(320px,90vw)] bg-white z-[60] transform transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[20px_0_40px_rgba(0,0,0,0.05)] overflow-y-auto no-scrollbar ${
+        className={`fixed top-0 left-0 h-[100dvh] w-[min(320px,90vw)] bg-white z-[60] transform transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[20px_0_40px_rgba(0,0,0,0.05)] overflow-y-auto no-scrollbar ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
