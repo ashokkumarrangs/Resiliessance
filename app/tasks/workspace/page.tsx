@@ -378,6 +378,17 @@ export default function TaskManagerPage() {
     setDraggedTaskIndex(null);
   };
 
+  const isRelatedToActiveMenu = (taskId: string): boolean => {
+    if (!activeMenuTaskId) return false;
+    if (activeMenuTaskId === taskId) return true;
+    let curr = tasks.find(t => t.id === activeMenuTaskId);
+    while (curr && curr.parent_id) {
+      if (curr.parent_id === taskId) return true;
+      curr = tasks.find(t => t.id === curr.parent_id);
+    }
+    return false;
+  };
+
   const renderTaskTree = (parentId: string | null = null, depth = 0) => {
     let filtered = tasks.filter(t => t.parent_id === parentId);
     if (depth === 0) {
@@ -406,7 +417,7 @@ export default function TaskManagerPage() {
                     const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60';
 
                     return (
-                        <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
+                        <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
                             <div 
                               draggable
                               onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
@@ -515,7 +526,7 @@ export default function TaskManagerPage() {
                         const gridClass = 'grid-cols-[24px_22px_1fr_24px_40px]';
 
                         return (
-                            <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
+                            <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
                                 <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />
@@ -604,7 +615,7 @@ export default function TaskManagerPage() {
                     const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60';
 
                     return (
-                        <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
+                        <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
                             <div 
                               draggable
                               onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
@@ -670,7 +681,7 @@ export default function TaskManagerPage() {
                         const gridClass = 'grid-cols-[24px_22px_1fr_40px]';
 
                         return (
-                            <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
+                            <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
                                 <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />

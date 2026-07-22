@@ -277,7 +277,7 @@ export default function WorkoutPage() {
         <div className="space-y-6 w-full">
         <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="w-full space-y-6">
           <div className="bg-card rounded-md p-7 shadow-sm border border-border/40 space-y-7 relative z-40">
-            <div className="flex w-full gap-3 relative z-30">
+            <div className="flex flex-col sm:flex-row w-full gap-4 relative z-30">
               <div className="flex-1 min-w-0 space-y-2">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   <CalendarDays size={16} className="shrink-0" /> Date
@@ -289,7 +289,7 @@ export default function WorkoutPage() {
                   className="w-full min-w-0 h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
                 />
               </div>
-              <div className="w-[100px] shrink-0 space-y-2">
+              <div className="w-full sm:w-[120px] shrink-0 space-y-2">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   Time
                 </label>
@@ -297,12 +297,12 @@ export default function WorkoutPage() {
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="w-full min-w-0 h-11 bg-muted border-none rounded-md px-2 text-sm font-bold text-center text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                  className="w-full min-w-0 h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-center text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
                 />
               </div>
             </div>
 
-            <div className="flex w-full gap-3 relative z-20">
+            <div className="flex flex-col sm:flex-row w-full gap-4 relative z-20">
               <div className="flex-1 min-w-0 space-y-2">
                 <SearchableSelect 
                   label="Workout Day"
@@ -313,7 +313,7 @@ export default function WorkoutPage() {
                   createLabel="Workout Day"
                 />
               </div>
-              <div className="space-y-2 w-[100px] shrink-0">
+              <div className="w-full sm:w-[120px] shrink-0 space-y-2">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                   Duration
                 </label>
