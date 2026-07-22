@@ -1066,6 +1066,7 @@ export default function HabitConfigPage() {
           )}
         </div>
       </div>
+      </div>
     </div>
   );
 }
