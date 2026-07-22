@@ -155,59 +155,75 @@ export default function VehicleMasterPage() {
         {/* Form Card */}
         <Card className="rounded-md shadow-zenith border border-white/20 overflow-hidden">
           <CardContent className="p-7 space-y-6 bg-card">
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Car className="w-3.5 h-3.5" /> Vehicle Name</label>
-              <Input 
+            <div className="space-y-2">
+              <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                 <Car className="w-4 h-4 shrink-0" /> Vehicle Name
+              </label>
+              <input 
+                type="text"
                 placeholder="Blue Swift, Duke 390..." 
-                className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full"
+                className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none"
                 value={formData.vehicle_name}
                 onChange={e => setFormData(p => ({...p, vehicle_name: e.target.value}))}
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Hash className="w-3.5 h-3.5" /> Registration No.</label>
-              <Input 
+            <div className="space-y-2">
+              <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                 <Hash className="w-4 h-4 shrink-0" /> Registration No.
+              </label>
+              <input 
+                type="text"
                 placeholder="KA-01-XX-0000" 
-                className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full uppercase tracking-wider"
+                className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none uppercase tracking-wider"
                 value={formData.registration_number}
                 onChange={e => setFormData(p => ({...p, registration_number: e.target.value}))}
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Gauge className="w-3.5 h-3.5" /> Initial Odometer (km)</label>
-              <Input 
+            <div className="space-y-2">
+              <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                 <Gauge className="w-4 h-4 shrink-0" /> Initial Odometer (km)
+              </label>
+              <input 
                 type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="Mileage at start" 
-                className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full"
+                className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none"
                 value={formData.initial_odometer}
                 onChange={e => setFormData(p => ({...p, initial_odometer: e.target.value}))}
               />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Calendar className="w-3.5 h-3.5" /> Insurance Expiry</label>
-                <Input 
+            <div className="grid grid-cols-2 gap-7">
+              <div className="space-y-2">
+                <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                   <Calendar className="w-4 h-4 shrink-0" /> Insurance Expiry
+                </label>
+                <input 
                   type="date" 
-                  className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full"
+                  className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none"
                   value={formData.insurance_expiry}
                   onChange={e => setFormData(p => ({...p, insurance_expiry: e.target.value}))}
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Calendar className="w-3.5 h-3.5" /> Next Service Date</label>
-                <Input 
+              <div className="space-y-2">
+                <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                   <Calendar className="w-4 h-4 shrink-0" /> Next Service Date
+                </label>
+                <input 
                   type="date" 
-                  className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full"
+                  className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none"
                   value={formData.next_service_date}
                   onChange={e => setFormData(p => ({...p, next_service_date: e.target.value}))}
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Info className="w-3.5 h-3.5" /> Type</label>
+            <div className="grid grid-cols-2 gap-7">
+              <div className="space-y-2">
+                <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                   <Info className="w-4 h-4 shrink-0" /> Type
+                </label>
                 <Select value={formData.vehicle_type} onValueChange={v => setFormData(p => ({...p, vehicle_type: v}))}>
-                  <SelectTrigger className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full flex items-center justify-between text-foreground">
+                  <SelectTrigger className="h-11 min-h-[44px] w-full bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner flex items-center justify-between">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-md border-border/40">
@@ -217,10 +233,12 @@ export default function VehicleMasterPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Fuel className="w-3.5 h-3.5" /> Fuel Type</label>
+              <div className="space-y-2">
+                <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                   <Fuel className="w-4 h-4 shrink-0" /> Fuel Type
+                </label>
                 <Select value={formData.fuel_type} onValueChange={v => setFormData(p => ({...p, fuel_type: v}))}>
-                  <SelectTrigger className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full flex items-center justify-between text-foreground">
+                  <SelectTrigger className="h-11 min-h-[44px] w-full bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner flex items-center justify-between">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-md border-border/40">

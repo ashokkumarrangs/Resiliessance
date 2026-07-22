@@ -280,29 +280,63 @@ export default function VehicleFuelServicePage() {
              <Card className="rounded-md border border-white/20 shadow-zenith overflow-hidden bg-card">
 
                  <CardContent className="p-8 space-y-6">
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Calendar className="w-3.5 h-3.5" /> Date</label>
-                           <Input type="date" value={serviceData.date} onChange={e => setServiceData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                     <div className="grid grid-cols-2 gap-7">
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Calendar className="w-4 h-4 shrink-0" /> Date
+                           </label>
+                           <input 
+                              type="date" 
+                              value={serviceData.date} 
+                              onChange={e => setServiceData(p =>({...p, date: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Clock className="w-3.5 h-3.5" /> Time</label>
-                           <Input type="time" value={serviceData.time} onChange={e => setServiceData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Clock className="w-4 h-4 shrink-0" /> Time
+                           </label>
+                           <input 
+                              type="time" 
+                              value={serviceData.time} 
+                              onChange={e => setServiceData(p =>({...p, time: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
                      </div>
   
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Gauge className="w-3.5 h-3.5" /> Odometer</label>
-                           <Input type="number" placeholder="Readings" value={serviceData.odometer} onChange={e => setServiceData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                     <div className="grid grid-cols-2 gap-7">
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Gauge className="w-4 h-4 shrink-0" /> Odometer
+                           </label>
+                           <input 
+                              type="number" 
+                              inputMode="numeric" 
+                              pattern="[0-9]*" 
+                              placeholder="Readings" 
+                              value={serviceData.odometer} 
+                              onChange={e => setServiceData(p =>({...p, odometer: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><CreditCard className="w-3.5 h-3.5" /> Total Paid</label>
-                           <Input type="number" placeholder="Service Amount" value={serviceData.amount} onChange={e => setServiceData(p =>({...p, amount: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <CreditCard className="w-4 h-4 shrink-0" /> Total Paid
+                           </label>
+                           <input 
+                              type="number" 
+                              step="0.01" 
+                              inputMode="decimal" 
+                              placeholder="Service Amount" 
+                              value={serviceData.amount} 
+                              onChange={e => setServiceData(p =>({...p, amount: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
                      </div>
  
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-30">
+                     <div className="grid grid-cols-2 gap-7 relative z-30">
                        <div className="space-y-1">
                           <SearchableSelect 
                             label="Service Center"
@@ -312,9 +346,16 @@ export default function VehicleFuelServicePage() {
                             placeholder="Select or Type Center"
                           />
                        </div>
-                       <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none mb-1.5"><Calendar className="w-3.5 h-3.5" /> Next Service Date</label>
-                          <Input type="date" value={serviceData.next_service_date} onChange={e => setServiceData(p =>({...p, next_service_date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                       <div className="space-y-2">
+                          <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none mb-1">
+                             <Calendar className="w-4 h-4 shrink-0" /> Next Service Date
+                          </label>
+                          <input 
+                             type="date" 
+                             value={serviceData.next_service_date} 
+                             onChange={e => setServiceData(p =>({...p, next_service_date: e.target.value}))} 
+                             className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                          />
                        </div>
                      </div>
  
@@ -328,13 +369,16 @@ export default function VehicleFuelServicePage() {
                         />
                      </div>
  
-                     <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none mb-1.5"><FileText className="w-3.5 h-3.5" /> Notes</label>
-                        <Input 
+                     <div className="space-y-2">
+                        <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                           <FileText className="w-4 h-4 shrink-0" /> Notes
+                        </label>
+                        <input 
+                          type="text"
                           placeholder="Enter service notes or extra details..." 
                           value={serviceData.notes} 
                           onChange={e => setServiceData(p =>({...p, notes: e.target.value}))} 
-                          className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" 
+                          className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
                         />
                      </div>
  

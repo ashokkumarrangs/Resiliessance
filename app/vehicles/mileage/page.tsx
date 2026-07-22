@@ -254,27 +254,52 @@ export default function VehicleFuelServicePage() {
              <Card className="rounded-md border border-white/20 shadow-zenith overflow-hidden bg-card">
 
                  <CardContent className="p-8 space-y-6">
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Calendar className="w-3.5 h-3.5" /> Date</label>
-                           <Input type="date" value={mileageData.date} onChange={e => setMileageData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                     <div className="grid grid-cols-2 gap-7">
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Calendar className="w-4 h-4 shrink-0" /> Date
+                           </label>
+                           <input 
+                              type="date" 
+                              value={mileageData.date} 
+                              onChange={e => setMileageData(p =>({...p, date: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Clock className="w-3.5 h-3.5" /> Time</label>
-                           <Input type="time" value={mileageData.time} onChange={e => setMileageData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Clock className="w-4 h-4 shrink-0" /> Time
+                           </label>
+                           <input 
+                              type="time" 
+                              value={mileageData.time} 
+                              onChange={e => setMileageData(p =>({...p, time: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
                      </div>
   
-                     <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Gauge className="w-3.5 h-3.5" /> Odometer</label>
-                        <Input type="number" placeholder="Readings" value={mileageData.odometer} onChange={e => setMileageData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                     <div className="space-y-2">
+                        <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                           <Gauge className="w-4 h-4 shrink-0" /> Odometer
+                        </label>
+                        <input 
+                           type="number" 
+                           inputMode="numeric" 
+                           pattern="[0-9]*" 
+                           placeholder="Readings" 
+                           value={mileageData.odometer} 
+                           onChange={e => setMileageData(p =>({...p, odometer: e.target.value}))} 
+                           className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                        />
                      </div>
  
-  
-                     <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none mb-1.5"><FileText className="w-3.5 h-3.5" /> Notes</label>
+                     <div className="space-y-2">
+                        <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none mb-1">
+                           <FileText className="w-4 h-4 shrink-0" /> Notes
+                        </label>
                         <textarea 
-                          className="w-full rounded-md border border-border bg-muted/30 font-bold p-4 min-h-24 outline-none focus:ring-2 ring-primary/10 text-foreground shadow-inner text-sm placeholder:text-muted-foreground/50"
+                          className="w-full rounded-md border-none bg-muted font-bold p-4 min-h-24 outline-none focus:ring-2 focus:ring-accent/20 text-foreground shadow-inner text-sm placeholder:text-muted-foreground/50"
                           placeholder="Trip to city, casual drive, etc."
                           value={mileageData.notes}
                           onChange={e => setMileageData(p =>({...p, notes: e.target.value}))}

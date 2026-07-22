@@ -264,43 +264,95 @@ export default function VehicleFuelServicePage() {
              <Card className="rounded-md border border-white/20 shadow-zenith overflow-hidden bg-card">
 
                  <CardContent className="p-8 space-y-6">
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Calendar className="w-3.5 h-3.5" /> Date</label>
-                           <Input type="date" value={fuelData.date} onChange={e => setFuelData(p =>({...p, date: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                     <div className="grid grid-cols-2 gap-7">
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Calendar className="w-4 h-4 shrink-0" /> Date
+                           </label>
+                           <input 
+                              type="date" 
+                              value={fuelData.date} 
+                              onChange={e => setFuelData(p =>({...p, date: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Clock className="w-3.5 h-3.5" /> Time</label>
-                           <Input type="time" value={fuelData.time} onChange={e => setFuelData(p =>({...p, time: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Clock className="w-4 h-4 shrink-0" /> Time
+                           </label>
+                           <input 
+                              type="time" 
+                              value={fuelData.time} 
+                              onChange={e => setFuelData(p =>({...p, time: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
                      </div>
   
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Gauge className="w-3.5 h-3.5" /> Odometer</label>
-                           <Input type="number" placeholder="Readings" value={fuelData.odometer} onChange={e => setFuelData(p =>({...p, odometer: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                     <div className="grid grid-cols-2 gap-7">
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Gauge className="w-4 h-4 shrink-0" /> Odometer
+                           </label>
+                           <input 
+                              type="number" 
+                              inputMode="numeric" 
+                              pattern="[0-9]*" 
+                              placeholder="Readings" 
+                              value={fuelData.odometer} 
+                              onChange={e => setFuelData(p =>({...p, odometer: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Store className="w-3.5 h-3.5" /> Fuel Station</label>
-                           <Input placeholder="HP, Shell, Indian Oil..." value={fuelData.station} onChange={e => setFuelData(p =>({...p, station: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Store className="w-4 h-4 shrink-0" /> Fuel Station
+                           </label>
+                           <input 
+                              type="text"
+                              placeholder="HP, Shell, Indian Oil..." 
+                              value={fuelData.station} 
+                              onChange={e => setFuelData(p =>({...p, station: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
                      </div>
 
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><Droplets className="w-3.5 h-3.5" /> Liters</label>
-                           <Input type="number" step="0.01" placeholder="Qty" value={fuelData.liters} onChange={e => setFuelData(p =>({...p, liters: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                     <div className="grid grid-cols-2 gap-7">
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <Droplets className="w-4 h-4 shrink-0" /> Liters
+                           </label>
+                           <input 
+                              type="number" 
+                              step="0.01" 
+                              inputMode="decimal" 
+                              placeholder="Qty" 
+                              value={fuelData.liters} 
+                              onChange={e => setFuelData(p =>({...p, liters: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
-                        <div className="space-y-1">
-                           <label className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-wider flex items-center gap-1.5 leading-none"><CreditCard className="w-3.5 h-3.5" /> Total Paid</label>
-                           <Input type="number" placeholder="Amt" value={fuelData.amount} onChange={e => setFuelData(p =>({...p, amount: e.target.value}))} className="h-12 rounded-md border border-border bg-muted/30 font-bold px-3 w-full" />
+                        <div className="space-y-2">
+                           <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                              <CreditCard className="w-4 h-4 shrink-0" /> Total Paid
+                           </label>
+                           <input 
+                              type="number" 
+                              step="0.01" 
+                              inputMode="decimal" 
+                              placeholder="Amt" 
+                              value={fuelData.amount} 
+                              onChange={e => setFuelData(p =>({...p, amount: e.target.value}))} 
+                              className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none" 
+                           />
                         </div>
                      </div>
 
                      <div className="flex justify-center pt-8">
                       <SaveButton onClick={handleFuelSave} isSaving={saving} label="Save Fuel Log" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
                   </div>
-                 </CardContent>
+                  </CardContent>
              </Card>
 
           
