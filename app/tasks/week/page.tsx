@@ -384,7 +384,8 @@ export default function TaskManagerPage() {
     let curr = tasks.find(t => t.id === activeMenuTaskId);
     while (curr && curr.parent_id) {
       if (curr.parent_id === taskId) return true;
-      curr = tasks.find(t => t.id === curr.parent_id);
+      const pid: string = curr.parent_id;
+      curr = tasks.find(t => t.id === pid);
     }
     return false;
   };
