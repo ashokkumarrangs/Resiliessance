@@ -44,11 +44,11 @@ export default function HabitConfigPage() {
   // Form State
   const [formData, setFormData] = useState({
     habit_name: '',
-    group_name: 'Core',
+    group_name: '',
     frequency: 'daily',
     input_type: 'number',
     unit: '',
-    condition_type: 'at_least_n',
+    condition_type: '',
     target_value: 1,
     suc_min: undefined as number | undefined,
     suc_max: undefined as number | undefined,
@@ -149,6 +149,17 @@ export default function HabitConfigPage() {
     if (data) {
       const groups = Array.from(new Set(data.map(d => d.group_name))).filter(Boolean);
       setExistingGroups(groups as string[]);
+      if (groups.length > 0) {
+        setFormData(prev => ({
+          ...prev,
+          group_name: prev.group_name === '' ? (groups[0] as string) : prev.group_name
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          group_name: prev.group_name === '' ? 'Core' : prev.group_name
+        }));
+      }
     }
   };
 
@@ -161,6 +172,12 @@ export default function HabitConfigPage() {
       }
       if (key === 'frequency' && value === 'event') {
         next.unlogged_is_success = false;
+      }
+      // Automate condition type for boolean input types
+      if (key === 'input_type' && value === 'boolean') {
+        next.condition_type = 'exactly_n';
+      } else if (key === 'input_type' && prev.input_type === 'boolean' && value !== 'boolean') {
+        next.condition_type = '';
       }
       return next;
     });
@@ -179,6 +196,10 @@ export default function HabitConfigPage() {
         }
       }
       if (currentStep === 2) {
+        if (formData.input_type !== 'boolean' && !formData.condition_type) {
+          toast.error('Please select a success condition type');
+          return;
+        }
         if (formData.condition_type === 'between') {
           if (formData.suc_min !== undefined && formData.suc_max !== undefined && parseFloat(formData.suc_min as any) > parseFloat(formData.suc_max as any)) {
             toast.error('Success MIN cannot be greater than Success MAX');
@@ -857,76 +878,192 @@ export default function HabitConfigPage() {
         {/* STEP 4: PREVIEW */}
         {currentStep === 3 && (
           <div className="space-y-6">
-             {/* PREVIEW CARD */}
-             <div className="flex flex-col gap-2">
-                <div className="text-[10px] font-black uppercase text-accent tracking-widest ml-1">Preview — Daily Log Card</div>
-                <div className="bg-accent/10 rounded-md p-8 border-4 border-background shadow-zenith relative overflow-hidden group">
-                   <div className="absolute top-0 right-0 p-8 text-muted-foreground/30 font-black opacity-20 text-6xl group-hover:scale-125 transition-transform">{formData.emoji}</div>
-                   <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-3">
-                         <span className="text-4xl">{formData.emoji}</span>
-                         <h3 className="text-4xl font-black uppercase tracking-tighter text-foreground leading-none">{formData.habit_name}</h3>
-                         <div className="w-6 h-6 rounded-md border-4 border-background shadow-sm" style={{ backgroundColor: formData.habit_color }} />
-                      </div>
-                      <div className="flex items-center gap-2 mt-4">
-                         <div className="bg-accent/20 text-accent px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                            <ArrowRight size={10} /> {formData.condition_type.replace('_', ' ')} {formData.target_value}
+              {/* PREVIEW CONTAINER */}
+              {formData.frequency === 'daily' ? (
+                <div className="flex flex-col gap-2">
+                   <div className="text-[10px] font-black uppercase text-primary tracking-widest ml-1">Preview — Daily Log Card</div>
+                   <div className="bg-card rounded-2xl border border-border/40 p-5 shadow-sm">
+                      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-muted/20 border border-border/30">
+                         <div className="w-8 flex flex-col items-center shrink-0 opacity-50"><span className="text-lg">{formData.emoji || '⭐'}</span></div>
+                         <div className="flex-1 min-w-0 pr-2">
+                            <div className="flex items-center gap-2">
+                               <div className="text-sm font-bold text-foreground truncate">
+                                  {formData.habit_name || 'My Habit'}
+                                </div>
+                                <div className="shrink-0">
+                                   <CircleDot size={16} className="text-muted-foreground/30 shrink-0" />
+                                </div>
+                            </div>
+                         </div>
+                         <div className="flex items-center gap-1.5 shrink-0 ml-auto">
+                            <div className="w-20 flex justify-end">
+                               {formData.input_type === 'boolean' ? (
+                                  <div className="relative group w-full">
+                                     <select disabled className="w-full h-8 bg-muted border-none rounded-lg pl-2 pr-6 text-xs font-bold text-foreground appearance-none shadow-inner text-center">
+                                        <option>—</option>
+                                        <option>Yes</option>
+                                        <option>No</option>
+                                     </select>
+                                     <ChevronDown size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none" />
+                                  </div>
+                               ) : formData.input_type === 'duration' ? (
+                                  <div className="flex items-center gap-1 w-full justify-end">
+                                     <input disabled type="number" placeholder="0" className="w-7 h-8 rounded-lg bg-muted border-none text-center font-bold text-xs p-0.5 text-foreground" />
+                                     <span className="text-[9px] font-bold opacity-40">h</span>
+                                     <input disabled type="number" placeholder="00" className="w-7 h-8 rounded-lg bg-muted border-none text-center font-bold text-xs p-0.5 text-foreground" />
+                                     <span className="text-[9px] font-bold opacity-40">m</span>
+                                  </div>
+                               ) : formData.input_type === 'time' ? (
+                                  <div className="relative group w-full">
+                                     <input disabled type="time" className="w-full h-8 rounded-lg bg-muted border-none text-center font-bold text-xs appearance-none shadow-inner px-2 text-foreground" />
+                                     <Clock size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none" />
+                                  </div>
+                               ) : (
+                                  <input disabled type={formData.input_type === 'number' ? 'number' : 'text'} placeholder="--" className="w-full h-8 rounded-lg bg-muted border-none text-center font-bold text-xs text-foreground" />
+                               )}
+                            </div>
+                            <span className="text-[9px] font-black uppercase opacity-30 w-6 text-right truncate">{formData.unit || 'pt'}</span>
                          </div>
                       </div>
                    </div>
-                   <div className="absolute bottom-8 right-8 bg-card/40 border border-border/60 rounded-md px-6 py-4 font-black text-2xl text-muted-foreground">
-                      HH:MM
-                   </div>
                 </div>
-             </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* Event Previews */}
+                  <div className="flex flex-col gap-2">
+                     <div className="text-[10px] font-black uppercase text-primary tracking-widest ml-1">Preview 1 — Event Log Card</div>
+                     <div className="rounded-2xl border border-border/40 shadow-sm overflow-hidden bg-card transition-all">
+                        <div className="p-5 flex flex-col gap-4">
+                           <div className="flex justify-between items-center">
+                              <h2 className="text-xl font-bold uppercase tracking-tighter flex items-center gap-2">
+                                 <span className="text-2xl">{formData.emoji || '⭐'}</span>
+                                 <span className="truncate">{formData.habit_name || 'My Habit'}</span>
+                                 <CircleDot size={18} className="text-muted-foreground/30 shrink-0" />
+                              </h2>
+                              <div className="flex items-center gap-2">
+                                 <div className="h-8 min-w-[36px] px-2 flex items-center justify-center bg-muted text-foreground border border-border/40 rounded-md text-xs font-black shadow-sm">
+                                    0
+                                 </div>
+                                 <div className="h-8 min-w-[40px] px-2.5 flex items-center justify-center rounded-md border border-border/40 text-xs font-black tracking-wider shadow-sm bg-muted text-foreground">
+                                    0{formData.unit ? ` ${formData.unit}` : ''}
+                                 </div>
+                              </div>
+                           </div>
 
-             {/* SUMMARY TABLE */}
-             <Card className="rounded-md border-white/20 shadow-zenith overflow-hidden bg-card">
-                <CardContent className="p-0 flex flex-col divide-y divide-border/40">
-                   <div className="bg-muted/50 p-6 flex items-center gap-3">
-                      <AlignLeft size={20} className="text-muted-foreground/60" />
-                      <span className="text-sm font-black uppercase tracking-widest text-muted-foreground/60">Summary</span>
-                   </div>
-                   <SummaryRow label="Habit Name" value={formData.habit_name} />
-                   <SummaryRow label="Emoji" value={formData.emoji} />
-                   <SummaryRow label="Frequency" value={formData.frequency === 'daily' ? 'Daily' : 'Event'} />
-                   <SummaryRow label="Input Type" value={formData.input_type} />
-                   <SummaryRow label="Group" value={formData.group_name} />
-                   <SummaryRow label="Condition" value={formData.condition_type.replace('_', ' ')} />
-                   {formData.use_grace && <SummaryRow label="Grace" value={`After ${formData.grace_days} successes`} color="text-accent" />}
-                   {formData.use_escalation && <SummaryRow label="Escalation" value={`After ${formData.escalation_days} failures`} color="text-primary" />}
-                </CardContent>
-             </Card>
-          </div>
+                           <div className="flex items-end gap-2.5 min-h-[50px] w-full">
+                              <div className="w-[70px] flex flex-col justify-end">
+                                 <label className="text-[9px] font-black uppercase opacity-30 mb-1 ml-1 leading-none">Time</label>
+                                 <input disabled type="time" className="bg-muted/50 border-none h-9 min-h-[36px] rounded-md font-bold text-center py-0 px-1 text-foreground text-xs w-full" />
+                              </div>
+
+                              <div className="flex-[2] flex flex-col justify-end">
+                                 <label className="text-[9px] font-black uppercase opacity-30 mb-1 ml-1 leading-none">Notes</label>
+                                 <input disabled placeholder="Details..." className="bg-muted/50 border-none h-9 min-h-[36px] rounded-md font-bold shadow-inner placeholder:text-muted-foreground/30 text-foreground text-xs py-0 px-2 w-full" />
+                              </div>
+
+                              {formData.input_type === 'boolean' ? (
+                                 <div className="flex-1 flex flex-col justify-end">
+                                    <label className="text-[9px] font-black uppercase opacity-30 mb-1 ml-1 leading-none">Value</label>
+                                    <div className="relative group">
+                                       <select disabled className="w-full h-9 min-h-[36px] bg-muted/50 border-none rounded-md pl-1.5 pr-5 text-xs font-bold text-foreground appearance-none shadow-inner transition-all py-0">
+                                          <option>Yes</option>
+                                          <option>No</option>
+                                       </select>
+                                       <ChevronDown size={10} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none" />
+                                    </div>
+                                 </div>
+                              ) : (
+                                 <div className="flex-1 flex flex-col justify-end relative">
+                                    <label className="text-[9px] font-black uppercase opacity-30 mb-1 ml-1 leading-none">
+                                       {formData.input_type === 'time' ? 'Time' : formData.input_type === 'duration' ? 'Duration' : 'Value'}
+                                    </label>
+                                    <input disabled type={formData.input_type === 'time' || formData.input_type === 'duration' ? 'time' : formData.input_type === 'number' ? 'number' : 'text'} placeholder={formData.input_type === 'text' ? 'Enter...' : formData.input_type === 'duration' ? 'HH:MM' : '0'} className="bg-muted/50 border-none h-9 min-h-[36px] rounded-md font-black text-center shadow-inner text-foreground placeholder:text-muted-foreground/20 text-xs py-0 px-1 w-full" />
+                                 </div>
+                              )}
+
+                              <button disabled className="h-9 min-h-[36px] px-3.5 bg-emerald-600/50 text-white rounded-md text-xs font-black transition-all flex items-center justify-center gap-1">
+                                 Log
+                              </button>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                     <div className="text-[10px] font-black uppercase text-primary tracking-widest ml-1">Preview 2 — Daily Log Row (Aggregated View)</div>
+                     <div className="bg-card rounded-2xl border border-border/40 p-5 shadow-sm">
+                        <div className="flex items-center gap-2 p-2.5 rounded-xl bg-muted/20 border border-border/30">
+                           <div className="w-8 flex flex-col items-center shrink-0 opacity-50"><span className="text-lg">{formData.emoji || '⭐'}</span></div>
+                           <div className="flex-1 min-w-0 pr-2">
+                              <div className="flex items-center gap-2">
+                                 <div className="text-sm font-bold text-foreground truncate">
+                                    {formData.habit_name || 'My Habit'}
+                                 </div>
+                                 <div className="shrink-0">
+                                    <CircleDot size={16} className="text-muted-foreground/30 shrink-0" />
+                                 </div>
+                              </div>
+                           </div>
+                           <div className="flex items-center gap-1.5 shrink-0 ml-auto">
+                              <div className="flex items-center gap-1 w-20 justify-end">
+                                 <div className="bg-muted/50 rounded-lg h-8 w-[36px] flex flex-col items-center justify-center shadow-inner border border-border/5">
+                                    <span className="text-[7px] font-black uppercase opacity-30 leading-none mb-0.5">Logs</span>
+                                    <div className="text-[10px] font-black text-primary leading-none">0</div>
+                                 </div>
+                                 <div className="bg-muted/50 rounded-lg h-8 w-[40px] flex flex-col items-center justify-center shadow-inner border border-border/5">
+                                    <span className="text-[7px] font-black uppercase opacity-30 leading-none mb-0.5">Val</span>
+                                    <div className="text-[10px] font-black text-accent leading-none px-0.5 truncate max-w-full">
+                                       {formData.input_type === 'text' ? '--' : '0'}
+                                    </div>
+                                 </div>
+                              </div>
+                              <span className="text-[9px] font-black uppercase opacity-30 w-6 text-right truncate">{formData.unit || 'pt'}</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* SUMMARY TABLE */}
+              <Card className="rounded-md border-white/20 shadow-zenith overflow-hidden bg-card">
+                 <CardContent className="p-0 flex flex-col divide-y divide-border/40">
+                    <div className="bg-muted/50 p-6 flex items-center gap-3">
+                       <AlignLeft size={20} className="text-muted-foreground/60" />
+                       <span className="text-sm font-black uppercase tracking-widest text-muted-foreground/60">Summary</span>
+                    </div>
+                    <SummaryRow label="Habit Name" value={formData.habit_name} />
+                    <SummaryRow label="Emoji" value={formData.emoji} />
+                    <SummaryRow label="Frequency" value={formData.frequency === 'daily' ? 'Daily' : 'Event'} />
+                    <SummaryRow label="Input Type" value={formData.input_type} />
+                    <SummaryRow label="Group" value={formData.group_name} />
+                    <SummaryRow label="Condition" value={formData.condition_type ? formData.condition_type.replace('_', ' ') : 'None'} />
+                    {formData.use_grace && <SummaryRow label="Grace" value={`After ${formData.grace_days} successes`} color="text-accent" />}
+                    {formData.use_escalation && <SummaryRow label="Escalation" value={`After ${formData.escalation_days} failures`} color="text-primary" />}
+                 </CardContent>
+              </Card>
+           </div>
         )}
 
         {/* NAVIGATION BUTTONS INSIDE CONTAINER */}
         <div className="flex gap-4 pt-4 pb-12">
           <Button 
             variant="outline" 
-            className="flex-1 h-16 rounded-md font-black text-sm border-2 border-border bg-card hover:bg-muted/50 transition-all text-muted-foreground active:scale-95" 
+            className="flex-1 h-12 rounded-xl font-black text-sm border border-border bg-card hover:bg-muted/50 transition-all text-muted-foreground active:scale-95" 
             onClick={handleBack}
           >
             ← Back
           </Button>
           {currentStep === STEPS.length - 1 ? (
-            <div className="flex-[2] flex justify-center">
-              <SaveButton isSaving={saving} label="Save Habit" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" onClick={handleSave} />
-            </div>
+             <SaveButton isSaving={saving} label="Save Habit" className="flex-[2] h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" onClick={handleSave} />
           ) : (
             <Button 
-              className={`flex-[2] h-16 rounded-md font-black text-sm shadow-zenith transition-all active:scale-95 flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground`}
+              className={`flex-[2] h-12 rounded-xl font-black text-sm shadow-xl shadow-primary/10 transition-all active:scale-95 flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground`}
               onClick={handleNext}
             >
               Next Step →
             </Button>
           )}
-        </div>
-      </div>
-      </div>
-    </div>
-  );
-}
 
 // Sub-components for cleaner code
 function InputTypeBtn({ icon, label, sub, active, onClick }: any) {

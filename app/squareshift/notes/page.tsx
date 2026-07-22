@@ -21,7 +21,7 @@ export default function SquareShiftNotesPage() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [openCounts, setOpenCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [showDone, setShowDone] = useState(true);
+  const [showDone, setShowDone] = useState(false);
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<any | null>(null);
   const [newTaskText, setNewTaskText] = useState("");
