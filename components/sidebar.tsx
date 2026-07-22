@@ -40,14 +40,14 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
 
         <div className="pt-6 px-5 pb-3 bg-card">
           <div className="flex items-center gap-2">
-            <img src="/logo.svg" alt="Resiliessance Logo" className="w-6.5 h-6.5 rounded-lg object-contain" />
-            <div className="text-xl font-black tracking-tighter text-foreground leading-none">
+            <img src="/logo.svg" alt="Resiliessance Logo" className="w-7 h-7 rounded-lg object-contain" />
+            <div className="text-2xl font-black tracking-tighter text-foreground leading-none">
               Resiliessance
             </div>
           </div>
         </div>
 
-        <ul className="list-none m-0 py-3 px-2.5 space-y-1.5">
+        <ul className="list-none m-0 py-3 px-2.5 space-y-3">
           {/* Dashboard */}
           <NavItem href="/" icon={<LayoutDashboard size={20} />} title="Dashboard" onClick={onClose} />
           {/* Reports */}
@@ -58,7 +58,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           <NavItem href="/activity-timeline" icon={<Clock size={20} />} title="Activity Timeline" onClick={onClose} />
 
           {/* Divider with breathable vertical spacing */}
-          <div className="h-px bg-slate-100 my-4 mx-4" />
+          <div className="h-px bg-slate-100 my-5 mx-4" />
 
           {/* Finance */}
           <NavItem href="/expenses/daily-entry?type=Expense" icon={<Wallet size={20} />} title="Finance" onClick={onClose} />
@@ -92,7 +92,7 @@ function NavItem({ icon, title, onClick, href }: { icon: React.ReactNode; title:
   const isActive = href && pathname === href;
   
   const content = (
-    <div className={`flex items-center gap-2.5 py-2 px-2.5 rounded-xl text-[14px] font-bold cursor-pointer transition-all duration-300 select-none
+    <div className={`flex items-center gap-3 py-2.5 px-3 rounded-xl text-[15px] font-bold cursor-pointer transition-all duration-300 select-none
       ${isActive ? "text-primary-foreground bg-primary shadow-xl shadow-primary/10 scale-[1.02]" : "text-muted-foreground hover:text-foreground hover:bg-muted"}
     `}>
       <div className="w-5 flex justify-center">{icon}</div>
