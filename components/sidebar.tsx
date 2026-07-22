@@ -38,16 +38,16 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
         }`}
       >
 
-        <div className="pt-10 px-8 pb-6 bg-card">
+        <div className="pt-6 px-6 pb-3 bg-card">
           <div className="flex items-center gap-2">
-            <img src="/logo.svg" alt="Resiliessance Logo" className="w-8 h-8 rounded-lg object-contain" />
-            <div className="text-3xl font-black tracking-tighter text-foreground leading-none">
+            <img src="/logo.svg" alt="Resiliessance Logo" className="w-7 h-7 rounded-lg object-contain" />
+            <div className="text-2xl font-black tracking-tighter text-foreground leading-none">
               Resiliessance
             </div>
           </div>
         </div>
 
-        <ul className="list-none m-0 py-4 px-4 space-y-1">
+        <ul className="list-none m-0 py-2 px-3 space-y-0.5">
           {/* Dashboard */}
           <NavItem href="/" icon={<LayoutDashboard size={20} />} title="Dashboard" onClick={onClose} />
           {/* Reports */}
@@ -57,8 +57,8 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           {/* Activity Timeline */}
           <NavItem href="/activity-timeline" icon={<Clock size={20} />} title="Activity Timeline" onClick={onClose} />
 
-          {/* Divider with extra vertical spacing */}
-          <div className="h-px bg-slate-100 my-5 mx-4" />
+          {/* Divider with compact vertical spacing */}
+          <div className="h-px bg-slate-100 my-3 mx-4" />
 
           {/* Finance */}
           <NavItem href="/expenses/daily-entry?type=Expense" icon={<Wallet size={20} />} title="Finance" onClick={onClose} />
@@ -92,7 +92,7 @@ function NavItem({ icon, title, onClick, href }: { icon: React.ReactNode; title:
   const isActive = href && pathname === href;
   
   const content = (
-    <div className={`flex items-center gap-4 py-4 px-5 rounded-xl text-[15px] font-bold cursor-pointer transition-all duration-300 select-none
+    <div className={`flex items-center gap-3.5 py-2.5 px-4 rounded-xl text-[14px] font-bold cursor-pointer transition-all duration-300 select-none
       ${isActive ? "text-primary-foreground bg-primary shadow-xl shadow-primary/10 scale-[1.02]" : "text-muted-foreground hover:text-foreground hover:bg-muted"}
     `}>
       <div className="w-5 flex justify-center">{icon}</div>
