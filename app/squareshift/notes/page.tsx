@@ -308,7 +308,7 @@ export default function SquareShiftNotesPage() {
           setTaskModalOpen(false);
           setActiveTask(null);
         }}
-        taskName={activeTask?.text || ""}
+        taskTitle={activeTask?.text || ""}
       />
     </div>
   );

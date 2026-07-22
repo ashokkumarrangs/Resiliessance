@@ -807,7 +807,7 @@ export default function TaskManagerPage() {
           setTaskModalOpen(false);
           setActiveTask(null);
         }}
-        taskName={activeTask?.task || ""}
+        taskTitle={activeTask?.task || ""}
       />
     </div>
     </div>

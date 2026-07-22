@@ -304,7 +304,7 @@ export default function SquareShiftProjectPage() {
           setTaskModalOpen(false);
           setActiveTask(null);
         }}
-        taskName={activeTask?.text || ""}
+        taskTitle={activeTask?.text || ""}
       />
     </div>
   );
