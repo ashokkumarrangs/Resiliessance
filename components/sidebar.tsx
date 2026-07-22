@@ -47,7 +47,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           </div>
         </div>
 
-        <ul className="list-none m-0 py-3 px-2.5 space-y-3">
+        <ul className="list-none m-0 py-3 px-2.5 space-y-[9px]">
           {/* Dashboard */}
           <NavItem href="/" icon={<LayoutDashboard size={20} />} title="Dashboard" onClick={onClose} />
           {/* Reports */}
@@ -58,7 +58,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           <NavItem href="/activity-timeline" icon={<Clock size={20} />} title="Activity Timeline" onClick={onClose} />
 
           {/* Divider with breathable vertical spacing */}
-          <div className="h-px bg-slate-100 my-5 mx-4" />
+          <div className="h-px bg-slate-100 my-[14px] mx-4" />
 
           {/* Finance */}
           <NavItem href="/expenses/daily-entry?type=Expense" icon={<Wallet size={20} />} title="Finance" onClick={onClose} />
@@ -80,6 +80,9 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           
           {/* Inventory */}
           <NavItem href="/inventory" icon={<PackageCheck size={20} />} title="Inventory" onClick={onClose} />
+
+          {/* New Divider below Inventory */}
+          <div className="h-px bg-slate-100 mt-[14px] mb-[6px] mx-4" />
         </ul>
 
       </nav>
