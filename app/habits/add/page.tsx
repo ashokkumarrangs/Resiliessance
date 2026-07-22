@@ -1064,6 +1064,11 @@ export default function HabitConfigPage() {
               Next Step →
             </Button>
           )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Sub-components for cleaner code
 function InputTypeBtn({ icon, label, sub, active, onClick }: any) {
