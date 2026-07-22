@@ -88,7 +88,7 @@ export default function CorrelationsPage() {
       setLoading(true);
       const minDate=format(subDays(new Date(),days),"yyyy-MM-dd");
       const [{data:habits},{data:workouts},{data:expenses},{data:tasks}]=await Promise.all([
-        supabase.from("habit_data").select("date,habit_name,value").gte("date",minDate),
+        supabase.from("habit_data").select("date,habit,value").gte("date",minDate),
         supabase.from("workout_log").select("date,weight,reps").gte("date",minDate),
         supabase.from("history_expenses").select("date,amount").eq("type","Expense").gte("date",minDate),
         supabase.from("tasks").select("completed_at").eq("status","Completed").gte("completed_at",minDate+"T00:00:00"),
@@ -104,7 +104,7 @@ export default function CorrelationsPage() {
   const dataPoints=useMemo<DataPoint[]>(()=>{
     const dateList=Array.from({length:days},(_,i)=>format(subDays(new Date(),i),"yyyy-MM-dd"));
     const getHabit=(date:string,name:string):number|null=>{
-      const row=rawData.habits.find((h:any)=>h.date===date&&h.habit_name===name);
+      const row=rawData.habits.find((h:any)=>h.date===date&&h.habit===name);
       if(!row||!row.value) return null;
       return parseFloat(row.value)||null;
     };

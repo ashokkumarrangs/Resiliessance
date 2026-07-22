@@ -35,8 +35,8 @@ export default function WeeklySummaryPage() {
       ] = await Promise.all([
         supabase.from("history_expenses").select("amount").eq("type","Expense").gte("date",thisStart).lte("date",thisEnd),
         supabase.from("history_expenses").select("amount").eq("type","Expense").gte("date",lastStart).lte("date",lastEnd),
-        supabase.from("habit_data").select("habit_name,value").gte("date",thisStart).lte("date",thisEnd),
-        supabase.from("habit_data").select("habit_name,value").gte("date",lastStart).lte("date",lastEnd),
+        supabase.from("habit_data").select("habit,value").gte("date",thisStart).lte("date",thisEnd),
+        supabase.from("habit_data").select("habit,value").gte("date",lastStart).lte("date",lastEnd),
         supabase.from("habit_config").select("habit_name").eq("is_active",true),
         supabase.from("workout_log").select("date,weight,reps").gte("date",thisStart).lte("date",thisEnd),
         supabase.from("workout_log").select("date,weight,reps").gte("date",lastStart).lte("date",lastEnd),

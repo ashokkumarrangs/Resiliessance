@@ -137,7 +137,7 @@ export default function ActivityTimelinePage() {
         supabase.from('habit_data').select('*').eq('date', dateStr),
         supabase.from('event_log').select('*').eq('date', dateStr),
         supabase.from('skill_logs').select('*').eq('date', dateStr),
-        supabase.from('skills').select('id, name'),
+        supabase.from('skill_items').select('id, name'),
         supabase.from('workout_log').select('*').eq('date', dateStr),
         supabase.from('vehicle_fuel_logs').select('*').eq('date', dateStr),
         supabase.from('vehicle_service_logs').select('*').eq('date', dateStr),

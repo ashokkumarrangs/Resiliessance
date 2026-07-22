@@ -84,9 +84,16 @@ export default function HabitViewPage() {
 
       const dailyMap: Record<string, { value: string; status: HabitStatus }> = {};
       (logData || []).forEach(d => {
+        let mappedStatus: HabitStatus = 'Not Entered';
+        if (d.status === 'Success' || d.status === 'Completed') mappedStatus = 'Success';
+        else if (d.status === 'Tolerance') mappedStatus = 'Tolerance';
+        else if (d.status === 'Critical') mappedStatus = 'Critical';
+        else if (d.status === 'Failure' || d.status === 'Missed') mappedStatus = 'Failure';
+        else mappedStatus = (d.status || 'Not Entered') as HabitStatus;
+
         dailyMap[d.habit] = {
           value: d.value || '',
-          status: d.status as HabitStatus
+          status: mappedStatus
         };
       });
 

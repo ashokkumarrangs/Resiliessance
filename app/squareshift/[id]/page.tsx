@@ -11,6 +11,7 @@ import { LoadingScreen } from "@/components/LoadingScreen";
 import { SectionNav } from "@/components/SectionNav";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { TaskCompletionModal } from "@/components/TaskCompletionModal";
 
 const NOTES_ID = "__notes__";
 
@@ -22,7 +23,9 @@ export default function SquareShiftProjectPage() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [openCounts, setOpenCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [showDone, setShowDone] = useState(false);
+  const [showDone, setShowDone] = useState(true);
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [activeTask, setActiveTask] = useState<any | null>(null);
   const [newTaskText, setNewTaskText] = useState("");
 
   useEffect(() => {
@@ -68,8 +71,29 @@ export default function SquareShiftProjectPage() {
   };
 
   const toggleStatus = async (task: any) => {
-    const { error } = await supabase.from('action_tasks').update({ completed: !task.completed }).eq('id', task.id);
-    if (!error) fetchTasks();
+    const nextStatus = !task.completed;
+    if (nextStatus) {
+      setActiveTask(task);
+      setTaskModalOpen(true);
+    } else {
+      await executeStatusChange(task, false, null);
+    }
+  };
+
+  const executeStatusChange = async (task: any, completed: boolean, completedAt: string | null) => {
+    const { error } = await supabase
+      .from('action_tasks')
+      .update({ 
+        completed,
+        completed_at: completedAt
+      })
+      .eq('id', task.id);
+    if (!error) {
+      fetchTasks();
+    } else {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update task status");
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -187,23 +211,25 @@ export default function SquareShiftProjectPage() {
           <div className="space-y-3">
             {tasks.filter(t => !t.completed).map(task => (
                 <div key={task.id} className="w-full">
-                    <div className="grid gap-2 items-center bg-card border border-border/40 border-l-4 border-l-primary/60 rounded-xl px-2 h-14 shadow-sm transition-all group grid-cols-[24px_22px_1fr_64px]">
-                        <div className="p-1 text-muted-foreground/20 hover:text-primary rounded-md cursor-grab active:cursor-grabbing">
+                    <div className="flex items-center gap-2 bg-card border border-border/40 border-l-4 border-l-primary/60 rounded-xl px-3 h-14 shadow-sm transition-all group">
+                        <div className="w-6 flex items-center justify-center text-muted-foreground/20 hover:text-primary cursor-grab active:cursor-grabbing shrink-0">
                             <GripVertical size={16} />
                         </div>
-                        <button 
-                            onClick={() => toggleStatus(task)}
-                            className="w-5 h-5 rounded-md border border-border/40 text-muted-foreground/30 hover:border-primary hover:text-primary flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-                        >
-                            <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </button>
-                        <div className="min-w-0 pr-2 flex items-center gap-1.5">
+                        <div className="w-6 flex items-center justify-center shrink-0">
+                            <button 
+                                onClick={() => toggleStatus(task)}
+                                className="w-5 h-5 rounded-md border border-border/40 text-muted-foreground/30 hover:border-primary hover:text-primary flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+                            >
+                                <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </button>
+                        </div>
+                        <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
                             <span className="text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 font-bold text-foreground/90">
                                 {task.text}
                             </span>
                         </div>
                         
-                        <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity bg-card">
+                        <div className="w-16 flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-card shrink-0">
                             <button onClick={() => handleRename(task)} className="p-1 text-muted-foreground/40 hover:text-primary hover:bg-muted rounded-md cursor-pointer"><Edit3 size={13} /></button>
                             <button onClick={() => handleDelete(task.id)} className="p-1 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-md cursor-pointer"><Trash2 size={13} /></button>
                         </div>
@@ -223,23 +249,25 @@ export default function SquareShiftProjectPage() {
                   </div>
                   {tasks.filter(t => t.completed).map(task => (
                       <div key={task.id} className="w-full">
-                          <div className="grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group grid-cols-[24px_22px_1fr_64px]">
-                              <div className="p-1 text-muted-foreground/20">
+                          <div className="flex items-center gap-2 bg-muted/10 border border-border/20 rounded-xl px-3 h-14 opacity-55 hover:opacity-90 transition-opacity group">
+                              <div className="w-6 flex items-center justify-center text-muted-foreground/20 shrink-0">
                                   <GripVertical size={16} />
                               </div>
-                              <button 
-                                  onClick={() => toggleStatus(task)}
-                                  className="w-5 h-5 rounded-md bg-emerald-500 border border-emerald-500 text-white flex items-center justify-center shrink-0 cursor-pointer"
-                              >
-                                  <Check size={12} />
-                              </button>
-                              <div className="min-w-0 pr-2 flex items-center gap-1.5">
+                              <div className="w-6 flex items-center justify-center shrink-0">
+                                  <button 
+                                      onClick={() => toggleStatus(task)}
+                                      className="w-5 h-5 rounded-md bg-emerald-500 border border-emerald-500 text-white flex items-center justify-center shrink-0 cursor-pointer"
+                                  >
+                                      <Check size={12} />
+                                  </button>
+                              </div>
+                              <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
                                   <span className="text-xs font-semibold text-muted-foreground/45 line-through decoration-muted-foreground/30 leading-tight block truncate cursor-pointer hover:text-foreground transition-colors">
                                       {task.text}
                                   </span>
                               </div>
                               
-                              <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity bg-transparent">
+                              <div className="w-16 flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-transparent shrink-0">
                                   <button onClick={() => handleDelete(task.id)} className="p-1 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-md cursor-pointer"><Trash2 size={13} /></button>
                               </div>
                           </div>
@@ -262,6 +290,22 @@ export default function SquareShiftProjectPage() {
       </>
         )}
       </div>
+
+      <TaskCompletionModal 
+        isOpen={taskModalOpen}
+        onClose={() => {
+          setTaskModalOpen(false);
+          setActiveTask(null);
+        }}
+        onConfirm={(completedAt) => {
+          if (activeTask) {
+            executeStatusChange(activeTask, true, completedAt);
+          }
+          setTaskModalOpen(false);
+          setActiveTask(null);
+        }}
+        taskName={activeTask?.text || ""}
+      />
     </div>
   );
 }

@@ -58,7 +58,7 @@ export default function FilteredTimelinePage() {
         { data: eventLogs },
       ] = await Promise.all([
         supabase.from("history_expenses").select("date, type, category, amount, notes, created_at").gte("date", minDate).order("date", { ascending: false }).limit(300),
-        supabase.from("habit_data").select("date, habit_name, value").gte("date", minDate).order("date", { ascending: false }).limit(300),
+        supabase.from("habit_data").select("date, habit, value").gte("date", minDate).order("date", { ascending: false }).limit(300),
         supabase.from("workout_log").select("date, workout_day, exercise, weight, reps, created_at").gte("date", minDate).order("date", { ascending: false }).limit(300),
         supabase.from("pet_logs").select("date, log_type, notes").gte("date", minDate).order("date", { ascending: false }).limit(200),
         supabase.from("vehicle_fuel_logs").select("date, liters, amount, notes").gte("date", minDate).order("date", { ascending: false }).limit(200),
@@ -73,7 +73,7 @@ export default function FilteredTimelinePage() {
         entries.push({ id: `fin-${idx++}`, date: e.date, time: e.created_at ? format(new Date(e.created_at), "h:mm a") : "", category: "Finance", label: `${e.type}: ₹${parseFloat(e.amount || 0).toLocaleString("en-IN")} — ${e.category}`, sub: e.notes || "" });
       });
       (habitData || []).filter((h: any) => h.value && h.value !== "0" && h.value !== "false").forEach((h: any) => {
-        entries.push({ id: `hab-${idx++}`, date: h.date, time: "", category: "Habits", label: `✓ ${h.habit_name}`, sub: `Value: ${h.value}` });
+        entries.push({ id: `hab-${idx++}`, date: h.date, time: "", category: "Habits", label: `✓ ${h.habit}`, sub: `Value: ${h.value}` });
       });
       const wdMap: Record<string, any[]> = {};
       (workoutData || []).forEach((w: any) => { if (!wdMap[w.date]) wdMap[w.date] = []; wdMap[w.date].push(w); });

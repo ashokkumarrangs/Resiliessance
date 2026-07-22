@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS public.tasks (
   is_high_priority BOOLEAN DEFAULT FALSE,
   notes TEXT,
   completed_at TIMESTAMPTZ,
+  sort_order INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

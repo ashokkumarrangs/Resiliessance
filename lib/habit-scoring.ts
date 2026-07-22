@@ -40,7 +40,7 @@ export function calculateHabitStatus(config: HabitConfig, rawValue: string): Hab
   // 1. Boolean Type
   if (config.input_type === 'boolean') {
     const targetIsYes = config.target_value === 0 ? false : true;
-    const answeredYes = rawValue === 'Yes';
+    const answeredYes = rawValue === 'Yes' || rawValue === 'true' || rawValue === 'Success';
     return targetIsYes === answeredYes ? 'Success' : 'Failure';
   }
 

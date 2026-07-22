@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { SectionNav } from "@/components/SectionNav";
+import { TaskCompletionModal } from "@/components/TaskCompletionModal";
 
 interface Task {
   id: string;
@@ -34,6 +35,8 @@ export default function TaskManagerPage() {
   const [newTaskName, setNewTaskName] = useState("");
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [expandedNotes, setExpandedNotes] = useState<Set<string>>(new Set());
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
   
   const [activeMenuTaskId, setActiveMenuTaskId] = useState<string | null>(null);
   
@@ -160,7 +163,7 @@ export default function TaskManagerPage() {
       const filtered = tasks.filter(t => t.parent_id === parentId && (parentId ? true : (view === 'inbox' ? t.is_inbox : !t.is_inbox)));
       const nextSortOrder = filtered.length > 0 ? Math.max(...filtered.map(t => t.sort_order || 0)) + 1 : 0;
       
-      const { data, error } = await supabase.from('tasks').insert({
+      const payload: any = {
         id: crypto.randomUUID(),
         parent_id: parentId,
         task: name,
@@ -170,7 +173,15 @@ export default function TaskManagerPage() {
         is_high_priority: false,
         is_inbox: false,
         sort_order: nextSortOrder
-      }).select().single();
+      };
+
+      let { data, error } = await supabase.from('tasks').insert(payload).select().single();
+      if (error && error.message?.includes('sort_order')) {
+        delete payload.sort_order;
+        const res = await supabase.from('tasks').insert(payload).select().single();
+        data = res.data;
+        error = res.error;
+      }
 
       if (error) throw error;
 
@@ -196,7 +207,15 @@ export default function TaskManagerPage() {
 
   const toggleStatus = async (task: Task) => {
     const nextStatus = task.status === 'Completed' ? 'Pending' : 'Completed';
-    const completedAt = nextStatus === 'Completed' ? new Date().toISOString() : null;
+    if (nextStatus === 'Completed') {
+      setActiveTask(task);
+      setTaskModalOpen(true);
+    } else {
+      await executeStatusChange(task, 'Pending', null);
+    }
+  };
+
+  const executeStatusChange = async (task: Task, nextStatus: string, completedAt: string | null) => {
     const oldTasks = [...tasks];
     setTasks(tasks.map(t => t.id === task.id ? { ...t, status: nextStatus, completed_at: completedAt } : t));
     try {
@@ -388,7 +407,7 @@ export default function TaskManagerPage() {
                     const gridClass = 'grid-cols-[24px_22px_1fr_24px_40px]';
 
                     return (
-                        <div key={task.id} className="w-full">
+                        <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
                             <div 
                               draggable
                               onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
@@ -495,7 +514,7 @@ export default function TaskManagerPage() {
                         const gridClass = 'grid-cols-[24px_22px_1fr_24px_40px]';
 
                         return (
-                            <div key={task.id} className="w-full">
+                            <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
                                 <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />
@@ -585,7 +604,7 @@ export default function TaskManagerPage() {
                     const gridClass = 'grid-cols-[24px_22px_1fr_40px]';
 
                     return (
-                        <div key={task.id} className="w-full">
+                        <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
                             <div 
                               draggable
                               onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
@@ -649,7 +668,7 @@ export default function TaskManagerPage() {
                         const gridClass = 'grid-cols-[24px_22px_1fr_40px]';
 
                         return (
-                            <div key={task.id} className="w-full">
+                            <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
                                 <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />
@@ -774,6 +793,22 @@ export default function TaskManagerPage() {
           )}
         </div>
       )}
+      
+      <TaskCompletionModal 
+        isOpen={taskModalOpen}
+        onClose={() => {
+          setTaskModalOpen(false);
+          setActiveTask(null);
+        }}
+        onConfirm={(completedAt) => {
+          if (activeTask) {
+            executeStatusChange(activeTask, 'Completed', completedAt);
+          }
+          setTaskModalOpen(false);
+          setActiveTask(null);
+        }}
+        taskName={activeTask?.task || ""}
+      />
     </div>
     </div>
   );

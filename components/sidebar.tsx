@@ -57,35 +57,26 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           {/* Activity Timeline */}
           <NavItem href="/activity-timeline" icon={<Clock size={20} />} title="Activity Timeline" onClick={onClose} />
 
-          <div className="h-px bg-slate-100 my-4 mx-4" />
+          {/* Divider with extra vertical spacing */}
+          <div className="h-px bg-slate-100 my-5 mx-4" />
 
           {/* Finance */}
           <NavItem href="/expenses/daily-entry?type=Expense" icon={<Wallet size={20} />} title="Finance" onClick={onClose} />
 
-          <div className="h-px bg-slate-50 my-2 mx-4" />
-
           {/* Habits */}
           <NavItem href="/habits/daily-log" icon={<CheckCircle2 size={20} />} title="Habits" onClick={onClose} />
 
-          <div className="h-px bg-slate-50 my-2 mx-4" />
-
           {/* Workout */}
           <NavItem href="/workout" icon={<Bike size={20} />} title="Workout" onClick={onClose} />
-
-          <div className="h-px bg-slate-50 my-2 mx-4" />
 
           {/* Pets & Vehicles */}
           <NavItem href="/pets" icon={<Dog size={20} />} title="Pets" onClick={onClose} />
           <NavItem href="/vehicles/fuel" icon={<Car size={20} />} title="Vehicles" onClick={onClose} />
 
-          <div className="h-px bg-slate-50 my-2 mx-4" />
-
           {/* Core Apps */}
           <NavItem href="/tasks" icon={<KanbanSquare size={20} />} title="Task Manager" onClick={onClose} />
           <NavItem href="/squareshift" icon={<FileCheck size={20} />} title="SquareShift" onClick={onClose} />
           <NavItem href="/skills" icon={<GraduationCap size={20} />} title="Skills" onClick={onClose} />
-          
-          <div className="h-px bg-slate-50 my-2 mx-4" />
           
           {/* Inventory */}
           <NavItem href="/inventory" icon={<PackageCheck size={20} />} title="Inventory" onClick={onClose} />

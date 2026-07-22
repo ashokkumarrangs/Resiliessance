@@ -160,7 +160,7 @@ export default function TaskManagerPage() {
       const filtered = tasks.filter(t => t.parent_id === parentId && (parentId ? true : (view === 'inbox' ? t.is_inbox : !t.is_inbox)));
       const nextSortOrder = filtered.length > 0 ? Math.max(...filtered.map(t => t.sort_order || 0)) + 1 : 0;
       
-      const { data, error } = await supabase.from('tasks').insert({
+      const payload: any = {
         id: crypto.randomUUID(),
         parent_id: parentId,
         task: name,
@@ -170,7 +170,15 @@ export default function TaskManagerPage() {
         is_high_priority: false,
         is_inbox: false,
         sort_order: nextSortOrder
-      }).select().single();
+      };
+
+      let { data, error } = await supabase.from('tasks').insert(payload).select().single();
+      if (error && error.message?.includes('sort_order')) {
+        delete payload.sort_order;
+        const res = await supabase.from('tasks').insert(payload).select().single();
+        data = res.data;
+        error = res.error;
+      }
 
       if (error) throw error;
 
@@ -399,7 +407,7 @@ export default function TaskManagerPage() {
                     const gridClass = 'grid-cols-[24px_22px_1fr_24px_40px]';
 
                     return (
-                        <div key={task.id} className="w-full">
+                        <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
                             <div 
                               draggable
                               onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
@@ -506,7 +514,7 @@ export default function TaskManagerPage() {
                         const gridClass = 'grid-cols-[24px_22px_1fr_24px_40px]';
 
                         return (
-                            <div key={task.id} className="w-full">
+                            <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
                                 <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />
@@ -596,7 +604,7 @@ export default function TaskManagerPage() {
                     const gridClass = 'grid-cols-[24px_22px_1fr_40px]';
 
                     return (
-                        <div key={task.id} className="w-full">
+                        <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
                             <div 
                               draggable
                               onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
@@ -660,7 +668,7 @@ export default function TaskManagerPage() {
                         const gridClass = 'grid-cols-[24px_22px_1fr_40px]';
 
                         return (
-                            <div key={task.id} className="w-full">
+                            <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-1'}`}>
                                 <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />
