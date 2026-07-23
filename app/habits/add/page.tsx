@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, AlignLeft, ArrowRight, Award, CheckCircle2, CheckSquare, ChevronDown, ChevronUp, Clock, Flame, Hash, History, Info, Palette, RefreshCw, Settings2, ShieldCheck, Timer , BarChart2 } from "lucide-react";
+import { AlertTriangle, AlignLeft, ArrowRight, Award, CheckCircle2, CheckSquare, ChevronDown, ChevronUp, CircleDot, Clock, Flame, Hash, History, Info, Palette, RefreshCw, Settings2, ShieldCheck, Timer , BarChart2 } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
