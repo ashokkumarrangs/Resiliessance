@@ -629,6 +629,9 @@ export default function DashboardPage() {
           <div className="text-[12px] text-accent font-bold">
             {dateStr}
           </div>
+          <div className="text-[10px] text-muted-foreground/50 font-black tracking-widest mt-1">
+            VERSION 1.1
+          </div>
         </div>
         <button 
           onClick={fetchDashboardData}

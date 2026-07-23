@@ -337,3 +337,15 @@ button[type="button"] .truncate,
 button[type="button"] span {
   font-size: 13px !important;
 }
+
+/* Unify page container top padding globally */
+@media (max-width: 767px) {
+  .max-w-lg.mx-auto.w-full {
+    padding-top: 16px !important;
+  }
+}
+@media (min-width: 768px) {
+  .max-w-lg.mx-auto.w-full {
+    padding-top: 24px !important;
+  }
+}
