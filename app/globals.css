@@ -326,3 +326,14 @@
   animation: staggerFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 280ms;
 }
+
+/* Unify form input, select, and dropdown option font sizes globally */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+select,
+button[type="button"] .truncate,
+button[type="button"] span {
+  font-size: 13px !important;
+}

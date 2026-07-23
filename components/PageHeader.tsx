@@ -13,7 +13,7 @@ export function PageHeader({ title, children }: PageHeaderProps) {
   const router = useRouter();
 
   return (
-    <div className="flex items-center gap-2 md:gap-3 pt-2 md:pt-0 mb-4 md:mb-6 w-full">
+    <div className="flex items-center gap-2 md:gap-3 pt-0 -mt-4 md:mt-0 mb-4 md:mb-6 w-full">
       {/* Home Button */}
       <Link 
         href="/" 
@@ -42,7 +42,7 @@ export function PageHeader({ title, children }: PageHeaderProps) {
       </button>
 
       {/* Page Title */}
-      <h1 className="text-base md:text-xl font-black text-foreground tracking-tight leading-tight md:leading-none ml-1 md:ml-2 line-clamp-2 md:line-clamp-1">
+      <h1 className="text-lg md:text-2xl font-black text-foreground tracking-tight leading-tight md:leading-none ml-1 md:ml-2 line-clamp-2 md:line-clamp-1">
         {title}
       </h1>
 
