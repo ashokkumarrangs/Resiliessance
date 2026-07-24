@@ -67,10 +67,10 @@ export function SectionNav({ tabs, activePath }: { tabs: TabItem[], activePath?:
       >
         {tabs.map((t, index) => {
           const isActive = checkActive(t, index);
-          const baseClasses = `snap-center flex-1 min-w-[85px] sm:min-w-[100px] h-14 rounded-lg font-black flex flex-col items-center justify-center gap-1 transition-all shrink-0 active:scale-95 ${
+          const baseClasses = `snap-center min-w-[90px] sm:min-w-[100px] px-3 h-14 rounded-lg font-black flex flex-col items-center justify-center gap-1 transition-all shrink-0 active:scale-95 ${
             isActive 
-              ? 'bg-card text-primary shadow-sm border border-border/40 scale-100' 
-              : 'text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 scale-95 hover:scale-100'
+              ? 'bg-card text-primary shadow-sm border border-border/40' 
+              : 'text-muted-foreground/60 hover:text-foreground hover:bg-muted/50'
           }`;
 
           const content = (
