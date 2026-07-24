@@ -35,6 +35,13 @@
   /* Zenith Specific Tokens (Hardened Rich Style) */
 
   --shadow-zenith: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+
+  /* Unified Navigation Tokens */
+  --nav-font-size: 9px;
+  --nav-font-weight: 900;
+  --nav-letter-spacing: 0.15em;
+  --subnav-font-size: 11px;
+  --subnav-font-weight: 900;
 }
 
 [data-theme="terracotta"] {

@@ -15,7 +15,11 @@ export function SubNav({ items, activeItem, onChange, className }: SubNavProps) 
         <button
           key={tab}
           onClick={() => onChange(tab)}
-          className={`flex-1 py-1.5 px-3 text-xs font-black transition-all rounded-md ${
+          style={{
+            fontSize: "var(--subnav-font-size)",
+            fontWeight: "var(--subnav-font-weight)" as any
+          }}
+          className={`flex-1 py-1.5 px-3 transition-all rounded-md ${
             activeItem === tab 
               ? "bg-background text-foreground shadow-sm" 
               : "text-muted-foreground hover:text-foreground/80"

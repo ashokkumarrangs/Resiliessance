@@ -78,7 +78,16 @@ export function SectionNav({ tabs, activePath }: { tabs: TabItem[], activePath?:
               <div className={`${isActive ? "text-primary" : "opacity-60"}`}>
                 {t.icon}
               </div>
-              <span className="text-[9px] uppercase tracking-widest text-center px-1 truncate w-full">{t.title}</span>
+              <span 
+                style={{
+                  fontSize: "var(--nav-font-size)",
+                  fontWeight: "var(--nav-font-weight)" as any,
+                  letterSpacing: "var(--nav-letter-spacing)"
+                }}
+                className="uppercase text-center px-1 truncate w-full"
+              >
+                {t.title}
+              </span>
             </>
           );
 
