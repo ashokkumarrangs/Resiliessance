@@ -56,6 +56,10 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
+      style={{
+        height: size === "default" || size === "lg" ? "var(--input-height)" : undefined,
+        borderRadius: size === "default" || size === "lg" ? "var(--input-radius)" : undefined
+      }}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

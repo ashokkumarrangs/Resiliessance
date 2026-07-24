@@ -42,6 +42,16 @@
   --nav-letter-spacing: 0.15em;
   --subnav-font-size: 11px;
   --subnav-font-weight: 900;
+
+  /* Global UI Spacing & Layout Tokens */
+  --page-max-width: 448px;
+  --header-height: 64px;
+  --card-padding: 24px;
+  --form-row-gap: 24px;
+  --form-col-gap: 16px;
+  --card-radius: 24px;
+  --input-height: 44px;
+  --input-radius: 12px;
 }
 
 [data-theme="terracotta"] {
