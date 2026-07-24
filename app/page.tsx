@@ -630,7 +630,7 @@ export default function DashboardPage() {
             {dateStr}
           </div>
           <div className="text-[10px] text-muted-foreground/50 font-black tracking-widest mt-1">
-            VERSION 1.1
+            VERSION 1.2
           </div>
         </div>
         <button 
