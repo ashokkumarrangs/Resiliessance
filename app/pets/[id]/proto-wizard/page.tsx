@@ -3,12 +3,11 @@ import { Select } from "@/components/Select";
 import Link from "next/link";
 
 import React, { useState, useEffect, use } from "react";
-import { PageHeader } from "@/components/PageHeader";
-import { SectionNav } from "@/components/SectionNav";
+import { PageWrapper } from "@/components/PageWrapper";
 import { PET_TABS } from "@/lib/navigation";
 import { supabase } from "@/lib/supabase";
 import { format, differenceInMonths, differenceInYears } from "date-fns";
-import { Dog, Activity, PlusCircle, Syringe, HeartPulse, Stethoscope, Bone, BarChart2, Scissors, Sparkles, Mountain, Trees, Waves, Car, Shield, AlertTriangle, GraduationCap, Octagon, Heart, Ear } from "lucide-react";
+import { Dog, Activity, PlusCircle, Syringe, HeartPulse, Stethoscope, Bone, Scissors, Sparkles, Mountain, Trees, Waves, Car, Shield, AlertTriangle, GraduationCap, Octagon, Heart, Ear } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -113,23 +112,12 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-20 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title={`${petData.name}'s Dashboard`} >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/pets" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={PET_TABS} />
-        </div>
+    <PageWrapper
+      title={`${petData.name}'s Dashboard`}
+      reportHref="/reports/pets"
+      sectionTabs={PET_TABS}
+      className="pb-20"
+    >
         <div className="space-y-6 w-full">
         
         {/* Profile Card */}
@@ -294,6 +282,6 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
         </div>
       )}
       </div>
-    </div>
+    </PageWrapper>
   );
 }

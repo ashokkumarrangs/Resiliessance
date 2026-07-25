@@ -2,14 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { PageHeader } from "@/components/PageHeader";
-import { SectionNav } from "@/components/SectionNav";
+import { PageWrapper } from "@/components/PageWrapper";
 import { PET_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Dog , BarChart2 } from "lucide-react";
+import { Dog } from "lucide-react";
 
 export default function AddPetPage() {
   const router = useRouter();
@@ -60,23 +59,13 @@ export default function AddPetPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-20 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Add Pet" >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/pets" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={PET_TABS} activePath="/pets/add" />
-        </div>
+    <PageWrapper
+      title="Add Pet"
+      reportHref="/reports/pets"
+      sectionTabs={PET_TABS}
+      activePath="/pets/add"
+      className="pb-20"
+    >
         
         <div className="flex items-center justify-center relative mb-6 w-full">
           <SubNav 
@@ -141,7 +130,6 @@ export default function AddPetPage() {
           </button>
         </form>
       </div>
-      </div>
-    </div>
+    </PageWrapper>
   );
 }

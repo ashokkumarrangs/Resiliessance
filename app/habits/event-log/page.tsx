@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronRight, CircleDot, Clock, Plus, RefreshCw, Trash2, XCircle , BarChart2 } from "lucide-react";
+import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronRight, CircleDot, Clock, Plus, RefreshCw, Trash2, XCircle  } from "lucide-react";
 import { getStatusIcon, getStatusStyles, getStatusColor } from "@/lib/habit-ui-utils";
 import { calculateHabitStatus, HabitStatus, sumDurations } from '@/lib/habit-scoring';
 import { format } from 'date-fns';
@@ -13,12 +13,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 
-import { PageHeader } from '@/components/PageHeader';
-import { SectionNav } from "@/components/SectionNav";
 import { HABIT_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 
 import { toast } from 'sonner';
+import { PageWrapper } from "@/components/PageWrapper";
 
 interface HabitConfig {
   id: string;
@@ -259,23 +258,14 @@ export default function HabitEventLogPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Event Log"  >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/habits" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={HABIT_TABS} activePath="/habits/daily-log" />
-        </div>
+    <PageWrapper
+      title="Event Log"
+      reportHref="/reports/habits"
+      sectionTabs={HABIT_TABS}
+      activePath="/habits/daily-log"
+    >
+        
+        
         <SubNav 
           items={["Daily Log", "Event Log"]}
           activeItem="Event Log"
@@ -443,7 +433,6 @@ export default function HabitEventLogPage() {
             </Button>
             <div className="text-[10px] font-bold text-muted-foreground/20 uppercase tracking-[0.2em]">End of Active Stream</div>
         </div>
-      </div>
-    </div>
+    </PageWrapper>
   );
 }

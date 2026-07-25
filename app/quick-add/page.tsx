@@ -17,8 +17,8 @@ import {
   Calendar,
   CalendarDays,
 } from "lucide-react";
-import { PageHeader } from "@/components/PageHeader";
-import { SectionNav, TabItem } from "@/components/SectionNav";
+import { PageWrapper } from "@/components/PageWrapper";
+import { TabItem } from "@/components/SectionNav";
 
 interface LauncherItem {
   title: string;
@@ -161,15 +161,7 @@ export default function QuickAddLauncherPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-24 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        {/* Standard Page Header */}
-        <PageHeader title="Quick Add" />
-
-        {/* SectionNav Component Container with Offset Margins */}
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={navigationTabs} />
-        </div>
+    <PageWrapper title="Quick Add" sectionTabs={navigationTabs} className="pb-24">
 
         {/* Bento Tiles Grid Layout */}
         <div className="grid grid-cols-2 gap-3.5 animate-fadeIn">
@@ -206,7 +198,6 @@ export default function QuickAddLauncherPage() {
             </Link>
           ))}
         </div>
-      </div>
-    </div>
+    </PageWrapper>
   );
 }

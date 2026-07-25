@@ -7,8 +7,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Currency } from "@/components/currency";
 import { format } from "date-fns";
-import { PageHeader } from "@/components/PageHeader";
-import { SectionNav } from "@/components/SectionNav";
+import { PageWrapper } from "@/components/PageWrapper";
 import { EXPENSE_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 
@@ -53,31 +52,21 @@ export default function ViewAssetsPage() {
   const profitPct = totalBuyVal > 0 ? (profit / totalBuyVal) * 100 : 0;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-24 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        
-        <PageHeader title="View Assets"  >
-        <div className="flex items-center gap-2">
-          <button 
-            onClick={fetchAssets} 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="Refresh"
-          >
-            <RefreshCw className={`w-4 h-4 md:w-[18px] md:h-[18px] ${isLoading ? "animate-spin" : ""}`} />
-          </button>
-          <Link 
-            href="/reports/finance" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={EXPENSE_TABS} activePath="/expenses/view-assets" />
-        </div>
+    <PageWrapper
+      title="View Assets"
+      reportHref="/reports/finance"
+      sectionTabs={EXPENSE_TABS}
+      activePath="/expenses/view-assets"
+      headerActions={
+        <button 
+          onClick={fetchAssets} 
+          className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
+          title="Refresh"
+        >
+          <RefreshCw className={`w-4 h-4 md:w-[18px] md:h-[18px] ${isLoading ? "animate-spin" : ""}`} />
+        </button>
+      }
+    >
         
         <div className="flex items-center justify-center relative mb-6 w-full">
           <SubNav 
@@ -197,9 +186,7 @@ export default function ViewAssetsPage() {
           </div>
         </div>
       )}
-      </div>
-      </div>
-    </div>
+      </PageWrapper>
   );
 }
 

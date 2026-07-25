@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Currency } from "@/components/currency";
 import { toast } from "sonner";
 import { TaskCompletionModal } from "@/components/TaskCompletionModal";
+import { PageWrapper } from "@/components/PageWrapper";
 
 
 export default function DashboardPage() {
@@ -619,27 +620,30 @@ export default function DashboardPage() {
 
 
   return (
-    <div className="p-6 max-w-lg mx-auto bg-transparent min-h-screen pb-24 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-end mb-4 px-2">
-        <div>
-          <h1 className="text-[32px] font-black text-foreground tracking-tight leading-none mb-2">
-            {greeting}
-          </h1>
-          <div className="text-[12px] text-accent font-bold">
-            {dateStr}
+    <PageWrapper
+      customHeader={
+        <div className="flex justify-between items-end mb-4 px-2">
+          <div>
+            <h1 className="text-[32px] font-black text-foreground tracking-tight leading-none mb-2">
+              {greeting}
+            </h1>
+            <div className="text-[12px] text-accent font-bold">
+              {dateStr}
+            </div>
+            <div className="text-[10px] text-muted-foreground/50 font-black tracking-widest mt-1">
+              VERSION 1.1
+            </div>
           </div>
-          <div className="text-[10px] text-muted-foreground/50 font-black tracking-widest mt-1">
-            VERSION 1.1
-          </div>
+          <button 
+            onClick={fetchDashboardData}
+            className="p-3.5 bg-card rounded-md shadow-sm text-foreground hover:bg-muted transition-all active:scale-95 border border-border/40"
+          >
+            <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
+          </button>
         </div>
-        <button 
-          onClick={fetchDashboardData}
-          className="p-3.5 bg-card rounded-md shadow-sm text-foreground hover:bg-muted transition-all active:scale-95 border border-border/40"
-        >
-          <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />
-        </button>
-      </div>
+      }
+      className="space-y-6"
+    >
 
 
       {/* Finance Intelligence - Consolidate Card */}
@@ -1258,7 +1262,7 @@ export default function DashboardPage() {
         onConfirm={confirmTaskCompletion} 
         taskTitle={activeTask?.name || ""} 
       />
-    </div>
+    </PageWrapper>
   );
 }
 

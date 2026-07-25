@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { AlertCircle, ArrowLeft, ArrowRightLeft, Box, Calendar, Check, ChevronRight, Clock, Filter, Gift, History, Home, IndianRupee, Info, MapPin, MoreVertical, Move, Package, Plus, PlusCircle, Search, Share2, Trash2, User, Users, X , BarChart2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { PageHeader } from "@/components/PageHeader";
+import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { format, differenceInDays } from "date-fns";
 
@@ -745,20 +745,11 @@ export default function InventoryPage() {
   // --- Modals ---
 
   return (
-    <div className="max-w-lg mx-auto min-h-screen bg-background p-4 md:p-6 pb-32 font-dm-sans selection:bg-accent/20">
-      
-      <PageHeader title="Inventory" >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
+    <PageWrapper
+      title="Inventory"
+      reportHref="/reports"
+      className="pb-32 selection:bg-accent/20"
+    >
 
       {isLoading ? (
         <LoadingScreen message="Scanning node registers..." />
@@ -1162,6 +1153,6 @@ export default function InventoryPage() {
         </div>
       )}
 
-    </div>
+    </PageWrapper>
   );
 }

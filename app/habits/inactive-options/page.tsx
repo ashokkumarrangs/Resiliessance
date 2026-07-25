@@ -1,28 +1,21 @@
 'use client';
 
-import { PageHeader } from "@/components/PageHeader";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Play, RotateCcw, Trash2, ArchiveRestore, Pause, Archive , BarChart2 } from "lucide-react";
+import { Play, RotateCcw, Trash2, ArchiveRestore, Pause, Archive  } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageWrapper } from "@/components/PageWrapper";
+import { HABIT_TABS } from "@/lib/navigation";
 
 export default function InactiveOptionsPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-32 font-dm-sans">
-      <div className="max-w-2xl mx-auto w-full p-4 md:p-6 space-y-16">
-        <PageHeader title="Inactive Tab Concepts" >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/habits" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
+    <PageWrapper
+      title="Inactive Tab Concepts"
+      reportHref="/reports/habits"
+      sectionTabs={HABIT_TABS}
+    >
+        
 
         {/* OPTION 1 */}
         <div className="space-y-6">
@@ -218,8 +211,6 @@ export default function InactiveOptionsPage() {
               </Card>
            </div>
         </div>
-
-      </div>
-    </div>
+    </PageWrapper>
   );
 }

@@ -1,9 +1,10 @@
 "use client";
+import { PageWrapper } from "@/components/PageWrapper";
+import { REPORT_TABS } from "@/lib/navigation";
 import React, { useState, useEffect } from "react";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { format, subDays, startOfWeek, endOfWeek } from "date-fns";
-import { PageHeader } from "@/components/PageHeader";
 
 export default function WeeklySummaryPage() {
   const [data, setData] = useState<any>(null);
@@ -92,7 +93,7 @@ export default function WeeklySummaryPage() {
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6 page-stagger-container">
-      <PageHeader title="Weekly Progress Summary" />
+      
 
       {loading ? (
         <div className="text-sm text-muted-foreground text-center py-16">Loading weekly data...</div>
@@ -133,6 +134,6 @@ export default function WeeklySummaryPage() {
           </div>
         </>
       )}
-    </div>
+    </PageWrapper>
   );
 }

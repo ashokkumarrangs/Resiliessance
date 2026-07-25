@@ -1,16 +1,20 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeftCircle, ArrowRightCircle, Home } from "lucide-react";
+import { ArrowLeftCircle, ArrowRightCircle, BarChart2, Home } from "lucide-react";
 import Link from "next/link";
 
 interface PageHeaderProps {
   title: string;
+  /** If provided, renders a report link icon button */
+  reportHref?: string;
   children?: React.ReactNode;
 }
 
-export function PageHeader({ title, children }: PageHeaderProps) {
+export function PageHeader({ title, reportHref, children }: PageHeaderProps) {
   const router = useRouter();
+
+  const hasActions = children || reportHref;
 
   return (
     <div className="flex items-center gap-2 md:gap-3 pt-0 -mt-4 md:mt-0 mb-4 md:mb-6 w-full">
@@ -48,7 +52,20 @@ export function PageHeader({ title, children }: PageHeaderProps) {
 
       {/* Spacer and Page-Specific Actions */}
       <div className="flex-1" />
-      {children}
+      {hasActions && (
+        <div className="flex items-center gap-2">
+          {children}
+          {reportHref && (
+            <Link
+              href={reportHref}
+              className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
+              title="View Reports"
+            >
+              <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   );
 }

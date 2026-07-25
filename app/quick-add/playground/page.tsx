@@ -25,6 +25,7 @@ import {
   Bookmark,
   Sparkles,
 } from "lucide-react";
+import { PageWrapper } from "@/components/PageWrapper";
 
 interface LauncherItem {
   title: string;
@@ -162,26 +163,29 @@ export default function HybridPlaygroundPage() {
   ];
 
   return (
-    <div className="p-5 max-w-lg mx-auto bg-transparent min-h-screen pb-24 space-y-6 animate-fadeIn">
-      {/* Header */}
-      <div className="space-y-1">
-        <Link href="/quick-add" className="text-[10px] font-black text-primary hover:underline flex items-center gap-1">
-          &larr; Back to standard cockpit
-        </Link>
-        <div className="flex justify-between items-end">
-          <div>
-            <h1 className="text-[26px] font-black text-foreground tracking-tight leading-none mb-1.5">
-              Hybrid Playground
-            </h1>
-            <div className="text-[11px] text-accent font-bold">
-              {conceptLabels[selectedStyle - 1]}
+    <PageWrapper
+      customHeader={
+        <div className="space-y-1 mb-6">
+          <Link href="/quick-add" className="text-[10px] font-black text-primary hover:underline flex items-center gap-1">
+            &larr; Back to standard cockpit
+          </Link>
+          <div className="flex justify-between items-end">
+            <div>
+              <h1 className="text-[26px] font-black text-foreground tracking-tight leading-none mb-1.5">
+                Hybrid Playground
+              </h1>
+              <div className="text-[11px] text-accent font-bold">
+                {conceptLabels[selectedStyle - 1]}
+              </div>
+            </div>
+            <div className="p-2.5 bg-card rounded-md border border-border/40 text-accent">
+              <Sparkles size={14} className="animate-spin" style={{ animationDuration: '3s' }} />
             </div>
           </div>
-          <div className="p-2.5 bg-card rounded-md border border-border/40 text-accent">
-            <Sparkles size={14} className="animate-spin" style={{ animationDuration: '3s' }} />
-          </div>
         </div>
-      </div>
+      }
+      className="pb-24 animate-fadeIn"
+    >
 
       {/* 10 Concept Switcher Buttons */}
       <div className="bg-card rounded-lg border border-border/30 p-3 space-y-2 shadow-sm">
@@ -441,6 +445,6 @@ export default function HybridPlaygroundPage() {
           </div>
         )}
       </div>
-    </div>
+    </PageWrapper>
   );
 }

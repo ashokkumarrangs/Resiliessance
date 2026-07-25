@@ -4,12 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from "next/link";
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Calendar, CreditCard, Gauge, RefreshCw, Save , BarChart2, Clock, FileText } from "lucide-react";
+import { Calendar, CreditCard, Gauge, RefreshCw, Save , Clock, FileText } from "lucide-react";
 import { format } from 'date-fns';
-import { PageHeader } from "@/components/PageHeader";
+import { PageWrapper } from "@/components/PageWrapper";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { SubNav } from "@/components/SubNav";
-import { SectionNav } from "@/components/SectionNav";
 import { VEHICLE_TABS } from "@/lib/navigation";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -205,23 +204,12 @@ export default function VehicleFuelServicePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Mileage"  >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/vehicles" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={VEHICLE_TABS} activePath="/vehicles/mileage" />
-        </div>
+    <PageWrapper
+      title="Mileage"
+      reportHref="/reports/vehicles"
+      sectionTabs={VEHICLE_TABS}
+      activePath="/vehicles/mileage"
+    >
 
 
         
@@ -313,8 +301,7 @@ export default function VehicleFuelServicePage() {
              </Card>
         </div>
       </div>
-      </div>
-    </div>
+    </PageWrapper>
   );
 }
 

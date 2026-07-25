@@ -1,12 +1,11 @@
 "use client";
 import React, { useState, useEffect, use } from "react";
-import { PageHeader } from "@/components/PageHeader";
-import { SectionNav } from "@/components/SectionNav";
+import { PageWrapper } from "@/components/PageWrapper";
 import { PET_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 import { supabase } from "@/lib/supabase";
 import { format, differenceInYears, differenceInMonths } from "date-fns";
-import { Dog, PlusCircle, Activity, Sparkles, Trees, Shield, GraduationCap, Trash2, BarChart2 } from "lucide-react";
+import { Dog, PlusCircle, Activity, Sparkles, Trees, Shield, GraduationCap, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -162,22 +161,13 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
   const currentOptions = dynamicOptions[entryCategory] || [];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-20 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title={petData.name}>
-          <div className="flex items-center gap-2">
-            <Link 
-              href="/reports/pets" 
-              className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-              title="View Reports"
-            >
-              <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-            </Link>
-          </div>
-        </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={PET_TABS} activePath="/pets" />
-        </div>
+    <PageWrapper
+      title={petData.name}
+      reportHref="/reports/pets"
+      sectionTabs={PET_TABS}
+      activePath="/pets"
+      className="pb-20"
+    >
         
         <div className="flex items-center justify-center relative mb-6 w-full">
           <SubNav 
@@ -335,7 +325,7 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
           </div>
 
         </div>
-      </div>
-    </div>
+        </div>
+    </PageWrapper>
   );
 }

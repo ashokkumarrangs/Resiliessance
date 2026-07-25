@@ -1,17 +1,17 @@
 "use client";
+import { PageWrapper } from "@/components/PageWrapper";
+import { REPORT_TABS } from "@/lib/navigation";
 import { VehicleDashboard } from "@/components/VehicleDashboard";
 import { Select } from "@/components/Select";
 import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { Activity, AlertTriangle, ArrowLeftCircle, BarChart2, Box, CalendarDays, Car, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, Dumbbell, Flame, Gauge, GraduationCap, Grid3X3, LayoutPanelLeft, ListTodo, Map, PackageCheck, RefreshCw, Scale, ShieldAlert, TrendingUp, Trophy, Wallet, Weight, Zap , Dog, Scissors, Shield, Trees, Coins, LineChart as LineChartIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { PageHeader } from "@/components/PageHeader";
 import { 
   format, subDays, startOfMonth, eachDayOfInterval, isSameDay, 
   startOfWeek, endOfWeek, endOfMonth, addMonths, subMonths,
   subMonths as subM, startOfYear, endOfYear, differenceInDays
 } from "date-fns";
-import { SectionNav } from "@/components/SectionNav";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -1680,25 +1680,15 @@ export default function ReportsPage() {
   if (loading) return <div className="min-h-screen bg-background flex flex-col justify-center"><LoadingScreen message="Assembling intelligence matrices..." /></div>;
 
   return (
-    <div className="bg-background min-h-screen pb-20 p-4 md:p-6 font-dm-sans">
-      <PageHeader title="Intelligence">
-        <button onClick={fetchAll} className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0">
+    <PageWrapper
+  title="Intelligence"
+  sectionTabs={REPORT_TABS}
+  headerActions={
+    <button onClick={fetchAll} className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0">
           <RefreshCw className="w-4 h-4 md:w-[18px] md:h-[18px]" />
         </button>
-      </PageHeader>
-
-            <div className="-mt-2 mb-6">
-        <SectionNav tabs={[
-          { title: "ALL", icon: <LayoutPanelLeft size={16} />, isActive: activeTab === "ALL", onClick: () => router.push("/reports") },
-          { title: "FINANCE", icon: <Wallet size={16} />, isActive: activeTab === "FINANCE", onClick: () => router.push("/reports/finance") },
-          { title: "HABITS", icon: <Flame size={16} />, isActive: activeTab === "HABITS", onClick: () => router.push("/reports/habits") },
-          { title: "WORKOUT", icon: <Zap size={16} />, isActive: activeTab === "WORKOUT", onClick: () => router.push("/reports/workout") },
-          { title: "VEHICLES", icon: <Car size={16} />, isActive: activeTab === "VEHICLES", onClick: () => router.push("/reports/vehicles") },
-          { title: "TASKS", icon: <ListTodo size={16} />, isActive: activeTab === "TASKS", onClick: () => router.push("/reports/tasks") },
-          { title: "SKILLS", icon: <GraduationCap size={16} />, isActive: activeTab === "SKILLS", onClick: () => router.push("/reports/skills") },
-          { title: "PETS", icon: <Dog size={16} />, isActive: activeTab === "PETS", onClick: () => router.push("/reports/pets") },
-        ]} />
-      </div>
+  }
+>
 
       <div className="space-y-12 max-w-lg mx-auto">
         {/* ===================== SYSTEM ACTION CENTER ===================== */}
@@ -3323,6 +3313,6 @@ export default function ReportsPage() {
           </section>
         )}
 </div>
-    </div>
+    </PageWrapper>
   );
 }

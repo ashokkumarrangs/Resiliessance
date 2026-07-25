@@ -6,7 +6,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { PageHeader } from "@/components/PageHeader";
+import { PageWrapper } from "@/components/PageWrapper";
 import { SectionNav } from "@/components/SectionNav";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -124,9 +124,7 @@ export default function DayAtAGlancePage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-24 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Activity Timeline" />
+    <PageWrapper title="Activity Timeline" className="pb-24">
 
         {/* Sub-nav */}
         <SectionNav tabs={SUB_TABS} />
@@ -310,8 +308,7 @@ export default function DayAtAGlancePage() {
             </div>
           </>
         )}
-      </div>
-    </div>
+    </PageWrapper>
   );
 }
 

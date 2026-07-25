@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Search, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { format, subDays } from "date-fns";
-import { PageHeader } from "@/components/PageHeader";
+import { PageWrapper } from "@/components/PageWrapper";
 
 type Entry = {
   id: string;
@@ -120,12 +120,15 @@ export default function FilteredTimelinePage() {
   const groupedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6 page-stagger-container">
-      <PageHeader title="Activity Timeline">
+    <PageWrapper 
+      title="Activity Timeline"
+      headerActions={
         <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
           {loading ? "Loading..." : `${filtered.length} entries`}
         </span>
-      </PageHeader>
+      }
+      className="page-stagger-container"
+    >
 
       {/* Search + Category Filters */}
       <div className="bg-card border border-border rounded-xl p-4 shadow-zenith mb-6 space-y-3">
@@ -201,6 +204,6 @@ export default function FilteredTimelinePage() {
           ))}
         </div>
       )}
-    </div>
+    </PageWrapper>
   );
 }

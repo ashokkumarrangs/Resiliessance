@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
     Folder, Notebook, Plus, Check, FileText, Edit3, Trash2, GripVertical, List, Eye, EyeOff
-, BarChart2 } from "lucide-react";
-import { PageHeader } from "@/components/PageHeader";
+} from "lucide-react";
+import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { SectionNav } from "@/components/SectionNav";
 import { supabase } from "@/lib/supabase";
@@ -129,30 +129,19 @@ export default function SquareShiftNotesPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-24 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="SquareShift">
-        <div className="flex items-center gap-2">
-
-            <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => setShowDone(!showDone)}
-                  className={`p-2 md:p-2.5 rounded-xl border flex items-center justify-center transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 ${ showDone ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-500 hover:text-indigo-600' : 'bg-card border-border/40 text-muted-foreground/60 hover:text-foreground' }`}
-                  title={showDone ? "Hide Done" : "Show Done"}
-                >
-                  {showDone ? <EyeOff className="w-4 h-4 md:w-[18px] md:h-[18px]" /> : <Eye className="w-4 h-4 md:w-[18px] md:h-[18px]" />}
-                </button>
-            </div>
-        
-          <Link 
-            href="/reports" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
+    <PageWrapper
+      title="SquareShift"
+      reportHref="/reports"
+      headerActions={
+        <button 
+          onClick={() => setShowDone(!showDone)}
+          className={`p-2 md:p-2.5 rounded-xl border flex items-center justify-center transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 ${ showDone ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-500 hover:text-indigo-600' : 'bg-card border-border/40 text-muted-foreground/60 hover:text-foreground' }`}
+          title={showDone ? "Hide Done" : "Show Done"}
+        >
+          {showDone ? <EyeOff className="w-4 h-4 md:w-[18px] md:h-[18px]" /> : <Eye className="w-4 h-4 md:w-[18px] md:h-[18px]" />}
+        </button>
+      }
+    >
 
         {isLoading ? (
           <LoadingScreen message="Synthesizing quick notes..." />
@@ -293,7 +282,6 @@ export default function SquareShiftNotesPage() {
 
       </>
         )}
-      </div>
 
       <TaskCompletionModal 
         isOpen={taskModalOpen}
@@ -310,6 +298,6 @@ export default function SquareShiftNotesPage() {
         }}
         taskTitle={activeTask?.text || ""}
       />
-    </div>
+    </PageWrapper>
   );
 }

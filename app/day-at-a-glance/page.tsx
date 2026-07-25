@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { CheckCircle2, Circle, Dumbbell, Flame, CheckSquare, Zap } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
-import { PageHeader } from "@/components/PageHeader";
+import { PageWrapper } from "@/components/PageWrapper";
 
 type TaskItem = { id: string; task: string; status: string; is_high_priority: boolean };
 type HabitItem = { habit_name: string; done: boolean; group_name: string };
@@ -93,10 +93,13 @@ export default function DayAtAGlancePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6 page-stagger-container">
-      <PageHeader title="Day at a Glance">
+    <PageWrapper
+      title="Day at a Glance"
+      headerActions={
         <span className="text-[11px] font-black text-muted-foreground">{format(new Date(), "EEEE, MMM d")}</span>
-      </PageHeader>
+      }
+      className="page-stagger-container"
+    >
 
       {loading ? (
         <div className="text-sm text-muted-foreground text-center py-16">Loading your day...</div>
@@ -155,6 +158,6 @@ export default function DayAtAGlancePage() {
           </div>
         </>
       )}
-    </div>
+    </PageWrapper>
   );
 }

@@ -1,23 +1,15 @@
 "use client"
-import { PageHeader } from "@/components/PageHeader";
-import { BarChart2 } from "lucide-react";
 import Link from "next/link";
+import { PageWrapper } from "@/components/PageWrapper";
+import { HABIT_TABS } from "@/lib/navigation";
 export default function V5() {
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-32 font-dm-sans">
-      <div className="max-w-3xl mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Option 5: Command Canvas" >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/habits" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
+    <PageWrapper
+      title="Option 5: Command Canvas"
+      reportHref="/reports/habits"
+      sectionTabs={HABIT_TABS}
+    >
+        
         <p className="text-muted-foreground mb-8">A Notion-style text editor block where you type out the rules naturally.</p>
         <div className="bg-card border border-border/40 p-8 rounded-2xl shadow-inner min-h-[400px]">
            <div className="flex items-center gap-2 text-xl font-medium text-foreground/80 leading-loose">
@@ -31,7 +23,7 @@ export default function V5() {
            </div>
            <div className="mt-8 text-sm text-muted-foreground">Type '/' to add advanced streak rules...</div>
         </div>
-      </div>
-    </div>
+      
+    </PageWrapper>
   )
 }

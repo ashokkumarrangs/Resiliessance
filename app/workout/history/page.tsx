@@ -7,12 +7,11 @@ import {
   format, subDays, differenceInDays, startOfWeek, endOfWeek, 
   eachDayOfInterval, isSameDay, parseISO 
 } from "date-fns";
-import { Activity, ArrowLeftCircle, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Dumbbell, Flame, TrendingUp, Trophy , BarChart2 } from "lucide-react";
+import { Activity, ArrowLeftCircle, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Dumbbell, Flame, TrendingUp, Trophy } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { PageHeader } from "@/components/PageHeader";
+import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { SectionNav } from "@/components/SectionNav";
 import { SubNav } from "@/components/SubNav";
 import { WORKOUT_TABS } from "@/lib/navigation";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -203,23 +202,11 @@ export default function WorkoutHistoryPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-24 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Workout History" >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/workout" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={WORKOUT_TABS} />
-        </div>
+    <PageWrapper
+      title="Workout History"
+      reportHref="/reports/workout"
+      sectionTabs={WORKOUT_TABS}
+    >
 
         <div className="space-y-6 w-full">
         {/* Toggle between Day & Week Views */}
@@ -472,7 +459,6 @@ export default function WorkoutHistoryPage() {
           </div>
           )}
         </div>
-      </div>
-    </div>
+    </PageWrapper>
   );
 }

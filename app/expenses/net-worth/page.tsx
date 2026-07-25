@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Currency } from "@/components/currency";
-import { PageHeader } from "@/components/PageHeader";
-import { SectionNav } from "@/components/SectionNav";
+import { PageWrapper } from "@/components/PageWrapper";
 import { EXPENSE_TABS } from "@/lib/navigation";
 
 interface NetWorthItem {
@@ -80,23 +79,11 @@ export default function NetWorthPage() {
   const isPositive = data.netWorth >= 0;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-24 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Financial Net Worth" >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/finance" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={EXPENSE_TABS} />
-        </div>
+    <PageWrapper
+      title="Financial Net Worth"
+      reportHref="/reports/finance"
+      sectionTabs={EXPENSE_TABS}
+    >
 
         <div className="space-y-6">
         
@@ -153,9 +140,7 @@ export default function NetWorthPage() {
               <span>Update Valuations</span>
            </button>
         </div>
-      </div>
-      </div>
-    </div>
+      </PageWrapper>
   );
 }
 

@@ -1,8 +1,9 @@
 "use client";
+import { PageWrapper } from "@/components/PageWrapper";
+import { REPORT_TABS } from "@/lib/navigation";
 import React, { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { format, subDays } from "date-fns";
-import { PageHeader } from "@/components/PageHeader";
 import { ReportsNav } from "@/components/ReportsNav";
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -161,12 +162,10 @@ export default function CorrelationsPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen pb-20 p-4 md:p-6 font-dm-sans">
-      <PageHeader title="Intelligence">
-        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+    <PageWrapper title="Intelligence" sectionTabs={REPORT_TABS} headerActions={{<span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
           {loading?"Loading…":`${dataPoints.length} pts`}
-        </span>
-      </PageHeader>
+        </span>}}>
+      
 
       {/* Full reports nav bar */}
       <ReportsNav />
@@ -274,6 +273,6 @@ export default function CorrelationsPage() {
           </div>
         )}
       </div>
-    </div>
+    </PageWrapper>
   );
 }

@@ -4,11 +4,11 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Bookmark, Check, ChevronDown, ChevronRight, Edit3, Eye, EyeOff, FileText, Flame, GripVertical, Inbox, LayoutGrid, List, Plus, PlusSquare, Search, Star, Trash2, X, BarChart2, MoreVertical } from "lucide-react";
+import { Bookmark, Check, ChevronDown, ChevronRight, Edit3, Eye, EyeOff, FileText, Flame, GripVertical, Inbox, LayoutGrid, List, Plus, PlusSquare, Search, Star, Trash2, X, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
-import { PageHeader } from "@/components/PageHeader";
+import { PageWrapper } from "@/components/PageWrapper";
+import { TASK_TABS } from "@/lib/navigation";
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { SectionNav } from "@/components/SectionNav";
 import { TaskCompletionModal } from "@/components/TaskCompletionModal";
 
 interface Task {
@@ -718,40 +718,20 @@ export default function TaskManagerPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-24 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Task Manager">
-        <div className="flex items-center gap-2">
-
-            <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => setShowDone(!showDone)}
-                  className={`p-2 md:p-2.5 rounded-xl border flex items-center justify-center transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 ${ showDone ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-500 hover:text-indigo-600' : 'bg-card border-border/40 text-muted-foreground/60 hover:text-foreground' }`}
-                  title={showDone ? "Hide Done" : "Show Done"}
-                >
-                  {showDone ? <EyeOff className="w-4 h-4 md:w-[18px] md:h-[18px]" /> : <Eye className="w-4 h-4 md:w-[18px] md:h-[18px]" />}
-                </button>
-            </div>
-        
-          <Link 
-            href="/reports/tasks" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-
-        {/* Tab System */}
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={[
-            { title: "Quick Notes", icon: <Inbox size={16} />, isActive: view === "inbox", onClick: () => router.push("/tasks/inbox") },
-            { title: "Today", icon: <Star size={16} fill={view === "today" ? "currentColor" : "none"} />, isActive: view === "today", onClick: () => router.push("/tasks/today") },
-            { title: "Week", icon: <Bookmark size={16} fill={view === "week" ? "currentColor" : "none"} />, isActive: view === "week", onClick: () => router.push("/tasks/week") },
-            { title: "Workspace", icon: <LayoutGrid size={16} />, isActive: view === "all", onClick: () => router.push("/tasks/workspace") }
-          ]} />
-        </div>
+    <PageWrapper
+      title="Task Manager"
+      reportHref="/reports/tasks"
+      sectionTabs={TASK_TABS}
+      headerActions={
+        <button 
+          onClick={() => setShowDone(!showDone)}
+          className={`p-2 md:p-2.5 rounded-xl border flex items-center justify-center transition-all shadow-sm active:scale-95 cursor-pointer shrink-0 ${ showDone ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-500 hover:text-indigo-600' : 'bg-card border-border/40 text-muted-foreground/60 hover:text-foreground' }`}
+          title={showDone ? "Hide Done" : "Show Done"}
+        >
+          {showDone ? <EyeOff className="w-4 h-4 md:w-[18px] md:h-[18px]" /> : <Eye className="w-4 h-4 md:w-[18px] md:h-[18px]" />}
+        </button>
+      }
+    >
 
 
 
@@ -807,21 +787,14 @@ export default function TaskManagerPage() {
       )}
       
       <TaskCompletionModal 
-        isOpen={taskModalOpen}
-        onClose={() => {
-          setTaskModalOpen(false);
-          setActiveTask(null);
-        }}
-        onConfirm={(completedAt) => {
+        isOpen={taskModalOpen} 
+        onClose={() => setTaskModalOpen(false)} 
+        onComplete={async (completedAt) => {
           if (activeTask) {
-            executeStatusChange(activeTask, 'Completed', completedAt);
+            await executeStatusChange(activeTask, 'Completed', completedAt);
           }
-          setTaskModalOpen(false);
-          setActiveTask(null);
-        }}
-        taskTitle={activeTask?.task || ""}
+        }} 
       />
-    </div>
-    </div>
+    </PageWrapper>
   );
 }

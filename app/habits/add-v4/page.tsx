@@ -1,23 +1,15 @@
 "use client"
-import { PageHeader } from "@/components/PageHeader";
-import { BarChart2 } from "lucide-react";
 import Link from "next/link";
+import { PageWrapper } from "@/components/PageWrapper";
+import { HABIT_TABS } from "@/lib/navigation";
 export default function V4() {
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-32 font-dm-sans">
-      <div className="max-w-2xl mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Option 4: The Accordion" >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/habits" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
+    <PageWrapper
+      title="Option 4: The Accordion"
+      reportHref="/reports/habits"
+      sectionTabs={HABIT_TABS}
+    >
+        
         <p className="text-muted-foreground mb-8">A highly condensed vertical list. Click a header to expand its settings.</p>
         <div className="space-y-4">
            <div className="bg-card border border-border/40 rounded-2xl shadow-sm overflow-hidden">
@@ -42,7 +34,7 @@ export default function V4() {
               </div>
            </div>
         </div>
-      </div>
-    </div>
+      
+    </PageWrapper>
   )
 }

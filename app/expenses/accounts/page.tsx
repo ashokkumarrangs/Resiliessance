@@ -9,8 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { SearchableSelect } from "@/components/SearchableSelect";
-import { PageHeader } from "@/components/PageHeader";
-import { SectionNav } from "@/components/SectionNav";
+import { PageWrapper } from "@/components/PageWrapper";
 import { EXPENSE_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 
@@ -139,23 +138,12 @@ function AccountPageContent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-24 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Manage Accounts"  >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/finance" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={EXPENSE_TABS} activePath="/expenses/liquidity" />
-        </div>
+    <PageWrapper
+      title="Manage Accounts"
+      reportHref="/reports/finance"
+      sectionTabs={EXPENSE_TABS}
+      activePath="/expenses/liquidity"
+    >
         <SubNav 
           items={["Overview", "Manage Accounts"]}
           activeItem="Manage Accounts"
@@ -332,8 +320,7 @@ function AccountPageContent() {
           </div>
         </div>
       </form>
-      </div>
-    </div>
+      </PageWrapper>
   );
 }
 

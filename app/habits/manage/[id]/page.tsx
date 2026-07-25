@@ -5,16 +5,14 @@ import Link from "next/link";
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, AlignLeft, ArrowRight, Award, CheckCircle2, CheckSquare, ChevronDown, ChevronUp, CircleDot, Clock, Flame, Hash, History, Info, Palette, RefreshCw, Settings2, ShieldCheck, Timer , BarChart2 } from "lucide-react";
+import { AlertTriangle, AlignLeft, ArrowRight, Award, CheckCircle2, CheckSquare, ChevronDown, ChevronUp, CircleDot, Clock, Flame, Hash, History, Info, Palette, RefreshCw, Settings2, ShieldCheck, Timer  } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from 'sonner';
-import { PageHeader } from "@/components/PageHeader";
 import { SaveButton } from "@/components/ui/SaveButton";
-import { SectionNav } from "@/components/SectionNav";
 import { SubNav } from "@/components/SubNav";
 import { HABIT_TABS } from "@/lib/navigation";
 
@@ -34,6 +32,7 @@ const timeToDecimal = (timeStr: string) => {
 const EMOJIS = ['🥳', '🏃', '💧', '🏋️', '🧘', '📚', '💊', '🚴', '🥗', '☕', '📱', '🖋️', '💤', '🥬', '🚶'];
 
 import { use } from "react";
+import { PageWrapper } from "@/components/PageWrapper";
 export default function EditHabitPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [loading, setLoading] = useState(true);
@@ -366,29 +365,19 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
     }
   };
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-       <RefreshCw className="w-8 h-8 animate-spin text-muted-foreground/20" />
+    <PageWrapper
+      title="Edit Habit"
+      reportHref="/reports/habits"
+      sectionTabs={HABIT_TABS}
+    ><RefreshCw className="w-8 h-8 animate-spin text-muted-foreground/20" />
     </div>
   );
 
   return (
     <div className="flex flex-col min-h-screen bg-background pb-32 font-dm-sans">
       <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Edit Habit" >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/habits" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={HABIT_TABS} />
-        </div>
+        
+        
 
         {/* Stepper */}
         <SubNav 
@@ -1217,7 +1206,7 @@ function SummaryRow({ label, value, color }: any) {
     <div className="flex items-center justify-between p-6">
        <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">{label}</span>
        <span className={`text-md font-black text-right ${color || 'text-foreground'}`}>{value || '—'}</span>
-    </div>
+    </PageWrapper>
   );
 }
 

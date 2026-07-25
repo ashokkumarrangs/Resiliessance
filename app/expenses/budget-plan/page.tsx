@@ -8,8 +8,7 @@ import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { SaveButton } from "@/components/ui/SaveButton";
-import { PageHeader } from "@/components/PageHeader";
-import { SectionNav } from "@/components/SectionNav";
+import { PageWrapper } from "@/components/PageWrapper";
 import { EXPENSE_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 
@@ -275,23 +274,13 @@ function BudgetPlanContent() {
   }, [budgetData]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-48 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Budget Plan"  >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/finance" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={EXPENSE_TABS} activePath="/expenses/current-budget" />
-        </div>
+    <PageWrapper
+      title="Budget Plan"
+      reportHref="/reports/finance"
+      sectionTabs={EXPENSE_TABS}
+      activePath="/expenses/current-budget"
+      className="pb-48"
+    >
         <SubNav 
           items={["Current Budget", "Budget Plan"]}
           activeItem="Budget Plan"
@@ -475,8 +464,7 @@ function BudgetPlanContent() {
            <SaveButton type="submit" isSaving={isSubmitting} disabled={isSubmitting} label="Save" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
         </div>
       </div>
-      </div>
-    </div>
+      </PageWrapper>
   );
 }
 

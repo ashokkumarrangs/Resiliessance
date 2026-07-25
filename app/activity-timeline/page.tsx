@@ -17,7 +17,7 @@ import {
   Dog,
   Package,
 } from "lucide-react";
-import { PageHeader } from "@/components/PageHeader";
+import { PageWrapper } from "@/components/PageWrapper";
 import { SectionNav } from "@/components/SectionNav";
 import { supabase } from "@/lib/supabase";
 
@@ -467,10 +467,7 @@ export default function ActivityTimelinePage() {
   }, [timelineDate]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-24 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        {/* Standard Page Header */}
-        <PageHeader title="Activity Timeline" />
+    <PageWrapper title="Activity Timeline" className="pb-24">
 
         {/* Sub-nav: Timeline | Day at a Glance */}
         <SectionNav tabs={[
@@ -545,7 +542,6 @@ export default function ActivityTimelinePage() {
             No activities recorded for this day.
           </div>
         )}
-      </div>
-    </div>
+    </PageWrapper>
   );
 }

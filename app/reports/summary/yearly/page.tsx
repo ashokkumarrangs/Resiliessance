@@ -1,18 +1,15 @@
 "use client";
+import { PageWrapper } from "@/components/PageWrapper";
+import { SectionNav } from "@/components/SectionNav";
+import { SUMMARY_TABS } from "@/lib/navigation";
 import React, { useState, useEffect } from "react";
 import { TrendingUp, TrendingDown, Minus, CalendarDays, Flame, Dumbbell, CheckSquare, Wallet } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { format, startOfYear, endOfYear, subYears, eachMonthOfInterval, endOfMonth, startOfMonth } from "date-fns";
-import { PageHeader } from "@/components/PageHeader";
 import { ReportsNav } from "@/components/ReportsNav";
-import { SectionNav } from "@/components/SectionNav";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend } from "recharts";
 
-const SUMMARY_TABS = [
-  { title: "Weekly",  href: "/reports/summary/weekly",  icon: <CalendarDays size={14} /> },
-  { title: "Monthly", href: "/reports/summary/monthly", icon: <Flame size={14} /> },
-  { title: "Yearly",  href: "/reports/summary/yearly",  icon: <TrendingUp size={14} /> },
-];
+
 
 const MONTHS_SHORT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -92,8 +89,7 @@ export default function YearlySummaryPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen pb-20 p-4 md:p-6 font-dm-sans">
-      <PageHeader title="Intelligence" />
+    <PageWrapper title="Intelligence">
       <ReportsNav />
 
       <div className="max-w-lg mx-auto">
@@ -174,6 +170,6 @@ export default function YearlySummaryPage() {
           </>
         )}
       </div>
-    </div>
+    </PageWrapper>
   );
 }

@@ -4,15 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from "next/link";
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleDot, Clock, PlusCircle, Sliders, XCircle , BarChart2 } from "lucide-react";
+import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleDot, Clock, PlusCircle, Sliders, XCircle  } from "lucide-react";
 import { format, addDays, subDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { calculateHabitStatus, HabitStatus, sumDurations } from '@/lib/habit-scoring';
-import { PageHeader } from '@/components/PageHeader';
-import { SectionNav } from '@/components/SectionNav';
 import { HABIT_TABS } from '@/lib/navigation';
+import { PageWrapper } from "@/components/PageWrapper";
 
 interface HabitConfig {
   id: string;
@@ -231,23 +230,14 @@ export default function HabitViewPage() {
   const strokeDashoffset = circumference - (consistencyRate / 100) * circumference;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-32 text-foreground font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Habits Daily Viewer" >
-        <div className="flex items-center gap-2">
-
-          <Link 
-            href="/reports/habits" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
-        </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={HABIT_TABS} activePath="/habits/view" />
-        </div>
+    <PageWrapper
+      title="Habits Daily Viewer"
+      reportHref="/reports/habits"
+      sectionTabs={HABIT_TABS}
+      activePath="/habits/view"
+    >
+        
+        
 
         {/* Date Swapper */}
         <div className="flex justify-center mb-6 mt-6 w-full">
@@ -423,7 +413,6 @@ export default function HabitViewPage() {
             })}
           </div>
         )}
-      </div>
-    </div>
+    </PageWrapper>
   );
 }

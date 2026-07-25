@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { Currency } from "@/components/currency";
-import { PageHeader } from "@/components/PageHeader";
+import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { SectionNav } from "@/components/SectionNav";
 import { EXPENSE_TABS } from "@/lib/navigation";
 import { toast } from "sonner";
 import { SubNav } from "@/components/SubNav";
@@ -122,32 +121,22 @@ export default function CurrentBudgetPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-32 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
-        <PageHeader title="Current Budget">
-        <div className="flex items-center gap-2">
-
-          <div className="flex items-center gap-3">
-            <div className="text-[10px] font-black text-indigo-600 tracking-[3px] bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20">
-              {monthString}
-            </div>
-            <button onClick={fetchData} className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0">
-              <RefreshCw className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-            </button>
+    <PageWrapper
+      title="Current Budget"
+      reportHref="/reports/finance"
+      sectionTabs={EXPENSE_TABS}
+      activePath="/expenses/current-budget"
+      headerActions={
+        <div className="flex items-center gap-3">
+          <div className="text-[10px] font-black text-indigo-600 tracking-[3px] bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20">
+            {monthString}
           </div>
-        
-          <Link 
-            href="/reports/finance" 
-            className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0"
-            title="View Reports"
-          >
-            <BarChart2 className="w-4 h-4 md:w-[18px] md:h-[18px]" />
-          </Link>
+          <button onClick={fetchData} className="p-2 md:p-2.5 bg-card rounded-xl shadow-sm text-muted-foreground/60 hover:text-primary border border-border/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer shrink-0">
+            <RefreshCw className="w-4 h-4 md:w-[18px] md:h-[18px]" />
+          </button>
         </div>
-      </PageHeader>
-        <div className="-mt-2 mb-6">
-          <SectionNav tabs={EXPENSE_TABS} activePath="/expenses/current-budget" />
-        </div>
+      }
+    >
         <SubNav 
           items={["Current Budget", "Budget Plan"]}
           activeItem="Current Budget"
@@ -280,8 +269,7 @@ export default function CurrentBudgetPage() {
           })}
         </div>
       </div>
-      </div>
-    </div>
+      </PageWrapper>
   );
 }
 
