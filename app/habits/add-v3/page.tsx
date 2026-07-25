@@ -1,4 +1,7 @@
 "use client"
+import { PageWrapper } from "@/components/PageWrapper";
+import { HABIT_TABS } from "@/lib/navigation";
+
 export default function V3() {
   return (
     <PageWrapper
