@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { SaveButton } from "@/components/ui/SaveButton";
 import { SubNav } from "@/components/SubNav";
 import { HABIT_TABS } from "@/lib/navigation";
+import { PageWrapper } from "@/components/PageWrapper";
 
 const STEPS = [
   { id: 'basics', title: 'Basics' },
@@ -32,7 +33,6 @@ const timeToDecimal = (timeStr: string) => {
 const EMOJIS = ['🥳', '🏃', '💧', '🏋️', '🧘', '📚', '💊', '🚴', '🥗', '☕', '📱', '🖋️', '💤', '🥬', '🚶'];
 
 import { use } from "react";
-import { PageWrapper } from "@/components/PageWrapper";
 export default function EditHabitPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [loading, setLoading] = useState(true);
@@ -374,8 +374,11 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-32 font-dm-sans">
-      <div className="max-w-lg mx-auto w-full p-4 md:p-6">
+    <PageWrapper
+      title="Manage Habit"
+      reportHref="/reports/habits"
+      sectionTabs={HABIT_TABS}
+    >
         
         
 

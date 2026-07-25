@@ -92,7 +92,7 @@ export default function WeeklySummaryPage() {
   ] : [];
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6 page-stagger-container">
+    <PageWrapper title="Weekly Progress Summary" sectionTabs={REPORT_TABS}>
       
 
       {loading ? (
