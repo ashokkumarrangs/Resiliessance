@@ -1200,7 +1200,7 @@ function RuleToggle({ icon, title, desc, active, days, onToggle, onDaysChange, d
           </div>
           <Switch disabled={disabled} checked={active && !disabled} onCheckedChange={onToggle} className="data-[state=checked]:bg-primary" onClick={(e) => e.stopPropagation()} />
        </div>
-    
+     </div>
   );
 }
 
