@@ -302,9 +302,37 @@ export default function HabitConfigPage() {
       reportHref="/reports/habits"
       sectionTabs={HABIT_TABS}
     >
-        
-        
+        {/* ─── LIVE DYNAMIC DASHBOARD PREVIEW ─── */}
+        <div className="mb-6 select-none animate-fadeIn">
+          <div className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-3 px-1">Live Preview</div>
+          <div className="bg-card rounded-2xl border border-border/40 p-5 shadow-zenith flex items-center gap-4 relative overflow-hidden transition-all duration-300">
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-inner transition-colors duration-300 ${formData.theme_color ? `bg-${formData.theme_color.split('-')[1]}-500/10` : 'bg-primary/10'}`}>
+              <span className="text-2xl">{formData.emoji || "✨"}</span>
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full transition-colors ${formData.theme_color ? `bg-${formData.theme_color.split('-')[1]}-500/10 ${formData.theme_color}` : 'bg-primary/10 text-primary'}`}>
+                  {formData.group_name || "General"}
+                </span>
+                <span className="text-[9px] font-black text-muted-foreground/30 uppercase tracking-widest">
+                  {formData.frequency === "daily" ? "Daily" : "Event"}
+                </span>
+              </div>
+              <h3 className="text-base font-black text-foreground truncate leading-tight">
+                {formData.habit_name || "Name your Habit"}
+              </h3>
+              <p className="text-xs font-bold text-muted-foreground/60 mt-0.5">
+                Target: {formData.input_type === "boolean" ? "Check-off" : `${formData.target_value} ${formData.unit || ""}`}
+              </p>
+            </div>
 
+            <div className="shrink-0 flex flex-col items-end gap-1">
+              <div className={`w-3 h-3 rounded-full ${formData.theme_color ? `bg-${formData.theme_color.split('-')[1]}-500` : 'bg-primary'}`} />
+              <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest">Active</span>
+            </div>
+          </div>
+        </div>
         {/* Stepper */}
         <SubNav 
           items={STEPS.map(s => s.title)}
@@ -323,7 +351,7 @@ export default function HabitConfigPage() {
         {currentStep === 0 && (
           <div className="space-y-4">
             {/* Identity Card */}
-            <Card className="rounded-md border-white/20 shadow-zenith bg-card overflow-hidden">
+            <Card className="rounded-2xl border border-border/40 shadow-sm bg-card overflow-hidden">
               <CardContent className="p-6 space-y-6">
                 <div className="space-y-4">
                    <div className="flex items-center gap-2 text-primary">
@@ -358,7 +386,7 @@ export default function HabitConfigPage() {
             </Card>
 
             {/* Frequency Card */}
-            <Card className="rounded-md border-white/20 shadow-zenith bg-card transition-all">
+            <Card className="rounded-2xl border border-border/40 shadow-sm bg-card transition-all">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2 text-primary">
                    <History size={14} className="fill-current" />
@@ -397,7 +425,7 @@ export default function HabitConfigPage() {
             </Card>
 
             {/* Input Type Card */}
-            <Card className="rounded-md border-white/20 shadow-zenith bg-card overflow-hidden">
+            <Card className="rounded-2xl border border-border/40 shadow-sm bg-card overflow-hidden">
                <CardContent className="p-6 space-y-5">
                   <div className="flex items-center gap-2 text-primary">
                      <AlignLeft size={14} />
@@ -432,7 +460,7 @@ export default function HabitConfigPage() {
         {/* STEP 2: DISPLAY */}
         {currentStep === 1 && (
           <div className="space-y-6">
-             <Card className="rounded-md border-white/20 shadow-zenith bg-card overflow-hidden">
+             <Card className="rounded-2xl border border-border/40 shadow-sm bg-card overflow-hidden">
                 <CardContent className="p-8 space-y-8">
                    <div className="space-y-1.5">
                       <div className="flex items-center gap-2 text-primary mb-2">
@@ -517,7 +545,7 @@ export default function HabitConfigPage() {
         {/* STEP 3: CONDITIONS */}
         {currentStep === 2 && (
           <div className="space-y-6">
-             <Card className="rounded-md border-white/20 shadow-zenith bg-card overflow-hidden">
+             <Card className="rounded-2xl border border-border/40 shadow-sm bg-card overflow-hidden">
                 <CardContent className="p-6 space-y-6">
                    <div className="flex items-center gap-2 text-primary">
                       <Award size={14} className="fill-current" />
@@ -782,7 +810,7 @@ export default function HabitConfigPage() {
 
               {/* AVOIDANCE LOGIC CARD */}
               {formData.frequency !== 'event' && (
-                <Card className="rounded-md border-white/20 shadow-zenith bg-card overflow-hidden">
+                <Card className="rounded-2xl border border-border/40 shadow-sm bg-card overflow-hidden">
                    <CardContent className="p-6">
                       <div className="flex items-center justify-between gap-4">
                          <div className="flex-1 space-y-1">
@@ -806,7 +834,7 @@ export default function HabitConfigPage() {
               )}
 
              {/* STREAK RULES CARD */}
-             <Card className="rounded-md border-white/20 shadow-zenith bg-card overflow-hidden">
+             <Card className="rounded-2xl border border-border/40 shadow-sm bg-card overflow-hidden">
                 <CardContent className="p-6 space-y-4">
                    <div className="flex items-center gap-2 text-primary mb-2">
                        <RefreshCw size={14} className="fill-current" />
@@ -1015,7 +1043,7 @@ export default function HabitConfigPage() {
               )}
 
               {/* SUMMARY TABLE */}
-              <Card className="rounded-md border-white/20 shadow-zenith overflow-hidden bg-card">
+              <Card className="rounded-2xl border border-border/40 shadow-sm overflow-hidden bg-card">
                  <CardContent className="p-0 flex flex-col divide-y divide-border/40">
                     <div className="bg-muted/50 p-6 flex items-center gap-3">
                        <AlignLeft size={20} className="text-muted-foreground/60" />

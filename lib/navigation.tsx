@@ -31,6 +31,7 @@ import {
   Wrench,
   Zap,
   Activity,
+  Sparkles,
 } from "lucide-react";
 
 // ─── Finance ──────────────────────────────────────────────────────────────────
