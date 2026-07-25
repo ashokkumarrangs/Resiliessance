@@ -306,13 +306,19 @@ export default function HabitConfigPage() {
         <div className="mb-6 select-none animate-fadeIn">
           <div className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest mb-3 px-1">Live Preview</div>
           <div className="bg-card rounded-2xl border border-border/40 p-5 shadow-zenith flex items-center gap-4 relative overflow-hidden transition-all duration-300">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-inner transition-colors duration-300 ${formData.theme_color ? `bg-${formData.theme_color.split('-')[1]}-500/10` : 'bg-primary/10'}`}>
+            <div 
+              className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-inner transition-colors duration-300"
+              style={{ backgroundColor: `${formData.habit_color || '#3d4a3e'}15` }}
+            >
               <span className="text-2xl">{formData.emoji || "✨"}</span>
             </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full transition-colors ${formData.theme_color ? `bg-${formData.theme_color.split('-')[1]}-500/10 ${formData.theme_color}` : 'bg-primary/10 text-primary'}`}>
+                <span 
+                  className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full transition-colors"
+                  style={{ backgroundColor: `${formData.habit_color || '#3d4a3e'}15`, color: formData.habit_color || '#3d4a3e' }}
+                >
                   {formData.group_name || "General"}
                 </span>
                 <span className="text-[9px] font-black text-muted-foreground/30 uppercase tracking-widest">
@@ -325,7 +331,10 @@ export default function HabitConfigPage() {
             </div>
 
             <div className="shrink-0 flex flex-col items-end gap-1">
-              <div className={`w-3 h-3 rounded-full ${formData.theme_color ? `bg-${formData.theme_color.split('-')[1]}-500` : 'bg-primary'}`} />
+              <div 
+                className="w-3 h-3 rounded-full" 
+                style={{ backgroundColor: formData.habit_color || 'var(--primary)' }}
+              />
               <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest">Active</span>
             </div>
           </div>
