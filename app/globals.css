@@ -333,8 +333,8 @@ input[type="number"],
 input[type="date"],
 input[type="time"],
 select,
-button[type="button"] .truncate,
-button[type="button"] span {
+button[type="button"]:not(.snap-center) .truncate,
+button[type="button"]:not(.snap-center) span {
   font-size: 13px !important;
 }
 
