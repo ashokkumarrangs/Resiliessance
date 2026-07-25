@@ -1209,7 +1209,7 @@ function SummaryRow({ label, value, color }: any) {
     <div className="flex items-center justify-between p-6">
        <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">{label}</span>
        <span className={`text-md font-black text-right ${color || 'text-foreground'}`}>{value || '—'}</span>
-    </PageWrapper>
+    </div>
   );
 }
 
