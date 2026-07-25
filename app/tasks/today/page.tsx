@@ -789,11 +789,14 @@ export default function TaskManagerPage() {
       <TaskCompletionModal 
         isOpen={taskModalOpen} 
         onClose={() => setTaskModalOpen(false)} 
-        onComplete={async (completedAt) => {
+        onConfirm={async (completedAt) => {
           if (activeTask) {
             await executeStatusChange(activeTask, 'Completed', completedAt);
           }
+          setTaskModalOpen(false);
+          setActiveTask(null);
         }} 
+        taskTitle={activeTask?.task || ""}
       />
     </PageWrapper>
   );
