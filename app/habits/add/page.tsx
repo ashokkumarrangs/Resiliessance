@@ -322,9 +322,6 @@ export default function HabitConfigPage() {
               <h3 className="text-base font-black text-foreground truncate leading-tight">
                 {formData.habit_name || "Name your Habit"}
               </h3>
-              <p className="text-xs font-bold text-muted-foreground/60 mt-0.5">
-                Target: {formData.input_type === "boolean" ? "Check-off" : `${formData.target_value} ${formData.unit || ""}`}
-              </p>
             </div>
 
             <div className="shrink-0 flex flex-col items-end gap-1">
@@ -434,8 +431,8 @@ export default function HabitConfigPage() {
                   <div className="space-y-4">
                      <Label className="text-sm font-black text-foreground">How do you log it? <span className="text-primary">*</span></Label>
                      <div className="grid grid-cols-5 gap-1.5">
-                        <InputTypeBtn icon={<Timer size={16}/>} label="Duration" sub="HH:MM" active={formData.input_type === 'duration'} onClick={() => handleChange('input_type', 'duration')} />
-                        <InputTypeBtn icon={<Clock size={16}/>} label="Time" sub="HH:MM" active={formData.input_type === 'time'} onClick={() => handleChange('input_type', 'time')} />
+                        <InputTypeBtn icon={<Timer size={16}/>} label="Duration" active={formData.input_type === 'duration'} onClick={() => handleChange('input_type', 'duration')} />
+                        <InputTypeBtn icon={<Clock size={16}/>} label="Time" active={formData.input_type === 'time'} onClick={() => handleChange('input_type', 'time')} />
                         <InputTypeBtn icon={<Hash size={16}/>} label="Number" active={formData.input_type === 'number'} onClick={() => handleChange('input_type', 'number')} />
                          {formData.frequency !== 'event' && (
                            <InputTypeBtn icon={<CheckSquare size={16}/>} label="Yes/No" active={formData.input_type === 'boolean'} onClick={() => handleChange('input_type', 'boolean')} />
@@ -1092,14 +1089,23 @@ function InputTypeBtn({ icon, label, sub, active, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className={`flex flex-col items-center justify-center gap-3 p-3 pt-4 rounded-md transition-all border-none shadow-sm relative group ${active ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105 z-10' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}
+      type="button"
+      className={`h-11 px-4 rounded-xl border flex items-center gap-2.5 font-black text-xs transition-all active:scale-[0.97] relative group ${
+        active 
+          ? 'bg-primary text-primary-foreground border-transparent shadow-lg scale-[1.02] z-10' 
+          : 'bg-muted/15 border-border/40 text-muted-foreground hover:bg-muted/30 hover:text-foreground hover:border-border/60'
+      }`}
     >
-      <div className={`p-2 rounded-md transition-colors ${active ? 'bg-white/20 text-primary-foreground' : 'bg-card shadow-sm text-muted-foreground group-hover:text-primary'}`}>
+      <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${
+        active 
+          ? 'bg-white/10 text-primary-foreground' 
+          : 'bg-card border border-border/20 shadow-sm text-muted-foreground'
+      }`}>
         {icon}
       </div>
-      <div className="flex flex-col items-center gap-0.5">
-          <span className="text-[9px] font-black uppercase tracking-tight leading-none">{label}</span>
-          {sub && <span className="text-[6px] font-mono opacity-60 leading-none">{sub}</span>}
+      <div className="flex flex-col items-start leading-none gap-0.5">
+        <span className="text-[9px] font-black uppercase tracking-wider">{label}</span>
+        {sub && <span className="text-[6px] font-mono opacity-50">{sub}</span>}
       </div>
     </button>
   );
@@ -1109,12 +1115,21 @@ function ConditionBtn({ icon, label, active, onClick, color }: any) {
   return (
     <button 
       onClick={onClick}
-      className={`h-11 px-6 rounded-md flex items-center gap-2.5 font-black text-xs transition-all border-none shadow-sm
-        ${active ? `${color} text-primary-foreground shadow-lg scale-105` : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}
+      className={`h-11 px-5 rounded-xl border flex items-center gap-3 font-black text-xs transition-all active:scale-[0.97] ${
+        active 
+          ? `${color} text-primary-foreground border-transparent shadow-lg scale-[1.02] z-10` 
+          : 'bg-muted/15 border-border/40 text-muted-foreground hover:bg-muted/30 hover:text-foreground hover:border-border/60'
+      }`}
     >
-      <div className={`p-1 rounded-md ${active ? 'bg-white/20' : 'bg-card'}`}>{icon}</div>
+      <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${
+        active 
+          ? 'bg-white/10 text-primary-foreground' 
+          : 'bg-card border border-border/20 shadow-sm text-muted-foreground'
+      }`}>
+        {icon}
+      </div>
       {label}
-      {active && <div className="ml-auto w-1.5 h-1.5 rounded-md bg-white animate-pulse" />}
+      {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
     </button>
   );
 }
