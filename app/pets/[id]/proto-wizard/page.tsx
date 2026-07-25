@@ -281,7 +281,6 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
           </div>
         </div>
       )}
-      </div>
     </PageWrapper>
   );
 }

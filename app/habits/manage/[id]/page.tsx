@@ -370,7 +370,7 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
       reportHref="/reports/habits"
       sectionTabs={HABIT_TABS}
     ><RefreshCw className="w-8 h-8 animate-spin text-muted-foreground/20" />
-    </div>
+    </PageWrapper>
   );
 
   return (

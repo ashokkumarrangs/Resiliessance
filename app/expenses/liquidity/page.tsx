@@ -137,6 +137,7 @@ export default function LiquidityPage() {
           </>
         )}
       </div>
+      </div>
 
       {/* Detail Overlay */}
       {selectedAccount && (

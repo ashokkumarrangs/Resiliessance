@@ -162,9 +162,9 @@ export default function CorrelationsPage() {
   };
 
   return (
-    <PageWrapper title="Intelligence" sectionTabs={REPORT_TABS} headerActions={{<span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+    <PageWrapper title="Intelligence" sectionTabs={REPORT_TABS} headerActions={<span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
           {loading?"Loading…":`${dataPoints.length} pts`}
-        </span>}}>
+        </span>}>
       
 
       {/* Full reports nav bar */}

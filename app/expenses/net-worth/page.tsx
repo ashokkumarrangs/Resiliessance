@@ -139,7 +139,8 @@ export default function NetWorthPage() {
               <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
               <span>Update Valuations</span>
            </button>
-        </div>
+         </div>
+       </div>
       </PageWrapper>
   );
 }

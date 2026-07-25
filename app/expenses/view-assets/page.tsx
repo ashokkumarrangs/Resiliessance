@@ -136,6 +136,7 @@ export default function ViewAssetsPage() {
           })
         )}
       </div>
+      </div>
 
       {selectedAsset && (
         <div 

@@ -123,6 +123,7 @@ export default function ViewLiabilityPage() {
           ))
         )}
       </div>
+      </div>
 
       {selectedLiability && (
         <div 
