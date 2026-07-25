@@ -425,7 +425,7 @@ export default function TaskManagerPage() {
                               onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
                               onDragOver={(e) => e.preventDefault()}
                               onDrop={() => isRoot && handleTaskDrop(idx, parentId, depth)}
-                              className={`grid gap-2 items-center bg-card border border-border/40 border-l-4 rounded-xl px-2 h-14 shadow-sm transition-all group ${accentClass} ${gridClass}`}
+                              className={`grid gap-2 items-center bg-card border border-border/40 border-l-4 rounded-xl px-2 h-14 shadow-sm transition-all group ${accentClass}`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}
                             >
                                 {/* Drag Handle */}
                                 <div className="p-1 text-muted-foreground/20 hover:text-primary rounded-md cursor-grab active:cursor-grabbing">
@@ -527,7 +527,7 @@ export default function TaskManagerPage() {
 
                         return (
                             <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
-                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
+                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />
                                     </div>
@@ -622,7 +622,7 @@ export default function TaskManagerPage() {
                               onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
                               onDragOver={(e) => e.preventDefault()}
                               onDrop={() => isRoot && handleTaskDrop(idx, null, 0)}
-                              className={`grid gap-2 items-center bg-card border border-border/40 border-l-4 rounded-xl px-2 h-14 shadow-sm transition-all group ${accentClass} ${gridClass}`}
+                              className={`grid gap-2 items-center bg-card border border-border/40 border-l-4 rounded-xl px-2 h-14 shadow-sm transition-all group ${accentClass}`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}
                             >
                                 {/* Drag Handle */}
                                 <div className="p-1 text-muted-foreground/20 hover:text-primary rounded-md cursor-grab active:cursor-grabbing">
@@ -681,7 +681,7 @@ export default function TaskManagerPage() {
 
                         return (
                             <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
-                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
+                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />
                                     </div>

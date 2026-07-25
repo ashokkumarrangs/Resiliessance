@@ -528,7 +528,7 @@ export default function TaskManagerPage() {
 
                         return (
                             <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
-                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
+                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />
                                     </div>
@@ -683,7 +683,7 @@ export default function TaskManagerPage() {
 
                         return (
                             <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
-                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group ${gridClass}`}>
+                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}>
                                     <div className="p-1 text-muted-foreground/20">
                                         <GripVertical size={16} />
                                     </div>

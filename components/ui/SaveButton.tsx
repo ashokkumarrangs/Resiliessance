@@ -18,7 +18,7 @@ export function SaveButton({
   return (
     <button
       disabled={isSaving || disabled}
-      className={`w-full h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none disabled:active:scale-100 mt-8 ${className}`}
+      className={`w-full h-11 bg-emerald-600 text-white rounded-md font-bold text-sm shadow flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none disabled:active:scale-100 ${className}`}
       {...props}
     >
       {isSaving ? (

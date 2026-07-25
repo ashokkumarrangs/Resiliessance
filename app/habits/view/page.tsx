@@ -358,19 +358,19 @@ export default function HabitViewPage() {
                                   <div className="min-w-0">
                                      <div className="font-bold text-foreground truncate text-sm">{habit.habit_name}</div>
                                      <div className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
-                                        <span>{habit.frequency}</span>
-                                        <span>•</span>
-                                        <span>{habit.input_type}</span>
+                                        {habit.input_type === 'boolean' 
+                                          ? `Target: ${habit.target_value === 0 ? 'No' : 'Yes'}`
+                                          : habit.condition_type === 'between'
+                                          ? `Target: ${habit.suc_min}-${habit.suc_max} ${habit.unit || ''}`
+                                          : `Target: ${habit.target_value} ${habit.unit || ''}`}
                                      </div>
                                   </div>
                                </div>
 
                                <div className="flex items-center gap-3 shrink-0">
-                                  {log.value && (
-                                     <span className="text-xs font-black text-muted-foreground/80 font-mono">
-                                       {log.value} {habit.unit}
-                                     </span>
-                                  )}
+                                   <span className="text-xs font-black text-muted-foreground/80 font-mono">
+                                     {log.value ? `${log.value} ${habit.unit || ''}` : '--'}
+                                   </span>
                                   
                                   <div className={`px-2.5 py-1 rounded-md text-[9px] font-black uppercase border tracking-wider flex items-center gap-1.5 ${styles}`}>
                                      {getStatusIcon(log.status, 10)}

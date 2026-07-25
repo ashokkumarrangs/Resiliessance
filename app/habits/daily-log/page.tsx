@@ -270,15 +270,22 @@ export default function HabitDailyPage() {
                                <div key={habit.id} className={`flex items-center gap-2 group/row p-2 rounded-xl transition-all ${styles.bg} ${styles.anim}`}>
                                  <div className="w-8 flex flex-col items-center shrink-0 opacity-50"><span className="text-lg">{habit.emoji}</span></div>
                                  <div className="flex-1 min-w-0 pr-2">
-                                   <div className="flex items-center gap-2">
-                                     <div className={`text-sm transition-all truncate ${styles.text} ${styles.weight}`}>
-                                       {habit.habit_name}
-                                     </div>
-                                     <div className="shrink-0">
-                                       {getStatusIcon(status, 16)}
-                                     </div>
-                                   </div>
-                                 </div>
+                                    <div className="flex items-center gap-2">
+                                      <div className={`text-sm transition-all truncate ${styles.text} ${styles.weight}`}>
+                                        {habit.habit_name}
+                                      </div>
+                                      <div className="shrink-0">
+                                        {getStatusIcon(status, 16)}
+                                      </div>
+                                    </div>
+                                    <div className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-wider mt-0.5">
+                                      {habit.input_type === 'boolean' 
+                                        ? `Target: ${habit.target_value === 0 ? 'No' : 'Yes'}`
+                                        : habit.condition_type === 'between'
+                                        ? `Target: ${habit.suc_min}-${habit.suc_max} ${habit.unit || ''}`
+                                        : `Target: ${habit.target_value} ${habit.unit || ''}`}
+                                    </div>
+                                  </div>
 
                            <div className="flex items-center gap-1.5 shrink-0 ml-auto">
                               {habit.frequency === 'event' ? (

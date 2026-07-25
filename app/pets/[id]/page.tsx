@@ -5,11 +5,11 @@ import { PET_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 import { supabase } from "@/lib/supabase";
 import { format, differenceInYears, differenceInMonths } from "date-fns";
-import { Dog, PlusCircle, Activity, Sparkles, Trees, Shield, GraduationCap, Trash2 } from "lucide-react";
+import { Dog, PlusCircle, Activity, Sparkles, Trees, Shield, GraduationCap, Trash2, Tag, ListTodo, CalendarDays, Clock, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { SearchableSelect } from "@/components/SearchableSelect";
+import { SaveButton } from "@/components/ui/SaveButton";
 const DEFAULT_CATEGORIES: Record<string, string[]> = {
   Grooming: ['Bath', 'Nail Trim', 'Teeth Brushing', 'Ear Cleaning', 'Haircut', 'Coat Brushing'],
   Activities: ['Beach Trip', 'Park Visit', 'Hike', 'Playdate', 'Swimming', 'Long Car Ride', 'Time Apart'],
@@ -207,38 +207,35 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
              </div>
 
              <div className="space-y-4 relative z-10 w-full min-w-0">
-                {/* Row 1: Category & Subcategory */}
-                <div className="flex w-full gap-3 relative z-30">
-                  <div className="flex-1 min-w-0 space-y-1.5">
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">Category</label>
+                {/* Row 1: Category & Sub-Category */}
+                <div className="grid grid-cols-2 gap-4 relative z-30">
+                  <div className="space-y-2">
                     <SearchableSelect 
                       label="Category"
-                      hideLabel
+                      headerIcon={<Tag size={16} className="shrink-0" />}
                       value={entryCategory}
                       onChange={val => { setEntryCategory(val); setEntrySubCategory(""); }}
                       options={['Grooming', 'Activities', 'Wellness', 'Training']}
                     />
                   </div>
-                  <div className="flex-1 min-w-0 space-y-1.5">
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">Subcategory</label>
-                    <div className="bg-background rounded-xl p-0.5 border shadow-sm">
-                       <SearchableSelect
-                          label="Subcategory / Log Type"
-                          hideLabel
-                          options={currentOptions}
-                          value={entrySubCategory}
-                          onChange={setEntrySubCategory}
-                          placeholder={`Select/Type...`}
-                          createLabel="Create: {search}"
-                       />
-                    </div>
+                  <div className="space-y-2">
+                    <SearchableSelect
+                       label="Sub-Category"
+                       headerIcon={<ListTodo size={16} className="shrink-0" />}
+                       options={currentOptions}
+                       value={entrySubCategory}
+                       onChange={setEntrySubCategory}
+                       placeholder={`Select/Type...`}
+                       createLabel="Create: {search}"
+                    />
                   </div>
                 </div>
 
                 {/* Row 2: Date & Time */}
-                <div className="flex w-full gap-3 relative z-20">
-                  <div className="flex-1 min-w-0 space-y-1.5">
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">
+                <div className="grid grid-cols-2 gap-4 relative z-20">
+                  <div className="space-y-2">
+                    <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                      <CalendarDays size={16} className="shrink-0" />
                       {entryCategory === 'Wellness' ? 'Administered Date' : 'Date'}
                     </label>
                     <input 
@@ -248,8 +245,11 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
                        className="w-full min-w-0 bg-muted p-3 h-11 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm text-sm" 
                     />
                   </div>
-                  <div className="w-[100px] shrink-0 space-y-1.5">
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest block">Time</label>
+                  <div className="space-y-2">
+                    <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                      <Clock size={16} className="shrink-0" />
+                      Time
+                    </label>
                     <input 
                        type="time" 
                        value={entryTime} 
@@ -263,8 +263,8 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
                 {/* Next Planned Date (Conditional) */}
                 {entryCategory === 'Wellness' && (
                   <div className="animate-in slide-in-from-top-2 fade-in bg-rose-500/5 p-4 rounded-xl border border-rose-500/10">
-                    <label className="text-xs font-bold text-rose-500 uppercase tracking-widest mb-1.5 flex items-center gap-1">
-                       <Shield size={12} /> Next Due / Planned Date
+                    <label className="text-sm font-black text-rose-500 flex items-center gap-1.5 leading-none mb-2">
+                       <Shield size={16} className="shrink-0" /> Next Due / Planned Date
                     </label>
                     <input 
                        type="date" 
@@ -277,8 +277,11 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
                 )}
 
                 {/* Notes */}
-                <div>
-                   <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1.5 block">Notes (Optional)</label>
+                <div className="mt-5 space-y-2">
+                   <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                     <FileText size={16} className="shrink-0" />
+                     Notes (Optional)
+                   </label>
                    <textarea 
                      value={entryNotes} 
                      onChange={e => setEntryNotes(e.target.value)} 
@@ -287,14 +290,15 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
                    />
                 </div>
 
-                <button 
-                  onClick={handleUnifiedSubmit} 
-                  disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground p-4 rounded-xl font-black uppercase tracking-widest shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? "Saving..." : "Save Entry"}
-                </button>
-             </div>
+                 <div className="flex justify-center pt-6">
+                   <SaveButton 
+                     onClick={handleUnifiedSubmit}
+                     isSaving={isSubmitting}
+                     label="Save Entry"
+                     className="w-full max-w-xs h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md font-bold text-sm shadow"
+                   />
+                 </div>
+              </div>
           
           {/* Recent History Preview */}
           <div className="px-2">
