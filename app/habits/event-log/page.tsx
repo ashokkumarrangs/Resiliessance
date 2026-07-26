@@ -28,6 +28,11 @@ interface HabitConfig {
   frequency: string;
   emoji: string;
   habit_color: string;
+  condition_type?: string;
+  direction?: string;
+  suc_min?: number;
+  suc_max?: number;
+  target_value?: number;
 }
 
 interface EventAggregate {
