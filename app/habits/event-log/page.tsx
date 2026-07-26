@@ -327,7 +327,7 @@ export default function HabitEventLogPage() {
                                 Target: {(() => {
                                   const isEvent = habit.frequency === 'event';
                                   const isCount = isEvent && habit.condition_type?.endsWith('_count');
-                                  let baseCond = isCount ? habit.condition_type.replace('_count', '') : habit.condition_type;
+                                  let baseCond = isCount ? (habit.condition_type || '').replace('_count', '') : habit.condition_type;
                                   
                                   let suffix = habit.unit ? ` ${habit.unit}` : '';
                                   if (isEvent) {
