@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Activity, CheckCircle2, Circle, Clock, Dumbbell,
   CheckSquare, ChevronLeft, ChevronRight, Wallet, TrendingUp, TrendingDown,
-  GraduationCap,
+  GraduationCap, Plus,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { PageWrapper } from "@/components/PageWrapper";
@@ -32,8 +32,9 @@ function formatDisplayDate(dateStr: string): string {
 
 // ── Sub-nav tabs ──────────────────────────────────────────────────────────────
 const SUB_TABS = [
-  { title:"Timeline",       href:"/activity-timeline",     icon:<Activity size={15}/> },
-  { title:"Day at a Glance",href:"/activity-timeline/day", icon:<Clock size={15}/> },
+  { title:"Timeline",        href:"/activity-timeline",              icon:<Activity size={15}/> },
+  { title:"Day at a Glance", href:"/activity-timeline/day",          icon:<Clock size={15}/> },
+  { title:"Add Activity",    href:"/activity-timeline/add-activity", icon:<Plus size={15}/> },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -16,6 +16,8 @@ import {
   Clock,
   Dog,
   Package,
+  Plus,
+  Star,
 } from "lucide-react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { SectionNav } from "@/components/SectionNav";
@@ -131,7 +133,8 @@ export default function ActivityTimelinePage() {
         { data: petProfiles },
         { data: inventoryItems },
         { data: inventoryLocations },
-        { data: habitsConfig }
+        { data: habitsConfig },
+        { data: activityLogs }
       ] = await Promise.all([
         supabase.from('history_expenses').select('*').eq('date', dateStr),
         supabase.from('habit_data').select('*').eq('date', dateStr),
@@ -149,7 +152,8 @@ export default function ActivityTimelinePage() {
         supabase.from('pet_profile').select('id, name'),
         supabase.from('inventory_items').select('*'),
         supabase.from('inventory_locations').select('id, name'),
-        supabase.from('habit_config').select('habit_name, input_type')
+        supabase.from('habit_config').select('habit_name, input_type'),
+        supabase.from('activity_logs').select('*').eq('date', dateStr),
       ]);
 
 
@@ -429,6 +433,34 @@ export default function ActivityTimelinePage() {
         });
       }
 
+      // Activity Logs
+      if (activityLogs) {
+        const categoryColor: Record<string, string> = {
+          "Social": "bg-blue-500 text-white",
+          "Food & Dining": "bg-rose-500 text-white",
+          "Travel": "bg-amber-500 text-white",
+          "Celebration": "bg-purple-500 text-white",
+          "Fitness": "bg-emerald-500 text-white",
+          "Entertainment": "bg-indigo-500 text-white",
+          "Work": "bg-slate-500 text-white",
+          "Other": "bg-gray-400 text-white",
+        };
+        activityLogs.forEach((a: any) => {
+          const subtitle = [a.location, a.people ? `with ${a.people}` : null, a.occasion, a.mood].filter(Boolean).join(' · ');
+          formattedEvents.push({
+            id: a.id,
+            timestamp: a.created_at || a.date,
+            sortMs: getSortMs(dateStr, a.time, a.created_at),
+            time: formatTime(a.created_at, a.time),
+            type: "Activity",
+            title: a.activity || 'Activity',
+            value: subtitle,
+            icon: <Star size={14} />,
+            colorClass: categoryColor[a.category] || "bg-violet-500 text-white",
+          });
+        });
+      }
+
       // Sort events chronologically
       formattedEvents.sort((a, b) => (a.sortMs || 0) - (b.sortMs || 0));
 
@@ -471,8 +503,9 @@ export default function ActivityTimelinePage() {
 
         {/* Sub-nav: Timeline | Day at a Glance */}
         <SectionNav tabs={[
-          { title: "Timeline", href: "/activity-timeline", icon: <Activity size={15} /> },
-          { title: "Day at a Glance", href: "/activity-timeline/day", icon: <Clock size={15} /> },
+          { title: "Timeline",        href: "/activity-timeline",              icon: <Activity size={15} /> },
+          { title: "Day at a Glance", href: "/activity-timeline/day",          icon: <Clock size={15} /> },
+          { title: "Add Activity",    href: "/activity-timeline/add-activity", icon: <Plus size={15} /> },
         ]} />
 
         {/* Date Switcher Bar */}

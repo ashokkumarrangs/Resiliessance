@@ -357,12 +357,42 @@ export default function HabitViewPage() {
                                   </div>
                                   <div className="min-w-0">
                                      <div className="font-bold text-foreground truncate text-sm">{habit.habit_name}</div>
-                                     <div className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
-                                        {habit.input_type === 'boolean' 
-                                          ? `Target: ${habit.target_value === 0 ? 'No' : 'Yes'}`
-                                          : habit.condition_type === 'between'
-                                          ? `Target: ${habit.suc_min}-${habit.suc_max} ${habit.unit || ''}`
-                                          : `Target: ${habit.target_value} ${habit.unit || ''}`}
+                                     <div className="text-[8px] font-bold text-muted-foreground mt-0.5 normal-case">
+                                        Target: {(() => {
+                                          const isEvent = habit.frequency === 'event';
+                                          const isCount = isEvent && habit.condition_type?.endsWith('_count');
+                                          let baseCond = isCount ? habit.condition_type.replace('_count', '') : habit.condition_type;
+                                          
+                                          let suffix = habit.unit ? ` ${habit.unit}` : '';
+                                          if (isEvent) {
+                                            if (isCount) {
+                                              suffix = ' times';
+                                            } else {
+                                              suffix = habit.unit ? ` ${habit.unit} (Sum)` : ' (Sum)';
+                                            }
+                                          }
+                                          
+                                          if (baseCond === 'above_below') {
+                                            baseCond = habit.direction === 'less' ? 'at_most_n' : 'at_least_n';
+                                          }
+                                          
+                                          if (habit.input_type === 'boolean') {
+                                            return habit.target_value === 0 ? 'No' : 'Yes';
+                                          }
+                                          if (baseCond === 'between') {
+                                            return `Between ${habit.suc_min} and ${habit.suc_max}${suffix}`;
+                                          }
+                                          if (baseCond === 'at_least_n') {
+                                            return `At least ${habit.target_value}${suffix}`;
+                                          }
+                                          if (baseCond === 'at_most_n') {
+                                            return `At most ${habit.target_value}${suffix}`;
+                                          }
+                                          if (baseCond === 'exactly_n') {
+                                            return `Exactly ${habit.target_value}${suffix}`;
+                                          }
+                                          return `${habit.target_value}${suffix}`;
+                                        })()}
                                      </div>
                                   </div>
                                </div>

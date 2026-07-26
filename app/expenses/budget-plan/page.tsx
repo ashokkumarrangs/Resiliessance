@@ -292,8 +292,8 @@ function BudgetPlanContent() {
       <div className={`space-y-6 w-full transition-opacity duration-300 ${isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
         
         {/* Comparison Config (Restored Selectors) */}
-        <div className="bg-card rounded-2xl p-6 shadow-sm border border-border/40 space-y-6">
-            <div className="grid grid-cols-2 gap-4">
+         <div className="bg-card rounded-2xl p-6 shadow-sm border border-border/40">
+            <div className="grid grid-cols-3 gap-4">
               <div className="flex flex-col gap-1.5">
                 <span className="text-[9px] font-black text-muted-foreground/60 ml-1">Reference Plan</span>
                 <div className="bg-muted rounded-lg p-3 flex items-center shadow-inner">
@@ -323,30 +323,29 @@ function BudgetPlanContent() {
                   </Select>
                 </div>
               </div>
-           </div>
 
-           <div className="flex flex-col gap-1.5">
-              <span className="text-[9px] font-black text-indigo-600 ml-1">Target Period</span>
-              <div className="bg-indigo-50/30 rounded-lg p-4 flex items-center justify-between border border-indigo-100/50 shadow-inner">
-                 <Select 
-                   value={targetMonth}
-                   onChange={(e) => setTargetMonth(e.target.value)}
-                   className="bg-transparent border-none p-0 text-lg font-black text-indigo-600 focus:ring-0 appearance-none tracking-tighter cursor-pointer"
-                 >
-                   {targetMonthOptions.map(opt => (
-                     <option key={opt.value} value={opt.value}>{opt.label}</option>
-                   ))}
-                 </Select>
-                 <TrendingUp size={20} className="text-indigo-600 opacity-30" />
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[9px] font-black text-muted-foreground/60 ml-1">Target Period</span>
+                <div className="bg-muted rounded-lg p-3 flex items-center shadow-inner">
+                  <Select 
+                    value={targetMonth}
+                    onChange={(e) => setTargetMonth(e.target.value)}
+                    className="w-full bg-transparent border-none p-0 text-xs font-black text-foreground focus:ring-0 appearance-none tracking-tighter cursor-pointer"
+                  >
+                    {targetMonthOptions.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </Select>
+                </div>
               </div>
-           </div>
-        </div>
+            </div>
+         </div>
         
         {/* Summary Cards: Income and Total Budget */}
         <div className="space-y-4 mb-8">
            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 flex items-center justify-between">
               <div className="flex flex-col gap-1">
-                 <h2 className="text-[20px] font-medium text-emerald-600 tracking-tighter leading-none">Total Income</h2>
+                 <h2 className="text-[20px] font-medium text-foreground tracking-tighter leading-none">Total Income</h2>
                  <span className="text-[9px] font-black text-muted-foreground/40 tracking-[2px]">Planned revenue</span>
               </div>
               <TripleBox 
@@ -361,7 +360,7 @@ function BudgetPlanContent() {
 
            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 flex items-center justify-between">
               <div className="flex flex-col gap-1">
-                 <h2 className="text-[20px] font-medium text-indigo-600 tracking-tighter leading-none">Total Budget</h2>
+                 <h2 className="text-[20px] font-medium text-foreground tracking-tighter leading-none">Total Budget</h2>
                  <span className="text-[9px] font-black text-muted-foreground/40 tracking-[2px]">Planned expenses</span>
               </div>
               <TripleBox 
@@ -376,88 +375,188 @@ function BudgetPlanContent() {
         </div>
 
         {/* Categories List */}
-        <div className="space-y-4">
-          {Object.entries(budgetData).map(([cat, subs]) => {
-            const isIncome = cat === "Income" || incomeCats.has(cat);
-
-            const catTotals = totals.cats[cat];
-            const catValue = isIncome ? catTotals.incomePlan : catTotals.expensePlan;
-            const grandTotal = isIncome ? totals.grandIncome : totals.grandExpense;
-            const catPercent = grandTotal > 0 ? Math.round((catValue / grandTotal) * 100) : 0;
-            
-            let catPrevBudget = 0;
-            let catPrevActual = 0;
-            Object.values(subs).forEach(item => {
-              catPrevBudget += item.prevBudget;
-              catPrevActual += item.prevActual;
-            });
-
+        <div className="space-y-6">
+          {/* Income Categories Section */}
+          {(() => {
+            const incomeEntries = Object.entries(budgetData).filter(([cat]) => cat === "Income" || incomeCats.has(cat));
+            if (incomeEntries.length === 0) return null;
             return (
-              <div 
-                key={cat} 
-                className="bg-card rounded-2xl shadow-sm border border-border/40 overflow-hidden hover:border-indigo-600/30 transition-all group"
-              >
-                {/* Category Row */}
-                <div className="p-5 cursor-pointer" onClick={() => toggleExpand(cat)}>
-                   <div className="flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between mb-3">
-                      <h2 className="text-[20px] font-medium text-foreground tracking-tighter leading-none">
-                        {cat}
-                      </h2>
-                      <TripleBox 
-                        val1={catPrevBudget} 
-                        val2={catPrevActual} 
-                        val3={catValue}
-                        readOnly
-                        highlight={isIncome ? "text-emerald-600" : "text-indigo-600"}
-                        isCategory
-                      />
-                   </div>
+              <div className="space-y-4">
+                <h3 className="text-xs font-black text-muted-foreground/60 uppercase tracking-widest ml-1">Income Categories</h3>
+                {incomeEntries.map(([cat, subs]) => {
+                  const isIncome = true;
+                  const catTotals = totals.cats[cat];
+                  const catValue = catTotals ? catTotals.incomePlan : 0;
+                  const grandTotal = totals.grandIncome;
+                  const catPercent = grandTotal > 0 ? Math.round((catValue / grandTotal) * 100) : 0;
+                  
+                  let catPrevBudget = 0;
+                  let catPrevActual = 0;
+                  Object.values(subs).forEach(item => {
+                    catPrevBudget += item.prevBudget;
+                    catPrevActual += item.prevActual;
+                  });
 
-                   {/* Surgical Progress Bar (Category vs Total) */}
-                   <div className="flex flex-col gap-1 mt-2">
-                     <span className="text-[9px] font-black text-indigo-600/60 ml-1">{catPercent}% weight</span>
-                     <div className="h-1 bg-muted w-full relative rounded-full overflow-hidden">
-                       <div 
-                         className="absolute top-0 left-0 h-full transition-all bg-indigo-600" 
-                         style={{ width: `${catPercent}%` }}
-                       />
-                     </div>
-                   </div>
-                </div>
-
-                {/* Sub-categories */}
-                {expanded[cat] && (
-                  <div className="p-5 pt-2 space-y-6 bg-muted/10 border-t border-border/40">
-                    <TripleBox headerMode />
-                    {Object.entries(subs).map(([sub, item]) => {
-                      const subPercent = catValue > 0 ? Math.round((item.currentPlan / catValue) * 100) : 0;
-                      return (
-                        <div key={sub} className="flex flex-col gap-2">
-                          <div className="flex flex-col items-start gap-1.5 sm:flex-row sm:items-center sm:justify-between">
-                            <div className="flex flex-col gap-0.5">
-                              <span className="text-[14px] font-medium text-foreground tracking-tight leading-none">{sub}</span>
-                            </div>
+                  return (
+                    <div 
+                      key={cat} 
+                      className="bg-card rounded-2xl shadow-sm border border-border/40 overflow-hidden hover:border-indigo-600/30 transition-all group"
+                    >
+                      {/* Category Row */}
+                      <div className="p-5 cursor-pointer" onClick={() => toggleExpand(cat)}>
+                         <div className="flex items-center justify-between gap-4 w-full mb-3">
+                            <h2 className="text-[20px] font-medium text-foreground tracking-tighter leading-none">
+                              {cat}
+                            </h2>
                             <TripleBox 
-                              val1={item.prevBudget}
-                              val2={item.prevActual}
-                              val3={item.currentPlan}
-                              onChange={(field, val) => handleValueChange(cat, sub, field, val)}
+                              val1={catPrevBudget} 
+                              val2={catPrevActual} 
+                              val3={catValue}
+                              readOnly
+                              highlight="text-emerald-600"
+                              isCategory
                             />
-                          </div>
-                          <div className="flex flex-col gap-1">
-                             <span className="text-[8px] font-black text-muted-foreground/40 ml-0.5">{subPercent}% weight</span>
-                             <div className="w-full h-0.5 bg-muted rounded-full overflow-hidden">
-                                <div className="h-full transition-all bg-indigo-600" style={{ width: `${subPercent}%` }} />
-                             </div>
-                          </div>
+                         </div>
+
+                         {/* Surgical Progress Bar (Category vs Total) */}
+                         <div className="flex flex-col gap-1 mt-2">
+                           <span className="text-[9px] font-black text-indigo-600/60 ml-1">{catPercent}% weight</span>
+                           <div className="h-1 bg-muted w-full relative rounded-full overflow-hidden">
+                             <div 
+                               className="absolute top-0 left-0 h-full transition-all bg-indigo-600" 
+                               style={{ width: `${catPercent}%` }}
+                             />
+                           </div>
+                         </div>
+                      </div>
+
+                      {/* Sub-categories */}
+                      {expanded[cat] && (
+                        <div className="p-5 pt-2 space-y-6 bg-muted/10 border-t border-border/40">
+                          <TripleBox headerMode />
+                          {Object.entries(subs).map(([sub, item]) => {
+                            const subPercent = catValue > 0 ? Math.round((item.currentPlan / catValue) * 100) : 0;
+                            return (
+                              <div key={sub} className="flex flex-col gap-2">
+                                 <div className="flex items-center justify-between gap-4 w-full">
+                                  <div className="flex flex-col gap-0.5">
+                                    <span className="text-[14px] font-medium text-foreground tracking-tight leading-none">{sub}</span>
+                                  </div>
+                                  <TripleBox 
+                                    val1={item.prevBudget}
+                                    val2={item.prevActual}
+                                    val3={item.currentPlan}
+                                    onChange={(field, val) => handleValueChange(cat, sub, field, val)}
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                   <span className="text-[8px] font-black text-muted-foreground/40 ml-0.5">{subPercent}% weight</span>
+                                   <div className="w-full h-0.5 bg-muted rounded-full overflow-hidden">
+                                      <div className="h-full transition-all bg-indigo-600" style={{ width: `${subPercent}%` }} />
+                                   </div>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             );
-          })}
+          })()}
+
+          {/* Expense Categories Section */}
+          {(() => {
+            const expenseEntries = Object.entries(budgetData).filter(([cat]) => cat !== "Income" && !incomeCats.has(cat));
+            if (expenseEntries.length === 0) return null;
+            return (
+              <div className="space-y-4">
+                <h3 className="text-xs font-black text-muted-foreground/60 uppercase tracking-widest ml-1">Expense Categories</h3>
+                {expenseEntries.map(([cat, subs]) => {
+                  const isIncome = false;
+                  const catTotals = totals.cats[cat];
+                  const catValue = catTotals ? catTotals.expensePlan : 0;
+                  const grandTotal = totals.grandExpense;
+                  const catPercent = grandTotal > 0 ? Math.round((catValue / grandTotal) * 100) : 0;
+                  
+                  let catPrevBudget = 0;
+                  let catPrevActual = 0;
+                  Object.values(subs).forEach(item => {
+                    catPrevBudget += item.prevBudget;
+                    catPrevActual += item.prevActual;
+                  });
+
+                  return (
+                    <div 
+                      key={cat} 
+                      className="bg-card rounded-2xl shadow-sm border border-border/40 overflow-hidden hover:border-indigo-600/30 transition-all group"
+                    >
+                      {/* Category Row */}
+                      <div className="p-5 cursor-pointer" onClick={() => toggleExpand(cat)}>
+                         <div className="flex items-center justify-between gap-4 w-full mb-3">
+                            <h2 className="text-[20px] font-medium text-foreground tracking-tighter leading-none">
+                              {cat}
+                            </h2>
+                            <TripleBox 
+                              val1={catPrevBudget} 
+                              val2={catPrevActual} 
+                              val3={catValue}
+                              readOnly
+                              highlight="text-indigo-600"
+                              isCategory
+                            />
+                         </div>
+
+                         {/* Surgical Progress Bar (Category vs Total) */}
+                         <div className="flex flex-col gap-1 mt-2">
+                           <span className="text-[9px] font-black text-indigo-600/60 ml-1">{catPercent}% weight</span>
+                           <div className="h-1 bg-muted w-full relative rounded-full overflow-hidden">
+                             <div 
+                               className="absolute top-0 left-0 h-full transition-all bg-indigo-600" 
+                               style={{ width: `${catPercent}%` }}
+                             />
+                           </div>
+                         </div>
+                      </div>
+
+                      {/* Sub-categories */}
+                      {expanded[cat] && (
+                        <div className="p-5 pt-2 space-y-6 bg-muted/10 border-t border-border/40">
+                          <TripleBox headerMode />
+                          {Object.entries(subs).map(([sub, item]) => {
+                            const subPercent = catValue > 0 ? Math.round((item.currentPlan / catValue) * 100) : 0;
+                            return (
+                              <div key={sub} className="flex flex-col gap-2">
+                                 <div className="flex items-center justify-between gap-4 w-full">
+                                  <div className="flex flex-col gap-0.5">
+                                    <span className="text-[14px] font-medium text-foreground tracking-tight leading-none">{sub}</span>
+                                  </div>
+                                  <TripleBox 
+                                    val1={item.prevBudget}
+                                    val2={item.prevActual}
+                                    val3={item.currentPlan}
+                                    onChange={(field, val) => handleValueChange(cat, sub, field, val)}
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                   <span className="text-[8px] font-black text-muted-foreground/40 ml-0.5">{subPercent}% weight</span>
+                                   <div className="w-full h-0.5 bg-muted rounded-full overflow-hidden">
+                                      <div className="h-full transition-all bg-indigo-600" style={{ width: `${subPercent}%` }} />
+                                   </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
         </div>
 
         <div className="pt-8 pb-32 flex justify-center">

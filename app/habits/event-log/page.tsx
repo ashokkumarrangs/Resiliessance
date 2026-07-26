@@ -308,18 +308,57 @@ export default function HabitEventLogPage() {
                 <Card key={habit.habit_name} className={`rounded-md border shadow-zenith overflow-hidden transition-all active:scale-[0.99] ${colorClasses} ${styles.bg} ${styles.anim}`}>
                   <CardContent className="p-5 flex flex-col gap-4">
                     {/* Header Row */}
-                     <div className="flex justify-between items-center">
-                        <h2 className={`text-xl uppercase tracking-tighter flex items-center gap-2 transition-all ${styles.text} ${styles.weight}`}>
-                           <span className="text-2xl">{habit.emoji}</span>
-                           <div className="flex items-center gap-2">
-                              {habit.habit_name}
-                              <div className="ml-1">
-                                 {getStatusIcon(agg.status, 20)}
+                      <div className="flex justify-between items-center">
+                         <h2 className={`text-xl tracking-tighter flex items-center gap-2 transition-all ${styles.text} ${styles.weight}`}>
+                            <span className="text-2xl">{habit.emoji}</span>
+                            <div className="flex flex-col justify-start">
+                              <div className="flex items-center gap-2">
+                                {habit.habit_name}
+                                <div className="ml-1">
+                                   {getStatusIcon(agg.status, 20)}
+                                </div>
                               </div>
-                           </div>
+                              <div className="text-[10px] text-muted-foreground/50 font-bold mt-0.5 normal-case tracking-normal">
+                                Target: {(() => {
+                                  const isEvent = habit.frequency === 'event';
+                                  const isCount = isEvent && habit.condition_type?.endsWith('_count');
+                                  let baseCond = isCount ? habit.condition_type.replace('_count', '') : habit.condition_type;
+                                  
+                                  let suffix = habit.unit ? ` ${habit.unit}` : '';
+                                  if (isEvent) {
+                                    if (isCount) {
+                                      suffix = ' times';
+                                    } else {
+                                      suffix = habit.unit ? ` ${habit.unit} (Sum)` : ' (Sum)';
+                                    }
+                                  }
+                                  
+                                  if (baseCond === 'above_below') {
+                                    baseCond = habit.direction === 'less' ? 'at_most_n' : 'at_least_n';
+                                  }
+                                  
+                                  if (habit.input_type === 'boolean') {
+                                    return habit.target_value === 0 ? 'No' : 'Yes';
+                                  }
+                                  if (baseCond === 'between') {
+                                    return `Between ${habit.suc_min} and ${habit.suc_max}${suffix}`;
+                                  }
+                                  if (baseCond === 'at_least_n') {
+                                    return `At least ${habit.target_value}${suffix}`;
+                                  }
+                                  if (baseCond === 'at_most_n') {
+                                    return `At most ${habit.target_value}${suffix}`;
+                                  }
+                                  if (baseCond === 'exactly_n') {
+                                    return `Exactly ${habit.target_value}${suffix}`;
+                                  }
+                                  return `${habit.target_value}${suffix}`;
+                                })()}
+                              </div>
+                            </div>
                         </h2>
-                       <div className="flex items-center gap-2">
-                          <div className="h-8 min-w-[36px] px-2 flex items-center justify-center bg-card text-foreground border border-border/40 rounded-md text-xs font-black shadow-sm">
+                        <div className="flex items-center gap-2 shrink-0">
+                           <div className="h-8 min-w-[36px] px-2 flex items-center justify-center bg-card text-foreground border border-border/40 rounded-md text-xs font-black shadow-sm">
                              {agg.count}
                           </div>
                           <div className={`h-8 min-w-[40px] px-2.5 flex items-center justify-center rounded-md border border-border/40 text-xs font-black tracking-wider shadow-sm ${colorKey === 'count' || colorKey === 'boolean' ? 'bg-primary/20 text-primary border-primary/10' : 'bg-muted text-foreground'}`}>

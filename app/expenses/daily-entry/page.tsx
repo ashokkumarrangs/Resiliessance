@@ -378,9 +378,9 @@ export default function DailyEntryPage() {
         {/* Autofill Notification */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-6">
         
-        <div className="bg-card rounded-2xl p-8 shadow-sm border border-border/40 space-y-7">
+        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 space-y-5">
           {/* Row 1: Date | Time */}
-          <div className="grid grid-cols-2 gap-7">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                 <CalendarDays size={16} className="shrink-0" />
@@ -412,7 +412,7 @@ export default function DailyEntryPage() {
           {formData.type === 'Transfer' ? (
             <>
               {/* Transfer Layout */}
-              <div className="grid grid-cols-2 gap-7 relative z-20">
+              <div className="grid grid-cols-2 gap-4 relative z-20">
                 <div className="space-y-2">
                   <SearchableSelect 
                     label="From Account"
@@ -435,7 +435,7 @@ export default function DailyEntryPage() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-7">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                     <Banknote size={16} className="shrink-0" />
@@ -474,7 +474,7 @@ export default function DailyEntryPage() {
             <>
               {/* Expense/Income Layout */}
               {/* Row 2: Account | Amount */}
-              <div className="grid grid-cols-2 gap-7 relative z-30">
+              <div className="grid grid-cols-2 gap-4 relative z-30">
                 <div className="space-y-2">
                   <SearchableSelect 
                     label="Account"
@@ -507,7 +507,7 @@ export default function DailyEntryPage() {
               </div>
 
               {/* Row 3: Category | Sub-Category */}
-              <div className="grid grid-cols-2 gap-7 relative z-20">
+              <div className="grid grid-cols-2 gap-4 relative z-20">
                 <div className="space-y-2">
                   <SearchableSelect 
                     label="Category"
@@ -529,7 +529,7 @@ export default function DailyEntryPage() {
               </div>
 
               {/* Row 4: Particular | Vendor */}
-              <div className="grid grid-cols-2 gap-7 relative z-10">
+              <div className="grid grid-cols-2 gap-4 relative z-10">
                 <div className="space-y-2">
                   <SearchableSelect 
                     label="Particular"
@@ -551,7 +551,7 @@ export default function DailyEntryPage() {
               </div>
 
               {/* Row 5: Place | Tags */}
-              <div className="grid grid-cols-2 gap-7 relative">
+              <div className="grid grid-cols-2 gap-4 relative">
                 <div className="space-y-2">
                   <SearchableSelect 
                     label="Place"

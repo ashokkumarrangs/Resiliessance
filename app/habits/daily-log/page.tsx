@@ -278,31 +278,61 @@ export default function HabitDailyPage() {
                                         {getStatusIcon(status, 16)}
                                       </div>
                                     </div>
-                                    <div className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-wider mt-0.5">
-                                      {habit.input_type === 'boolean' 
-                                        ? `Target: ${habit.target_value === 0 ? 'No' : 'Yes'}`
-                                        : habit.condition_type === 'between'
-                                        ? `Target: ${habit.suc_min}-${habit.suc_max} ${habit.unit || ''}`
-                                        : `Target: ${habit.target_value} ${habit.unit || ''}`}
+                                    <div className="text-[10px] text-muted-foreground/50 font-bold mt-0.5 normal-case">
+                                      Target: {(() => {
+                                        const isEvent = habit.frequency === 'event';
+                                        const isCount = isEvent && habit.condition_type?.endsWith('_count');
+                                        let baseCond = isCount ? habit.condition_type.replace('_count', '') : habit.condition_type;
+                                        
+                                        let suffix = habit.unit ? ` ${habit.unit}` : '';
+                                        if (isEvent) {
+                                          if (isCount) {
+                                            suffix = ' times';
+                                          } else {
+                                            suffix = habit.unit ? ` ${habit.unit} (Sum)` : ' (Sum)';
+                                          }
+                                        }
+                                        
+                                        if (baseCond === 'above_below') {
+                                          baseCond = habit.direction === 'less' ? 'at_most_n' : 'at_least_n';
+                                        }
+                                        
+                                        if (habit.input_type === 'boolean') {
+                                          return habit.target_value === 0 ? 'No' : 'Yes';
+                                        }
+                                        if (baseCond === 'between') {
+                                          return `Between ${habit.suc_min} and ${habit.suc_max}${suffix}`;
+                                        }
+                                        if (baseCond === 'at_least_n') {
+                                          return `At least ${habit.target_value}${suffix}`;
+                                        }
+                                        if (baseCond === 'at_most_n') {
+                                          return `At most ${habit.target_value}${suffix}`;
+                                        }
+                                        if (baseCond === 'exactly_n') {
+                                          return `Exactly ${habit.target_value}${suffix}`;
+                                        }
+                                        return `${habit.target_value}${suffix}`;
+                                      })()}
                                     </div>
                                   </div>
 
-                           <div className="flex items-center gap-1.5 shrink-0 ml-auto">
-                              {habit.frequency === 'event' ? (
-                                <div className="flex items-center gap-1 w-20 justify-end">
-                                   <div className="bg-muted/50 rounded-lg h-8 w-[36px] flex flex-col items-center justify-center shadow-inner border border-border/5">
-                                     <span className="text-[7px] font-black uppercase opacity-30 leading-none mb-0.5">Logs</span>
-                                     <div className="text-[10px] font-black text-primary leading-none">{eventAggregates[habit.habit_name]?.count || 0}</div>
-                                   </div>
-                                   <div className="bg-muted/50 rounded-lg h-8 w-[40px] flex flex-col items-center justify-center shadow-inner border border-border/5">
-                                     <span className="text-[7px] font-black uppercase opacity-30 leading-none mb-0.5">Val</span>
-                                     <div className="text-[10px] font-black text-accent leading-none px-0.5 truncate max-w-full">
-                                       {eventAggregates[habit.habit_name]?.valueDisplay || (habit.input_type === 'text' ? '--' : '0')}
-                                     </div>
-                                   </div>
-                                </div>
-                              ) : (
-                                <div className="w-20 flex justify-end">
+                            <div className="flex items-center gap-1.5 shrink-0 ml-auto">
+                               {habit.frequency === 'event' ? (
+                                 <div className="flex items-center gap-1 w-20 shrink-0 justify-end">
+                                    <div className="bg-muted/50 rounded-lg h-8 w-[36px] flex flex-col items-center justify-center shadow-inner border border-border/5">
+                                      <span className="text-[7px] font-black uppercase opacity-30 leading-none mb-0.5">Logs</span>
+                                      <div className="text-[10px] font-black text-primary leading-none">{eventAggregates[habit.habit_name]?.count || 0}</div>
+                                    </div>
+                                    <div className="bg-muted/50 rounded-lg h-8 w-[40px] flex flex-col items-center justify-center shadow-inner border border-border/5">
+                                      <span className="text-[7px] font-black uppercase opacity-30 leading-none mb-0.5">Val</span>
+                                      <div className="text-[10px] font-black text-accent leading-none px-0.5 truncate max-w-full">
+                                        {eventAggregates[habit.habit_name]?.valueDisplay || (habit.input_type === 'text' ? '--' : '0')}
+                                      </div>
+                                    </div>
+                                  </div>
+                               ) : (
+                                 <div className="w-20 shrink-0 flex justify-end">
                                   {habit.input_type === 'boolean' ? (
                                     <div className="relative group w-full">
                                       <Select 
