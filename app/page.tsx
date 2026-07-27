@@ -9,6 +9,7 @@ import { Currency } from "@/components/currency";
 import { toast } from "sonner";
 import { TaskCompletionModal } from "@/components/TaskCompletionModal";
 import { PageWrapper } from "@/components/PageWrapper";
+import pkg from "../package.json";
 
 
 export default function DashboardPage() {
@@ -631,7 +632,7 @@ export default function DashboardPage() {
               {dateStr}
             </div>
             <div className="text-[10px] text-muted-foreground/50 font-black tracking-widest mt-1">
-              VERSION 1.x
+              VERSION {pkg.version}
             </div>
           </div>
           <button 
