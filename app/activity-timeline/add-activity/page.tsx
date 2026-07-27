@@ -11,13 +11,11 @@ import {
   Calendar,
   Clock,
   Timer,
-  Tag,
   FileText,
   Plus,
   X,
   Activity,
   Heart,
-  Star,
 } from "lucide-react";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -32,28 +30,6 @@ const MOODS = [
   { emoji: "😴", label: "Tired" },
   { emoji: "🥰", label: "Loved" },
 ];
-
-const CATEGORIES = [
-  "Social",
-  "Food & Dining",
-  "Travel",
-  "Celebration",
-  "Fitness",
-  "Entertainment",
-  "Work",
-  "Other",
-];
-
-const CATEGORY_COLOR: Record<string, string> = {
-  "Social":        "bg-blue-500",
-  "Food & Dining": "bg-rose-500",
-  "Travel":        "bg-amber-500",
-  "Celebration":   "bg-purple-500",
-  "Fitness":       "bg-emerald-500",
-  "Entertainment": "bg-indigo-500",
-  "Work":          "bg-slate-500",
-  "Other":         "bg-gray-400",
-};
 
 const NAV_TABS = [
   { title: "Timeline",        href: "/activity-timeline",             icon: <Activity size={15} /> },
@@ -88,20 +64,56 @@ interface ChipProps {
   placeholder: string;
   icon?: React.ReactNode;
   onChange: (val: string) => void;
-  type?: "text" | "time" | "date" | "select";
+  type?: "text" | "time" | "date" | "select" | "searchable-select";
   options?: string[];
 }
 
 function InlineChip({ value, placeholder, icon, onChange, type = "text", options = [] }: ChipProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [search, setSearch] = useState(value);
+  const [isManualEntry, setIsManualEntry] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
+
+  useEffect(() => {
+    if (isEditing) {
+      setSearch(value);
+      setIsManualEntry(false);
+    }
+  }, [isEditing, value]);
 
   useEffect(() => {
     if (isEditing && inputRef.current) inputRef.current.focus();
   }, [isEditing]);
 
-  const handleBlur = () => setIsEditing(false);
-  const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Enter") setIsEditing(false); };
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsEditing(false);
+      }
+    }
+    if (isEditing && type === "searchable-select") {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isEditing, type]);
+
+  const handleBlur = () => {
+    if (type !== "searchable-select") {
+      setIsEditing(false);
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter") {
+      if (type === "searchable-select") {
+        onChange(search);
+      }
+      setIsEditing(false);
+    }
+  };
 
   if (isEditing) {
     if (type === "select") {
@@ -111,13 +123,85 @@ function InlineChip({ value, placeholder, icon, onChange, type = "text", options
           value={value}
           onChange={(e) => { onChange(e.target.value); setIsEditing(false); }}
           onBlur={handleBlur}
-          className="inline-flex items-center h-10 px-4 rounded-full bg-indigo-900/50 text-indigo-100 border border-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-medium text-base appearance-none cursor-pointer"
+          className="inline-flex items-center h-10 px-4 rounded-full bg-black/20 text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 font-medium text-base appearance-none cursor-pointer"
         >
           <option value="" disabled>{placeholder}</option>
-          {options.map(opt => <option key={opt} value={opt} className="bg-indigo-950">{opt}</option>)}
+          {options.map(opt => <option key={opt} value={opt} className="bg-slate-800 text-white">{opt}</option>)}
         </select>
       );
     }
+
+    if (type === "searchable-select") {
+      const filteredOptions = search
+        ? options.filter(opt => opt?.toLowerCase().includes(search.toLowerCase()))
+        : options;
+
+      return (
+        <div ref={containerRef} className="relative inline-flex items-center">
+          <input
+            ref={inputRef as React.RefObject<HTMLInputElement>}
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              if (isManualEntry) {
+                onChange(e.target.value);
+              }
+            }}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            className="inline-flex items-center h-10 px-4 min-w-[140px] rounded-full bg-black/20 text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 font-medium text-base placeholder:text-white/40"
+            style={{ width: `${Math.max((search.length || placeholder.length) * 10 + 48, 140)}px` }}
+          />
+          {/* Dropdown Menu */}
+          <div className="absolute z-50 left-0 top-full mt-1 bg-slate-850 border border-white/10 rounded-xl shadow-2xl p-1.5 min-w-[200px] max-h-48 overflow-y-auto">
+            {filteredOptions.map((opt, i) => (
+              <button
+                key={`${opt}-${i}`}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onChange(opt);
+                  setSearch(opt);
+                  setIsEditing(false);
+                }}
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center justify-between mb-0.5 last:mb-0
+                  ${value === opt 
+                    ? "bg-primary text-white font-black" 
+                    : "text-white/80 hover:bg-white/10 hover:text-white"}`}
+              >
+                <span>{opt}</span>
+              </button>
+            ))}
+
+            {!isManualEntry && (
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  setIsManualEntry(true);
+                  setSearch("");
+                  onChange("");
+                  setTimeout(() => inputRef.current?.focus(), 50);
+                }}
+                className="w-full text-left px-3 py-2 rounded-lg text-xs font-black text-white/90 bg-white/5 hover:bg-white/10 transition-all flex items-center gap-1.5 mt-1 border-t border-white/5"
+              >
+                <Plus size={12} />
+                <span>Add New</span>
+              </button>
+            )}
+
+            {filteredOptions.length === 0 && !search && (
+              <div className="px-3 py-3 text-center text-xs text-white/30 font-bold uppercase tracking-wider">
+                Empty List
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <input
         ref={inputRef as React.RefObject<HTMLInputElement>}
@@ -127,7 +211,7 @@ function InlineChip({ value, placeholder, icon, onChange, type = "text", options
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="inline-flex items-center h-10 px-4 min-w-[120px] rounded-full bg-indigo-900/50 text-indigo-100 border border-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-medium text-base placeholder:text-indigo-300/50"
+        className="inline-flex items-center h-10 px-4 min-w-[120px] rounded-full bg-black/20 text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 font-medium text-base placeholder:text-white/40"
         style={{ width: `${Math.max((value.length || placeholder.length) * 10 + 48, 120)}px` }}
       />
     );
@@ -143,11 +227,11 @@ function InlineChip({ value, placeholder, icon, onChange, type = "text", options
       onClick={() => setIsEditing(true)}
       className={`inline-flex items-center h-10 px-4 rounded-full text-base font-medium transition-all duration-200 gap-2 ${
         isEmpty
-          ? "bg-transparent text-indigo-300/60 border border-dashed border-indigo-300/40 hover:bg-indigo-900/30"
-          : "bg-indigo-900/40 text-indigo-50 border border-indigo-400/30 hover:bg-indigo-800/50"
+          ? "bg-white/10 text-white/80 border border-dashed border-white/20 hover:bg-white/25"
+          : "bg-black/20 text-white border border-white/15 hover:bg-black/30"
       }`}
     >
-      {icon && <span className={isEmpty ? "opacity-50" : "text-indigo-300"}>{icon}</span>}
+      {icon && <span className={isEmpty ? "opacity-50" : "text-white/70"}>{icon}</span>}
       {isEmpty ? placeholder : (type === "time" ? displayValue : type === "date" ? displayDate : value)}
     </button>
   );
@@ -178,13 +262,13 @@ function PeopleTags({ people, onChange }: { people: string[]; onChange: (p: stri
   return (
     <span className="inline-flex items-center flex-wrap gap-2 align-middle">
       {people.map(person => (
-        <span key={person} className="inline-flex items-center h-10 pl-3 pr-2 rounded-full bg-indigo-900/40 text-indigo-50 border border-indigo-400/30 font-medium text-base">
-          <Users size={14} className="text-indigo-300 mr-2" />
+        <span key={person} className="inline-flex items-center h-10 pl-3 pr-2 rounded-full bg-black/20 text-white border border-white/15 font-medium text-base">
+          <Users size={14} className="text-white/70 mr-2" />
           {person}
           <button
             type="button"
             onClick={() => onChange(people.filter(p => p !== person))}
-            className="ml-2 p-0.5 rounded-full hover:bg-indigo-800/60 text-indigo-300 hover:text-white transition-colors"
+            className="ml-2 p-0.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
           >
             <X size={13} />
           </button>
@@ -199,7 +283,7 @@ function PeopleTags({ people, onChange }: { people: string[]; onChange: (p: stri
           onBlur={addPerson}
           onKeyDown={handleKeyDown}
           placeholder="Name..."
-          className="inline-flex items-center h-10 px-4 w-32 rounded-full bg-indigo-900/50 text-indigo-100 border border-indigo-400/50 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-medium text-base placeholder:text-indigo-300/50"
+          className="inline-flex items-center h-10 px-4 w-32 rounded-full bg-black/20 text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/20 font-medium text-base placeholder:text-white/40"
         />
       ) : (
         <button
@@ -207,8 +291,8 @@ function PeopleTags({ people, onChange }: { people: string[]; onChange: (p: stri
           onClick={() => setIsEditing(true)}
           className={`inline-flex items-center h-10 px-4 rounded-full text-base font-medium transition-all duration-200 gap-2 ${
             people.length === 0
-              ? "bg-transparent text-indigo-300/60 border border-dashed border-indigo-300/40 hover:bg-indigo-900/30"
-              : "bg-indigo-900/20 text-indigo-300 border border-dashed border-indigo-400/30 hover:bg-indigo-800/40"
+              ? "bg-transparent text-white/80 border border-dashed border-white/30 hover:bg-white/10"
+              : "bg-white/5 text-white border border-dashed border-white/20 hover:bg-white/15"
           }`}
         >
           <Plus size={16} />
@@ -222,12 +306,12 @@ function PeopleTags({ people, onChange }: { people: string[]; onChange: (p: stri
 // ─── Live Preview ─────────────────────────────────────────────────────────────
 
 function LivePreview({
-  activity, location, people, occasion, mood, time, category,
+  activity, location, people, occasion, mood, time,
 }: {
   activity: string; location: string; people: string[]; occasion: string;
-  mood: string; time: string; category: string;
+  mood: string; time: string;
 }) {
-  const dotColor = CATEGORY_COLOR[category] || "bg-violet-500";
+  const dotColor = "bg-violet-500";
   const moodEmoji = MOODS.find(m => m.label === mood)?.emoji || "";
   const subtitle = [
     location,
@@ -243,16 +327,16 @@ function LivePreview({
       <span className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest block mb-4">
         Timeline Preview
       </span>
-      <div className="relative border-l border-border/60 ml-3 pl-5 space-y-0 py-1">
+      <div className="relative border-l border-border/60 ml-3.5 pl-6 space-y-0 py-1">
         {isEmpty ? (
           <div className="relative">
-            <span className="absolute -left-[27px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-background bg-muted ring-4 ring-muted/10" />
+            <span className="absolute -left-[31px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-background bg-muted ring-4 ring-muted/10" />
             <h4 className="text-xs font-bold text-muted-foreground/30">Your activity will appear here...</h4>
             <p className="text-[10px] text-muted-foreground/20 font-medium mt-0.5">Activity · details · mood</p>
           </div>
         ) : (
           <div className="relative">
-            <span className={`absolute -left-[27px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-background ring-4 ring-muted/10 ${dotColor}`} />
+            <span className={`absolute -left-[31px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-background ring-4 ring-muted/10 ${dotColor}`} />
             <h4 className="text-xs font-bold text-foreground">
               {time ? `${formatTime12(time)} – ` : ""}{activity || "Activity"}
             </h4>
@@ -263,7 +347,7 @@ function LivePreview({
         )}
         {/* Ghost entries below */}
         <div className="relative pt-4 opacity-20 pointer-events-none select-none">
-          <span className="absolute -left-[27px] top-5.5 w-2 h-2 rounded-full bg-muted" />
+          <span className="absolute -left-[31px] top-5.5 w-2 h-2 rounded-full bg-muted" />
           <h4 className="text-[10px] font-semibold text-muted-foreground pt-4">Earlier entries...</h4>
         </div>
       </div>
@@ -281,10 +365,26 @@ export default function AddActivityPage() {
   const [date, setDate]           = useState(todayStr);
   const [time, setTime]           = useState(nowTimeStr);
   const [duration, setDuration]   = useState("");
-  const [category, setCategory]   = useState("");
   const [mood, setMood]           = useState("");
   const [notes, setNotes]         = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pastActivities, setPastActivities] = useState<string[]>([]);
+
+  const fetchPastActivities = async () => {
+    try {
+      const { data } = await supabase.from("activity_logs").select("activity");
+      if (data) {
+        const unique = Array.from(new Set(data.map((d: any) => d.activity).filter(Boolean))) as string[];
+        setPastActivities(unique);
+      }
+    } catch (err) {
+      console.error("Failed to fetch past activities:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPastActivities();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -299,7 +399,6 @@ export default function AddActivityPage() {
         date,
         time:      time      || null,
         duration:  duration  || null,
-        category:  category  || null,
         mood:      mood      || null,
         notes:     notes     || null,
         created_at: new Date().toISOString(),
@@ -308,7 +407,8 @@ export default function AddActivityPage() {
       // Reset form
       setActivity(""); setLocation(""); setPeople([]); setOccasion("");
       setDate(todayStr()); setTime(nowTimeStr()); setDuration("");
-      setCategory(""); setMood(""); setNotes("");
+      setMood(""); setNotes("");
+      fetchPastActivities();
     } catch (err) {
       console.error("Failed to save activity:", err);
     } finally {
@@ -323,12 +423,15 @@ export default function AddActivityPage() {
       <form onSubmit={handleSubmit} className="space-y-5">
 
         {/* ── Story Card ─────────────────────────────────────────────── */}
-        <div className="bg-indigo-950 rounded-3xl p-7 shadow-xl shadow-indigo-900/20 border border-indigo-800/50">
-          <h2 className="text-[9px] font-black tracking-widest text-indigo-400/70 uppercase mb-6 flex items-center gap-2">
+        <div className="bg-gradient-to-r from-primary to-accent/80 rounded-3xl p-7 text-white shadow-xl relative overflow-hidden border border-white/10">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-xl"></div>
+          <div className="absolute bottom-0 left-10 w-24 h-24 bg-black/10 rounded-full -mb-10 blur-lg"></div>
+
+          <h2 className="text-[9px] font-black tracking-widest text-white/70 uppercase mb-6 flex items-center gap-2 relative z-10">
             <FileText size={13} /> Describe your activity
           </h2>
 
-          <div className="text-xl md:text-2xl leading-loose font-medium text-indigo-100 flex flex-wrap items-center gap-y-4 gap-x-2.5">
+          <div className="text-xl md:text-2xl leading-loose font-medium text-white flex flex-wrap items-center gap-y-4 gap-x-2.5 relative z-10">
             <span>On</span>
             <InlineChip value={date} onChange={setDate} placeholder="today" type="date" icon={<Calendar size={16} />} />
             <span>at</span>
@@ -336,16 +439,20 @@ export default function AddActivityPage() {
             <span>, I spent</span>
             <InlineChip value={duration} onChange={setDuration} placeholder="duration" icon={<Timer size={16} />} />
             <span>doing</span>
-            <InlineChip value={activity} onChange={setActivity} placeholder="what activity?" />
+            <InlineChip
+              value={activity}
+              onChange={setActivity}
+              placeholder="what activity?"
+              type="searchable-select"
+              options={pastActivities}
+            />
             <span>at</span>
             <InlineChip value={location} onChange={setLocation} placeholder="where?" icon={<MapPin size={16} />} />
             <span>with</span>
             <PeopleTags people={people} onChange={setPeople} />
             <span>for</span>
             <InlineChip value={occasion} onChange={setOccasion} placeholder="what occasion?" icon={<Heart size={16} />} />
-            <span>. This was a</span>
-            <InlineChip value={category} onChange={setCategory} placeholder="category" type="select" options={CATEGORIES} icon={<Tag size={16} />} />
-            <span>activity.</span>
+            <span>.</span>
           </div>
         </div>
 
@@ -357,7 +464,6 @@ export default function AddActivityPage() {
           occasion={occasion}
           mood={mood}
           time={time}
-          category={category}
         />
 
         {/* ── Mood + Notes row ────────────────────────────────────────── */}
