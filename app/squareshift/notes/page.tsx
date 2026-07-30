@@ -170,6 +170,19 @@ export default function SquareShiftNotesPage() {
           ]} />
         </div>
 
+        {/* Quick Notes Header */}
+        <div className="flex items-center gap-2.5 mb-5">
+          <div className="w-8 h-8 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-center shrink-0">
+            <Notebook size={15} className="text-primary" />
+          </div>
+          <div>
+            <h2 className="text-sm font-black text-foreground leading-none">Quick Notes</h2>
+            <p className="text-[10px] text-muted-foreground/50 font-medium mt-0.5 uppercase tracking-wide">
+              {openCounts[NOTES_ID] ?? 0} open note{openCounts[NOTES_ID] !== 1 ? 's' : ''}
+            </p>
+          </div>
+        </div>
+
         {/* Input Area matches Task Manager */}
         <div className="bg-card rounded-xl p-4 shadow-sm border border-border/40 flex flex-col gap-3">
             <div className="flex gap-2">

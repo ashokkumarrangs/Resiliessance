@@ -124,6 +124,41 @@ export default function SquareShiftProjectPage() {
       }
   };
 
+  const currentProject = projects.find(p => p.id === projectId);
+
+  const handleRenameProject = async () => {
+    if (!currentProject) return;
+    const newName = prompt("Rename project:", currentProject.name);
+    if (newName && newName.trim() && newName.trim() !== currentProject.name) {
+      const { error } = await supabase
+        .from('action_projects')
+        .update({ name: newName.trim() })
+        .eq('id', projectId);
+      if (!error) {
+        toast.success(`Project renamed to "${newName.trim()}"`); 
+        fetchProjects();
+      } else {
+        toast.error("Failed to rename project");
+      }
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    if (!currentProject) return;
+    const confirmed = confirm(`Are you sure you want to delete the project "${currentProject.name}" and all its tasks? This action cannot be undone.`);
+    if (!confirmed) return;
+    const { error } = await supabase
+      .from('action_projects')
+      .delete()
+      .eq('id', projectId);
+    if (!error) {
+      toast.success(`Project "${currentProject.name}" deleted`);
+      router.push('/squareshift/notes');
+    } else {
+      toast.error("Failed to delete project");
+    }
+  };
+
   return (
     <PageWrapper
       title="SquareShift"
@@ -165,6 +200,39 @@ export default function SquareShiftProjectPage() {
             }
           ]} />
         </div>
+
+        {/* Project Header */}
+        {currentProject && (
+          <div className="flex items-center justify-between mb-5 group">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-center shrink-0">
+                <Folder size={15} className="text-primary" />
+              </div>
+              <div>
+                <h2 className="text-sm font-black text-foreground leading-none">{currentProject.name}</h2>
+                <p className="text-[10px] text-muted-foreground/50 font-medium mt-0.5 uppercase tracking-wide">
+                  {openCounts[projectId] ?? 0} open task{openCounts[projectId] !== 1 ? 's' : ''}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                onClick={handleRenameProject}
+                title="Rename project"
+                className="p-1.5 text-muted-foreground/40 hover:text-primary hover:bg-primary/10 rounded-lg cursor-pointer transition-colors"
+              >
+                <Edit3 size={14} />
+              </button>
+              <button
+                onClick={handleDeleteProject}
+                title="Delete project"
+                className="p-1.5 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer transition-colors"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Input Area matches Task Manager */}
         <div className="bg-card rounded-xl p-4 shadow-sm border border-border/40 flex flex-col gap-3">
