@@ -1,7 +1,6 @@
 "use client";
 
-import { Briefcase, ChevronDown, Landmark, RefreshCw, Wallet , BarChart2 } from "lucide-react";
-import Link from "next/link";
+import { Briefcase, ChevronDown, Landmark, RefreshCw, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -49,8 +48,11 @@ export default function NetWorthPage() {
       }
       const [ { data: liqData }, { data: astData }, { data: libData } ] = results;
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const liqItems = (liqData || []).map(d => ({ name: d.account_name, value: parseFloat(d.balance as any) || 0 }));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const astItems = (astData || []).map(d => ({ name: d.asset_name, value: parseFloat(d.current_value as any) || 0 }));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const libItems = (libData || []).map(d => ({ name: d.party, value: parseFloat(d.remaining as any) || 0 }));
 
       const liqTotal = liqItems.reduce((s, i) => s + i.value, 0);
@@ -69,7 +71,7 @@ export default function NetWorthPage() {
         assets: astItems,
         liabilities: libItems
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching net worth:", error);
     } finally {
       setIsLoading(false);

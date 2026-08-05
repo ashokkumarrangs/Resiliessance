@@ -69,29 +69,30 @@ export default function FilteredTimelinePage() {
       const entries: Entry[] = [];
       let idx = 0;
 
-      (expenses || []).forEach((e: any) => {
+      (expenses || []).forEach((e) => {
         entries.push({ id: `fin-${idx++}`, date: e.date, time: e.created_at ? format(new Date(e.created_at), "h:mm a") : "", category: "Finance", label: `${e.type}: ₹${parseFloat(e.amount || 0).toLocaleString("en-IN")} — ${e.category}`, sub: e.notes || "" });
       });
-      (habitData || []).filter((h: any) => h.value && h.value !== "0" && h.value !== "false").forEach((h: any) => {
+      (habitData || []).filter((h) => h.value && h.value !== "0" && h.value !== "false").forEach((h) => {
         entries.push({ id: `hab-${idx++}`, date: h.date, time: "", category: "Habits", label: `✓ ${h.habit}`, sub: `Value: ${h.value}` });
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const wdMap: Record<string, any[]> = {};
-      (workoutData || []).forEach((w: any) => { if (!wdMap[w.date]) wdMap[w.date] = []; wdMap[w.date].push(w); });
+      (workoutData || []).forEach((w) => { if (!wdMap[w.date]) wdMap[w.date] = []; wdMap[w.date].push(w); });
       Object.entries(wdMap).forEach(([date, ws]) => {
-        entries.push({ id: `wkt-${idx++}`, date, time: "", category: "Workout", label: `${ws[0]?.workout_day} — ${ws.length} exercises`, sub: ws.map((w: any) => w.exercise).join(", ") });
+        entries.push({ id: `wkt-${idx++}`, date, time: "", category: "Workout", label: `${ws[0]?.workout_day} — ${ws.length} exercises`, sub: ws.map((w) => w.exercise).join(", ") });
       });
-      (petLogs || []).forEach((p: any) => {
+      (petLogs || []).forEach((p) => {
         entries.push({ id: `pet-${idx++}`, date: p.date, time: "", category: "Pets", label: `Pet: ${p.log_type}`, sub: p.notes || "" });
       });
-      (fuelLogs || []).forEach((f: any) => {
+      (fuelLogs || []).forEach((f) => {
         entries.push({ id: `veh-${idx++}`, date: f.date, time: "", category: "Vehicles", label: `Fuel: ${f.liters}L — ₹${parseFloat(f.amount || 0).toLocaleString("en-IN")}`, sub: f.notes || "" });
       });
-      (taskData || []).forEach((t: any) => {
+      (taskData || []).forEach((t) => {
         const d = t.completed_at ? format(new Date(t.completed_at), "yyyy-MM-dd") : "";
         const time = t.completed_at ? format(new Date(t.completed_at), "h:mm a") : "";
         entries.push({ id: `tsk-${idx++}`, date: d, time, category: "Tasks", label: `✓ ${t.task}`, sub: "Completed" });
       });
-      (eventLogs || []).forEach((e: any) => {
+      (eventLogs || []).forEach((e) => {
         entries.push({ id: `evt-${idx++}`, date: e.date, time: e.created_at ? format(new Date(e.created_at), "h:mm a") : "", category: "Events", label: `${e.event_type}: ${e.value}`, sub: e.notes || "" });
       });
 

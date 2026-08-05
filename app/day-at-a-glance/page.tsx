@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { CheckCircle2, Circle, Dumbbell, Flame, CheckSquare, Zap } from "lucide-react";
+import { CheckCircle2, Circle, Dumbbell, Flame, CheckSquare} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
 import { PageWrapper } from "@/components/PageWrapper";
@@ -37,11 +37,11 @@ export default function DayAtAGlancePage() {
 
       const doneHabits = new Set(
         (habitData || [])
-          .filter((h: any) => h.value && h.value !== "0" && h.value !== "false")
-          .map((h: any) => h.habit)
+          .filter((h) => h.value && h.value !== "0" && h.value !== "false")
+          .map((h) => h.habit)
       );
       setTasks(tasksData || []);
-      setHabits((habitConfigs || []).map((h: any) => ({ habit_name: h.habit_name, group_name: h.group_name, done: doneHabits.has(h.habit_name) })));
+      setHabits((habitConfigs || []).map((h) => ({ habit_name: h.habit_name, group_name: h.group_name, done: doneHabits.has(h.habit_name) })));
       setWorkouts(workoutData || []);
       setEvents(eventData || []);
       setLoading(false);

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Activity, Bike, Car, ChevronDown, ChevronUp, Clock, Droplets, Fuel, Gauge, IndianRupee, RefreshCw, ShieldAlert, ShieldCheck, ShieldX, TrendingUp, Truck, Wrench, Zap, Calendar, MapPin } from "lucide-react";
+import { Activity, Bike, Car, ChevronDown, ChevronUp, Droplets, Fuel, Gauge, IndianRupee, RefreshCw, ShieldAlert, ShieldCheck, ShieldX, TrendingUp, Truck, Wrench, Zap, Calendar} from "lucide-react";
 import { format, differenceInDays } from 'date-fns';
 import { toast } from 'sonner';
 
@@ -87,7 +87,7 @@ function SectionDivider({ label }: { label: string }) {
 
 function VehicleCard({ v, idx }: { v: VehicleStats; idx: number }) {
   const [expanded, setExpanded] = useState(true);
-  const VehicleIcon = getVehicleIcon(v.vehicle_type);
+  const vehicleIcon = getVehicleIcon(v.vehicle_type);
   const insurance = getInsuranceStatus(v.insurance_expiry);
   const service = getServiceStatus(v.next_service_date);
   const InsuranceIcon = insurance.icon;
@@ -105,13 +105,13 @@ function VehicleCard({ v, idx }: { v: VehicleStats; idx: number }) {
       {/* ── Card Header ── */}
       <div className="relative px-5 pt-5 pb-4 bg-gradient-to-br from-primary/5 via-card to-card border-b border-border/20 overflow-hidden">
         {/* Watermark */}
-        <VehicleIcon className="absolute -right-5 -bottom-5 w-32 h-32 text-primary/4 rotate-6 pointer-events-none select-none" />
+        {React.createElement(vehicleIcon, { className: "absolute -right-5 -bottom-5 w-32 h-32 text-primary/4 rotate-6 pointer-events-none select-none" })}
 
         <div className="flex items-start justify-between relative z-10">
           {/* Icon + Name */}
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm">
-              <VehicleIcon className="w-6 h-6 text-primary" />
+              {React.createElement(vehicleIcon, { className: "w-6 h-6 text-primary" })}
             </div>
             <div className="min-w-0">
               <h2 className="text-base font-black text-foreground tracking-tight capitalize leading-none">{v.vehicle_name}</h2>
@@ -306,7 +306,7 @@ export function VehicleDashboard() {
 
   useEffect(() => { fetchStats(); }, []);
 
-  const fetchStats = async () => {
+  async function fetchStats() {
     setLoading(true);
     try {
       const { data: vehicles, error: vError } = await supabase.from('vehicle_config').select('*');
@@ -366,7 +366,7 @@ export function VehicleDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
 
 

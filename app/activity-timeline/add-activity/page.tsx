@@ -374,7 +374,7 @@ export default function AddActivityPage() {
     try {
       const { data } = await supabase.from("activity_logs").select("activity");
       if (data) {
-        const unique = Array.from(new Set(data.map((d: any) => d.activity).filter(Boolean))) as string[];
+        const unique = Array.from(new Set(data.map((d) => d.activity).filter(Boolean))) as string[];
         setPastActivities(unique);
       }
     } catch (err) {

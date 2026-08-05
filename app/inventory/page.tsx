@@ -3,12 +3,11 @@ import { Select } from "@/components/Select";
 
 import React, { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
-import { AlertCircle, ArrowLeft, ArrowRightLeft, Box, Calendar, Check, ChevronRight, Clock, Filter, Gift, History, Home, IndianRupee, Info, MapPin, MoreVertical, Move, Package, Plus, PlusCircle, Search, Share2, Trash2, User, Users, X , BarChart2 } from "lucide-react";
-import Link from "next/link";
+import { ArrowLeft, ArrowRightLeft, Check, ChevronRight, Gift, History, Home, IndianRupee, Move, Package, Plus, PlusCircle, Search, Share2, Trash2, Users, X } from "lucide-react";
 import { toast } from "sonner";
 import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { format, differenceInDays } from "date-fns";
+import { format} from "date-fns";
 
 // --- Types ---
 
@@ -212,7 +211,7 @@ export default function InventoryPage() {
       const { data, error } = await query.order('name');
       if (error) throw error;
       setMoveDestinations(data || []);
-    } catch (e) {
+    } catch (e: any) {
       toast.error("Failed to load destinations");
     }
   };

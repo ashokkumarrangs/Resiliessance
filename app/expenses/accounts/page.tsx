@@ -1,8 +1,7 @@
 "use client";
 import { Select } from "@/components/Select";
-import Link from "next/link";
 
-import { Banknote, CheckCircle2, ChevronDown, CreditCard, FileText, Landmark, Settings2, StickyNote, Trash2 , BarChart2 } from "lucide-react";
+import { Banknote, ChevronDown, CreditCard, FileText, Landmark, Settings2, StickyNote, Trash2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect, Suspense } from "react";
 import { supabase } from "@/lib/supabase";
@@ -22,6 +21,7 @@ function AccountPageContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({
     id: null,
     account_name: "",
@@ -80,7 +80,7 @@ function AccountPageContent() {
           notes: data.notes || ""
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error loading account:", error);
     } finally {
       setIsLoading(false);
@@ -132,7 +132,7 @@ function AccountPageContent() {
       if (error) throw error;
       toast.success("Account deleted");
       router.push("/expenses/liquidity");
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Failed to delete account");
     }
   };

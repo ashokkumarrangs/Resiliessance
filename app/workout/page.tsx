@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
-import { Activity, ArrowLeftCircle, CalendarDays, CheckCircle2, ChevronDown, Dumbbell, Flame, PlusCircle, Trash2, Trophy, X } from "lucide-react";
+import { Activity, CalendarDays, Dumbbell, Flame, PlusCircle, Trash2, Trophy, X } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PageWrapper } from "@/components/PageWrapper";
@@ -49,7 +48,7 @@ export default function WorkoutPage() {
     if (date) loadWorkoutData(date);
   }, [date]);
 
-  const fetchHistory = async () => {
+  async function fetchHistory() {
     try {
       const { data } = await supabase
         .from('workout_log')
@@ -108,9 +107,9 @@ export default function WorkoutPage() {
     } catch (error) {
       console.error("Error fetching history:", error);
     }
-  };
+  }
 
-  const loadWorkoutData = async (selectedDate: string) => {
+  async function loadWorkoutData(selectedDate: string) {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
@@ -153,7 +152,7 @@ export default function WorkoutPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const handleAddExercise = () => {
     setExercises([
@@ -192,8 +191,10 @@ export default function WorkoutPage() {
     setExercises(updated);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateExercise = (exerciseIndex: number, field: keyof Exercise, value: any) => {
     const updated = [...exercises];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (updated[exerciseIndex] as any)[field] = value;
     setExercises(updated);
   };

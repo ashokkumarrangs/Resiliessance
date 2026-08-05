@@ -1,9 +1,7 @@
 "use client";
 import { format } from 'date-fns';
-import { Select } from "@/components/Select";
-import Link from "next/link";
 
-import { Banknote, CalendarDays, CheckCircle2, ChevronDown, KeyIcon, Landmark, ListTodo, MapPin, NotebookPen, StickyNote, Store, Tag, Tags , BarChart2 } from "lucide-react";
+import { Banknote, CalendarDays, KeyIcon, Landmark, ListTodo, MapPin, NotebookPen, StickyNote, Store, Tag, Tags } from "lucide-react";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
@@ -58,8 +56,11 @@ export default function DailyEntryPage() {
     tags: [] as string[]
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [history, setHistory] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [hierarchy, setHierarchy] = useState<any>({});
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [lastEntry, setLastEntry] = useState<any>(null);
 
   useEffect(() => {
@@ -68,6 +69,7 @@ export default function DailyEntryPage() {
 
   const fetchOptions = async () => {
     setOptions(prev => ({ ...prev, ...DEFAULT_OPTIONS }));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tree: any = {};
 
     try {
@@ -85,7 +87,7 @@ export default function DailyEntryPage() {
         setHistory(hist);
         
         // Build Hierarchy: Type -> Category -> Sub -> Particular -> [Vendors]
-        hist.forEach((row: any) => {
+        hist.forEach((row) => {
           const { type, category, subcategory, particular, vendor } = row;
           if (!type || !category) return;
           
@@ -110,7 +112,7 @@ export default function DailyEntryPage() {
           tags: unique('tags')
         }));
       }
-    } catch (error) {
+    } catch (error: any) {
       // Error handled via silent failure or future toast
     }
     return tree;

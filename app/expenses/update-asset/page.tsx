@@ -1,8 +1,7 @@
 "use client";
 import { format } from 'date-fns';
 
-import { Banknote, CalendarDays, CheckCircle2, Gem, StickyNote , BarChart2 } from "lucide-react";
-import Link from "next/link";
+import { Banknote, CalendarDays, Gem, StickyNote } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect, Suspense } from "react";
 import { supabase } from "@/lib/supabase";
@@ -20,7 +19,9 @@ function UpdateAssetContent() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [assets, setAssets] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedAsset, setSelectedAsset] = useState<any>(null);
   
   const [formData, setFormData] = useState({

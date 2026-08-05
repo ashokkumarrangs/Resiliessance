@@ -1,12 +1,10 @@
 import React from "react";
 import {
   Archive,
-  Bike,
-  Bookmark,
+    Bookmark,
   Box,
   BarChart2,
-  Calendar,
-  CalendarDays,
+    CalendarDays,
   Car,
   Dog,
   Droplets,
@@ -31,8 +29,7 @@ import {
   Wrench,
   Zap,
   Activity,
-  Sparkles,
-} from "lucide-react";
+  } from "lucide-react";
 
 // ─── Finance ──────────────────────────────────────────────────────────────────
 export const EXPENSE_TABS = [

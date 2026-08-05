@@ -22,8 +22,11 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
   const { id: petId } = use(params);
   
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [petData, setPetData] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [logsData, setLogsData] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [allPets, setAllPets] = useState<any[]>([]);
 
   // Entry Form State
@@ -62,7 +65,7 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
         
         // Build dynamic options from past logs
         const newOptions = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
-        petLogs.forEach((log: any) => {
+        petLogs.forEach((log) => {
            if (log.category && log.log_type) {
               if (!newOptions[log.category]) newOptions[log.category] = [];
               if (!newOptions[log.category].includes(log.log_type)) {
@@ -97,6 +100,7 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
     
     setIsSubmitting(true);
     try {
+       // eslint-disable-next-line @typescript-eslint/no-explicit-any
        const payload: any = {
           pet_id: petId,
           category: entryCategory,
@@ -303,7 +307,7 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
           {/* Recent History Preview */}
           <div className="px-2">
              <h4 className="font-bold text-sm text-muted-foreground uppercase tracking-widest mb-4">Recent Entries</h4>
-             {logsData.slice(0, 5).map((log: any) => (
+             {logsData.slice(0, 5).map((log) => (
                 <div key={log.id} className="flex items-center gap-4 mb-3 bg-card p-3 rounded-2xl border shadow-sm">
                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground shrink-0">
                       {log.category === 'Grooming' && <Sparkles size={16} />}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { ChevronDown, CheckCircle2, PlusCircle } from "lucide-react";
 
 interface SearchableSelectProps {
@@ -27,14 +27,16 @@ export function SearchableSelect({
   hideLabel
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [prevValue, setPrevValue] = useState(value);
   const [search, setSearch] = useState(value);
   const [isTyping, setIsTyping] = useState(false);
   const [isManualEntry, setIsManualEntry] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  if (value !== prevValue) {
+    setPrevValue(value);
     setSearch(value);
-  }, [value]);
+  }
 
   const displayOptions = (isTyping && search)
     ? options.filter(opt => opt?.toLowerCase().includes(search.toLowerCase()))

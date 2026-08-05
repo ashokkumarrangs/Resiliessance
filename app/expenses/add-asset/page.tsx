@@ -1,8 +1,7 @@
 "use client";
 import { format } from 'date-fns';
 
-import { Banknote, Box, CalendarDays, CheckCircle2, ListTodo, MapPin, StickyNote, Tag, Tags , BarChart2 } from "lucide-react";
-import Link from "next/link";
+import { Banknote, Box, CalendarDays, ListTodo, MapPin, StickyNote, Tag, Tags } from "lucide-react";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
@@ -53,7 +52,7 @@ export default function AddAssetPage() {
           places: unique('place')
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
     }
   };

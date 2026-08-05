@@ -3,7 +3,7 @@ import { PageWrapper } from "@/components/PageWrapper";
 import { SectionNav } from "@/components/SectionNav";
 import { SUMMARY_TABS } from "@/lib/navigation";
 import React, { useState, useEffect } from "react";
-import { TrendingUp, TrendingDown, Minus, CalendarDays, Flame, Dumbbell, CheckSquare, Wallet } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Flame, Dumbbell, CheckSquare, Wallet } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { format, startOfYear, endOfYear, subYears, eachMonthOfInterval, endOfMonth, startOfMonth } from "date-fns";
 import { ReportsNav } from "@/components/ReportsNav";
@@ -14,9 +14,12 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 const MONTHS_SHORT=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 export default function YearlySummaryPage() {
-  const [monthlyChartData,setMonthlyChartData]=useState<any[]>([]);
-  const [annualStats,setAnnualStats]=useState<any>(null);
-  const [prevAnnualStats,setPrevAnnualStats]=useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [monthlyChartData,setMonthlyChartData]=useState<Record<string, any>[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [annualStats,setAnnualStats]=useState<Record<string, any> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [prevAnnualStats,setPrevAnnualStats]=useState<Record<string, any> | null>(null);
   const [loading,setLoading]=useState(true);
 
   useEffect(()=>{
@@ -41,25 +44,27 @@ export default function YearlySummaryPage() {
           supabase.from("tasks").select("completed_at").eq("status","Completed").gte("completed_at",lastYearStart+"T00:00:00").lte("completed_at",lastYearEnd+"T23:59:59"),
         ]);
 
-      const sum=(arr:any[])=>(arr||[]).reduce((s:number,e:any)=>s+(parseFloat(e.amount)||0),0);
-      const wktVol=(arr:any[])=>Math.round((arr||[]).reduce((s:number,w:any)=>s+((parseFloat(w.weight)||0)*(parseInt(w.reps)||0)),0));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sum=(arr: Record<string, any>[])=>(arr||[]).reduce((s:number, e)=>s+(parseFloat(e.amount)||0),0);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const wktVol=(arr: Record<string, any>[])=>Math.round((arr||[]).reduce((s:number, w)=>s+((parseFloat(w.weight)||0)*(parseInt(w.reps)||0)),0));
       const totalH=(habCfg||[]).length;
 
       const months=eachMonthOfInterval({start:startOfYear(now),end:now});
       const chartRows=months.map(m=>{
         const mStart=format(startOfMonth(m),"yyyy-MM-dd"),mEnd=format(endOfMonth(m),"yyyy-MM-dd");
-        const mExp=(thisExpAll||[]).filter((e:any)=>e.date>=mStart&&e.date<=mEnd);
-        const mInc=(thisIncAll||[]).filter((e:any)=>e.date>=mStart&&e.date<=mEnd);
-        const mWkt=(thisWktAll||[]).filter((w:any)=>w.date>=mStart&&w.date<=mEnd);
-        const mHab=(thisHabAll||[]).filter((h:any)=>h.date>=mStart&&h.date<=mEnd);
+        const mExp=(thisExpAll||[]).filter((e) =>e.date>=mStart&&e.date<=mEnd);
+        const mInc=(thisIncAll||[]).filter((e) =>e.date>=mStart&&e.date<=mEnd);
+        const mWkt=(thisWktAll||[]).filter((w) =>w.date>=mStart&&w.date<=mEnd);
+        const mHab=(thisHabAll||[]).filter((h) =>h.date>=mStart&&h.date<=mEnd);
         const daysInM=endOfMonth(m).getDate();
-        const habPct=totalH>0?Math.round(((mHab||[]).filter((h:any)=>h.value&&h.value!=="0").length/(totalH*daysInM))*100):0;
+        const habPct=totalH>0?Math.round(((mHab||[]).filter((h) =>h.value&&h.value!=="0").length/(totalH*daysInM))*100):0;
         return{month:MONTHS_SHORT[m.getMonth()],spend:Math.round(sum(mExp)),income:Math.round(sum(mInc)),workoutVol:wktVol(mWkt),habitPct:habPct};
       });
       setMonthlyChartData(chartRows);
 
-      const habConsistency=totalH>0?Math.round(((thisHabAll||[]).filter((h:any)=>h.value&&h.value!=="0").length/(totalH*365))*100):0;
-      setAnnualStats({spend:sum(thisExpAll||[]),income:sum(thisIncAll||[]),wktVol:wktVol(thisWktAll||[]),wktDays:new Set((thisWktAll||[]).map((w:any)=>w.date)).size,tasks:(thisTskAll||[]).length,habitPct:habConsistency,label:now.getFullYear().toString()});
+      const habConsistency=totalH>0?Math.round(((thisHabAll||[]).filter((h) =>h.value&&h.value!=="0").length/(totalH*365))*100):0;
+      setAnnualStats({spend:sum(thisExpAll||[]),income:sum(thisIncAll||[]),wktVol:wktVol(thisWktAll||[]),wktDays:new Set((thisWktAll||[]).map((w) =>w.date)).size,tasks:(thisTskAll||[]).length,habitPct:habConsistency,label:now.getFullYear().toString()});
       setPrevAnnualStats({spend:sum(lastExpAll||[]),wktVol:wktVol(lastWktAll||[]),tasks:(lastTskAll||[]).length,label:(now.getFullYear()-1).toString()});
       setLoading(false);
     }
@@ -73,11 +78,12 @@ export default function YearlySummaryPage() {
     return d>0?`+${d}%`:`${d}%`;
   };
 
-  const CustomTooltip=({active,payload,label}:any)=>{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Record<string, any>[]; label?: any }) =>{
     if(active&&payload?.length)return(
       <div className="bg-card border border-border rounded-xl p-3 shadow-md text-xs font-black">
         <div className="text-muted-foreground mb-2">{label}</div>
-        {payload.map((p:any,i:number)=>(
+        {payload.map((p: any, i: number)=>(
           <div key={i} className="flex gap-3 justify-between" style={{color:p.color}}>
             <span>{p.name}:</span>
             <span>{p.name==="Spend"||p.name==="Income"?`₹${p.value?.toLocaleString("en-IN")}`:p.value}</span>

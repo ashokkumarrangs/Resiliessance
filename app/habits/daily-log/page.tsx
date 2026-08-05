@@ -1,17 +1,15 @@
 'use client'
 import { Select } from "@/components/Select";;
-import Link from "next/link";
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, AlertTriangle, ArrowRight, Calendar, CheckCircle2, ChevronDown, ChevronUp, CircleDot, Clock, Plus, RefreshCw, XCircle  } from "lucide-react";
-import { format, addDays, subDays } from 'date-fns';
-import { Button } from '@/components/ui/button';
+import { Calendar, ChevronDown, ChevronUp, Clock} from "lucide-react";
+import { format} from 'date-fns';
 import { Input } from '@/components/ui/input';
 
 import { toast } from 'sonner';
-import { getStatusIcon, getStatusStyles, getStatusColor } from "@/lib/habit-ui-utils";
+import { getStatusIcon, getStatusStyles} from "@/lib/habit-ui-utils";
 import { calculateHabitStatus, HabitStatus, HabitConfig as ScoringConfig, sumDurations } from '@/lib/habit-scoring';
 import { SaveButton } from "@/components/ui/SaveButton";
 import { HABIT_TABS } from "@/lib/navigation";

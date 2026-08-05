@@ -1,11 +1,9 @@
 "use client";
 
 import { BarChart2, RefreshCw } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
-import { Currency } from "@/components/currency";
 import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { EXPENSE_TABS } from "@/lib/navigation";
@@ -92,7 +90,7 @@ export default function CurrentBudgetPage() {
       });
 
       setBudgetData(tree);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       toast.error("Failed to fetch budget intelligence");
     } finally {

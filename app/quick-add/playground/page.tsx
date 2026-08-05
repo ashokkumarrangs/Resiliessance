@@ -14,16 +14,7 @@ import {
   Flame,
   TrendingUp,
   Zap,
-  LayoutGrid,
-  Box,
-  CircleDot,
-  Layers,
-  Grid,
-  Compass,
-  Sliders,
-  Cpu,
-  Bookmark,
-  Sparkles,
+                    Sparkles,
 } from "lucide-react";
 import { PageWrapper } from "@/components/PageWrapper";
 

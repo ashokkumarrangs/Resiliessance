@@ -1,8 +1,7 @@
 "use client";
 
-import { Box, Briefcase, CalendarDays, Pencil, PlusCircle, RefreshCw, TrendingDown, TrendingUp , BarChart2 } from "lucide-react";
+import { Box, Briefcase, CalendarDays, PlusCircle, RefreshCw, TrendingDown, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Currency } from "@/components/currency";
@@ -39,14 +38,16 @@ export default function ViewAssetsPage() {
       const { data, error } = await supabase.from('assets').select('*');
       if (error) throw error;
       setAssets(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching assets:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const totalBuyVal = assets.reduce((s, a) => s + (parseFloat(a.purchase_price as any) || 0), 0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const totalCurrVal = assets.reduce((s, a) => s + (parseFloat(a.current_value as any) || 0), 0);
   const profit = totalCurrVal - totalBuyVal;
   const profitPct = totalBuyVal > 0 ? (profit / totalBuyVal) * 100 : 0;

@@ -1,8 +1,7 @@
 "use client";
 
-import { Landmark, PlusCircle, RefreshCw , BarChart2 } from "lucide-react";
+import { Landmark, PlusCircle, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { Currency } from "@/components/currency";
@@ -36,14 +35,16 @@ export default function ViewLiabilityPage() {
       const { data, error } = await supabase.from('liabilities').select('*');
       if (error) throw error;
       setLiabilities(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching liabilities:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const totalRemaining = liabilities.reduce((s, l) => s + (parseFloat(l.remaining as any) || 0), 0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const totalBorrowed = liabilities.reduce((s, l) => s + (parseFloat(l.total_amount as any) || 0), 0);
 
   return (

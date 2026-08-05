@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { AlignJustify, Archive, ArrowUpCircle, CalendarDays, CheckCircle2, ChevronDown, ChevronUp, Clock, Flame, GraduationCap, ListOrdered, Loader2, Plus, Target, Trophy, X, Zap } from "lucide-react";
-import { format, differenceInDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from "date-fns";
+import { AlignJustify, ArrowUpCircle, CalendarDays, CheckCircle2, ChevronDown, ChevronUp, Clock, Flame, Loader2, Plus, X, Zap } from "lucide-react";
+import { format, differenceInDays, startOfMonth, endOfMonth} from "date-fns";
 import { toast } from "sonner";
 import { PageWrapper } from "@/components/PageWrapper";
 import { SKILL_TABS } from "@/lib/navigation";
@@ -65,6 +64,7 @@ function ProgressRing({ value, max, color, size = 140 }: { value: number; max: n
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function SkillsPage() {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tab: any = "Plan";
   const [skills, setSkills] = useState<SkillItem[]>([]);
   const [logs, setLogs] = useState<SkillLog[]>([]);

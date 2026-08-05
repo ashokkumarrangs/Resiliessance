@@ -5,20 +5,18 @@ import { VehicleDashboard } from "@/components/VehicleDashboard";
 import { Select } from "@/components/Select";
 import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
-import { Activity, AlertTriangle, ArrowLeftCircle, BarChart2, Box, CalendarDays, Car, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, Clock, Dumbbell, Flame, Gauge, GraduationCap, Grid3X3, LayoutPanelLeft, ListTodo, Map, PackageCheck, RefreshCw, Scale, ShieldAlert, TrendingUp, Trophy, Wallet, Weight, Zap , Dog, Scissors, Shield, Trees, Coins, LineChart as LineChartIcon } from "lucide-react";
+import { Activity, AlertTriangle, BarChart2, CalendarDays, Car, CheckCircle2, ChevronDown, Clock, Dumbbell, Flame, Gauge, GraduationCap, Grid3X3, ListTodo, Map, PackageCheck, RefreshCw, Scale, ShieldAlert, TrendingUp, Trophy, Wallet, Weight, Zap , Scissors, Shield, Trees, Coins } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { 
-  format, subDays, startOfMonth, eachDayOfInterval, isSameDay, 
-  startOfWeek, endOfWeek, endOfMonth, addMonths, subMonths,
-  subMonths as subM, startOfYear, endOfYear, differenceInDays
+  format, subDays, startOfMonth, eachDayOfInterval,   startOfWeek, endOfWeek, endOfMonth, addMonths, subMonths,
+  differenceInDays
 } from "date-fns";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
-  RadialBarChart, RadialBar, LineChart, Line,
+  LineChart, Line,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-} from "recharts";
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, } from "recharts";
 
 const COLORS = ["var(--color-primary)", "#10b981", "#f59e0b", "#3b82f6", "#8b5cf6", "#ef4444", "#ec4899", "#84cc16"];
 
@@ -106,7 +104,7 @@ export default function ReportsPage() {
   const [trendCustomStart, setTrendCustomStart] = useState("");
   const [trendCustomEnd, setTrendCustomEnd] = useState("");
   const [trendFilters, setTrendFilters] = useState({ category: "All", subcategory: "All", place: "All", vendor: "All", particular: "All" });
-  const [trendData, setTrendData] = useState<any[]>([]);
+  const [trendData, setTrendData] = useState<Record<string, any>[]>([]);
   const [filterOptions, setFilterOptions] = useState({ categories: [], subcategories: [], places: [], vendors: [], particulars: [] });
 
   const [habitTrendDaysRange, setHabitTrendDaysRange] = useState(30);
@@ -114,8 +112,8 @@ export default function ReportsPage() {
   const [habitTrendCustomStart, setHabitTrendCustomStart] = useState("");
   const [habitTrendCustomEnd, setHabitTrendCustomEnd] = useState("");
   const [habitTrendGroup, setHabitTrendGroup] = useState("All Groups");
-  const [habitGravityData, setHabitGravityData] = useState<any[]>([]);
-  const [habitHeatmapData, setHabitHeatmapData] = useState<any[]>([]);
+  const [habitGravityData, setHabitGravityData] = useState<Record<string, any>[]>([]);
+  const [habitHeatmapData, setHabitHeatmapData] = useState<Record<string, any>[]>([]);
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [matrixCalendarMonth, setMatrixCalendarMonth] = useState(new Date());
   const [individualCalendarMonth, setIndividualCalendarMonth] = useState(new Date());
@@ -124,46 +122,46 @@ export default function ReportsPage() {
   const [selectedCalendarHabit, setSelectedCalendarHabit] = useState<string>("All Habits");
 
   // Finance States
-  const [savingsRateData, setSavingsRateData] = useState<any[]>([]);
-  const [budgetVariance, setBudgetVariance] = useState<any[]>([]);
-  const [netWorthTrend, setNetWorthTrend] = useState<any[]>([]);
-  const [categoryBreakdown, setCategoryBreakdown] = useState<any[]>([]);
-  const [liquidity, setLiquidity] = useState<any[]>([]);
-  const [assets, setAssets] = useState<any[]>([]);
-  const [liabilities, setLiabilities] = useState<any[]>([]);
+  const [savingsRateData, setSavingsRateData] = useState<Record<string, any>[]>([]);
+  const [budgetVariance, setBudgetVariance] = useState<Record<string, any>[]>([]);
+  const [netWorthTrend, setNetWorthTrend] = useState<Record<string, any>[]>([]);
+  const [categoryBreakdown, setCategoryBreakdown] = useState<Record<string, any>[]>([]);
+  const [liquidity, setLiquidity] = useState<Record<string, any>[]>([]);
+  const [assets, setAssets] = useState<Record<string, any>[]>([]);
+  const [liabilities, setLiabilities] = useState<Record<string, any>[]>([]);
   const [netWorthParts, setNetWorthParts] = useState({ liq: 0, ast: 0, lib: 0 });
-  const [expenses30, setExpenses30] = useState<any[]>([]);
-  const [detailedExpenses, setDetailedExpenses] = useState<any[]>([]);
-  const [catSpendData, setCatSpendData] = useState<any[]>([]);
-  const [subCatSpendData, setSubCatSpendData] = useState<any[]>([]);
+  const [expenses30, setExpenses30] = useState<Record<string, any>[]>([]);
+  const [detailedExpenses, setDetailedExpenses] = useState<Record<string, any>[]>([]);
+  const [catSpendData, setCatSpendData] = useState<Record<string, any>[]>([]);
+  const [subCatSpendData, setSubCatSpendData] = useState<Record<string, any>[]>([]);
 
   // Habit States
-  const [habitScores, setHabitScores] = useState<any[]>([]);
-  const [habitBreakdown, setHabitBreakdown] = useState<any[]>([]);
-  const [allHabitData, setAllHabitData] = useState<any[]>([]);
-  const [habitConfigs, setHabitConfigs] = useState<any[]>([]);
-  const [habitRadarData, setHabitRadarData] = useState<any[]>([]);
+  const [habitScores, setHabitScores] = useState<Record<string, any>[]>([]);
+  const [habitBreakdown, setHabitBreakdown] = useState<Record<string, any>[]>([]);
+  const [allHabitData, setAllHabitData] = useState<Record<string, any>[]>([]);
+  const [habitConfigs, setHabitConfigs] = useState<Record<string, any>[]>([]);
+  const [habitRadarData, setHabitRadarData] = useState<Record<string, any>[]>([]);
 
   // Workout States
-  const [workoutData, setWorkoutData] = useState<any[]>([]);
-  const [workoutVolumeTrend, setWorkoutVolumeTrend] = useState<any[]>([]);
-  const [workoutBodyDist, setWorkoutBodyDist] = useState<any[]>([]);
-  const [workoutFreshness, setWorkoutFreshness] = useState<any[]>([]);
-  const [workoutIntensityData, setWorkoutIntensityData] = useState<any[]>([]);
-  const [workoutBiasData, setWorkoutBiasData] = useState<any[]>([]);
-  const [workoutVelocityData, setWorkoutVelocityData] = useState<any[]>([]);
-  const [workoutHeatmapData, setWorkoutHeatmapData] = useState<any[]>([]);
+  const [workoutData, setWorkoutData] = useState<Record<string, any>[]>([]);
+  const [workoutVolumeTrend, setWorkoutVolumeTrend] = useState<Record<string, any>[]>([]);
+  const [workoutBodyDist, setWorkoutBodyDist] = useState<Record<string, any>[]>([]);
+  const [workoutFreshness, setWorkoutFreshness] = useState<Record<string, any>[]>([]);
+  const [workoutIntensityData, setWorkoutIntensityData] = useState<Record<string, any>[]>([]);
+  const [workoutBiasData, setWorkoutBiasData] = useState<Record<string, any>[]>([]);
+  const [workoutVelocityData, setWorkoutVelocityData] = useState<Record<string, any>[]>([]);
+  const [workoutHeatmapData, setWorkoutHeatmapData] = useState<Record<string, any>[]>([]);
   const [workoutCalendarMonth, setWorkoutCalendarMonth] = useState(new Date());
   const [routineCalendarMonth, setRoutineCalendarMonth] = useState(new Date());
   const [selectedWorkoutDay, setSelectedWorkoutDay] = useState("All");
 
   // Vehicle States
-  const [fuelEfficiencyTrend, setFuelEfficiencyTrend] = useState<any[]>([]);
-  const [vehicleTCO, setVehicleTCO] = useState<any[]>([]);
-  const [vehicleSpend, setVehicleSpend] = useState<any[]>([]);
-  const [vehicleKMsTrend, setVehicleKMsTrend] = useState<any[]>([]);
-  const [vehicleCPK, setVehicleCPK] = useState<any[]>([]);
-  const [vehicleUsageHeatmap, setVehicleUsageHeatmap] = useState<any[]>([]);
+  const [fuelEfficiencyTrend, setFuelEfficiencyTrend] = useState<Record<string, any>[]>([]);
+  const [vehicleTCO, setVehicleTCO] = useState<Record<string, any>[]>([]);
+  const [vehicleSpend, setVehicleSpend] = useState<Record<string, any>[]>([]);
+  const [vehicleKMsTrend, setVehicleKMsTrend] = useState<Record<string, any>[]>([]);
+  const [vehicleCPK, setVehicleCPK] = useState<Record<string, any>[]>([]);
+  const [vehicleUsageHeatmap, setVehicleUsageHeatmap] = useState<Record<string, any>[]>([]);
   const [vehicleKMsDays, setVehicleKMsDays] = useState(30);
   const [isVehicleKMsCustom, setIsVehicleKMsCustom] = useState(false);
   const [vkStart, setVkStart] = useState("");
@@ -173,19 +171,19 @@ export default function ReportsPage() {
 
   // Task States
   const [taskStats, setTaskStats] = useState({ done: 0, pending: 0, high: 0 });
-  const [taskVelocity, setTaskVelocity] = useState<any[]>([]);
-  const [taskAging, setTaskAging] = useState<any[]>([]);
-  const [taskThroughput, setTaskThroughput] = useState<any[]>([]);
-  const [taskHeatmap, setTaskHeatmap] = useState<any[]>([]);
+  const [taskVelocity, setTaskVelocity] = useState<Record<string, any>[]>([]);
+  const [taskAging, setTaskAging] = useState<Record<string, any>[]>([]);
+  const [taskThroughput, setTaskThroughput] = useState<Record<string, any>[]>([]);
+  const [taskHeatmap, setTaskHeatmap] = useState<Record<string, any>[]>([]);
 
   // --- NEW STATES FOR ADVANCED REPORTS ---
-  const [alerts, setAlerts] = useState<any[]>([]);
-  const [committedVsDiscretionary, setCommittedVsDiscretionary] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<Record<string, any>[]>([]);
+  const [committedVsDiscretionary, setCommittedVsDiscretionary] = useState<Record<string, any>[]>([]);
   const [emergencyFundRunway, setEmergencyFundRunway] = useState<number>(0);
   const [debtTimelineInputs, setDebtTimelineInputs] = useState<Record<string, { amount: number; frequency: number }>>({});
   const [habitStreaks, setHabitStreaks] = useState<Record<string, { current: number; max: number; success: number; failure: number; tolerance: number; critical: number; consistency: number; recoveries: number }>>({});
   const [neverMissTwice, setNeverMissTwice] = useState<{ totalMisses: number; successfulRecoveries: number; rate: number } | null>(null);
-  const [habitCorrelations, setHabitCorrelations] = useState<any[]>([]);
+  const [habitCorrelations, setHabitCorrelations] = useState<Record<string, any>[]>([]);
   const [selectedExercise1RM, setSelectedExercise1RM] = useState<string>("Bench Press");
   const [exerciseList, setExerciseList] = useState<string[]>([]);
   const [workoutVolumeTrendRange, setWorkoutVolumeTrendRange] = useState<number>(30);
@@ -194,23 +192,23 @@ export default function ReportsPage() {
   const [workoutBiasRange, setWorkoutBiasRange] = useState<number>(30);
   const [workout1RMRange, setWorkout1RMRange] = useState<number>(30);
   const [muscleBalanceRange, setMuscleBalanceRange] = useState<number>(30);
-  const [muscleBalanceData, setMuscleBalanceData] = useState<any[]>([]);
-  const [workoutPlateaus, setWorkoutPlateaus] = useState<any[]>([]);
-  const [maintenanceForecasts, setMaintenanceForecasts] = useState<any[]>([]);
+  const [muscleBalanceData, setMuscleBalanceData] = useState<Record<string, any>[]>([]);
+  const [workoutPlateaus, setWorkoutPlateaus] = useState<Record<string, any>[]>([]);
+  const [maintenanceForecasts, setMaintenanceForecasts] = useState<Record<string, any>[]>([]);
   const [serviceExpendituresRange, setServiceExpendituresRange] = useState<number>(30);
-  const [serviceLogs, setServiceLogs] = useState<any[]>([]);
-  const [serviceCategoryCosts, setServiceCategoryCosts] = useState<any[]>([]);
-  const [realTCOPerKM, setRealTCOPerKM] = useState<any[]>([]);
-  const [rawTasksData, setRawTasksData] = useState<any[]>([]);
+  const [serviceLogs, setServiceLogs] = useState<Record<string, any>[]>([]);
+  const [serviceCategoryCosts, setServiceCategoryCosts] = useState<Record<string, any>[]>([]);
+  const [realTCOPerKM, setRealTCOPerKM] = useState<Record<string, any>[]>([]);
+  const [rawTasksData, setRawTasksData] = useState<Record<string, any>[]>([]);
   const [taskMomentumRange, setTaskMomentumRange] = useState<number>(30);
   const [taskThroughputRange, setTaskThroughputRange] = useState<number>(30);
   
   // Skills States
-  const [skillItems, setSkillItems] = useState<any[]>([]);
-  const [petProfiles, setPetProfiles] = useState<any[]>([]);
-  const [petExpenses, setPetExpenses] = useState<any[]>([]);
-  const [petLogs, setPetLogs] = useState<any[]>([]);
-  const [skillLogs, setSkillLogs] = useState<any[]>([]);
+  const [skillItems, setSkillItems] = useState<Record<string, any>[]>([]);
+  const [petProfiles, setPetProfiles] = useState<Record<string, any>[]>([]);
+  const [petExpenses, setPetExpenses] = useState<Record<string, any>[]>([]);
+  const [petLogs, setPetLogs] = useState<Record<string, any>[]>([]);
+  const [skillLogs, setSkillLogs] = useState<Record<string, any>[]>([]);
   const [skillsTimeframe, setSkillsTimeframe] = useState<number>(180);
   const [selectedProgressSkill, setSelectedProgressSkill] = useState<string>("All");
 
@@ -221,8 +219,8 @@ export default function ReportsPage() {
   const [isExerciseDropdownOpen, setIsExerciseDropdownOpen] = useState<boolean>(false);
 
   // Raw configs for client-side recalculations
-  const [vehicleConfigs, setVehicleConfigs] = useState<any[]>([]);
-  const [mLogData, setMLogData] = useState<any[]>([]);
+  const [vehicleConfigs, setVehicleConfigs] = useState<Record<string, any>[]>([]);
+  const [mLogData, setMLogData] = useState<Record<string, any>[]>([]);
 
   // 1. Initial mount only
   useEffect(() => { 
@@ -378,7 +376,7 @@ export default function ReportsPage() {
     const today = new Date();
     const start = format(subDays(today, muscleBalanceRange - 1), "yyyy-MM-dd");
     let pushSets = 0, pullSets = 0, legsSets = 0, otherSets = 0;
-    workoutData.filter(r => r.date >= start).forEach((w: any) => {
+    workoutData.filter(r => r.date >= start).forEach((w) => {
       const name = (w.workout_name || '').toLowerCase();
       const day = (w.workout_day || '').toLowerCase();
       const isPush = name.includes('press') || name.includes('push') || name.includes('chest') || name.includes('shoulder') || name.includes('tricep') || name.includes('bench') || name.includes('dip') || day.includes('push') || day.includes('chest') || day.includes('shoulder');
@@ -421,7 +419,7 @@ export default function ReportsPage() {
       catCostMap[c.name] = {};
     });
 
-    serviceLogs.filter(s => s.date >= start).forEach((s: any) => {
+    serviceLogs.filter(s => s.date >= start).forEach((s) => {
       const amount = parseFloat(s.amount) || 0;
       const desc = (s.details || '').toLowerCase();
       const vName = vNameMap[s.vehicle_id] || `Vehicle ${s.vehicle_id?.slice(0, 4)}`;
@@ -464,7 +462,7 @@ export default function ReportsPage() {
     const tVelocity: Record<string, number> = {};
     eachDayOfInterval({ start, end: today }).forEach(d => tVelocity[format(d, "yyyy-MM-dd")] = 0);
     
-    rawTasksData.forEach((t: any) => {
+    rawTasksData.forEach((t) => {
       if (t.completed_at) {
         const completedDate = new Date(t.completed_at);
         const ds = format(completedDate, "yyyy-MM-dd");
@@ -486,7 +484,7 @@ export default function ReportsPage() {
     let createdCount = 0;
     let completedCount = 0;
 
-    rawTasksData.forEach((t: any) => {
+    rawTasksData.forEach((t) => {
       const created = new Date(t.created_at || t.id.replace('ID_', ''));
       const completed = t.completed_at ? new Date(t.completed_at) : null;
       
@@ -555,7 +553,7 @@ export default function ReportsPage() {
     const habitCfgRaw = results[5].data || [];
     
     const badgedNames: Record<string, string> = {};
-    const habitCfg = habitCfgRaw.map((c: any) => {
+    const habitCfg = habitCfgRaw.map((c) => {
        let newName = c.habit_name;
        if (c.is_archived) newName = `${c.habit_name} (Archived)`;
        else if (c.is_paused) newName = `${c.habit_name} (Paused)`;
@@ -564,7 +562,7 @@ export default function ReportsPage() {
        return { ...c, habit_name: newName };
     });
 
-    const habitData = habitDataRaw.map((d: any) => ({ ...d, habit: badgedNames[d.habit] || d.habit }));
+    const habitData = habitDataRaw.map((d) => ({ ...d, habit: badgedNames[d.habit] || d.habit }));
     const workoutRaw = results[6].data || [];
     const taskData = results[7].data;
     const vehicleCfg = results[8].data;
@@ -576,7 +574,7 @@ export default function ReportsPage() {
     const safeHistMonthRange = results[14].data || [];
     const detailedMonthExp = results[15].data;
     const trendMonthExp = results[16].data;
-    const habitTrendRaw = (results[17].data || []).map((d: any) => ({ ...d, habit: badgedNames[d.habit] || d.habit }));
+    const habitTrendRaw = (results[17].data || []).map((d) => ({ ...d, habit: badgedNames[d.habit] || d.habit }));
     const mLog = results[18].data;
     const inventoryItems = results[19].data;
     const actionTasks = results[20].data;
@@ -591,7 +589,7 @@ export default function ReportsPage() {
     // pets use a dynamic query based on pet names so we fetch separately
     const _petProfiles = results[23]?.data || [];
     if (_petProfiles.length > 0) {
-      const petNames = _petProfiles.map((p: any) => p.name);
+      const petNames = _petProfiles.map((p) => p.name);
       const namesList = petNames.map((n: string) => `"${n}"`).join(',');
       const { data: _petExp } = await supabase.from('history_expenses').select('*').or(`category.eq.Pets,subcategory.in.(${namesList})`);
       setPetExpenses(_petExp || []);
@@ -626,7 +624,7 @@ export default function ReportsPage() {
     const curAst = (astData || []).reduce((s, a) => s + (parseFloat(a.current_value) || 0), 0);
     const curLib = (libData || []).reduce((s, l) => s + (parseFloat(l.remaining) || 0), 0);
     setNetWorthParts({ liq: Math.round(curLiq), ast: Math.round(curAst), lib: Math.round(curLib) });
-    const nwTrend: any[] = [];
+    const nwTrend: Record<string, any>[] = [];
     let rLiq = curLiq, rLib = curLib, rAst = curAst;
     const nwInterval = eachDayOfInterval({ start: startDate, end: today }).reverse();
     nwInterval.forEach((day) => {
@@ -805,7 +803,7 @@ export default function ReportsPage() {
     });
     setNeverMissTwice({ totalMisses, successfulRecoveries, rate: totalMisses > 0 ? Math.round((successfulRecoveries / totalMisses) * 100) : 100 });
 
-    const correlations: any[] = [];
+    const correlations: Record<string, any>[] = [];
     const dailyHabitNames = (habitCfg || []).map(c => c.habit_name);
     for (let i = 0; i < dailyHabitNames.length; i++) {
       for (let j = 0; j < dailyHabitNames.length; j++) {
@@ -855,7 +853,7 @@ export default function ReportsPage() {
     const whmMap: Record<string, boolean> = {}; workoutRaw.forEach(r => whmMap[r.date] = true);
     setWorkoutHeatmapData(eachDayOfInterval({ start: subDays(today, 364), end: today }).map(d => ({ date: format(d, "yyyy-MM-dd"), active: !!whmMap[format(d, "yyyy-MM-dd")] })));
 
-    const allExercises = Array.from(new Set(workoutRaw.map((w: any) => w.workout_name).filter(Boolean))) as string[];
+    const allExercises = Array.from(new Set(workoutRaw.map((w) => w.workout_name).filter(Boolean))) as string[];
     setExerciseList(allExercises);
     if (selectedMatrixExercises.length === 0 && allExercises.length > 0) {
       setSelectedMatrixExercises([allExercises[0]]);
@@ -863,9 +861,9 @@ export default function ReportsPage() {
 
 
 
-    const plateauList: any[] = [];
+    const plateauList: Record<string, any>[] = [];
     allExercises.forEach(exercise => {
-      const exerciseLogs = workoutRaw.filter((w: any) => w.workout_name === exercise).sort((a,b) => a.date.localeCompare(b.date));
+      const exerciseLogs = workoutRaw.filter((w) => w.workout_name === exercise).sort((a,b) => a.date.localeCompare(b.date));
       const sessions: { date: string; maxWeight: number; maxVol: number }[] = [];
       const groupedByDate: Record<string, any[]> = {};
       exerciseLogs.forEach(l => {
@@ -899,7 +897,7 @@ export default function ReportsPage() {
     setWorkoutPlateaus(plateauList.slice(0, 5));
 
     // --- VEHICLE CONSOLIDATION ---
-    const usageOdoLogs = [...(mLog || [])].map((m:any) => ({ vId: m.vehicle_id, date: m.date, odo: parseFloat(m.odometer) })).sort((a,b) => a.odo - b.odo);
+    const usageOdoLogs = [...(mLog || [])].map((m) => ({ vId: m.vehicle_id, date: m.date, odo: parseFloat(m.odometer) })).sort((a,b) => a.odo - b.odo);
     const usageHeatmap: Record<string, number> = {};
     const vUsageGrouped = usageOdoLogs.reduce((acc, l) => { if (!acc[l.vId]) acc[l.vId] = []; acc[l.vId].push(l); return acc; }, {} as Record<string, any[]>);
     Object.values(vUsageGrouped).forEach(logs => {
@@ -931,25 +929,25 @@ export default function ReportsPage() {
 
     setVehicleCPK(Object.entries(vFuelDistMap).map(([id, d]) => { const dist = d.max - d.min; const cost = vFuelCostMap[id] || 0; return { name: (vehicleCfg || []).find(v => v.id === id)?.vehicle_name || "Unknown", cpk: dist > 0 ? (cost / dist).toFixed(2) : 0, dist }; }));
 
-    setVehicleSpend(Object.values((vehicleCfg || []).reduce((acc: any, v) => { acc[v.id] = { id: v.id, name: v.vehicle_name, fuel: 0, service: 0 }; return acc; }, {})).map((v:any) => {
+    setVehicleSpend(Object.values((vehicleCfg || []).reduce((acc: any, v) => { acc[v.id] = { id: v.id, name: v.vehicle_name, fuel: 0, service: 0 }; return acc; }, {})).map((v: any) => {
       const fuel = (fuelData || []).filter(f => f.vehicle_id === v.id && f.date >= monthStart).reduce((s, f) => s + (parseFloat(f.amount) || 0), 0);
       const svc = (svcData || []).filter(s => s.vehicle_id === v.id && s.date >= monthStart).reduce((s, s_l) => s + (parseFloat(s_l.amount) || 0), 0);
       return { ...v, fuel, service: svc };
     }));
-    setVehicleTCO(Object.values((vehicleCfg || []).reduce((acc: any, v) => { acc[v.id] = { id: v.id, name: v.vehicle_name, fuel: 0, service: 0 }; return acc; }, {})).map((v:any) => {
+    setVehicleTCO(Object.values((vehicleCfg || []).reduce((acc: any, v) => { acc[v.id] = { id: v.id, name: v.vehicle_name, fuel: 0, service: 0 }; return acc; }, {})).map((v: any) => {
       const fuel = (fuelData || []).filter(f => f.vehicle_id === v.id).reduce((s, f) => s + (parseFloat(f.amount) || 0), 0);
       const svc = (svcData || []).filter(s => s.vehicle_id === v.id).reduce((s, s_l) => s + (parseFloat(s_l.amount) || 0), 0);
       return { ...v, fuel, service: svc, total: fuel + svc };
     }));
     setFuelEfficiencyTrend((fuelData || []).filter(f => f.mileage).map(f => ({ date: format(new Date(f.date), "dd MMM"), mileage: parseFloat(f.mileage), vehicle: (vehicleCfg || []).find(v => v.id === f.vehicle_id)?.vehicle_name })));
 
-    const forecasts: any[] = [];
+    const forecasts: Record<string, any>[] = [];
     (vehicleCfg || []).forEach(v => {
-      const vLogs = (mLog || []).filter((m: any) => m.vehicle_id === v.id).sort((a,b) => a.date.localeCompare(b.date));
-      const vFuelLogs = (fuelData || []).filter((f: any) => f.vehicle_id === v.id).sort((a,b) => a.date.localeCompare(b.date));
+      const vLogs = (mLog || []).filter((m) => m.vehicle_id === v.id).sort((a,b) => a.date.localeCompare(b.date));
+      const vFuelLogs = (fuelData || []).filter((f) => f.vehicle_id === v.id).sort((a,b) => a.date.localeCompare(b.date));
       const odoReadings = [
-        ...vLogs.map((l: any) => ({ date: new Date(l.date), odo: parseFloat(l.odometer) })),
-        ...vFuelLogs.map((l: any) => ({ date: new Date(l.date), odo: parseFloat(l.odometer) }))
+        ...vLogs.map((l) => ({ date: new Date(l.date), odo: parseFloat(l.odometer) })),
+        ...vFuelLogs.map((l) => ({ date: new Date(l.date), odo: parseFloat(l.odometer) }))
       ].sort((a,b) => a.date.getTime() - b.date.getTime());
       let dailyRate = 10;
       if (odoReadings.length >= 2) {
@@ -977,7 +975,7 @@ export default function ReportsPage() {
 
 
 
-    const realTCOList: any[] = [];
+    const realTCOList: Record<string, any>[] = [];
     (vehicleCfg || []).forEach(v => {
       const fuelCost = (fuelData || []).filter(f => f.vehicle_id === v.id).reduce((s, f) => s + (parseFloat(f.amount) || 0), 0);
       const svcCost = (svcData || []).filter(s => s.vehicle_id === v.id).reduce((s, s_l) => s + (parseFloat(s_l.amount) || 0), 0);
@@ -987,9 +985,9 @@ export default function ReportsPage() {
       const annualDepreciation = estimatedOriginalPrice * 0.10;
       const totalDepreciation = annualDepreciation * ageYears;
       const totalCost = fuelCost + svcCost + totalDepreciation;
-      const vLogs = (mLog || []).filter((m: any) => m.vehicle_id === v.id);
-      const vFuelLogs = (fuelData || []).filter((f: any) => f.vehicle_id === v.id);
-      const odoValues = [...vLogs, ...vFuelLogs].map((l: any) => parseFloat(l.odometer)).filter(Boolean);
+      const vLogs = (mLog || []).filter((m) => m.vehicle_id === v.id);
+      const vFuelLogs = (fuelData || []).filter((f) => f.vehicle_id === v.id);
+      const odoValues = [...vLogs, ...vFuelLogs].map((l) => parseFloat(l.odometer)).filter(Boolean);
       const maxOdo = odoValues.length > 0 ? Math.max(...odoValues) : (parseFloat(v.initial_odometer) || 0);
       const distance = Math.max(100, maxOdo - (parseFloat(v.initial_odometer) || 0));
       realTCOList.push({
@@ -1009,7 +1007,7 @@ export default function ReportsPage() {
     const tHeatmap: Record<string, number> = {};
     const tAgingBuckets = { "< 7d": 0, "7-30d": 0, "> 30d": 0 };
 
-    tasks.forEach((t: any) => {
+    tasks.forEach((t) => {
       const created = new Date(t.created_at || t.id.replace('ID_', '')); 
       const completed = t.completed_at ? new Date(t.completed_at) : null;
 
@@ -1025,9 +1023,9 @@ export default function ReportsPage() {
     });
 
     setTaskStats({ 
-      done: tasks.filter((t:any) => t.status === "Completed" || t.status === "Done").length, 
-      pending: tasks.filter((t:any) => t.status !== "Completed" && t.status !== "Done").length, 
-      high: tasks.filter((t:any) => t.is_high_priority).length 
+      done: tasks.filter((t) => t.status === "Completed" || t.status === "Done").length, 
+      pending: tasks.filter((t) => t.status !== "Completed" && t.status !== "Done").length, 
+      high: tasks.filter((t) => t.is_high_priority).length 
     });
     setTaskAging(Object.entries(tAgingBuckets).map(([name, value]) => ({ name, value })));
     setTaskHeatmap(eachDayOfInterval({ start: subDays(today, 364), end: today }).map(d => {
@@ -1035,7 +1033,7 @@ export default function ReportsPage() {
       return { date: ds, count: tHeatmap[ds] || 0 };
     }));
 
-    const systemAlerts: any[] = [];
+    const systemAlerts: Record<string, any>[] = [];
     (vehicleCfg || []).forEach(v => {
       if (v.insurance_expiry) {
         const exp = new Date(v.insurance_expiry);
@@ -1056,7 +1054,7 @@ export default function ReportsPage() {
         }
       }
     });
-    (actionTasks || []).forEach((t: any) => {
+    (actionTasks || []).forEach((t) => {
       if (!t.completed && t.due) {
         const due = new Date(t.due);
         const days = differenceInDays(due, today);
@@ -1065,7 +1063,7 @@ export default function ReportsPage() {
         }
       }
     });
-    (taskData || []).forEach((t: any) => {
+    (taskData || []).forEach((t) => {
       if (t.is_high_priority && t.status === 'Pending') {
         systemAlerts.push({ id: `task-high-${t.id}`, type: 'warning', section: 'TASKS', text: `High priority task pending: "${t.task}"` });
       }
@@ -1082,7 +1080,7 @@ export default function ReportsPage() {
         });
       }
     });
-    (inventoryItems || []).forEach((item: any) => {
+    (inventoryItems || []).forEach((item) => {
       if (item.status === 'lent_out' && item.return_due_date) {
         const due = new Date(item.return_due_date);
         const days = differenceInDays(due, today);
@@ -1097,14 +1095,14 @@ export default function ReportsPage() {
   };
 
   const debtPayoffCalculations = useMemo(() => {
-    const calcs: Record<string, { monthsToPay: number; monthlyPaymentEquivalent: number; timelinePoints: any[] }> = {};
+    const calcs: Record<string, { monthsToPay: number; monthlyPaymentEquivalent: number; timelinePoints: Record<string, any>[] }> = {};
     liabilities.forEach(l => {
       const input = debtTimelineInputs[l.name] || { amount: Math.round(l.value / 12) || 1000, frequency: 1 };
       const payAmount = input.amount || 1;
       const freq = input.frequency || 1;
       const monthlyPaymentEquivalent = payAmount / freq;
       const monthsToPay = monthlyPaymentEquivalent > 0 ? (l.value / monthlyPaymentEquivalent) : 999;
-      const points: any[] = [];
+      const points: Record<string, any>[] = [];
       let currentRemaining = l.value;
       for (let m = 0; m <= Math.min(60, Math.ceil(monthsToPay)); m++) {
         points.push({ month: `M+${m}`, remaining: Math.round(currentRemaining) });
@@ -1143,7 +1141,7 @@ export default function ReportsPage() {
       const curLib = (libData || []).reduce((s, l) => s + (parseFloat(l.remaining) || 0), 0);
       setNetWorthParts({ liq: Math.round(curLiq), ast: Math.round(curAst), lib: Math.round(curLib) });
 
-    const nwTrend: any[] = [];
+    const nwTrend: Record<string, any>[] = [];
     let rLiq = curLiq, rLib = curLib, rAst = curAst;
     const nwInterval = eachDayOfInterval({ start: startDate, end: today }).reverse();
     nwInterval.forEach((day) => {
@@ -1269,7 +1267,7 @@ export default function ReportsPage() {
 
   const recalculateVehicleKMs = () => {
     const today = new Date();
-    const usageOdoLogs = [...(mLogData || [])].map((m:any) => ({ vId: m.vehicle_id, date: m.date, odo: parseFloat(m.odometer) })).sort((a,b) => a.odo - b.odo);
+    const usageOdoLogs = [...(mLogData || [])].map((m) => ({ vId: m.vehicle_id, date: m.date, odo: parseFloat(m.odometer) })).sort((a,b) => a.odo - b.odo);
     
     const vNameMap: Record<string, string> = {};
     vehicleConfigs.forEach(vc => {
@@ -1333,8 +1331,8 @@ export default function ReportsPage() {
     const cutoffStr = format(cutoffDate, "yyyy-MM-dd");
     const sessions: Record<string, number> = {};
     workoutData
-      .filter((w: any) => w.workout_name === exerciseName && w.date >= cutoffStr)
-      .forEach((w: any) => {
+      .filter((w) => w.workout_name === exerciseName && w.date >= cutoffStr)
+      .forEach((w) => {
         const weight = parseFloat(w.weight) || 0;
         const reps = parseInt(w.reps) || 0;
         if (reps > 0 && weight > 0) {
@@ -1355,14 +1353,14 @@ export default function ReportsPage() {
       cutoffDate = subDays(today, parseInt(selectedStrengthTimeframe));
     }
 
-    const dateFilteredLogs = workoutData.filter((w: any) => {
+    const dateFilteredLogs = workoutData.filter((w) => {
       if (!cutoffDate) return true;
       const logDate = new Date(w.date);
       return logDate >= cutoffDate;
     });
 
     const allTimePRs: Record<string, number> = {};
-    workoutData.forEach((w: any) => {
+    workoutData.forEach((w) => {
       const name = w.workout_name;
       const weight = parseFloat(w.weight) || 0;
       if (name && weight > 0) {
@@ -1375,7 +1373,7 @@ export default function ReportsPage() {
     );
 
     return activeExercises.map((exName) => {
-      const logs = dateFilteredLogs.filter((w: any) => w.workout_name === exName);
+      const logs = dateFilteredLogs.filter((w) => w.workout_name === exName);
 
       if (logs.length === 0) {
         return {
@@ -1400,7 +1398,7 @@ export default function ReportsPage() {
       const weightCounts: Record<number, number> = {};
       const repCounts: Record<number, number> = {};
 
-      logs.forEach((w: any) => {
+      logs.forEach((w) => {
         const weight = parseFloat(w.weight) || 0;
         const reps = parseInt(w.reps) || 0;
         if (weight <= 0) return;
@@ -1503,7 +1501,7 @@ export default function ReportsPage() {
 
     // 3. Mastery Progression & Hour Milestones
     const sortedLogs = [...skillLogs].sort((a, b) => a.date.localeCompare(b.date));
-    const progressionData: any[] = [];
+    const progressionData: Record<string, any>[] = [];
     
     const filteredProgressionLogs = sortedLogs.filter(l => {
       if (selectedProgressSkill === "All") return true;
@@ -1525,7 +1523,7 @@ export default function ReportsPage() {
     });
 
     // 4. Monthly Target Achievement Rate
-    const monthlyTargetData: any[] = [];
+    const monthlyTargetData: Record<string, any>[] = [];
     const focusSkills = skillItems.filter(s => s.status === 'focus' || s.focus_month);
     const uniqueMonths = [...new Set(focusSkills.map(s => s.focus_month).filter(Boolean))] as string[];
     
@@ -1592,7 +1590,7 @@ export default function ReportsPage() {
         avgDuration,
         lastPracticed,
         bestStreak
-      };
+      } as any;
     }).sort((a, b) => b.totalHours - a.totalHours);
 
     return {
@@ -1606,26 +1604,26 @@ export default function ReportsPage() {
   }, [skillItems, skillLogs, skillsTimeframe, selectedProgressSkill]);
 
   // ─── PETS COMPUTED DATA ──────────────────────────────────────
-  const petTCO = petExpenses.filter((e: any) => e.type !== 'Income').reduce((sum: number, exp: any) => sum + (parseFloat(exp.amount) || 0), 0);
+  const petTCO = petExpenses.filter((e) => e.type !== 'Income').reduce((sum: number, exp: any) => sum + (parseFloat(exp.amount) || 0), 0);
 
   const petUpcomingReminders = petLogs
-    .filter((l: any) => l.next_due_date)
+    .filter((l) => l.next_due_date)
     .sort((a: any, b: any) => new Date(a.next_due_date).getTime() - new Date(b.next_due_date).getTime());
 
   const petMonthlyExpenseData = useMemo(() => {
     const monthsMap: Record<string, any> = {};
-    petExpenses.forEach((exp: any) => {
+    petExpenses.forEach((exp) => {
       const monthStr = format(new Date(exp.date), 'MMM yyyy');
       if (!monthsMap[monthStr]) monthsMap[monthStr] = { month: monthStr };
       const amount = parseFloat(exp.amount) || 0;
-      const petName = petProfiles.find((p: any) => p.name === exp.subcategory)?.name || 'General';
+      const petName = petProfiles.find((p) => p.name === exp.subcategory)?.name || 'General';
       monthsMap[monthStr][petName] = (monthsMap[monthStr][petName] || 0) + amount;
     });
     return Object.values(monthsMap).sort((a: any, b: any) => new Date(a.month).getTime() - new Date(b.month).getTime());
   }, [petExpenses, petProfiles]);
 
   const petGetDaysSince = (type: string) => {
-    const typeLogs = petLogs.filter((l: any) => l.log_type === type);
+    const typeLogs = petLogs.filter((l) => l.log_type === type);
     if (typeLogs.length === 0) return -1;
     typeLogs.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
     return Math.floor((new Date().getTime() - new Date(typeLogs[0].date).getTime()) / (1000 * 60 * 60 * 24));
@@ -1646,25 +1644,25 @@ export default function ReportsPage() {
   ].filter(d => d.days >= 0);
 
   const petActivityData = useMemo(() => {
-    const acts = petLogs.filter((l: any) => l.category === 'Activities');
+    const acts = petLogs.filter((l) => l.category === 'Activities');
     const counts: Record<string, number> = {};
-    acts.forEach((a: any) => { counts[a.log_type] = (counts[a.log_type] || 0) + 1; });
+    acts.forEach((a) => { counts[a.log_type] = (counts[a.log_type] || 0) + 1; });
     return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count).slice(0, 5);
   }, [petLogs]);
 
   const petTrainingData = useMemo(() => {
-    const trn = petLogs.filter((l: any) => l.category === 'Training');
+    const trn = petLogs.filter((l) => l.category === 'Training');
     let sessions = 0; let incidents = 0;
-    trn.forEach((t: any) => { if (t.log_type.includes('Incident')) incidents++; else sessions++; });
+    trn.forEach((t) => { if (t.log_type.includes('Incident')) incidents++; else sessions++; });
     return [{ name: 'Sessions', value: sessions }, { name: 'Incidents', value: incidents }].filter(d => d.value > 0);
   }, [petLogs]);
 
   const petExpenseBreakdown = useMemo(() => {
     const data: Record<string, Record<string, number>> = { 'General': {} };
-    petProfiles.forEach((p: any) => { data[p.name] = {}; });
-    petExpenses.forEach((exp: any) => {
+    petProfiles.forEach((p) => { data[p.name] = {}; });
+    petExpenses.forEach((exp) => {
       const amount = parseFloat(exp.amount) || 0;
-      const petName = petProfiles.find((p: any) => p.name === exp.subcategory)?.name || 'General';
+      const petName = petProfiles.find((p) => p.name === exp.subcategory)?.name || 'General';
       if (data[petName]) {
         const particular = exp.particular || 'Other';
         data[petName][particular] = (data[petName][particular] || 0) + amount;
@@ -1758,7 +1756,7 @@ export default function ReportsPage() {
             }>
               <ResponsiveContainer width="100%" height={240}>
                 <PieChart>
-                  <Pie data={catSpendData} dataKey="value" innerRadius={60} outerRadius={80} paddingAngle={2} onClick={(data: any) => setExpenseSelectedCategory(String(data?.name || "All"))}>
+                  <Pie data={catSpendData} dataKey="value" innerRadius={60} outerRadius={80} paddingAngle={2} onClick={(data) => setExpenseSelectedCategory(String(data?.name || "All"))}>
                     {catSpendData.map((_,i)=><Cell key={i} fill={COLORS[i%COLORS.length]}/>)}
                   </Pie>
                   <Tooltip content={<CustomTooltip/>}/>
@@ -2899,9 +2897,9 @@ export default function ReportsPage() {
                   <h3 className="font-black text-sm uppercase tracking-widest">Upcoming Reminders</h3>
                 </div>
                 <div className="space-y-2">
-                  {petUpcomingReminders.slice(0,3).map((r: any) => {
+                  {petUpcomingReminders.slice(0,3).map((r) => {
                     const daysLeft = Math.ceil((new Date(r.next_due_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-                    const petName = petProfiles.find((p: any) => p.id === r.pet_id)?.name || 'Pet';
+                    const petName = petProfiles.find((p) => p.id === r.pet_id)?.name || 'Pet';
                     return (
                       <div key={r.id} className="bg-background rounded-xl p-3 flex justify-between items-center border border-border/40">
                         <div>
@@ -2938,7 +2936,7 @@ export default function ReportsPage() {
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={petMonthlyExpenseData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                       <defs>
-                        {[...petProfiles.map((p: any) => p.name), 'General'].map((name: string, idx: number) => (
+                        {[...petProfiles.map((p) => p.name), 'General'].map((name: string, idx: number) => (
                           <linearGradient key={name} id={`petColor${name}`} x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor={COLORS[idx % COLORS.length]} stopOpacity={0.3}/>
                             <stop offset="95%" stopColor={COLORS[idx % COLORS.length]} stopOpacity={0}/>
@@ -2950,7 +2948,7 @@ export default function ReportsPage() {
                       <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10 }} tickFormatter={(v: number) => `₹${v}`} />
                       <Tooltip content={<CustomTooltip/>} />
                       <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', fontWeight: 'bold' }} />
-                      {[...petProfiles.map((p: any) => p.name), 'General'].map((name: string, idx: number) => (
+                      {[...petProfiles.map((p) => p.name), 'General'].map((name: string, idx: number) => (
                         <Area key={name} type="monotone" dataKey={name} stroke={COLORS[idx % COLORS.length]} strokeWidth={3} fillOpacity={1} fill={`url(#petColor${name})`} />
                       ))}
                     </AreaChart>
@@ -2965,7 +2963,7 @@ export default function ReportsPage() {
             {petProfiles.length > 0 && Object.keys(petExpenseBreakdown).some((pet: string) => petExpenseBreakdown[pet].length > 0) && (
               <SectionCard title="Expense Breakdown" icon={<Wallet size={18} />}>
                 <div className="grid grid-cols-2 gap-4 p-4">
-                  {[...petProfiles.map((p: any) => p.name), 'General'].map((name: string, idx: number) => {
+                  {[...petProfiles.map((p) => p.name), 'General'].map((name: string, idx: number) => {
                     const data = petExpenseBreakdown[name];
                     if (!data || data.length === 0) return null;
                     return (

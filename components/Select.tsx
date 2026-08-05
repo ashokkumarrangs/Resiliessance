@@ -3,22 +3,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, CheckCircle2 } from "lucide-react";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Select({ value, onChange, className, children, ...props }: { value: any; onChange: (e: any) => void; className?: string; children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Extract options from children <option value="X">Label</option>
-  const options = React.Children.toArray(children).map((child: any) => {
-    if (child.type === 'option') {
+  const options = React.Children.toArray(children).map((child) => {
+    const el = child as React.ReactElement<any>;
+    if (el && el.type === 'option') {
       return { 
-        value: child.props.value !== undefined ? child.props.value : child.props.children, 
-        label: child.props.children 
+        value: el.props.value !== undefined ? el.props.value : el.props.children, 
+        label: el.props.children 
       };
     }
     return null;
-  }).filter(Boolean);
+  }).filter(Boolean) as { value: string | number; label: string }[];
 
-  const selectedLabel = options.find((o: any) => String(o.value) === String(value))?.label || value;
+  const selectedLabel = options.find((o) => String(o.value) === String(value))?.label || value;
 
   // Handle click outside
   useEffect(() => {
@@ -48,7 +50,7 @@ export function Select({ value, onChange, className, children, ...props }: { val
       
       {isOpen && (
         <div className="absolute z-[100] right-0 top-full mt-1 min-w-[120px] w-max bg-card rounded-md shadow-2xl border border-border/40 p-1.5 max-h-60 overflow-y-auto">
-          {options.map((opt: any, i) => (
+          {options.map((opt, i) => (
             <div
               key={i}
               onClick={(e) => {

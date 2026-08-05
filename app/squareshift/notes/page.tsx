@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { 
-    Folder, Notebook, Plus, Check, FileText, Edit3, Trash2, GripVertical, List, Eye, EyeOff
+    Folder, Notebook, Plus, Check, Edit3, Trash2, GripVertical, List, Eye, EyeOff
 } from "lucide-react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -17,12 +16,15 @@ const NOTES_ID = "__notes__";
 
 export default function SquareShiftNotesPage() {
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [projects, setProjects] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [tasks, setTasks] = useState<any[]>([]);
   const [openCounts, setOpenCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [showDone, setShowDone] = useState(false);
   const [taskModalOpen, setTaskModalOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activeTask, setActiveTask] = useState<any | null>(null);
   const [newTaskText, setNewTaskText] = useState("");
   const [expandedNotes, setExpandedNotes] = useState<Set<string>>(new Set());
@@ -84,6 +86,7 @@ export default function SquareShiftNotesPage() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const executeStatusChange = async (task: any, completed: boolean, completedAt: string | null) => {
     const { error } = await supabase
       .from('action_tasks')

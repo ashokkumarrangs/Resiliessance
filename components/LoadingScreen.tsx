@@ -14,22 +14,19 @@ const DEFAULT_MESSAGES = [
 ];
 
 export function LoadingScreen({ message }: LoadingScreenProps) {
-  const [displayMessage, setDisplayMessage] = useState(message || DEFAULT_MESSAGES[0]);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (message) {
-      setDisplayMessage(message);
-      return;
-    }
+    if (message) return;
 
-    let index = 0;
     const interval = setInterval(() => {
-      index = (index + 1) % DEFAULT_MESSAGES.length;
-      setDisplayMessage(DEFAULT_MESSAGES[index]);
+      setIndex((prevIndex) => (prevIndex + 1) % DEFAULT_MESSAGES.length);
     }, 2000);
 
     return () => clearInterval(interval);
   }, [message]);
+
+  const displayMessage = message || DEFAULT_MESSAGES[index];
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] py-20 px-6 w-full animate-[fadeIn_0.3s_ease-out]">

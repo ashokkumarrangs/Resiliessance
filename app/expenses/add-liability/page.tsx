@@ -1,9 +1,8 @@
 "use client";
 import { format } from 'date-fns';
 import { Select } from "@/components/Select";
-import Link from "next/link";
 
-import { Banknote, CalendarDays, CheckCircle2, ChevronDown, Landmark, ListTodo, StickyNote, Tags, Users , BarChart2 } from "lucide-react";
+import { Banknote, CalendarDays, ChevronDown, Landmark, ListTodo, StickyNote, Tags, Users } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect, Suspense } from "react";
 import { supabase } from "@/lib/supabase";
@@ -38,6 +37,7 @@ function AddLiabilityContent() {
     accounts: ["Paid", "Received"]
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [partyDetail, setPartyDetail] = useState<any>(null);
 
   useEffect(() => {

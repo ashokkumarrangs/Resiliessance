@@ -7,7 +7,8 @@ import { supabase } from "@/lib/supabase";
 import { format, subDays, startOfWeek, endOfWeek } from "date-fns";
 
 export default function WeeklySummaryPage() {
-  const [data, setData] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<Record<string, any> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,14 +39,18 @@ export default function WeeklySummaryPage() {
       ]);
 
       const totalHabits = (habitConfigs || []).length;
-      const habitPct = (habitData: any[]) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const habitPct = (habitData: Record<string, any>[]) => {
         if (totalHabits === 0) return 0;
-        const done = (habitData || []).filter((h: any) => h.value && h.value !== "0" && h.value !== "false").length;
+        const done = (habitData || []).filter((h) => h.value && h.value !== "0" && h.value !== "false").length;
         return Math.round((done / (totalHabits * 7)) * 100);
       };
-      const workoutVol = (wd: any[]) => (wd || []).reduce((s: number, w: any) => s + ((parseFloat(w.weight) || 0) * (parseInt(w.reps) || 0)), 0);
-      const workoutDays = (wd: any[]) => new Set((wd || []).map((w: any) => w.date)).size;
-      const totalSpend = (ed: any[]) => (ed || []).reduce((s: number, e: any) => s + (parseFloat(e.amount) || 0), 0);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const workoutVol = (wd: Record<string, any>[]) => (wd || []).reduce((s: number, w) => s + ((parseFloat(w.weight) || 0) * (parseInt(w.reps) || 0)), 0);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const workoutDays = (wd: Record<string, any>[]) => new Set((wd || []).map((w) => w.date)).size;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const totalSpend = (ed: Record<string, any>[]) => (ed || []).reduce((s: number, e) => s + (parseFloat(e.amount) || 0), 0);
 
       setData({
         this: {
@@ -95,7 +100,7 @@ export default function WeeklySummaryPage() {
     <PageWrapper title="Weekly Progress Summary" sectionTabs={REPORT_TABS}>
       
 
-      {loading ? (
+      {loading || !data ? (
         <div className="text-sm text-muted-foreground text-center py-16">Loading weekly data...</div>
       ) : (
         <>

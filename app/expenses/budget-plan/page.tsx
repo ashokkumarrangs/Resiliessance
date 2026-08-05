@@ -1,8 +1,6 @@
 "use client";
 import { Select } from "@/components/Select";
-import Link from "next/link";
 
-import { CheckCircle2, ChevronRight, Save, TrendingUp , BarChart2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { supabase } from "@/lib/supabase";
@@ -217,6 +215,7 @@ function BudgetPlanContent() {
   const handleSave = async () => {
     setIsSubmitting(true);
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payloads: any[] = [];
       Object.entries(budgetData).forEach(([category, subcategories]) => {
         Object.entries(subcategories).forEach(([subcategory, item]) => {

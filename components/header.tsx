@@ -9,7 +9,11 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     
-    setDateStr(`${days[d.getDay()]}\n${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`);
+    const formatted = `${days[d.getDay()]}\n${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    const timer = setTimeout(() => {
+      setDateStr(formatted);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, Landmark, Pencil, Plus, RefreshCw , BarChart2 } from "lucide-react";
+import { Eye, Landmark, Pencil, Plus, RefreshCw } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
@@ -40,7 +40,7 @@ export default function LiquidityPage() {
       
       if (error) throw error;
       setAccounts(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching accounts:", error);
     } finally {
       setIsLoading(false);

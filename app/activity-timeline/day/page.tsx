@@ -44,10 +44,15 @@ export default function DayAtAGlancePage() {
   const dateInputRef          = useRef<HTMLInputElement>(null);
 
   // data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [tasks,    setTasks]    = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [habits,   setHabits]   = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [workouts, setWorkouts] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [expenses, setExpenses] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [skills,   setSkills]   = useState<any[]>([]);   // {name, duration_minutes}[]
 
   const handleDateClick = () => {
@@ -77,12 +82,12 @@ export default function DayAtAGlancePage() {
       ]);
 
       const doneHabits = new Set(
-        (habitData||[]).filter((h:any)=>h.value && h.value !== "0" && h.value !== "false" && h.value !== "No").map((h:any)=>h.habit)
+        (habitData||[]).filter((h) =>h.value && h.value !== "0" && h.value !== "false" && h.value !== "No").map((h) =>h.habit)
       );
-      setHabits((habitConfigs||[]).map((h:any)=>({...h, done:doneHabits.has(h.habit_name)})));
+      setHabits((habitConfigs||[]).map((h) =>({...h, done:doneHabits.has(h.habit_name)})));
       
       const isDateToday = date === todayStr();
-      const filteredTasks = (tasksData || []).filter((t: any) => {
+      const filteredTasks = (tasksData || []).filter((t) => {
         if (t.completed_at && t.completed_at.startsWith(date)) return true;
         if (isDateToday && t.status === "Pending" && t.is_today) return true;
         return false;
@@ -92,8 +97,8 @@ export default function DayAtAGlancePage() {
       setExpenses(expenseData||[]);
 
       // join skill_logs with skills name
-      const skillMap = new Map((skillsConfig||[]).map((s:any)=>[s.id, s.name]));
-      setSkills((skillLogsData||[]).map((sl:any)=>({
+      const skillMap = new Map((skillsConfig||[]).map((s) =>[s.id, s.name]));
+      setSkills((skillLogsData||[]).map((sl) =>({
         name: skillMap.get(sl.skill_id)||"Skill Focus",
         duration_minutes: sl.duration_minutes||0,
       })));

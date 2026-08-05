@@ -1,16 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from "next/link";
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { ArrowLeftCircle, Car, Edit3, Plus, RefreshCw, Save, Trash2 , Hash, Calendar, Gauge, Fuel, Info } from "lucide-react";
+import { Car, Edit3, Trash2 , Hash, Calendar, Gauge, Fuel, Info } from "lucide-react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { VEHICLE_TABS } from "@/lib/navigation";
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Select,
@@ -52,10 +50,13 @@ export default function VehicleMasterPage() {
   });
 
   useEffect(() => {
-    fetchVehicles();
+    const timer = setTimeout(() => {
+      fetchVehicles();
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
-  const fetchVehicles = async () => {
+  async function fetchVehicles() {
     setLoading(true);
     try {
       const { data, error } = await supabase.from('vehicle_config').select('*').order('vehicle_name');
@@ -66,7 +67,7 @@ export default function VehicleMasterPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleEdit = (v: Vehicle) => {
     setEditingId(v.id);

@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from "next/link";
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Settings2, Trash2, Edit3, CheckCircle2, Archive, ArchiveRestore, Plus, Pause, Play, RotateCcw } from 'lucide-react';
+import { Settings2, Trash2, Edit3, Archive, Plus, Pause} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

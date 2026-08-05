@@ -3,7 +3,7 @@ import { PageWrapper } from "@/components/PageWrapper";
 import { SectionNav } from "@/components/SectionNav";
 import { SUMMARY_TABS } from "@/lib/navigation";
 import React, { useState, useEffect } from "react";
-import { TrendingUp, TrendingDown, Minus, CalendarDays, Flame, Dumbbell, CheckSquare, Wallet } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Flame, Dumbbell, CheckSquare, Wallet } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { format, subDays, startOfWeek, endOfWeek } from "date-fns";
 import { ReportsNav } from "@/components/ReportsNav";
@@ -11,7 +11,8 @@ import { ReportsNav } from "@/components/ReportsNav";
 
 
 export default function WeeklySummaryPage() {
-  const [data, setData] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<Record<string, any> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,14 +43,18 @@ export default function WeeklySummaryPage() {
       ]);
 
       const totalH = (habCfg||[]).length;
-      const habitPct = (hd:any[]) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const habitPct = (hd: Record<string, any>[]) => {
         if(!totalH) return 0;
-        const done=(hd||[]).filter((h:any)=>h.value&&h.value!=="0"&&h.value!=="false").length;
+        const done=(hd||[]).filter((h) =>h.value&&h.value!=="0"&&h.value!=="false").length;
         return Math.round((done/(totalH*7))*100);
       };
-      const wktVol = (wd:any[]) => Math.round((wd||[]).reduce((s:number,w:any)=>s+((parseFloat(w.weight)||0)*(parseInt(w.reps)||0)),0));
-      const wktDays= (wd:any[]) => new Set((wd||[]).map((w:any)=>w.date)).size;
-      const spend  = (ed:any[]) => (ed||[]).reduce((s:number,e:any)=>s+(parseFloat(e.amount)||0),0);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const wktVol = (wd: Record<string, any>[]) => Math.round((wd||[]).reduce((s:number, w)=>s+((parseFloat(w.weight)||0)*(parseInt(w.reps)||0)),0));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const wktDays= (wd: Record<string, any>[]) => new Set((wd||[]).map((w) =>w.date)).size;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const spend  = (ed: Record<string, any>[]) => (ed||[]).reduce((s:number, e)=>s+(parseFloat(e.amount)||0),0);
 
       setData({
         this: { spend:spend(thisExp||[]), habitPct:habitPct(thisHab||[]), wktDays:wktDays(thisWkt||[]), wktVol:wktVol(thisWkt||[]), tasks:(thisTsk||[]).length },
@@ -87,7 +92,7 @@ export default function WeeklySummaryPage() {
       <div className="max-w-lg mx-auto">
         <SectionNav tabs={SUMMARY_TABS} />
 
-        {loading ? (
+        {loading || !data ? (
           <div className="text-sm text-muted-foreground text-center py-16">Loading weekly data…</div>
         ) : (
           <>

@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Bookmark, Check, ChevronDown, ChevronRight, Edit3, Eye, EyeOff, FileText, Flame, GripVertical, Inbox, LayoutGrid, List, Plus, PlusSquare, Search, Star, Trash2, X, MoreVertical } from "lucide-react";
+import { Bookmark, Check, ChevronRight, Edit3, Eye, EyeOff, FileText, Flame, GripVertical, Inbox, List, PlusSquare, Star, Trash2, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import { PageWrapper } from "@/components/PageWrapper";
 import { TASK_TABS } from "@/lib/navigation";
@@ -27,6 +26,7 @@ interface Task {
 export default function TaskManagerPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const view: any = "week";
   const [isLoading, setIsLoading] = useState(true);
   const [showDone, setShowDone] = useState(false);
@@ -163,6 +163,7 @@ export default function TaskManagerPage() {
       const filtered = tasks.filter(t => t.parent_id === parentId && (parentId ? true : (view === 'inbox' ? t.is_inbox : !t.is_inbox)));
       const nextSortOrder = filtered.length > 0 ? Math.max(...filtered.map(t => t.sort_order || 0)) + 1 : 0;
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: any = {
         id: crypto.randomUUID(),
         parent_id: parentId,

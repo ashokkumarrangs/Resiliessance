@@ -33,6 +33,7 @@ export default function ActivityTimelinePage() {
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [timelineEvents, setTimelineEvents] = useState<any[]>([]);
   const [isTimelineLoading, setIsTimelineLoading] = useState<boolean>(true);
   const dateInputRef = React.useRef<HTMLInputElement>(null);
@@ -157,8 +158,9 @@ export default function ActivityTimelinePage() {
       ]);
 
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const formattedEvents: any[] = [];
-      const habitConfigMap = new Map(habitsConfig?.map((hc: any) => [hc.habit_name, hc.input_type]) || []);
+      const habitConfigMap = new Map(habitsConfig?.map((hc) => [hc.habit_name, hc.input_type]) || []);
 
 
       // 1. Finance
@@ -221,7 +223,7 @@ export default function ActivityTimelinePage() {
 
       // 4. Skills Focus
       if (skillLogs && skillsConfig) {
-        const skillMap = new Map(skillsConfig.map((s: any) => [s.id, s.name]));
+        const skillMap = new Map(skillsConfig.map((s) => [s.id, s.name]));
         skillLogs.forEach(s => {
           const name = skillMap.get(s.skill_id) || "Skill Focus";
           formattedEvents.push({
@@ -250,6 +252,7 @@ export default function ActivityTimelinePage() {
           workoutMap[key].weight += (parseFloat(w.weight) || 0) * (parseInt(w.reps) || 0);
         });
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Object.values(workoutMap).forEach((w: any, index) => {
           formattedEvents.push({
             id: `workout-${index}`,
@@ -385,7 +388,7 @@ export default function ActivityTimelinePage() {
 
       // 10. Inventory Items
       if (inventoryItems && inventoryLocations) {
-        const locationMap = new Map(inventoryLocations.map((l: any) => [l.id, l.name]));
+        const locationMap = new Map(inventoryLocations.map((l) => [l.id, l.name]));
         inventoryItems.forEach(item => {
           // A. Acquired
           if (item.acquired_date === dateStr) {
@@ -445,7 +448,7 @@ export default function ActivityTimelinePage() {
           "Work": "bg-slate-500 text-white",
           "Other": "bg-gray-400 text-white",
         };
-        activityLogs.forEach((a: any) => {
+        activityLogs.forEach((a) => {
           const subtitle = [a.location, a.people ? `with ${a.people}` : null, a.occasion, a.mood].filter(Boolean).join(' · ');
           formattedEvents.push({
             id: a.id,

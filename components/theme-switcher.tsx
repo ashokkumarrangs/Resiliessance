@@ -11,16 +11,18 @@ const THEMES = [
 ];
 
 export function ThemeSwitcher() {
-  const [activeTheme, setActiveTheme] = useState("nordic");
+  const [activeTheme, setActiveTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("resiliessance_ui_theme") || "nordic";
+    }
+    return "nordic";
+  });
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Load saved theme or default to nordic
-    const saved = localStorage.getItem("resiliessance_ui_theme") || "nordic";
-    console.log("🎨 ThemeSwitcher: Initializing theme ->", saved);
-    setActiveTheme(saved);
-    document.documentElement.setAttribute("data-theme", saved);
-  }, []);
+    // Set theme attribute on root element
+    document.documentElement.setAttribute("data-theme", activeTheme);
+  }, [activeTheme]);
 
   const changeTheme = (tId: string) => {
     console.log("🎨 ThemeSwitcher: Changing theme to ->", tId);

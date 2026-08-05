@@ -1,25 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from "next/link";
 import { supabase } from '@/lib/supabase';
-import { useRouter } from 'next/navigation';
-import { Calendar, CreditCard, Gauge, RefreshCw, Save , Clock, Store, FileText, Wrench } from "lucide-react";
+import { Calendar, CreditCard, Gauge, Clock, FileText} from "lucide-react";
 import { format } from 'date-fns';
 import { PageWrapper } from "@/components/PageWrapper";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { SubNav } from "@/components/SubNav";
 import { VEHICLE_TABS } from "@/lib/navigation";
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent} from '@/components/ui/card';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+          } from "@/components/ui/select";
 import { toast } from 'sonner';
 import { SearchableSelect } from '@/components/SearchableSelect';
 
@@ -71,11 +62,14 @@ export default function VehicleFuelServicePage() {
   });
 
   useEffect(() => {
-    fetchVehicles();
-    fetchServiceOptions();
+    const timer = setTimeout(() => {
+      fetchVehicles();
+      fetchServiceOptions();
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
-  const fetchServiceOptions = async () => {
+  async function fetchServiceOptions() {
     try {
       const { data } = await supabase
         .from('vehicle_service_logs')
@@ -92,9 +86,9 @@ export default function VehicleFuelServicePage() {
     } catch (e) {
       console.error('Failed to load service options:', e);
     }
-  };
+  }
 
-  const fetchVehicles = async () => {
+  async function fetchVehicles() {
     setLoading(true);
     try {
       const { data, error } = await supabase.from('vehicle_config').select('id, vehicle_name, registration_number, initial_odometer').order('vehicle_name');
@@ -106,7 +100,7 @@ export default function VehicleFuelServicePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleFuelSave = async () => {
     if (!selectedVehicle || !fuelData.odometer || !fuelData.liters || !fuelData.amount) {

@@ -1,11 +1,10 @@
 'use client'
 import { Select } from "@/components/Select";;
-import Link from "next/link";
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, AlignLeft, ArrowRight, Award, CheckCircle2, CheckSquare, ChevronDown, ChevronUp, CircleDot, Clock, Flame, Hash, History, Info, Palette, RefreshCw, Settings2, ShieldCheck, Timer  } from "lucide-react";
+import { AlertTriangle, AlignLeft, ArrowRight, Award, CheckCircle2, CheckSquare, ChevronDown, ChevronUp, CircleDot, Clock, Flame, Hash, History, Info, Palette, RefreshCw, ShieldCheck, Timer  } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -106,7 +105,7 @@ export default function HabitConfigPage() {
         // Default new habit to end of list
         setFormData(prev => ({ ...prev, group_order: normalizedData.length + 1 }));
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error fetching group habits:", err);
     }
   };
@@ -162,7 +161,7 @@ export default function HabitConfigPage() {
     }
   };
 
-  const handleChange = (key: string, value: any) => {
+  const handleChange = (key: string, value: string | number | boolean | null | undefined) => {
     setFormData(prev => {
       const next = { ...prev, [key]: value };
       // If frequency is event, yes/no (boolean) is not allowed
@@ -200,7 +199,7 @@ export default function HabitConfigPage() {
           return;
         }
         if (formData.condition_type === 'between') {
-          if (formData.suc_min !== undefined && formData.suc_max !== undefined && parseFloat(formData.suc_min as any) > parseFloat(formData.suc_max as any)) {
+          if (formData.suc_min !== undefined && formData.suc_max !== undefined && parseFloat(String(formData.suc_min)) > parseFloat(String(formData.suc_max))) {
             toast.error('Success MIN cannot be greater than Success MAX');
             return;
           }
@@ -253,7 +252,7 @@ export default function HabitConfigPage() {
       }
 
       if (payload.condition_type === 'between') {
-        if (payload.suc_min !== undefined && payload.suc_max !== undefined && parseFloat(payload.suc_min as any) > parseFloat(payload.suc_max as any)) {
+        if (payload.suc_min !== undefined && payload.suc_max !== undefined && parseFloat(String(payload.suc_min)) > parseFloat(String(payload.suc_max))) {
           toast.error('Success MIN cannot be greater than Success MAX');
           setSaving(false);
           return;
@@ -564,7 +563,7 @@ export default function HabitConfigPage() {
                    {formData.input_type === 'boolean' && (
                       <div className="space-y-4">
                          <Label className="text-lg font-black text-foreground">Target Answer <span className="text-primary">*</span></Label>
-                         <InputRange label="SUCCESS" value={formData.target_value ?? 1} onChange={(v: any) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType="boolean" />
+                         <InputRange label="SUCCESS" value={formData.target_value ?? 1} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType="boolean" />
                          <p className="text-xs text-muted-foreground/60 italic">If you select NO, logging a NO will be treated as a success.</p>
                       </div>
                    )}
@@ -575,31 +574,31 @@ export default function HabitConfigPage() {
                          <div className="space-y-3">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Success Range</Label>
                             <div className="grid grid-cols-2 gap-4">
-                               <InputRange label="MIN" value={formData.suc_min || ''} onChange={(v: any) => handleChange('suc_min', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
-                               <InputRange label="MAX" value={formData.suc_max || ''} onChange={(v: any) => handleChange('suc_max', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
+                               <InputRange label="MIN" value={formData.suc_min || ''} onChange={(v) => handleChange('suc_min', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
+                               <InputRange label="MAX" value={formData.suc_max || ''} onChange={(v) => handleChange('suc_max', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
                             </div>
                          </div>
                          <div className="space-y-3">
                             <div className="flex items-center justify-between">
                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Tolerance Zone <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — close but not quite</span></Label>
-                               <Switch checked={formData.enable_tol} onCheckedChange={(v: any) => handleChange("enable_tol", v)} />
+                               <Switch checked={formData.enable_tol} onCheckedChange={(v) => handleChange("enable_tol", v)} />
                             </div>
                             {formData.enable_tol && (
                                <div className="grid grid-cols-2 gap-4">
-                               <InputRange label="BELOW SUC" value={formData.tol_min || ''} onChange={(v: any) => handleChange('tol_min', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
-                               <InputRange label="ABOVE SUC" value={formData.tol_max || ''} onChange={(v: any) => handleChange('tol_max', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
+                               <InputRange label="BELOW SUC" value={formData.tol_min || ''} onChange={(v) => handleChange('tol_min', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
+                               <InputRange label="ABOVE SUC" value={formData.tol_max || ''} onChange={(v) => handleChange('tol_max', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
                             </div>
                             )}
                          </div>
                          <div className="space-y-3">
                             <div className="flex items-center justify-between">
                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Critical Zone <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — danger</span></Label>
-                               <Switch checked={formData.enable_crit} onCheckedChange={(v: any) => handleChange("enable_crit", v)} />
+                               <Switch checked={formData.enable_crit} onCheckedChange={(v) => handleChange("enable_crit", v)} />
                             </div>
                             {formData.enable_crit && (
                                <div className="grid grid-cols-2 gap-4">
-                               <InputRange label="BELOW" value={formData.crit_min || ''} onChange={(v: any) => handleChange('crit_min', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
-                               <InputRange label="ABOVE" value={formData.crit_max || ''} onChange={(v: any) => handleChange('crit_max', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
+                               <InputRange label="BELOW" value={formData.crit_min || ''} onChange={(v) => handleChange('crit_min', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
+                               <InputRange label="ABOVE" value={formData.crit_max || ''} onChange={(v) => handleChange('crit_max', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
                             </div>
                             )}
                          </div>
@@ -617,7 +616,7 @@ export default function HabitConfigPage() {
                          </div>
                          <div className="space-y-4">
                             <Label className="text-lg font-black text-foreground">Success Threshold</Label>
-                            <InputRange label="TARGET" value={formData.target_value} onChange={(v: any) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
+                            <InputRange label="TARGET" value={formData.target_value} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
                              {formData.frequency === 'event' && (
                                <div className="mt-2 mb-2 bg-muted/40 border border-border/40 rounded-md p-2.5 flex items-start gap-2">
                                  <Info size={12} className="text-primary mt-0.5 shrink-0" />
@@ -634,19 +633,19 @@ export default function HabitConfigPage() {
                          <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                <Label className="text-lg font-black text-foreground">Tolerance <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — just below/above target</span></Label>
-                               <Switch checked={formData.enable_tol} onCheckedChange={(v: any) => handleChange("enable_tol", v)} />
+                               <Switch checked={formData.enable_tol} onCheckedChange={(v) => handleChange("enable_tol", v)} />
                             </div>
                             {formData.enable_tol && (
-                               <InputRange label={formData.direction === 'more' ? 'TOL. MIN' : 'TOL. MAX'} value={formData.direction === 'more' ? formData.tol_min || '' : formData.tol_max || ''} onChange={(v: any) => formData.direction === 'more' ? handleChange('tol_min', v) : handleChange('tol_max', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
+                               <InputRange label={formData.direction === 'more' ? 'TOL. MIN' : 'TOL. MAX'} value={formData.direction === 'more' ? formData.tol_min || '' : formData.tol_max || ''} onChange={(v) => formData.direction === 'more' ? handleChange('tol_min', v) : handleChange('tol_max', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
                             )}
                          </div>
                          <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                <Label className="text-lg font-black text-foreground">Critical Threshold <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 inline-flex"><Info size={8}/> optional</span></Label>
-                               <Switch checked={formData.enable_crit} onCheckedChange={(v: any) => handleChange("enable_crit", v)} />
+                               <Switch checked={formData.enable_crit} onCheckedChange={(v) => handleChange("enable_crit", v)} />
                             </div>
                             {formData.enable_crit && (
-                               <InputRange label="DANGER" value={formData.direction === 'more' ? formData.crit_min || '' : formData.crit_max || ''} onChange={(v: any) => formData.direction === 'more' ? handleChange('crit_min', v) : handleChange('crit_max', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
+                               <InputRange label="DANGER" value={formData.direction === 'more' ? formData.crit_min || '' : formData.crit_max || ''} onChange={(v) => formData.direction === 'more' ? handleChange('crit_min', v) : handleChange('crit_max', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
                             )}
                          </div>
                       </div>
@@ -656,7 +655,7 @@ export default function HabitConfigPage() {
                        <div className="space-y-6">
                           <div className="space-y-4">
                              <Label className="text-lg font-black text-foreground">Success Threshold</Label>
-                             <InputRange label="TARGET" value={formData.target_value} onChange={(v: any) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
+                             <InputRange label="TARGET" value={formData.target_value} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
                              {formData.frequency === 'event' && (
                                <div className="mt-2 mb-2 bg-muted/40 border border-border/40 rounded-md p-2.5 flex items-start gap-2">
                                  <Info size={12} className="text-primary mt-0.5 shrink-0" />
@@ -673,19 +672,19 @@ export default function HabitConfigPage() {
                           <div className="space-y-4">
                              <div className="flex items-center justify-between">
                                <Label className="text-lg font-black text-foreground">Tolerance <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — just below target</span></Label>
-                               <Switch checked={formData.enable_tol} onCheckedChange={(v: any) => handleChange("enable_tol", v)} />
+                               <Switch checked={formData.enable_tol} onCheckedChange={(v) => handleChange("enable_tol", v)} />
                             </div>
                             {formData.enable_tol && (
-                               <InputRange label="TOL. MIN" value={formData.tol_min || ''} onChange={(v: any) => handleChange('tol_min', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
+                               <InputRange label="TOL. MIN" value={formData.tol_min || ''} onChange={(v) => handleChange('tol_min', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
                             )}
                           </div>
                           <div className="space-y-4">
                              <div className="flex items-center justify-between">
                                <Label className="text-lg font-black text-foreground">Critical Threshold <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 inline-flex"><Info size={8}/> optional</span></Label>
-                               <Switch checked={formData.enable_crit} onCheckedChange={(v: any) => handleChange("enable_crit", v)} />
+                               <Switch checked={formData.enable_crit} onCheckedChange={(v) => handleChange("enable_crit", v)} />
                             </div>
                             {formData.enable_crit && (
-                               <InputRange label="DANGER" value={formData.crit_min || ''} onChange={(v: any) => handleChange('crit_min', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
+                               <InputRange label="DANGER" value={formData.crit_min || ''} onChange={(v) => handleChange('crit_min', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
                             )}
                           </div>
                        </div>
@@ -695,7 +694,7 @@ export default function HabitConfigPage() {
                        <div className="space-y-6">
                           <div className="space-y-4">
                              <Label className="text-lg font-black text-foreground">Success Threshold</Label>
-                             <InputRange label="TARGET" value={formData.target_value} onChange={(v: any) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
+                             <InputRange label="TARGET" value={formData.target_value} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
                              {formData.frequency === 'event' && (
                                <div className="mt-2 mb-2 bg-muted/40 border border-border/40 rounded-md p-2.5 flex items-start gap-2">
                                  <Info size={12} className="text-primary mt-0.5 shrink-0" />
@@ -712,19 +711,19 @@ export default function HabitConfigPage() {
                           <div className="space-y-4">
                              <div className="flex items-center justify-between">
                                <Label className="text-lg font-black text-foreground">Tolerance <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — just above target</span></Label>
-                               <Switch checked={formData.enable_tol} onCheckedChange={(v: any) => handleChange("enable_tol", v)} />
+                               <Switch checked={formData.enable_tol} onCheckedChange={(v) => handleChange("enable_tol", v)} />
                             </div>
                             {formData.enable_tol && (
-                               <InputRange label="TOL. MAX" value={formData.tol_max || ''} onChange={(v: any) => handleChange('tol_max', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
+                               <InputRange label="TOL. MAX" value={formData.tol_max || ''} onChange={(v) => handleChange('tol_max', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
                             )}
                           </div>
                           <div className="space-y-4">
                              <div className="flex items-center justify-between">
                                <Label className="text-lg font-black text-foreground">Critical Threshold <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 inline-flex"><Info size={8}/> optional</span></Label>
-                               <Switch checked={formData.enable_crit} onCheckedChange={(v: any) => handleChange("enable_crit", v)} />
+                               <Switch checked={formData.enable_crit} onCheckedChange={(v) => handleChange("enable_crit", v)} />
                             </div>
                             {formData.enable_crit && (
-                               <InputRange label="DANGER" value={formData.crit_max || ''} onChange={(v: any) => handleChange('crit_max', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
+                               <InputRange label="DANGER" value={formData.crit_max || ''} onChange={(v) => handleChange('crit_max', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
                             )}
                           </div>
                        </div>
@@ -734,7 +733,7 @@ export default function HabitConfigPage() {
                        <div className="space-y-6">
                           <div className="space-y-4">
                              <Label className="text-lg font-black text-foreground">Success Target</Label>
-                             <InputRange label="TARGET" value={formData.target_value} onChange={(v: any) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
+                             <InputRange label="TARGET" value={formData.target_value} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
                              {formData.frequency === 'event' && (
                                <div className="mt-2 mb-2 bg-muted/40 border border-border/40 rounded-md p-2.5 flex items-start gap-2">
                                  <Info size={12} className="text-primary mt-0.5 shrink-0" />
@@ -751,24 +750,24 @@ export default function HabitConfigPage() {
                           <div className="space-y-3">
                              <div className="flex items-center justify-between">
                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Tolerance Zone <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — close to target</span></Label>
-                               <Switch checked={formData.enable_tol} onCheckedChange={(v: any) => handleChange("enable_tol", v)} />
+                               <Switch checked={formData.enable_tol} onCheckedChange={(v) => handleChange("enable_tol", v)} />
                             </div>
                             {formData.enable_tol && (
                                <div className="grid grid-cols-2 gap-4">
-                                <InputRange label="MIN" value={formData.tol_min || ''} onChange={(v: any) => handleChange('tol_min', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
-                                <InputRange label="MAX" value={formData.tol_max || ''} onChange={(v: any) => handleChange('tol_max', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
+                                <InputRange label="MIN" value={formData.tol_min || ''} onChange={(v) => handleChange('tol_min', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
+                                <InputRange label="MAX" value={formData.tol_max || ''} onChange={(v) => handleChange('tol_max', v)} color="border-border/60 bg-muted/30 text-foreground" inputType={formData.input_type} />
                              </div>
                             )}
                           </div>
                           <div className="space-y-3">
                              <div className="flex items-center justify-between">
                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Critical Zone <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — far from target</span></Label>
-                               <Switch checked={formData.enable_crit} onCheckedChange={(v: any) => handleChange("enable_crit", v)} />
+                               <Switch checked={formData.enable_crit} onCheckedChange={(v) => handleChange("enable_crit", v)} />
                             </div>
                             {formData.enable_crit && (
                                <div className="grid grid-cols-2 gap-4">
-                                <InputRange label="BELOW" value={formData.crit_min || ''} onChange={(v: any) => handleChange('crit_min', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
-                                <InputRange label="ABOVE" value={formData.crit_max || ''} onChange={(v: any) => handleChange('crit_max', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
+                                <InputRange label="BELOW" value={formData.crit_min || ''} onChange={(v) => handleChange('crit_min', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
+                                <InputRange label="ABOVE" value={formData.crit_max || ''} onChange={(v) => handleChange('crit_max', v)} color="border-primary/20 bg-primary/10 text-primary" inputType={formData.input_type} />
                              </div>
                             )}
                           </div>
@@ -818,8 +817,8 @@ export default function HabitConfigPage() {
                         desc={<span>after <span className="bg-accent/10 px-1.5 rounded-md font-mono text-accent">N consecutive successes</span> → today&apos;s <span className="bg-primary/10 text-primary px-1.5 rounded-md font-mono">failure</span> = <span className="bg-accent/10 text-accent px-1 rounded-md font-mono">success</span></span>}
                         active={formData.use_grace} 
                         days={formData.grace_days}
-                        onToggle={(v: any) => handleChange('use_grace', v)}
-                        onDaysChange={(v: any) => handleChange('grace_days', v)}
+                        onToggle={(v) => handleChange('use_grace', v)}
+                        onDaysChange={(v) => handleChange('grace_days', v)}
                         daysLabel="consecutive successes"
                       />
                       <RuleToggle 
@@ -829,8 +828,8 @@ export default function HabitConfigPage() {
                         desc={<span>after <span className="bg-accent/10 px-1.5 rounded-md font-mono text-accent">N consecutive successes</span> → today&apos;s <span className="bg-muted/30 text-foreground px-1.5 rounded-md font-mono">tolerance</span> = <span className="bg-accent/10 text-accent px-1 rounded-md font-mono">success</span></span>}
                         active={formData.use_soft_grace} 
                         days={formData.soft_grace_days}
-                        onToggle={(v: any) => handleChange('use_soft_grace', v)}
-                        onDaysChange={(v: any) => handleChange('soft_grace_days', v)}
+                        onToggle={(v) => handleChange('use_soft_grace', v)}
+                        onDaysChange={(v) => handleChange('soft_grace_days', v)}
                         daysLabel="consecutive successes"
                       />
                       <RuleToggle 
@@ -840,8 +839,8 @@ export default function HabitConfigPage() {
                         desc={<span>after <span className="bg-primary/10 text-primary px-1.5 rounded-md font-mono">N consecutive failures</span> → today&apos;s <span className="bg-primary/10 text-primary px-1.5 rounded-md font-mono">failure</span> = <span className="bg-muted text-muted-foreground px-1.5 rounded-md font-mono">critical</span></span>}
                         active={formData.use_escalation} 
                         days={formData.escalation_days}
-                        onToggle={(v: any) => handleChange('use_escalation', v)}
-                        onDaysChange={(v: any) => handleChange('escalation_days', v)}
+                        onToggle={(v) => handleChange('use_escalation', v)}
+                        onDaysChange={(v) => handleChange('escalation_days', v)}
                         daysLabel="consecutive failures"
                       />
                       <RuleToggle 
@@ -851,8 +850,8 @@ export default function HabitConfigPage() {
                         desc={<span>after <span className="bg-muted/30 text-foreground px-1.5 rounded-md font-mono">N consecutive tolerance days</span> → today&apos;s <span className="bg-muted/30 text-foreground px-1.5 rounded-md font-mono">tolerance</span> = <span className="bg-primary/10 text-primary px-1 rounded-md font-mono">failure</span></span>}
                         active={formData.use_tol_cap} 
                         days={formData.tol_cap_days}
-                        onToggle={(v: any) => handleChange('use_tol_cap', v)}
-                        onDaysChange={(v: any) => handleChange('tol_cap_days', v)}
+                        onToggle={(v) => handleChange('use_tol_cap', v)}
+                        onDaysChange={(v) => handleChange('tol_cap_days', v)}
                         daysLabel="consecutive tolerance days"
                       />
                    </div>
@@ -1056,8 +1055,57 @@ export default function HabitConfigPage() {
   );
 }
 
+interface InputTypeBtnProps {
+  icon: React.ReactNode;
+  label: string;
+  sub?: string;
+  active: boolean;
+  onClick: () => void;
+}
+
+interface ConditionBtnProps {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  color: string;
+}
+
+interface InputRangeProps {
+  label: string;
+  value: string | number | undefined;
+  onChange: (val: string | number | undefined) => void;
+  color: string;
+  inputType: string;
+}
+
+interface SelectBtnProps {
+  active: boolean;
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+}
+
+interface RuleToggleProps {
+  icon: string;
+  title: string;
+  desc: React.ReactNode;
+  active: boolean;
+  days: number;
+  onToggle: (val: boolean) => void;
+  onDaysChange: (val: number) => void;
+  daysLabel: string;
+  disabled?: boolean;
+}
+
+interface SummaryRowProps {
+  label: string;
+  value: React.ReactNode;
+  color?: string;
+}
+
 // Sub-components for cleaner code
-function InputTypeBtn({ icon, label, sub, active, onClick }: any) {
+function InputTypeBtn({ icon, label, sub, active, onClick }: InputTypeBtnProps) {
   return (
     <button 
       onClick={onClick}
@@ -1083,7 +1131,7 @@ function InputTypeBtn({ icon, label, sub, active, onClick }: any) {
   );
 }
 
-function ConditionBtn({ icon, label, active, onClick, color }: any) {
+function ConditionBtn({ icon, label, active, onClick, color }: ConditionBtnProps) {
   return (
     <button 
       onClick={onClick}
@@ -1106,7 +1154,7 @@ function ConditionBtn({ icon, label, active, onClick, color }: any) {
   );
 }
 
-function InputRange({ label, value, onChange, color, inputType }: any) {
+function InputRange({ label, value, onChange, color, inputType }: InputRangeProps) {
   const timeToDecimal = (timeStr: string) => {
     if (!timeStr) return 0;
     const [h, m] = timeStr.split(':').map(Number);
@@ -1127,14 +1175,14 @@ function InputRange({ label, value, onChange, color, inputType }: any) {
             <CheckSquare size={10} className="opacity-60" />
             <span className="text-[8px] font-black uppercase tracking-widest opacity-60">{label}</span>
          </div>
-         <Select 
+         <select 
            value={value === 1 ? 'yes' : 'no'} 
            onChange={(e) => onChange(e.target.value === 'yes' ? 1 : 0)}
            className="bg-transparent border-none p-0 text-3xl font-black w-full focus:outline-none focus:ring-0 appearance-none cursor-pointer text-foreground"
          >
            <option value="yes" className="bg-card">YES</option>
            <option value="no" className="bg-card">NO</option>
-         </Select>
+         </select>
       </div>
     );
   }
@@ -1148,7 +1196,7 @@ function InputRange({ label, value, onChange, color, inputType }: any) {
          </div>
          <input 
            type="time" 
-           value={decimalToTime(parseFloat(value))} 
+           value={decimalToTime(typeof value === 'number' ? value : parseFloat(value || '0'))} 
            onChange={(e) => onChange(timeToDecimal(e.target.value))}
            className="bg-transparent border-none p-0 text-3xl font-black w-full focus:outline-none focus:ring-0 placeholder:opacity-20 text-foreground"
          />
@@ -1175,7 +1223,7 @@ function InputRange({ label, value, onChange, color, inputType }: any) {
   );
 }
 
-function SelectBtn({ active, label, icon, onClick }: any) {
+function SelectBtn({ active, label, icon, onClick }: SelectBtnProps) {
   return (
     <button 
       onClick={onClick}
@@ -1187,7 +1235,7 @@ function SelectBtn({ active, label, icon, onClick }: any) {
   );
 }
 
-function RuleToggle({ icon, title, desc, active, days, onToggle, onDaysChange, daysLabel, disabled }: any) {
+function RuleToggle({ icon, title, desc, active, days, onToggle, onDaysChange, daysLabel, disabled }: RuleToggleProps) {
   return (
     <div 
       onClick={() => { if (!disabled) onToggle(!active); }}
@@ -1219,7 +1267,7 @@ function RuleToggle({ icon, title, desc, active, days, onToggle, onDaysChange, d
   );
 }
 
-function SummaryRow({ label, value, color }: any) {
+function SummaryRow({ label, value, color }: SummaryRowProps) {
   return (
     <div className="flex items-center justify-between p-6">
        <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">{label}</span>

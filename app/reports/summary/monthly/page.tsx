@@ -3,7 +3,7 @@ import { PageWrapper } from "@/components/PageWrapper";
 import { SectionNav } from "@/components/SectionNav";
 import { SUMMARY_TABS } from "@/lib/navigation";
 import React, { useState, useEffect } from "react";
-import { TrendingUp, TrendingDown, Minus, CalendarDays, Flame, Dumbbell, CheckSquare, Wallet, PiggyBank } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Flame, Dumbbell, CheckSquare, Wallet, PiggyBank } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 import { ReportsNav } from "@/components/ReportsNav";
@@ -12,8 +12,10 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 
 
 export default function MonthlySummaryPage() {
-  const [data, setData] = useState<any>(null);
-  const [categoryData, setCategoryData] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<Record<string, any> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [categoryData, setCategoryData] = useState<Record<string, any>[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,16 +52,20 @@ export default function MonthlySummaryPage() {
 
       const daysInMonth=(start:string,end:string)=>Math.round((new Date(end).getTime()-new Date(start).getTime())/86400000)+1;
       const totalH=(habCfg||[]).length;
-      const habitPct=(hd:any[],days:number)=>{if(!totalH||!days)return 0;const done=(hd||[]).filter((h:any)=>h.value&&h.value!=="0"&&h.value!=="false").length;return Math.round((done/(totalH*days))*100);};
-      const wktDays=(wd:any[])=>new Set((wd||[]).map((w:any)=>w.date)).size;
-      const wktVol=(wd:any[])=>Math.round((wd||[]).reduce((s:number,w:any)=>s+((parseFloat(w.weight)||0)*(parseInt(w.reps)||0)),0));
-      const sum=(ed:any[])=>(ed||[]).reduce((s:number,e:any)=>s+(parseFloat(e.amount)||0),0);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const habitPct=(hd: Record<string, any>[],days:number)=>{if(!totalH||!days)return 0;const done=(hd||[]).filter((h) =>h.value&&h.value!=="0"&&h.value!=="false").length;return Math.round((done/(totalH*days))*100);};
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const wktDays=(wd: Record<string, any>[])=>new Set((wd||[]).map((w) =>w.date)).size;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const wktVol=(wd: Record<string, any>[])=>Math.round((wd||[]).reduce((s:number, w)=>s+((parseFloat(w.weight)||0)*(parseInt(w.reps)||0)),0));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sum=(ed: Record<string, any>[])=>(ed||[]).reduce((s:number, e)=>s+(parseFloat(e.amount)||0),0);
 
       const thisDays=daysInMonth(thisStart,format(now,"yyyy-MM-dd"));
       const lastDays=daysInMonth(lastStart,lastEnd);
 
       const catMap:Record<string,number>={};
-      (thisCats||[]).forEach((e:any)=>{const c=e.category||"Other";catMap[c]=(catMap[c]||0)+(parseFloat(e.amount)||0);});
+      (thisCats||[]).forEach((e) =>{const c=e.category||"Other";catMap[c]=(catMap[c]||0)+(parseFloat(e.amount)||0);});
       setCategoryData(Object.entries(catMap).map(([name,value])=>({name,value:Math.round(value as number)})).sort((a,b)=>b.value-a.value).slice(0,8));
 
       const thisSpend=sum(thisExp||[]),lastSpend=sum(lastExp||[]),thisIncome=sum(thisInc||[]),lastIncome=sum(lastInc||[]);
@@ -80,7 +86,8 @@ export default function MonthlySummaryPage() {
     return d>0?`+${d}%`:`${d}%`;
   };
 
-  const CustomTooltip=({active,payload}:any)=>{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Record<string, any>[] }) =>{
     if(active&&payload?.length)return(
       <div className="bg-card border border-border rounded-xl p-3 shadow-md text-xs font-black">
         <div className="text-muted-foreground mb-1">{payload[0]?.payload?.name}</div>
@@ -106,7 +113,7 @@ export default function MonthlySummaryPage() {
       <div className="max-w-lg mx-auto">
         <SectionNav tabs={SUMMARY_TABS} />
 
-        {loading ? (
+        {loading || !data ? (
           <div className="text-sm text-muted-foreground text-center py-16">Loading monthly data…</div>
         ) : (
           <>

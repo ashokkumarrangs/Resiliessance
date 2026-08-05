@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { PageWrapper } from "@/components/PageWrapper";
 import { PET_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
@@ -18,6 +17,7 @@ export default function AddPetPage() {
     breed: "",
   });
   const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [allPets, setAllPets] = useState<any[]>([]);
 
   React.useEffect(() => {
@@ -51,7 +51,7 @@ export default function AddPetPage() {
       
       toast.success(`${formData.name} added successfully!`);
       router.push("/pets");
-    } catch (err: any) {
+    } catch (err) {
       toast.error("An error occurred while adding the pet.");
     } finally {
       setLoading(false);

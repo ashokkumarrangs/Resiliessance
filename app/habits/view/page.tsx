@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from "next/link";
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleDot, Clock, PlusCircle, Sliders, XCircle  } from "lucide-react";
+import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleDot, Sliders, XCircle  } from "lucide-react";
 import { format, addDays, subDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -66,7 +65,7 @@ export default function HabitViewPage() {
         .order('habit_name', { ascending: true });
 
       if (configError) throw configError;
-      const allConfigs = (configData || []).map((c: any) => {
+      const allConfigs = (configData || []).map((c) => {
         if (c.is_archived) return { ...c, habit_name: `${c.habit_name} (Archived)` };
         if (c.is_paused) return { ...c, habit_name: `${c.habit_name} (Paused)` };
         return c;

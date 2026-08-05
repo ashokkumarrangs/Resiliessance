@@ -1,17 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { 
-  format, subDays, differenceInDays, startOfWeek, endOfWeek, 
-  eachDayOfInterval, isSameDay, parseISO 
+  format, subDays, startOfWeek, endOfWeek, 
+  eachDayOfInterval, parseISO 
 } from "date-fns";
-import { Activity, ArrowLeftCircle, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Dumbbell, Flame, TrendingUp, Trophy } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Dumbbell, Flame, TrendingUp, Trophy } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PageWrapper } from "@/components/PageWrapper";
-import { LoadingScreen } from "@/components/LoadingScreen";
 import { SubNav } from "@/components/SubNav";
 import { WORKOUT_TABS } from "@/lib/navigation";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
@@ -48,21 +46,7 @@ export default function WorkoutHistoryPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
-  // Fetch all historical max weights to identify PRs
-  useEffect(() => {
-    fetchPersonalRecords();
-  }, []);
-
-  // Fetch data based on mode and selectors
-  useEffect(() => {
-    if (viewMode === "day") {
-      fetchDayLogs(selectedDate);
-    } else {
-      fetchWeekLogs(selectedWeekStart);
-    }
-  }, [viewMode, selectedDate, selectedWeekStart]);
-
-  const fetchPersonalRecords = async () => {
+  async function fetchPersonalRecords() {
     try {
       const { data } = await supabase
         .from("workout_log")
@@ -81,9 +65,9 @@ export default function WorkoutHistoryPage() {
     } catch (error) {
       console.error("Error fetching PRs:", error);
     }
-  };
+  }
 
-  const fetchDayLogs = async (dateStr: string) => {
+  async function fetchDayLogs(dateStr: string) {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
@@ -101,9 +85,9 @@ export default function WorkoutHistoryPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
-  const fetchWeekLogs = async (weekStartStr: string) => {
+  async function fetchWeekLogs(weekStartStr: string) {
     setIsLoading(true);
     try {
       const start = parseISO(weekStartStr);
@@ -127,7 +111,27 @@ export default function WorkoutHistoryPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
+
+  // Fetch all historical max weights to identify PRs
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchPersonalRecords();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Fetch data based on mode and selectors
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (viewMode === "day") {
+        fetchDayLogs(selectedDate);
+      } else {
+        fetchWeekLogs(selectedWeekStart);
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [viewMode, selectedDate, selectedWeekStart]);
 
   // Group day logs by exercise name for rendering
   const dayExercises = useMemo(() => {

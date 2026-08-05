@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { X, Clock, Check } from "lucide-react";
 import { format, subMinutes, subHours } from "date-fns";
 
@@ -17,15 +17,17 @@ export function TaskCompletionModal({
   onConfirm,
   taskTitle
 }: TaskCompletionModalProps) {
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   const [option, setOption] = useState<"now" | "15m" | "1h" | "custom">("now");
   const [customDateTime, setCustomDateTime] = useState("");
 
-  useEffect(() => {
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (isOpen) {
       setOption("now");
       setCustomDateTime(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
     }
-  }, [isOpen]);
+  }
 
   if (!isOpen) return null;
 

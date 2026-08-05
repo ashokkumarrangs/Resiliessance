@@ -1,12 +1,11 @@
 'use client'
 import { Select } from "@/components/Select";;
-import Link from "next/link";
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, AlertTriangle, Calendar, CheckCircle2, ChevronDown, ChevronRight, CircleDot, Clock, Plus, RefreshCw, Trash2, XCircle  } from "lucide-react";
-import { getStatusIcon, getStatusStyles, getStatusColor } from "@/lib/habit-ui-utils";
+import { Calendar, ChevronDown, ChevronRight, Plus, RefreshCw, Trash2} from "lucide-react";
+import { getStatusIcon, getStatusStyles} from "@/lib/habit-ui-utils";
 import { calculateHabitStatus, HabitStatus, sumDurations } from '@/lib/habit-scoring';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -60,6 +59,7 @@ export default function HabitEventLogPage() {
   const [aggregates, setAggregates] = useState<Record<string, EventAggregate>>({});
   const [loading, setLoading] = useState(true);
   const [logging, setLogging] = useState<Record<string, boolean>>({});
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [rawEvents, setRawEvents] = useState<any[]>([]);
 
   // Form states for each card
@@ -202,7 +202,7 @@ export default function HabitEventLogPage() {
             notes: 'Aggregated from events'
          });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to sync event to habit_data", err);
     }
   };
@@ -441,7 +441,7 @@ export default function HabitEventLogPage() {
                        <div className="mt-4 border-t border-border/20 pt-4 space-y-2">
                           <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground opacity-60">Today's Logs</div>
                           <div className="max-h-32 overflow-y-auto space-y-1.5 pr-1">
-                             {rawEvents.filter(e => e.event === habit.habit_name).map((log: any) => (
+                             {rawEvents.filter(e => e.event === habit.habit_name).map((log) => (
                                <div key={log.id} className="flex items-center justify-between text-xs font-bold bg-muted/30 p-2 rounded-lg border border-border/10">
                                   <div className="flex items-center gap-2">
                                      <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-mono">{log.time ? log.time.substring(0, 5) : '--:--'}</span>

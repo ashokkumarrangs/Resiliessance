@@ -81,7 +81,8 @@ export default function CorrelationsPage() {
   const [activePairId,setActivePairId]=useState(PAIRS[0].id);
   const [activeGroup,setActiveGroup]=useState("All");
   const [showDow,setShowDow]=useState(false);
-  const [rawData,setRawData]=useState<{habits:any[];workouts:any[];expenses:any[];tasks:any[]}>({habits:[],workouts:[],expenses:[],tasks:[]});
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [rawData,setRawData]=useState<{habits: Record<string, any>[];workouts: Record<string, any>[];expenses: Record<string, any>[];tasks: Record<string, any>[]}>({habits:[],workouts:[],expenses:[],tasks:[]});
   const [loading,setLoading]=useState(false);
 
   useEffect(()=>{
@@ -105,13 +106,13 @@ export default function CorrelationsPage() {
   const dataPoints=useMemo<DataPoint[]>(()=>{
     const dateList=Array.from({length:days},(_,i)=>format(subDays(new Date(),i),"yyyy-MM-dd"));
     const getHabit=(date:string,name:string):number|null=>{
-      const row=rawData.habits.find((h:any)=>h.date===date&&h.habit===name);
+      const row=rawData.habits.find((h) =>h.date===date&&h.habit===name);
       if(!row||!row.value) return null;
       return parseFloat(row.value)||null;
     };
-    const getWorkoutVol=(date:string):number=>rawData.workouts.filter((w:any)=>w.date===date).reduce((s:number,w:any)=>s+((parseFloat(w.weight)||0)*(parseInt(w.reps)||0)),0);
-    const getDailyExpense=(date:string):number=>rawData.expenses.filter((e:any)=>e.date===date).reduce((s:number,e:any)=>s+(parseFloat(e.amount)||0),0);
-    const getTasksDone=(date:string):number=>rawData.tasks.filter((t:any)=>t.completed_at?.startsWith(date)).length;
+    const getWorkoutVol=(date:string):number=>rawData.workouts.filter((w) =>w.date===date).reduce((s:number, w)=>s+((parseFloat(w.weight)||0)*(parseInt(w.reps)||0)),0);
+    const getDailyExpense=(date:string):number=>rawData.expenses.filter((e) =>e.date===date).reduce((s:number, e)=>s+(parseFloat(e.amount)||0),0);
+    const getTasksDone=(date:string):number=>rawData.tasks.filter((t) =>t.completed_at?.startsWith(date)).length;
     const getValue=(key:string,date:string):number|null=>{
       if(["sleep_hours","water_liters","meditation_minutes","steps"].includes(key)) return getHabit(date,key);
       if(key==="workout_volume") return getWorkoutVol(date);
@@ -137,7 +138,8 @@ export default function CorrelationsPage() {
   const rollingY=rollingAvg(dataPoints,"y");
   const filteredPairs=activeGroup==="All"?PAIRS:PAIRS.filter(p=>p.group===activeGroup);
 
-  const ScatterTooltip=({active,payload}:any)=>{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ScatterTooltip = ({ active, payload }: { active?: boolean; payload?: Record<string, any>[] }) =>{
     if(active&&payload?.length){
       const d=payload[0]?.payload as DataPoint;
       return(
@@ -151,7 +153,8 @@ export default function CorrelationsPage() {
     return null;
   };
 
-  const TrendTooltip=({active,payload,label}:any)=>{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const TrendTooltip = ({ active, payload, label }: { active?: boolean; payload?: Record<string, any>[]; label?: any }) =>{
     if(active&&payload?.length)return(
       <div className="bg-card border border-border rounded-xl p-3 shadow-md text-xs font-black">
         <div className="text-muted-foreground mb-1">{label}</div>
