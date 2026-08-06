@@ -1135,7 +1135,9 @@ export default function ReportsPage() {
         supabase.from("assets").select("*"),
         supabase.from("liabilities").select("*"),
         supabase.from("history_liabilities").select("*").gte("date", startDateStr).order("date", { ascending: false }),
-        supabase.from("history_expenses").select("*").gte("date", startDateStr).order("date", { ascending: false })
+        supabase.from("history_expenses").select("*").gte("date", startDateStr).order("date", { ascending: false }),
+        supabase.from("receivables").select("*"),
+        supabase.from("history_receivables").select("*").gte("date", startDateStr).order("date", { ascending: false })
       ]);
       
       const liqData = results[0].data;
@@ -1143,20 +1145,24 @@ export default function ReportsPage() {
       const libData = results[2].data;
       const histLibData = results[3].data;
       const histExpRange = results[4].data;
+      const recData = results[5].data;
+      const histRecData = results[6].data;
 
       const curLiq = (liqData || []).reduce((s, a) => s + (parseFloat(a.balance) || 0), 0);
       const curAst = (astData || []).reduce((s, a) => s + (parseFloat(a.current_value) || 0), 0);
       const curLib = (libData || []).reduce((s, l) => s + (parseFloat(l.remaining) || 0), 0);
-      setNetWorthParts({ liq: Math.round(curLiq), ast: Math.round(curAst), lib: Math.round(curLib) });
+      const curRec = (recData || []).reduce((s, r) => s + (parseFloat(r.remaining) || 0), 0);
+      setNetWorthParts({ liq: Math.round(curLiq), ast: Math.round(curAst), rec: Math.round(curRec), lib: Math.round(curLib) });
 
     const nwTrend: Record<string, any>[] = [];
-    let rLiq = curLiq, rLib = curLib, rAst = curAst;
+    let rLiq = curLiq, rLib = curLib, rAst = curAst, rRec = curRec;
     const nwInterval = eachDayOfInterval({ start: startDate, end: today }).reverse();
     nwInterval.forEach((day) => {
       const dStr = format(day, "yyyy-MM-dd");
-      nwTrend.push({ date: format(day, "dd MMM"), liquidity: Math.round(rLiq), assets: Math.round(rAst), liabilities: Math.round(rLib), networth: Math.round(rLiq + rAst - rLib) });
+      nwTrend.push({ date: format(day, "dd MMM"), liquidity: Math.round(rLiq), assets: Math.round(rAst), receivables: Math.round(rRec), liabilities: Math.round(rLib), networth: Math.round(rLiq + rAst + rRec - rLib) });
       (histExpRange || []).filter(e => e.date === dStr).forEach(e => { const a = parseFloat(e.amount) || 0; if (e.type === 'Income') rLiq -= a; if (e.type === 'Expense') rLiq += a; });
       (histLibData || []).filter(l => l.date === dStr).forEach(l => { const a = parseFloat(l.amount) || 0; if (l.type === 'Borrowed') rLib -= a; if (l.type === 'Repay' || l.type === 'Principal') rLib += a; });
+      (histRecData || []).filter(r => r.date === dStr).forEach(r => { const a = parseFloat(r.amount) || 0; if (r.type === 'Pay') rRec += a; if (r.type === 'Receive' || r.type === 'Principal') rRec -= a; });
     });
     setNetWorthTrend(nwTrend.reverse());
 
