@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Settings } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { format, differenceInDays, subDays, differenceInYears, differenceInMonths } from "date-fns";
@@ -12,6 +12,8 @@ import pkg from "../package.json";
 import { useHabits } from "@/hooks/useHabits";
 import { useVehicles } from "@/hooks/useVehicles";
 import { usePets } from "@/hooks/usePets";
+import Link from "next/link";
+import { dietService } from "@/lib/services/diet";
 
 import { ActionCenterPanel } from "@/components/dashboard/ActionCenterPanel";
 import { FinancialSummaryPanel } from "@/components/dashboard/FinancialSummaryPanel";
@@ -31,6 +33,18 @@ export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Good Morning! 🌅");
   const [dateStr, setDateStr] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [dietStats, setDietStats] = useState({
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fat: 0,
+    fiber: 0,
+    targetCalories: 2000,
+    targetProtein: 130,
+    targetCarbs: 220,
+    targetFat: 65,
+    targetFiber: 25
+  });
 
   // Modal state for Task completion
   const [taskModalOpen, setTaskModalOpen] = useState(false);
@@ -224,6 +238,42 @@ export default function DashboardPage() {
         getProfiles(),
         getActivityLogs()
       ]);
+
+      // 1.5. Diet & Nutrition
+      let dietTargetData = { calories: 2000, protein: 130, carbs: 220, fat: 65, fiber: 25 };
+      let dietTodayLogs: any[] = [];
+      try {
+        dietTargetData = await dietService.getTarget();
+        dietTodayLogs = await dietService.getLogsForDate(today);
+      } catch (e) {
+        console.warn("Supabase diet fetch failed on dashboard:", e);
+      }
+
+      const dTotals = dietTodayLogs.reduce(
+        (acc, log) => {
+          const mult = log.quantity;
+          acc.calories += Math.round(log.calories * mult);
+          acc.protein += Number((log.protein * mult).toFixed(1));
+          acc.carbs += Number((log.carbs * mult).toFixed(1));
+          acc.fat += Number((log.fat * mult).toFixed(1));
+          acc.fiber += Number((log.fiber * mult).toFixed(1));
+          return acc;
+        },
+        { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }
+      );
+
+      setDietStats({
+        calories: dTotals.calories,
+        protein: Math.round(dTotals.protein),
+        carbs: Math.round(dTotals.carbs),
+        fat: Math.round(dTotals.fat),
+        fiber: Math.round(dTotals.fiber),
+        targetCalories: dietTargetData.calories,
+        targetProtein: dietTargetData.protein,
+        targetCarbs: dietTargetData.carbs,
+        targetFat: dietTargetData.fat,
+        targetFiber: dietTargetData.fiber
+      });
 
       // 1. Financials
       const liq = (liquidityData || []).reduce((s, a) => s + (parseFloat(a.balance) || 0), 0);
@@ -690,6 +740,133 @@ export default function DashboardPage() {
           habitsDone={stats.habitsDone}
           habitsTotal={stats.habitsTotal}
         />
+
+        {/* Today's Nutritional Split (Sustenance Card) */}
+        <div className="bg-card rounded-md border border-border shadow-sm p-7 flex flex-col justify-between group hover:scale-[1.01] transition-all relative">
+          <Link href="/diet" className="absolute inset-0 z-0" />
+          <div className="flex flex-col sm:flex-row items-center gap-8 z-10">
+            {/* SVG Calorie Ring */}
+            <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
+              <svg viewBox="0 0 128 128" className="w-full h-full transform -rotate-90">
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="52"
+                  className="stroke-muted"
+                  strokeWidth="8"
+                  fill="transparent"
+                />
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="52"
+                  className="stroke-primary"
+                  strokeWidth="8"
+                  fill="transparent"
+                  strokeDasharray={2 * Math.PI * 52}
+                  strokeDashoffset={
+                    2 * Math.PI * 52 * (1 - Math.min(1, dietStats.calories / dietStats.targetCalories))
+                  }
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-[9px] font-black uppercase text-muted-foreground/60 tracking-wider leading-none">
+                  Calories
+                </span>
+                <span className="text-2xl font-black mt-1 text-foreground leading-none">
+                  {dietStats.calories}
+                </span>
+                <span className="text-[9px] font-bold text-muted-foreground/50 mt-1">
+                  /{dietStats.targetCalories} kcal
+                </span>
+              </div>
+            </div>
+
+            {/* Macro Splits */}
+            <div className="flex-1 w-full space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-[11px] font-black uppercase tracking-wider text-muted-foreground/65 leading-none">
+                    Today's Nutritional Split
+                  </h3>
+                  <p className="text-[9px] font-bold text-muted-foreground/45 mt-1 leading-none">
+                    Macro targets & daily progress overview
+                  </p>
+                </div>
+                <Link href="/diet" className="text-muted-foreground hover:text-foreground p-1 rounded hover:bg-muted transition relative z-20">
+                  <Settings size={14} />
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                {/* Protein */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[11px] font-bold">
+                    <span className="text-foreground">Protein</span>
+                    <span className="text-muted-foreground/75 font-medium">
+                      {dietStats.protein}g / {dietStats.targetProtein}g
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(100, (dietStats.protein / dietStats.targetProtein) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Carbs */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[11px] font-bold">
+                    <span className="text-foreground">Carbs</span>
+                    <span className="text-muted-foreground/75 font-medium">
+                      {dietStats.carbs}g / {dietStats.targetCarbs}g
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-sky-500 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(100, (dietStats.carbs / dietStats.targetCarbs) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Fat */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[11px] font-bold">
+                    <span className="text-foreground">Fat</span>
+                    <span className="text-muted-foreground/75 font-medium">
+                      {dietStats.fat}g / {dietStats.targetFat}g
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-amber-500 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(100, (dietStats.fat / dietStats.targetFat) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Fiber */}
+                <div className="space-y-1">
+                  <div className="flex justify-between text-[11px] font-bold">
+                    <span className="text-foreground">Fiber</span>
+                    <span className="text-muted-foreground/75 font-medium">
+                      {dietStats.fiber}g / {dietStats.targetFiber}g
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-indigo-500 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(100, (dietStats.fiber / dietStats.targetFiber) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <VehicleFleetPanel 
           vehicleReminders={vehicleReminders}

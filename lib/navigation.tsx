@@ -30,6 +30,7 @@ import {
   Zap,
   Activity,
   HandCoins,
+  Apple,
   } from "lucide-react";
 
 // ─── Finance ──────────────────────────────────────────────────────────────────
@@ -96,6 +97,7 @@ export const REPORT_TABS = [
   { title: "TASKS", href: "/reports/tasks", icon: <ListTodo size={16} /> },
   { title: "SKILLS", href: "/reports/skills", icon: <GraduationCap size={16} /> },
   { title: "PETS", href: "/reports/pets", icon: <Dog size={16} /> },
+  { title: "NUTRITION", href: "/reports/nutrition", icon: <Apple size={16} /> },
   { title: "SUMMARY", href: "/reports/summary", icon: <CalendarDays size={16} /> },
   { title: "CORRELATIONS", href: "/reports/correlations", icon: <LineChart size={16} /> },
 ];

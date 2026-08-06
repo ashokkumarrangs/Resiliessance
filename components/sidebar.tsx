@@ -12,6 +12,7 @@ import {
   Dog,
   PlusCircle,
   Clock,
+  Apple,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -63,6 +64,9 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
 
           {/* Workout */}
           <NavItem href="/workout" icon={<Bike size={20} />} title="Workout" onClick={onClose} />
+
+          {/* Nutrition */}
+          <NavItem href="/diet" icon={<Apple size={20} />} title="Nutrition" onClick={onClose} />
 
           {/* Pets & Vehicles */}
           <NavItem href="/pets" icon={<Dog size={20} />} title="Pets" onClick={onClose} />
