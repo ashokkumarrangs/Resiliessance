@@ -76,6 +76,7 @@ function AccountPageContent() {
           account_no: data.account_no || "",
           card_no: data.card_no || "",
           card_pin: data.card_pin || "",
+          card_cvv: data.card_cvv || "",
           nb_user: data.nb_user || "",
           nb_pass: data.nb_pass || "",
           nb_txn: data.nb_txn || "",
@@ -224,9 +225,10 @@ function AccountPageContent() {
             <div className="text-[10px] font-black uppercase tracking-[3px] text-accent/60 mb-2">Vault & Credentials</div>
             <div className="grid grid-cols-2 gap-7 relative z-30">
               <div className="space-y-2">
-                <span className="text-[9px] font-black text-muted-foreground uppercase ml-1">Card Serial</span>
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Card Serial Number</span>
                 <input 
                   type="text" 
+                  inputMode="decimal"
                   placeholder="Card No"
                   value={formData.card_no}
                   onChange={(e) => setFormData({...formData, card_no: e.target.value})}
@@ -234,9 +236,21 @@ function AccountPageContent() {
                 />
               </div>
               <div className="space-y-2">
-                <span className="text-[9px] font-black text-muted-foreground uppercase ml-1">Security PIN</span>
+                <span className="text-[9px] font-black text-muted-foreground ml-1">CVV</span>
                 <input 
                   type="password" 
+                  inputMode="decimal"
+                  placeholder="CVV"
+                  value={formData.card_cvv}
+                  onChange={(e) => setFormData({...formData, card_cvv: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Card PIN Number</span>
+                <input 
+                  type="password" 
+                  inputMode="decimal"
                   placeholder="PIN"
                   value={formData.card_pin}
                   onChange={(e) => setFormData({...formData, card_pin: e.target.value})}
@@ -244,7 +258,7 @@ function AccountPageContent() {
                 />
               </div>
               <div className="space-y-2">
-                <span className="text-[9px] font-black text-muted-foreground uppercase ml-1">NetBanking User</span>
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Netbanking Username</span>
                 <input 
                   type="text" 
                   placeholder="Username"
@@ -254,7 +268,7 @@ function AccountPageContent() {
                 />
               </div>
               <div className="space-y-2">
-                <span className="text-[9px] font-black text-muted-foreground uppercase ml-1">NetBanking Pass</span>
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Netbanking Password</span>
                 <input 
                   type="password" 
                   placeholder="Password"
@@ -264,9 +278,20 @@ function AccountPageContent() {
                 />
               </div>
               <div className="space-y-2">
-                <span className="text-[9px] font-black text-muted-foreground uppercase ml-1">Mobile App Pass</span>
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Netbanking Transaction Password</span>
                 <input 
                   type="password" 
+                  placeholder="Txn Password"
+                  value={formData.nb_txn}
+                  onChange={(e) => setFormData({...formData, nb_txn: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Mobile App Password</span>
+                <input 
+                  type="password" 
+                  inputMode="decimal"
                   placeholder="App Pass"
                   value={formData.mb_pass}
                   onChange={(e) => setFormData({...formData, mb_pass: e.target.value})}
@@ -274,12 +299,24 @@ function AccountPageContent() {
                 />
               </div>
               <div className="space-y-2">
-                <span className="text-[9px] font-black text-muted-foreground uppercase ml-1">Mobile MPIN</span>
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Mobile App PIN</span>
                 <input 
                   type="password" 
-                  placeholder="MPIN"
+                  inputMode="decimal"
+                  placeholder="PIN"
                   value={formData.mb_mpin}
                   onChange={(e) => setFormData({...formData, mb_mpin: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Mobile App MPIN</span>
+                <input 
+                  type="password" 
+                  inputMode="decimal"
+                  placeholder="MPIN"
+                  value={formData.mb_txn}
+                  onChange={(e) => setFormData({...formData, mb_txn: e.target.value})}
                   className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
                 />
               </div>
