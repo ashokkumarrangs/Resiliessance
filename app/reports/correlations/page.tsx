@@ -4,7 +4,6 @@ import { REPORT_TABS } from "@/lib/navigation";
 import React, { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import { format, subDays } from "date-fns";
-import { ReportsNav } from "@/components/ReportsNav";
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, LineChart, Line,
@@ -169,9 +168,6 @@ export default function CorrelationsPage() {
           {loading?"Loading…":`${dataPoints.length} pts`}
         </span>}>
       
-
-      {/* Full reports nav bar */}
-      <ReportsNav />
 
       <div className="max-w-lg mx-auto space-y-4">
         {/* ── Controls ── */}

@@ -667,32 +667,30 @@ export default function DashboardPage() {
           </button>
         </div>
       }
-      className="space-y-6"
     >
-      <FinancialSummaryPanel 
-        isLoading={isLoading}
-        netWorth={stats.netWorth}
-        liquidity={stats.liquidity}
-        assetsTotal={stats.assetsTotal}
-        liabilitiesTotal={stats.liabilitiesTotal}
-        budgetActual={stats.budgetActual}
-        budgetPlanned={stats.budgetPlanned}
-      />
-
       <div className="flex flex-col gap-4">
+        <FinancialSummaryPanel 
+          isLoading={isLoading}
+          netWorth={stats.netWorth}
+          liquidity={stats.liquidity}
+          assetsTotal={stats.assetsTotal}
+          liabilitiesTotal={stats.liabilitiesTotal}
+          budgetActual={stats.budgetActual}
+          budgetPlanned={stats.budgetPlanned}
+        />
+
         <HabitTrackerPanel 
           habitsCategories={habitsCategories}
           habitsDone={stats.habitsDone}
           habitsTotal={stats.habitsTotal}
         />
+
         <VehicleFleetPanel 
           vehicleReminders={vehicleReminders}
           activeVehicleIndex={activeVehicleIndex}
           setActiveVehicleIndex={setActiveVehicleIndex}
         />
-      </div>
 
-      <div className="flex flex-col gap-4">
         <WorkoutVolumePanel 
           workoutHistoryDetail={stats.workoutHistoryDetail as any}
           workoutHistory7Days={stats.workoutHistory7Days}
@@ -700,18 +698,17 @@ export default function DashboardPage() {
           setActiveWorkoutIndex={setActiveWorkoutIndex}
           workoutScrollRef={workoutScrollRef}
         />
+
         <SkillsFocusPanel 
           focusSkillDash={focusSkillDash}
         />
-      </div>
 
-      <PetWellnessPanel 
-        petsData={petsData as unknown as Pet[]}
-        activePetIndex={activePetIndex}
-        setActivePetIndex={setActivePetIndex}
-      />
+        <PetWellnessPanel 
+          petsData={petsData as unknown as Pet[]}
+          activePetIndex={activePetIndex}
+          setActivePetIndex={setActivePetIndex}
+        />
 
-      <div className="flex flex-col gap-4">
         <FocusTasksPanel 
           pendingTasks={pendingTasks}
           activeTaskIndex={activeTaskIndex}
@@ -720,15 +717,16 @@ export default function DashboardPage() {
           tasksDone={stats.tasksDone}
           tasksTotal={stats.tasksTotal}
         />
+
         <SquareShiftProjectsPanel 
           squareShiftProjects={squareShiftProjects}
           activeProjectIndex={activeProjectIndex}
           setActiveProjectIndex={setActiveProjectIndex}
           handleCompleteSquareShiftTask={handleCompleteSquareShiftTask}
         />
-      </div>
 
-      <ActionCenterPanel alerts={alerts} />
+        <ActionCenterPanel alerts={alerts} />
+      </div>
 
       <TaskCompletionModal 
         isOpen={taskModalOpen} 
