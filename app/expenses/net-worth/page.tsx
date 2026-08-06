@@ -22,6 +22,7 @@ export default function NetWorthPage() {
     liabilities: 0,
     netWorth: 0
   });
+  const [lists, setLists] = useState({
     liquidity: [] as NetWorthItem[],
     assets: [] as NetWorthItem[],
     receivables: [] as NetWorthItem[],
