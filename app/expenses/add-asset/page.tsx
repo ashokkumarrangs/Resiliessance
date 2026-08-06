@@ -66,8 +66,11 @@ export default function AddAssetPage() {
 
     setIsSubmitting(true);
     try {
-      if (!formData.current_value) formData.current_value = formData.purchase_price;
-      const { error } = await supabase.from('assets').insert([formData]);
+      const payload = {
+        ...formData,
+        current_value: formData.current_value || formData.purchase_price
+      };
+      const { error } = await supabase.from('assets').insert([payload]);
       if (error) throw error;
       toast.success("Asset added successfully");
       router.push("/expenses/view-assets");

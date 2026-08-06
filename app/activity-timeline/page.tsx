@@ -498,7 +498,9 @@ export default function ActivityTimelinePage() {
   };
 
   useEffect(() => {
-    fetchTimelineData(timelineDate);
+    Promise.resolve().then(() => {
+      fetchTimelineData(timelineDate);
+    });
   }, [timelineDate]);
 
   return (

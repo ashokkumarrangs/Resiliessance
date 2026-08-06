@@ -47,7 +47,7 @@ function AddLiabilityContent() {
     }
   }, [initialParty]);
 
-  const fetchOptions = async () => {
+  async function fetchOptions() {
     const { data } = await supabase.from('liabilities').select('party, party_type');
     if (data) {
       setOptions(prev => ({
@@ -56,16 +56,16 @@ function AddLiabilityContent() {
         partyTypes: Array.from(new Set(data.map(d => d.party_type)))
       }));
     }
-  };
+  }
 
-  const handlePartySelect = async (party: string) => {
+  async function handlePartySelect(party: string) {
     setFormData(prev => ({ ...prev, party }));
     const { data } = await supabase.from('liabilities').select('*').eq('party', party).single();
     if (data) {
       setPartyDetail(data);
       setFormData(prev => ({ ...prev, party_type: data.party_type }));
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

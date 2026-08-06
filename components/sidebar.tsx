@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
 
@@ -34,7 +35,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
 
         <div className="pt-6 px-5 pb-3 bg-card">
           <div className="flex items-center gap-2">
-            <img src="/logo.svg" alt="Resiliessance Logo" className="w-7 h-7 rounded-lg object-contain" />
+            <Image src="/logo.svg" alt="Resiliessance Logo" width={28} height={28} className="rounded-lg object-contain" />
             <div className="text-2xl font-black tracking-tighter text-foreground leading-none">
               Resiliessance
             </div>

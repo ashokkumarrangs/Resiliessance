@@ -1,5 +1,6 @@
 import { Menu } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const [dateStr, setDateStr] = useState("");
@@ -24,7 +25,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
       </button>
       
       <div className="absolute left-1/2 -translate-x-1/2 text-2xl font-black tracking-tighter flex items-center gap-2">
-        <img src="/logo.svg" alt="Resiliessance Logo" className="w-6 h-6 rounded-md object-contain" />
+        <Image src="/logo.svg" alt="Resiliessance Logo" width={24} height={24} className="rounded-md object-contain" />
         <span>Resiliessance</span>
       </div>
       

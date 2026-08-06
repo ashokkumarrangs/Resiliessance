@@ -77,8 +77,10 @@ function InlineChip({ value, placeholder, icon, onChange, type = "text", options
 
   useEffect(() => {
     if (isEditing) {
-      setSearch(value);
-      setIsManualEntry(false);
+      Promise.resolve().then(() => {
+        setSearch(value);
+        setIsManualEntry(false);
+      });
     }
   }, [isEditing, value]);
 
@@ -383,7 +385,9 @@ export default function AddActivityPage() {
   };
 
   useEffect(() => {
-    fetchPastActivities();
+    Promise.resolve().then(() => {
+      fetchPastActivities();
+    });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

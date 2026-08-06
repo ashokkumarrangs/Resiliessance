@@ -46,12 +46,12 @@ function AccountPageContent() {
     }
   }, [initialName]);
 
-  const fetchAccounts = async () => {
+  async function fetchAccounts() {
     const { data } = await supabase.from('liquidity').select('account_name');
     if (data) setAccounts(data.map(a => a.account_name));
-  };
+  }
 
-  const handleAccountSelect = async (name: string) => {
+  async function handleAccountSelect(name: string) {
     if (!name) return;
     setIsLoading(true);
     try {
@@ -85,7 +85,7 @@ function AccountPageContent() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
