@@ -382,7 +382,7 @@ export default function DailyEntryPage() {
         
         <div className="bg-card rounded-2xl p-5 shadow-sm border border-border/40 space-y-5">
           {/* Row 1: Date | Time */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 relative z-50">
             <div className="space-y-2">
               <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                 <CalendarDays size={16} className="shrink-0" />
@@ -437,7 +437,7 @@ export default function DailyEntryPage() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 relative z-40">
                 <div className="space-y-2">
                   <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
                     <Banknote size={16} className="shrink-0" />

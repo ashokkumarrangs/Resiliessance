@@ -5,7 +5,7 @@ import { VehicleDashboard } from "@/components/VehicleDashboard";
 import { Select } from "@/components/Select";
 import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
-import { Activity, AlertTriangle, BarChart2, CalendarDays, Car, CheckCircle2, ChevronDown, Clock, Dumbbell, Flame, Gauge, GraduationCap, Grid3X3, ListTodo, Map, PackageCheck, RefreshCw, Scale, ShieldAlert, TrendingUp, Trophy, Wallet, Weight, Zap , Scissors, Shield, Trees, Coins } from "lucide-react";
+import { Activity, AlertTriangle, BarChart2, CalendarDays, Car, CheckCircle2, ChevronDown, Clock, Dumbbell, Flame, Gauge, GraduationCap, Grid3X3, ListTodo, Map, PackageCheck, RefreshCw, Scale, ShieldAlert, TrendingUp, Trophy, Wallet, Weight, Zap , Scissors, Shield, Trees, Coins, HandCoins } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { 
   format, subDays, startOfMonth, eachDayOfInterval,   startOfWeek, endOfWeek, endOfMonth, addMonths, subMonths,
@@ -128,8 +128,9 @@ export default function ReportsPage() {
   const [categoryBreakdown, setCategoryBreakdown] = useState<Record<string, any>[]>([]);
   const [liquidity, setLiquidity] = useState<Record<string, any>[]>([]);
   const [assets, setAssets] = useState<Record<string, any>[]>([]);
+  const [receivables, setReceivables] = useState<Record<string, any>[]>([]);
   const [liabilities, setLiabilities] = useState<Record<string, any>[]>([]);
-  const [netWorthParts, setNetWorthParts] = useState({ liq: 0, ast: 0, lib: 0 });
+  const [netWorthParts, setNetWorthParts] = useState({ liq: 0, ast: 0, rec: 0, lib: 0 });
   const [expenses30, setExpenses30] = useState<Record<string, any>[]>([]);
   const [detailedExpenses, setDetailedExpenses] = useState<Record<string, any>[]>([]);
   const [catSpendData, setCatSpendData] = useState<Record<string, any>[]>([]);
@@ -542,7 +543,9 @@ export default function ReportsPage() {
       run(['ALL', 'SKILLS']) ? supabase.from("skill_items").select("*") : mock, // 21
       run(['ALL', 'SKILLS']) ? supabase.from("skill_logs").select("*").order("date") : mock, // 22
       run(['ALL', 'PETS']) ? supabase.from("pet_profile").select("*") : mock, // 23
-      run(['ALL', 'PETS']) ? supabase.from("pet_logs").select("*") : mock // 24
+      run(['ALL', 'PETS']) ? supabase.from("pet_logs").select("*") : mock, // 24
+      run(['ALL', 'FINANCE']) ? supabase.from("receivables").select("*") : mock, // 25
+      run(['ALL', 'FINANCE']) ? supabase.from("history_receivables").select("*").gte("date", startDateStr).order("date", { ascending: false }) : mock // 26
     ]);
 
     const expData = results[0].data;
@@ -578,6 +581,8 @@ export default function ReportsPage() {
     const mLog = results[18].data;
     const inventoryItems = results[19].data;
     const actionTasks = results[20].data;
+    const recData = results[25]?.data;
+    const histRecData = results[26]?.data;
 
     setDetailedExpenses(detailedMonthExp || []);
     setVehicleConfigs(vehicleCfg || []);
@@ -623,15 +628,17 @@ export default function ReportsPage() {
     const curLiq = (liqData || []).reduce((s, a) => s + (parseFloat(a.balance) || 0), 0);
     const curAst = (astData || []).reduce((s, a) => s + (parseFloat(a.current_value) || 0), 0);
     const curLib = (libData || []).reduce((s, l) => s + (parseFloat(l.remaining) || 0), 0);
-    setNetWorthParts({ liq: Math.round(curLiq), ast: Math.round(curAst), lib: Math.round(curLib) });
+    const curRec = (recData || []).reduce((s, r) => s + (parseFloat(r.remaining) || 0), 0);
+    setNetWorthParts({ liq: Math.round(curLiq), ast: Math.round(curAst), rec: Math.round(curRec), lib: Math.round(curLib) });
     const nwTrend: Record<string, any>[] = [];
-    let rLiq = curLiq, rLib = curLib, rAst = curAst;
+    let rLiq = curLiq, rLib = curLib, rAst = curAst, rRec = curRec;
     const nwInterval = eachDayOfInterval({ start: startDate, end: today }).reverse();
     nwInterval.forEach((day) => {
       const dStr = format(day, "yyyy-MM-dd");
-      nwTrend.push({ date: format(day, "dd MMM"), liquidity: Math.round(rLiq), assets: Math.round(rAst), liabilities: Math.round(rLib), networth: Math.round(rLiq + rAst - rLib) });
+      nwTrend.push({ date: format(day, "dd MMM"), liquidity: Math.round(rLiq), assets: Math.round(rAst), receivables: Math.round(rRec), liabilities: Math.round(rLib), networth: Math.round(rLiq + rAst + rRec - rLib) });
       (histExpRange || []).filter(e => e.date === dStr).forEach(e => { const a = parseFloat(e.amount) || 0; if (e.type === 'Income') rLiq -= a; if (e.type === 'Expense') rLiq += a; });
       (histLibData || []).filter(l => l.date === dStr).forEach(l => { const a = parseFloat(l.amount) || 0; if (l.type === 'Borrowed') rLib -= a; if (l.type === 'Repay' || l.type === 'Principal') rLib += a; });
+      (histRecData || []).filter(r => r.date === dStr).forEach(r => { const a = parseFloat(r.amount) || 0; if (r.account === 'New Loan') rRec -= a; if (r.account === 'Principal') rRec += a; });
     });
     setNetWorthTrend(nwTrend.reverse());
 
@@ -666,6 +673,7 @@ export default function ReportsPage() {
 
     setLiquidity((liqData || []).map(a => ({ name: a.account_name, value: Math.round(parseFloat(a.balance) || 0) })));
     setAssets((astData || []).map(a => ({ name: a.asset_name, current: Math.round(parseFloat(a.current_value) || 0), bought: Math.round(parseFloat(a.purchase_price) || 0) })));
+    setReceivables((recData || []).map(r => ({ name: r.party, value: Math.round(parseFloat(r.remaining) || 0) })));
     setLiabilities((libData || []).map(l => ({ name: l.party, value: Math.round(parseFloat(l.remaining) || 0) })));
 
     let committedTotal = 0;
@@ -1723,13 +1731,14 @@ export default function ReportsPage() {
                 <option value="custom">Custom</option>
               </Select>
             }>
-              <div className="grid grid-cols-2 gap-3 mb-5">
-                <StatPill label="Net Worth" value={`₹${(netWorthParts.liq+netWorthParts.ast-netWorthParts.lib).toLocaleString()}`} color="text-emerald-500" className="px-3 py-2.5" />
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
+                <StatPill label="Net Worth" value={`₹${(netWorthParts.liq+netWorthParts.ast+netWorthParts.rec-netWorthParts.lib).toLocaleString()}`} color="text-emerald-500" className="px-3 py-2.5" />
                 <StatPill label="Liquidity" value={`₹${netWorthParts.liq.toLocaleString()}`} color="text-primary" className="px-3 py-2.5" />
                 <StatPill label="Assets" value={`₹${netWorthParts.ast.toLocaleString()}`} color="text-amber-500" className="px-3 py-2.5" />
+                <StatPill label="Receivables" value={`₹${netWorthParts.rec.toLocaleString()}`} color="text-emerald-500" className="px-3 py-2.5" />
                 <StatPill label="Liabilities" value={`₹${netWorthParts.lib.toLocaleString()}`} color="text-rose-500" className="px-3 py-2.5" />
               </div>
-              <ResponsiveContainer width="100%" height={220}><LineChart key={netWorthTrend.length} data={netWorthTrend}><CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.4}/><XAxis dataKey="date" tick={{fontSize:8, fontWeight:700}} axisLine={false} tickLine={false} interval={Math.ceil(netWorthTrend.length/5)}/><YAxis tick={{fontSize:8, fontWeight:700}} axisLine={false} tickLine={false} tickFormatter={v=>`₹${v/1000}k`} width={40}/><Tooltip content={<CustomTooltip/>}/><Line type="monotone" dataKey="networth" name="Net Worth" stroke="#10b981" strokeWidth={3} dot={false}/><Line type="monotone" dataKey="liquidity" name="Liquidity" stroke="var(--color-primary)" strokeWidth={2} dot={false}/><Line type="monotone" dataKey="assets" name="Assets" stroke="#f59e0b" strokeWidth={2} dot={false}/><Line type="monotone" dataKey="liabilities" name="Liabilities" stroke="#ef4444" strokeWidth={2} dot={false}/></LineChart></ResponsiveContainer>
+              <ResponsiveContainer width="100%" height={220}><LineChart key={netWorthTrend.length} data={netWorthTrend}><CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.4}/><XAxis dataKey="date" tick={{fontSize:8, fontWeight:700}} axisLine={false} tickLine={false} interval={Math.ceil(netWorthTrend.length/5)}/><YAxis tick={{fontSize:8, fontWeight:700}} axisLine={false} tickLine={false} tickFormatter={v=>`₹${v/1000}k`} width={40}/><Tooltip content={<CustomTooltip/>}/><Line type="monotone" dataKey="networth" name="Net Worth" stroke="#10b981" strokeWidth={3} dot={false}/><Line type="monotone" dataKey="liquidity" name="Liquidity" stroke="var(--color-primary)" strokeWidth={2} dot={false}/><Line type="monotone" dataKey="assets" name="Assets" stroke="#f59e0b" strokeWidth={2} dot={false}/><Line type="monotone" dataKey="receivables" name="Receivables" stroke="#10b981" strokeWidth={2} dot={false}/><Line type="monotone" dataKey="liabilities" name="Liabilities" stroke="#ef4444" strokeWidth={2} dot={false}/></LineChart></ResponsiveContainer>
             </SectionCard>
 
             <SectionCard title="Savings Rate Pulse" icon={<Flame size={18} />} headerRight={
@@ -1838,6 +1847,7 @@ export default function ReportsPage() {
 
             <SectionCard title="Assets Performance" icon={<PackageCheck size={18} />}><ResponsiveContainer width="100%" height={160}><BarChart data={assets}><XAxis dataKey="name" tick={{fontSize:7, fontWeight:800}} axisLine={false} tickLine={false}/><YAxis tick={{fontSize:8}} width={35} tickFormatter={v=>`₹${v/1000}k`}/><Tooltip content={<CustomTooltip/>}/><Bar dataKey="bought" name="Purchase" fill="var(--color-muted)" radius={[4,4,0,0]}/><Bar dataKey="current" name="Current" fill="#10b981" radius={[4,4,0,0]}/></BarChart></ResponsiveContainer></SectionCard>
             <SectionCard title="Liabilities" icon={<TrendingUp size={18} />}><ResponsiveContainer width="100%" height={Math.max(80, liabilities.length * 30)}><BarChart data={liabilities} layout="vertical"><XAxis type="number" hide/><YAxis dataKey="name" type="category" tick={{fontSize:8, fontWeight:700}} width={80} axisLine={false}/><Tooltip content={<CustomTooltip/>}/><Bar dataKey="value" name="Remaining" fill="#ef4444" radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></SectionCard>
+            <SectionCard title="Receivables" icon={<HandCoins size={18} />}><ResponsiveContainer width="100%" height={Math.max(80, receivables.length * 30)}><BarChart data={receivables} layout="vertical"><XAxis type="number" hide/><YAxis dataKey="name" type="category" tick={{fontSize:8, fontWeight:700}} width={80} axisLine={false}/><Tooltip content={<CustomTooltip/>}/><Bar dataKey="value" name="Remaining" fill="#10b981" radius={[0,4,4,0]}/></BarChart></ResponsiveContainer></SectionCard>
 
             {/* Committed vs Discretionary (f1) */}
             <SectionCard title="Committed vs. Discretionary Spend" icon={<Scale size={18} />}>

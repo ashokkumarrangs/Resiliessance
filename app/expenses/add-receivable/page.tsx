@@ -13,7 +13,7 @@ import { PageWrapper } from "@/components/PageWrapper";
 import { EXPENSE_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 
-function AddLiabilityContent() {
+function AddReceivableContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialParty = searchParams.get('party');
@@ -24,7 +24,7 @@ function AddLiabilityContent() {
   const [formData, setFormData] = useState({
     date: format(new Date(), 'yyyy-MM-dd'),
     amount: "",
-    type: "Receive", // We are borrowing it by default
+    type: "Pay", // We are paying it out (lending it) by default
     account: "Principal",
     party: "",
     party_type: "",
@@ -47,7 +47,7 @@ function AddLiabilityContent() {
   }, [initialParty]);
 
   async function fetchOptions() {
-    const { data } = await supabase.from('liabilities').select('party, party_type');
+    const { data } = await supabase.from('receivables').select('party, party_type');
     if (data) {
       setOptions(prev => ({
         ...prev,
@@ -59,7 +59,7 @@ function AddLiabilityContent() {
 
   async function handlePartySelect(party: string) {
     setFormData(prev => ({ ...prev, party }));
-    const { data } = await supabase.from('liabilities').select('*').eq('party', party).single();
+    const { data } = await supabase.from('receivables').select('*').eq('party', party).single();
     if (data) {
       setPartyDetail(data);
       setFormData(prev => ({ ...prev, party_type: data.party_type }));
@@ -83,15 +83,15 @@ function AddLiabilityContent() {
       if (partyDetail) {
         newTotal = parseFloat(partyDetail.total_amount) || 0;
         newRemaining = parseFloat(partyDetail.remaining) || 0;
-        newInterest = parseFloat(partyDetail.interest_paid) || 0;
+        newInterest = parseFloat(partyDetail.interest_received) || 0;
 
-        if (formData.type === "Receive") {
-          // Borrowed more
+        if (formData.type === "Pay") {
+          // Lent more
           if (formData.account === "Principal") {
             newTotal += amt;
             newRemaining += amt;
           }
-        } else if (formData.type === "Pay") {
+        } else if (formData.type === "Receive") {
           // Repaid
           if (formData.account === "Principal") {
             newRemaining = Math.max(0, newRemaining - amt);
@@ -100,17 +100,17 @@ function AddLiabilityContent() {
           }
         }
       } else {
-        newTotal = (formData.type === "Receive" && formData.account === "Principal") ? amt : 0;
+        newTotal = (formData.type === "Pay" && formData.account === "Principal") ? amt : 0;
         newRemaining = newTotal;
-        newInterest = (formData.type === "Pay" && formData.account === "Interest") ? amt : 0;
+        newInterest = (formData.type === "Receive" && formData.account === "Interest") ? amt : 0;
       }
 
       if (partyDetail) {
         const { error: libErr } = await supabase
-          .from('liabilities')
+          .from('receivables')
           .update({ 
             remaining: newRemaining, 
-            interest_paid: newInterest,
+            interest_received: newInterest,
             total_amount: newTotal,
             updated_at: new Date().toISOString()
           })
@@ -118,12 +118,12 @@ function AddLiabilityContent() {
         
         if (libErr) throw libErr;
       } else {
-        const { error: libErr } = await supabase.from('liabilities').insert({
+        const { error: libErr } = await supabase.from('receivables').insert({
           party: formData.party,
           party_type: formData.party_type,
           total_amount: newTotal,
           remaining: newRemaining,
-          interest_paid: newInterest,
+          interest_received: newInterest,
           notes: formData.notes
         });
         if (libErr) throw libErr;
@@ -133,13 +133,13 @@ function AddLiabilityContent() {
         ...formData,
         amount: amt
       };
-      const { error: histErr } = await supabase.from('history_liabilities').insert(payload);
+      const { error: histErr } = await supabase.from('history_receivables').insert(payload);
       if (histErr) throw histErr;
 
-      toast.success("Liability record saved");
-      router.push("/expenses/view-liability");
+      toast.success("Receivable record saved");
+      router.push("/expenses/view-receivable");
     } catch (error: any) {
-      console.error("Error saving liability:", error);
+      console.error("Error saving receivable:", error);
       toast.error(error.message || "Failed to save record");
     } finally {
       setIsSubmitting(false);
@@ -148,16 +148,16 @@ function AddLiabilityContent() {
 
   return (
     <PageWrapper
-      title="Add Liability"
+      title="Add Receivable"
       reportHref="/reports/finance"
       sectionTabs={EXPENSE_TABS}
-      activePath="/expenses/view-liability"
+      activePath="/expenses/view-receivable"
     >
         <SubNav 
-          items={["View Liabilities", "Add Liability"]}
-          activeItem="Add Liability"
+          items={["View Receivables", "Add Receivable"]}
+          activeItem="Add Receivable"
           onChange={(val) => {
-            if (val === "View Liabilities") router.push("/expenses/view-liability");
+            if (val === "View Receivables") router.push("/expenses/view-receivable");
           }}
         />
       
@@ -181,7 +181,7 @@ function AddLiabilityContent() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-7 relative z-50">
+          <div className="grid grid-cols-2 gap-7 relative z-40">
             <div className="space-y-2">
               <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
                 <CalendarDays size={16} /> Date
@@ -216,7 +216,7 @@ function AddLiabilityContent() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-7 relative z-40">
+          <div className="grid grid-cols-2 gap-7 relative z-30">
             <div className="space-y-2">
               <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
                 <ListTodo size={16} /> Type
@@ -257,8 +257,8 @@ function AddLiabilityContent() {
                  Reference Specs
                </div>
                <div className="grid grid-cols-2 gap-y-4">
-                  <SpecItem label="Current Debt" value={`₹${parseFloat(partyDetail?.remaining || 0).toLocaleString()}`} />
-                  <SpecItem label="Interest Paid" value={`₹${parseFloat(partyDetail?.interest_paid || 0).toLocaleString()}`} />
+                  <SpecItem label="Current Asset" value={`₹${parseFloat(partyDetail?.remaining || 0).toLocaleString()}`} />
+                  <SpecItem label="Interest Received" value={`₹${parseFloat(partyDetail?.interest_received || 0).toLocaleString()}`} />
                </div>
             </div>
           )}
@@ -277,7 +277,7 @@ function AddLiabilityContent() {
           </div>
 
           <div className="flex justify-center pt-8">
-            <SaveButton type="submit" isSaving={isSubmitting} disabled={isSubmitting} label="Save Liability" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
+            <SaveButton type="submit" isSaving={isSubmitting} disabled={isSubmitting} label="Save Receivable" className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
           </div>
         </div>
       </form>
@@ -294,10 +294,10 @@ function SpecItem({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function AddLiabilityPage() {
+export default function AddReceivablePage() {
   return (
     <Suspense fallback={<div className="p-8 text-center text-muted-foreground font-black tracking-widest uppercase text-xs">Synchronizing...</div>}>
-      <AddLiabilityContent />
+      <AddReceivableContent />
     </Suspense>
   );
 }

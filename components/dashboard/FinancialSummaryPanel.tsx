@@ -8,6 +8,7 @@ interface FinancialSummaryPanelProps {
   netWorth: number;
   liquidity: number;
   assetsTotal: number;
+  receivablesTotal: number;
   liabilitiesTotal: number;
   budgetActual: number;
   budgetPlanned: number;
@@ -18,6 +19,7 @@ export function FinancialSummaryPanel({
   netWorth,
   liquidity,
   assetsTotal,
+  receivablesTotal,
   liabilitiesTotal,
   budgetActual,
   budgetPlanned,
@@ -39,7 +41,7 @@ export function FinancialSummaryPanel({
         </div>
 
         {/* Grid Section: Core Metrics */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div>
             <div className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-wider mb-1">Liquidity</div>
             <div className="text-[14px] font-black text-foreground">
@@ -50,6 +52,12 @@ export function FinancialSummaryPanel({
             <div className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-wider mb-1">Assets</div>
             <div className="text-[14px] font-black text-foreground">
               {isLoading ? "..." : <Currency value={assetsTotal} />}
+            </div>
+          </div>
+          <div>
+            <div className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-wider mb-1">Receivables</div>
+            <div className="text-[14px] font-black text-emerald-500">
+              {isLoading ? "..." : <Currency value={receivablesTotal} />}
             </div>
           </div>
           <div>

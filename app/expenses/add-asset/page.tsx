@@ -100,7 +100,7 @@ export default function AddAssetPage() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-6">
         <div className="bg-card rounded-2xl p-8 shadow-sm border border-border/40 space-y-7">
           
-          <div className="grid grid-cols-2 gap-7">
+          <div className="grid grid-cols-2 gap-7 relative z-50">
             <div className="space-y-2">
               <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
                 <Tag size={16} /> Asset Name
@@ -128,7 +128,7 @@ export default function AddAssetPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-7">
+          <div className="grid grid-cols-2 gap-7 relative z-40">
             <div className="space-y-2">
               <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
                 <CalendarDays size={16} /> Purchase Date
@@ -163,7 +163,7 @@ export default function AddAssetPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-7">
+          <div className="grid grid-cols-2 gap-7 relative z-30">
             <SearchableSelect 
               label="Category"
               headerIcon={<Tag size={16} />}
@@ -180,7 +180,7 @@ export default function AddAssetPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-7">
+          <div className="grid grid-cols-2 gap-7 relative z-20">
             <SearchableSelect 
               label="Asset Type"
               headerIcon={<Box size={16} />}

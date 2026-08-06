@@ -67,6 +67,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState({
     liquidity: 0,
     assetsTotal: 0,
+    receivablesTotal: 0,
     liabilitiesTotal: 0,
     netWorth: 0,
     tasksTotal: 0,
@@ -189,6 +190,7 @@ export default function DashboardPage() {
       const [
         { data: liquidityData },
         { data: assetsData },
+        { data: receivablesData },
         { data: liabilitiesData },
         habitsData,
         habitConfigs,
@@ -206,6 +208,7 @@ export default function DashboardPage() {
       ] = await Promise.all([
         supabase.from('liquidity').select('balance'),
         supabase.from('assets').select('current_value'),
+        supabase.from('receivables').select('remaining'),
         supabase.from('liabilities').select('remaining'),
         getLogsForDate(today),
         getActiveConfigs(),
@@ -225,8 +228,9 @@ export default function DashboardPage() {
       // 1. Financials
       const liq = (liquidityData || []).reduce((s, a) => s + (parseFloat(a.balance) || 0), 0);
       const ast = (assetsData || []).reduce((s, a) => s + (parseFloat(a.current_value) || 0), 0);
+      const rec = (receivablesData || []).reduce((s, l) => s + (parseFloat(l.remaining) || 0), 0);
       const lib = (liabilitiesData || []).reduce((s, l) => s + (parseFloat(l.remaining) || 0), 0);
-      const nw = liq + ast - lib;
+      const nw = liq + ast + rec - lib;
 
       // 2. Habits
       const dailyCfg = (habitConfigs || []).filter(h => h.frequency === 'daily' || !h.frequency);
@@ -384,6 +388,7 @@ export default function DashboardPage() {
       setStats({
         liquidity: liq,
         assetsTotal: ast,
+        receivablesTotal: rec,
         liabilitiesTotal: lib,
         netWorth: nw,
         tasksTotal: todayTasks.length,
@@ -674,6 +679,7 @@ export default function DashboardPage() {
           netWorth={stats.netWorth}
           liquidity={stats.liquidity}
           assetsTotal={stats.assetsTotal}
+          receivablesTotal={stats.receivablesTotal}
           liabilitiesTotal={stats.liabilitiesTotal}
           budgetActual={stats.budgetActual}
           budgetPlanned={stats.budgetPlanned}

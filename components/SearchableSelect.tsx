@@ -43,7 +43,7 @@ export function SearchableSelect({
     : options;
 
   return (
-    <div className="relative space-y-2">
+    <div className={`relative space-y-2 ${isOpen ? 'z-[100]' : ''}`}>
       {!hideLabel && (
         <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
           {headerIcon}
@@ -82,7 +82,7 @@ export function SearchableSelect({
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 left-0 right-0 mt-1 bg-card rounded-xl shadow-2xl border border-border/40 max-h-72 overflow-y-auto p-1.5">
+        <div className="absolute z-[100] left-0 right-0 mt-1 bg-card rounded-xl shadow-2xl border border-border/40 max-h-72 overflow-y-auto p-1.5">
           {displayOptions.map((opt, i) => (
             <button
               key={`${opt}-${i}`}

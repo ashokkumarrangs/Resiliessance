@@ -292,7 +292,7 @@ function BudgetPlanContent() {
         
         {/* Comparison Config (Restored Selectors) */}
          <div className="bg-card rounded-2xl p-6 shadow-sm border border-border/40">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-4 relative z-50">
               <div className="flex flex-col gap-1.5">
                 <span className="text-[9px] font-black text-muted-foreground/60 ml-1">Reference Plan</span>
                 <div className="bg-muted rounded-lg p-3 flex items-center shadow-inner">

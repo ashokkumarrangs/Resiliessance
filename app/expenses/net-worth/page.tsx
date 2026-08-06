@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, ChevronDown, Landmark, RefreshCw, Wallet } from "lucide-react";
+import { Briefcase, ChevronDown, Landmark, RefreshCw, Wallet, HandCoins } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -18,12 +18,13 @@ export default function NetWorthPage() {
   const [data, setData] = useState({
     liquidity: 0,
     assets: 0,
+    receivables: 0,
     liabilities: 0,
     netWorth: 0
   });
-  const [lists, setLists] = useState({
     liquidity: [] as NetWorthItem[],
     assets: [] as NetWorthItem[],
+    receivables: [] as NetWorthItem[],
     liabilities: [] as NetWorthItem[]
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -39,6 +40,7 @@ export default function NetWorthPage() {
       const results = await Promise.all([
         supabase.from('liquidity').select('account_name, balance'),
         supabase.from('assets').select('asset_name, current_value'),
+        supabase.from('receivables').select('party, remaining'),
         supabase.from('liabilities').select('party, remaining')
       ]);
 
@@ -46,29 +48,34 @@ export default function NetWorthPage() {
       if (results.some(r => r.error)) {
         throw new Error("One or more tables failed to load properly.");
       }
-      const [ { data: liqData }, { data: astData }, { data: libData } ] = results;
+      const [ { data: liqData }, { data: astData }, { data: recData }, { data: libData } ] = results;
       
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const liqItems = (liqData || []).map(d => ({ name: d.account_name, value: parseFloat(d.balance as any) || 0 }));
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const astItems = (astData || []).map(d => ({ name: d.asset_name, value: parseFloat(d.current_value as any) || 0 }));
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const recItems = (recData || []).map(d => ({ name: d.party, value: parseFloat(d.remaining as any) || 0 }));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const libItems = (libData || []).map(d => ({ name: d.party, value: parseFloat(d.remaining as any) || 0 }));
 
       const liqTotal = liqItems.reduce((s, i) => s + i.value, 0);
       const astTotal = astItems.reduce((s, i) => s + i.value, 0);
+      const recTotal = recItems.reduce((s, i) => s + i.value, 0);
       const libTotal = libItems.reduce((s, i) => s + i.value, 0);
       
       setData({
         liquidity: liqTotal,
         assets: astTotal,
+        receivables: recTotal,
         liabilities: libTotal,
-        netWorth: liqTotal + astTotal - libTotal
+        netWorth: liqTotal + astTotal + recTotal - libTotal
       });
 
       setLists({
         liquidity: liqItems,
         assets: astItems,
+        receivables: recItems,
         liabilities: libItems
       });
     } catch (error: any) {
@@ -119,6 +126,16 @@ export default function NetWorthPage() {
              items={lists.assets}
              isExpanded={expanded === 'assets'}
              onToggle={() => setExpanded(expanded === 'assets' ? null : 'assets')}
+           />
+           <BreakdownCard 
+             label="Receivables" 
+             value={data.receivables} 
+             icon={<HandCoins size={24} />} 
+             color="text-emerald-500" 
+             bg="bg-emerald-500/10" 
+             items={lists.receivables}
+             isExpanded={expanded === 'receivables'}
+             onToggle={() => setExpanded(expanded === 'receivables' ? null : 'receivables')}
            />
            <BreakdownCard 
              label="Liabilities" 

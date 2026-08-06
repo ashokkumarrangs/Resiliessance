@@ -49,7 +49,7 @@ export function Select({ value, onChange, className, children, ...props }: { val
       <ChevronDown size={14} className="ml-2 opacity-50 shrink-0 pointer-events-none" />
       
       {isOpen && (
-        <div className="absolute z-[100] right-0 top-full mt-1 min-w-[120px] w-max bg-card rounded-md shadow-2xl border border-border/40 p-1.5 max-h-60 overflow-y-auto">
+        <div className="absolute z-[100] left-0 right-0 top-full mt-1 w-full bg-card rounded-xl shadow-2xl border border-border/40 max-h-72 overflow-y-auto p-1.5">
           {options.map((opt, i) => (
             <div
               key={i}
@@ -60,17 +60,19 @@ export function Select({ value, onChange, className, children, ...props }: { val
                 if (onChange) onChange({ target: { value: opt.value } });
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-3 py-2 rounded-md text-[10px] sm:text-xs font-bold tracking-tight transition-all flex items-center justify-between mb-0.5 last:mb-0 cursor-pointer
+              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-between mb-0.5 last:mb-0 cursor-pointer
                 ${String(value) === String(opt.value) 
                   ? "bg-primary text-primary-foreground shadow-sm font-black" 
                   : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
             >
               <span className="truncate pr-4">{opt.label}</span>
-              {String(value) === String(opt.value) && <CheckCircle2 size={12} className="text-primary-foreground/60 shrink-0" />}
+              {String(value) === String(opt.value) && <CheckCircle2 size={14} className="text-primary-foreground/60 shrink-0" />}
             </div>
           ))}
           {options.length === 0 && (
-            <div className="px-3 py-2 text-xs text-muted-foreground opacity-50">No options</div>
+            <div className="px-3 py-4 text-center">
+              <p className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest">Empty List</p>
+            </div>
           )}
         </div>
       )}

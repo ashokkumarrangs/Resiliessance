@@ -99,7 +99,7 @@ function UpdateAssetContent() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-6">
         <div className="bg-card rounded-2xl p-8 shadow-sm border border-border/40 space-y-7">
           
-          <div className="space-y-2">
+          <div className="space-y-2 relative z-50">
             <SearchableSelect 
               label="Select Asset"
               headerIcon={<Gem size={16} />}

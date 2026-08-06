@@ -20,6 +20,7 @@ function AccountPageContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
+  const [accountTypes, setAccountTypes] = useState<string[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({
@@ -47,8 +48,12 @@ function AccountPageContent() {
   }, [initialName]);
 
   async function fetchAccounts() {
-    const { data } = await supabase.from('liquidity').select('account_name');
-    if (data) setAccounts(data.map(a => a.account_name));
+    const { data } = await supabase.from('liquidity').select('account_name, type');
+    if (data) {
+      setAccounts(data.map(a => a.account_name));
+      const types = Array.from(new Set(data.map(a => a.type).filter(Boolean))) as string[];
+      setAccountTypes(types);
+    }
   }
 
   async function handleAccountSelect(name: string) {
@@ -155,7 +160,7 @@ function AccountPageContent() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-6">
         <div className="bg-card rounded-2xl p-8 shadow-sm border border-border/40 space-y-7">
           
-          <div className="grid grid-cols-2 gap-7">
+          <div className="grid grid-cols-2 gap-7 relative z-50">
             <SearchableSelect 
               label="Select Account"
               headerIcon={<Landmark size={16} />}
@@ -177,7 +182,7 @@ function AccountPageContent() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-7">
+          <div className="grid grid-cols-2 gap-7 relative z-40">
             <div className="space-y-2">
               <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
                 <Banknote size={16} /> Current Balance
@@ -193,24 +198,13 @@ function AccountPageContent() {
                 <Banknote size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30" />
               </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
-                <Settings2 size={16} /> Account Type
-              </label>
-              <div className="relative group">
-                <Select 
-                  value={formData.type}
-                  onChange={(e) => setFormData({...formData, type: e.target.value})}
-                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all appearance-none"
-                >
-                  <option value="Savings">Savings Account</option>
-                  <option value="Current">Current Account</option>
-                  <option value="Wallet">Digital Wallet</option>
-                  <option value="Cash">Physical Cash</option>
-                </Select>
-                <ChevronDown size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-accent transition-colors" />
-              </div>
-            </div>
+            <SearchableSelect 
+              label="Account Type"
+              headerIcon={<Settings2 size={16} />}
+              value={formData.type}
+              onChange={(val) => setFormData({...formData, type: val})}
+              options={accountTypes}
+            />
           </div>
 
           <div className="space-y-2">
@@ -228,7 +222,7 @@ function AccountPageContent() {
 
           <div className="border-t border-border/40 pt-6 space-y-4">
             <div className="text-[10px] font-black uppercase tracking-[3px] text-accent/60 mb-2">Vault & Credentials</div>
-            <div className="grid grid-cols-2 gap-7">
+            <div className="grid grid-cols-2 gap-7 relative z-30">
               <div className="space-y-2">
                 <span className="text-[9px] font-black text-muted-foreground uppercase ml-1">Card Serial</span>
                 <input 
