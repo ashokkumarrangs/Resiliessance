@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge'; // Run on edge for native web crypto support and speed
+export const runtime = 'edge'; // Run on edge for quick response
 
 export async function GET() {
   try {
@@ -14,13 +14,13 @@ export async function GET() {
       ['sign', 'verify']
     );
 
-    // Export public key as raw and private key as pkcs8
+    // Export public key as raw (65 bytes uncompressed EC point format)
     const rawPublicKey = await crypto.subtle.exportKey('raw', keyPair.publicKey);
-    const rawPrivateKey = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
+    // Export private key as JWK (JSON Web Key) to extract the raw 32-byte "d" parameter
+    const jwkPrivateKey = await crypto.subtle.exportKey('jwk', keyPair.privateKey);
 
-    // VAPID keys must be base64url encoded
     const publicKeyBase64 = bufferToBase64Url(rawPublicKey);
-    const privateKeyBase64 = bufferToBase64Url(rawPrivateKey);
+    const privateKeyBase64 = jwkPrivateKey.d || ''; // "d" is already base64url-encoded 32-byte private key
 
     return NextResponse.json({
       publicKey: publicKeyBase64,
