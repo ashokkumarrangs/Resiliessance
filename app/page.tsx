@@ -743,7 +743,7 @@ export default function DashboardPage() {
 
         {/* Today's Nutritional Split (Sustenance Card) */}
         <div className="bg-card rounded-md border border-border shadow-sm p-7 flex flex-col justify-between group hover:scale-[1.01] transition-all relative">
-          <Link href="/diet" className="absolute inset-0 z-0" />
+          <Link href="/nutrition/logs" className="absolute inset-0 z-0" />
           <div className="flex flex-col sm:flex-row items-center gap-8 z-10">
             {/* SVG Calorie Ring */}
             <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
@@ -794,7 +794,7 @@ export default function DashboardPage() {
                     Macro targets & daily progress overview
                   </p>
                 </div>
-                <Link href="/diet" className="text-muted-foreground hover:text-foreground p-1 rounded hover:bg-muted transition relative z-20">
+                <Link href="/nutrition/logs" className="text-muted-foreground hover:text-foreground p-1 rounded hover:bg-muted transition relative z-20">
                   <Settings size={14} />
                 </Link>
               </div>

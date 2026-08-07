@@ -65,6 +65,17 @@ export default function NutritionReportsPage() {
       setBiometricDefs(loadedDefs);
       setBiometricLogs(loadedBiometricLogs);
       setBiometricTargets(loadedBiometricTargets);
+
+      if (loadedDefs.length > 0) {
+        const hasWeight = loadedDefs.some(d => d.id === "weight");
+        if (hasWeight) {
+          setActiveMetricId("weight");
+        } else {
+          setActiveMetricId(loadedDefs[0].id);
+        }
+      } else {
+        setActiveMetricId("");
+      }
     } catch (e) {
       console.error("Failed to load reports data", e);
       toast.error("Failed to sync reports data");
@@ -79,7 +90,7 @@ export default function NutritionReportsPage() {
 
   // Find active metric metadata
   const activeMetric = useMemo(() => {
-    return biometricDefs.find(d => d.id === activeMetricId) || { id: "weight", name: "Body Weight", unit: "kg" };
+    return biometricDefs.find(d => d.id === activeMetricId) || { id: "", name: "", unit: "" };
   }, [biometricDefs, activeMetricId]);
 
   const activeTargetForMetric = useMemo(() => {
@@ -172,8 +183,28 @@ export default function NutritionReportsPage() {
       }
     >
       <div className="space-y-6 max-w-lg mx-auto">
-        {/* Metric Selector & Date Filter row */}
-        <div className="bg-card rounded-2xl border border-border/40 shadow-sm p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        {biometricDefs.length === 0 ? (
+          <div className="bg-card rounded-2xl border border-border/40 shadow-sm p-12 text-center flex flex-col items-center justify-center space-y-4">
+            <div className="p-3 rounded-full bg-primary/10 text-primary">
+              <Activity size={32} />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-sm font-black uppercase text-foreground leading-none">No Biometrics Configured</h3>
+              <p className="text-[10px] font-bold text-muted-foreground/60 max-w-xs mx-auto mt-1.5">
+                Nutrition correlation reports require at least one biometric metric (e.g. Body Weight, Blood Sugar) to plot trend lines.
+              </p>
+            </div>
+            <a
+              href="/nutrition/biometrics"
+              className="py-2.5 px-5 rounded-xl text-xs font-black bg-primary text-white shadow-lg shadow-primary/10 hover:bg-primary/95 transition-all block text-center"
+            >
+              Set Up Biometrics
+            </a>
+          </div>
+        ) : (
+          <>
+            {/* Metric Selector & Date Filter row */}
+            <div className="bg-card rounded-2xl border border-border/40 shadow-sm p-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 w-full md:w-auto">
             <span className="p-2 rounded-xl bg-primary/10 text-primary shrink-0">
               <Activity size={18} />
@@ -424,6 +455,8 @@ export default function NutritionReportsPage() {
             )}
           </div>
         </div>
+          </>
+        )}
       </div>
     </PageWrapper>
   );

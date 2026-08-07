@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   Activity,
   CheckCircle2,
@@ -25,14 +26,22 @@ import { supabase } from "@/lib/supabase";
 
 const NOTES_ID = "__notes__";
 
-export default function ActivityTimelinePage() {
-  const [timelineDate, setTimelineDate] = useState<string>(() => {
+function ActivityTimelineContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const timelineDate = searchParams.get("date") || (() => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  });
+  })();
+
+  const setTimelineDate = (dateStr: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("date", dateStr);
+    router.push(`/activity-timeline?${params.toString()}`);
+  };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [timelineEvents, setTimelineEvents] = useState<any[]>([]);
   const [isTimelineLoading, setIsTimelineLoading] = useState<boolean>(true);
@@ -581,5 +590,13 @@ export default function ActivityTimelinePage() {
           </div>
         )}
     </PageWrapper>
+  );
+}
+
+export default function ActivityTimelinePage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center font-black animate-pulse">LOADING TIMELINE...</div>}>
+      <ActivityTimelineContent />
+    </Suspense>
   );
 }

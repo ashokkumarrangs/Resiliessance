@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Calendar, CreditCard, Gauge, Clock, FileText} from "lucide-react";
 import { format } from 'date-fns';
@@ -21,13 +22,25 @@ interface Vehicle {
   initial_odometer: number;
 }
 
-export default function VehicleFuelServicePage() {
+function VehicleFuelServiceContent() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const selectedVehicle = searchParams.get("vehicle") || '';
+
+  const setSelectedVehicle = (id: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (id) {
+      params.set("vehicle", id);
+    } else {
+      params.delete("vehicle");
+    }
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
-  // Form States
-  const [selectedVehicle, setSelectedVehicle] = useState<string>('');
   const [activeTab, setActiveTab] = useState('Log Fuel');
 
   const [fuelData, setFuelData] = useState({
@@ -94,7 +107,11 @@ export default function VehicleFuelServicePage() {
       const { data, error } = await supabase.from('vehicle_config').select('id, vehicle_name, registration_number, initial_odometer').order('vehicle_name');
       if (error) throw error;
       setVehicles(data || []);
-      if (data && data.length > 0) setSelectedVehicle(data[0].id);
+      if (data && data.length > 0) {
+        if (!searchParams.get("vehicle")) {
+          setSelectedVehicle(data[0].id);
+        }
+      }
     } catch (err: any) {
       toast.error(err.message || 'Failed to load vehicles');
     } finally {
@@ -374,6 +391,14 @@ export default function VehicleFuelServicePage() {
         </div>
       </div>
     </PageWrapper>
+  );
+}
+
+export default function VehicleFuelServicePage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center font-black animate-pulse">LOADING SERVICE LOG...</div>}>
+      <VehicleFuelServiceContent />
+    </Suspense>
   );
 }
 

@@ -608,44 +608,27 @@ export const dietService = {
 
   // ─── Dynamic Biometrics & Body Tracking ────────────────────────────────────
   async getBiometricDefinitions(): Promise<BiometricDefinition[]> {
-    const DEFAULT_DEFS: BiometricDefinition[] = [
-      { id: "weight", name: "Body Weight", unit: "kg" },
-      { id: "height", name: "Height", unit: "cm" },
-      { id: "blood_sugar", name: "Blood Sugar", unit: "mg/dL" },
-      { id: "o2_level", name: "Oxygen Level (SpO2)", unit: "%" },
-      { id: "chest_size", name: "Chest Circumference", unit: "cm" },
-      { id: "stomach_size", name: "Stomach Circumference", unit: "cm" }
-    ];
-
     try {
       const { data, error } = await supabase
         .from("biometrics_definitions")
         .select("*");
       if (error) throw error;
       
-      const dbDefs = (data || []).map((item: any) => ({
+      return (data || []).map((item: any) => ({
         id: item.id,
         name: item.name,
         unit: item.unit
       }));
-
-      // Combine defaults with db definitions
-      const defsMap = new Map<string, BiometricDefinition>();
-      DEFAULT_DEFS.forEach(d => defsMap.set(d.id, d));
-      dbDefs.forEach(d => defsMap.set(d.id, d));
-      return Array.from(defsMap.values());
     } catch {
-      const customDefs = getLocal<BiometricDefinition[]>("biometrics_definitions_custom", []);
-      const defsMap = new Map<string, BiometricDefinition>();
-      DEFAULT_DEFS.forEach(d => defsMap.set(d.id, d));
-      customDefs.forEach(d => defsMap.set(d.id, d));
-      return Array.from(defsMap.values());
+      return getLocal<BiometricDefinition[]>("biometrics_definitions_custom", []);
     }
   },
 
   async addBiometricDefinition(nameStr: string, unitStr: string): Promise<BiometricDefinition> {
     const slug = nameStr.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/(^_+|_+$)/g, "");
-    const id = slug || (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11));
+    const id = (slug === "body_weight" || slug === "weight")
+      ? "weight"
+      : (slug || (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 11)));
     
     const newDef: BiometricDefinition = {
       id,
@@ -670,6 +653,29 @@ export const dietService = {
       console.warn("Supabase add biometric def failed, fallback used", e);
     }
     return newDef;
+  },
+
+  async deleteBiometricDefinition(id: string): Promise<boolean> {
+    // 1. Local storage cascade deletes
+    const customDefs = getLocal<BiometricDefinition[]>("biometrics_definitions_custom", []);
+    setLocal("biometrics_definitions_custom", customDefs.filter(d => d.id !== id));
+
+    const customLogs = getLocal<BiometricLog[]>("biometrics_logs", []);
+    setLocal("biometrics_logs", customLogs.filter(l => l.metric_type !== id));
+
+    const customTargets = getLocal<BiometricTarget[]>("biometrics_targets", []);
+    setLocal("biometrics_targets", customTargets.filter(t => t.metric_type !== id));
+
+    try {
+      const { error } = await supabase
+        .from("biometrics_definitions")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+      return true;
+    } catch {
+      return true;
+    }
   },
 
   async getBiometricsLogs(): Promise<BiometricLog[]> {
