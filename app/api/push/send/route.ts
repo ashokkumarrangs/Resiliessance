@@ -4,22 +4,36 @@ import { supabase } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
 
+const cleanKey = (key: string) => {
+  if (!key) return '';
+  // Strip any accidental quotes or whitespace characters
+  return key.replace(/['"\s]/g, '').trim();
+};
+
 // Initialize web-push with VAPID details
 const initWebPush = () => {
-  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-  const privateKey = process.env.VAPID_PRIVATE_KEY;
+  const rawPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  const rawPrivateKey = process.env.VAPID_PRIVATE_KEY;
 
-  if (!publicKey || !privateKey) {
+  if (!rawPublicKey || !rawPrivateKey) {
     console.warn('VAPID keys are missing from environment variables.');
     return false;
   }
 
-  webpush.setVapidDetails(
-    'mailto:admin@resiliessance.com', // Must be a mailto: or website URL
-    publicKey,
-    privateKey
-  );
-  return true;
+  const publicKey = cleanKey(rawPublicKey);
+  const privateKey = cleanKey(rawPrivateKey);
+
+  try {
+    webpush.setVapidDetails(
+      'mailto:admin@resiliessance.com', // Must be a mailto: or website URL
+      publicKey,
+      privateKey
+    );
+    return true;
+  } catch (err: any) {
+    console.error('Error in setVapidDetails:', err);
+    throw new Error(`VAPID Init Failed: ${err.message} (Public Key Length: ${publicKey.length}, Private Key Length: ${privateKey.length})`);
+  }
 };
 
 export async function POST(request: Request) {
