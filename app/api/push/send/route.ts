@@ -71,6 +71,7 @@ async function sendPushNotification(
 
   const pushSubscription: PushSubscription = {
     endpoint: subscription.endpoint,
+    expirationTime: null,
     keys: {
       p256dh,
       auth,
