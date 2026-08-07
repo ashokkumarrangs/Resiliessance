@@ -1,0 +1,3401 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="nordic">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resiliessance — Master Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="nordic"] {
+      /* Nordic Sage (Default Theme) */
+      --background: #f0f4f1;
+      --foreground: #2c332d;
+      --card: #ffffff;
+      --card-foreground: #2c332d;
+      --popover: #ffffff;
+      --popover-foreground: #2c332d;
+      --primary: #3d4a3e;
+      --primary-foreground: #ffffff;
+      --secondary: #e2e8e4;
+      --secondary-foreground: #3d4a3e;
+      --muted: #e2e8e4;
+      --muted-foreground: #6e7a70;
+      --accent: #7fa998;
+      --accent-foreground: #ffffff;
+      --border: #dce3dd;
+      --input: #dce3dd;
+      --ring: #7fa998;
+      --shadow-premium: 0 10px 30px rgba(44, 51, 45, 0.04), 0 1px 3px rgba(44, 51, 45, 0.02);
+
+      /* Semantic Badges */
+      --critical-bg: rgba(217, 136, 128, 0.12);
+      --critical-border: rgba(217, 136, 128, 0.3);
+      --critical-text: #b85a50;
+
+      --high-bg: rgba(224, 153, 112, 0.12);
+      --high-border: rgba(224, 153, 112, 0.3);
+      --high-text: #c26938;
+
+      --medium-bg: rgba(230, 185, 115, 0.12);
+      --medium-border: rgba(230, 185, 115, 0.3);
+      --medium-text: #b38030;
+
+      --low-bg: rgba(127, 169, 152, 0.12);
+      --low-border: rgba(127, 169, 152, 0.3);
+      --low-text: #3c6e5a;
+
+      --user-impact-bg: rgba(159, 131, 184, 0.08);
+      --user-impact-border: rgba(159, 131, 184, 0.2);
+      --user-impact-text: #7c5c96;
+    }
+
+    [data-theme="terracotta"] {
+      /* Terracotta Theme */
+      --background: #fbf9f6;
+      --foreground: #3d312a;
+      --card: #ffffff;
+      --card-foreground: #3d312a;
+      --popover: #ffffff;
+      --popover-foreground: #3d312a;
+      --primary: #c26d5c;
+      --primary-foreground: #ffffff;
+      --secondary: #f2ebe3;
+      --secondary-foreground: #3d312a;
+      --muted: #f2ebe3;
+      --muted-foreground: #8a736a;
+      --accent: #d88c7d;
+      --accent-foreground: #ffffff;
+      --border: #e8ded5;
+      --input: #e8ded5;
+      --ring: #d88c7d;
+      --shadow-premium: 0 10px 30px rgba(61, 49, 42, 0.04), 0 1px 3px rgba(61, 49, 42, 0.02);
+
+      --critical-bg: rgba(194, 109, 92, 0.1);
+      --critical-border: rgba(194, 109, 92, 0.25);
+      --critical-text: #c26d5c;
+
+      --high-bg: rgba(216, 140, 125, 0.12);
+      --high-border: rgba(216, 140, 125, 0.3);
+      --high-text: #b56c5c;
+
+      --medium-bg: rgba(217, 175, 143, 0.12);
+      --medium-border: rgba(217, 175, 143, 0.3);
+      --medium-text: #966139;
+
+      --low-bg: rgba(163, 194, 169, 0.12);
+      --low-border: rgba(163, 194, 169, 0.3);
+      --low-text: #4e8057;
+
+      --user-impact-bg: rgba(194, 109, 92, 0.06);
+      --user-impact-border: rgba(194, 109, 92, 0.2);
+      --user-impact-text: #c26d5c;
+    }
+
+    [data-theme="ocean"] {
+      /* Ocean Mist Theme */
+      --background: #f0f4f8;
+      --foreground: #1c2a38;
+      --card: #ffffff;
+      --card-foreground: #1c2a38;
+      --popover: #ffffff;
+      --popover-foreground: #1c2a38;
+      --primary: #2b5c8f;
+      --primary-foreground: #ffffff;
+      --secondary: #e1e8f0;
+      --secondary-foreground: #1c2a38;
+      --muted: #e1e8f0;
+      --muted-foreground: #5a738c;
+      --accent: #588bbd;
+      --accent-foreground: #ffffff;
+      --border: #d3dce6;
+      --input: #d3dce6;
+      --ring: #588bbd;
+      --shadow-premium: 0 10px 30px rgba(28, 42, 56, 0.04), 0 1px 3px rgba(28, 42, 56, 0.02);
+
+      --critical-bg: rgba(217, 136, 128, 0.1);
+      --critical-border: rgba(217, 136, 128, 0.25);
+      --critical-text: #d98880;
+
+      --high-bg: rgba(245, 158, 11, 0.1);
+      --high-border: rgba(245, 158, 11, 0.25);
+      --high-text: #d97706;
+
+      --medium-bg: rgba(251, 191, 36, 0.1);
+      --medium-border: rgba(251, 191, 36, 0.25);
+      --medium-text: #b45309;
+
+      --low-bg: rgba(68, 170, 255, 0.1);
+      --low-border: rgba(68, 170, 255, 0.25);
+      --low-text: #2b5c8f;
+
+      --user-impact-bg: rgba(88, 139, 189, 0.06);
+      --user-impact-border: rgba(88, 139, 189, 0.2);
+      --user-impact-text: #2b5c8f;
+    }
+
+    [data-theme="lavender"] {
+      /* Lavender Theme */
+      --background: #f5f3f7;
+      --foreground: #2d2438;
+      --card: #ffffff;
+      --card-foreground: #2d2438;
+      --popover: #ffffff;
+      --popover-foreground: #2d2438;
+      --primary: #7c5c96;
+      --primary-foreground: #ffffff;
+      --secondary: #e6e1ea;
+      --secondary-foreground: #2d2438;
+      --muted: #e6e1ea;
+      --muted-foreground: #7a6e85;
+      --accent: #9f83b8;
+      --accent-foreground: #ffffff;
+      --border: #d8d2df;
+      --input: #d8d2df;
+      --ring: #9f83b8;
+      --shadow-premium: 0 10px 30px rgba(45, 36, 56, 0.04), 0 1px 3px rgba(45, 36, 56, 0.02);
+
+      --critical-bg: rgba(217, 136, 128, 0.1);
+      --critical-border: rgba(217, 136, 128, 0.25);
+      --critical-text: #b85a50;
+
+      --high-bg: rgba(159, 131, 184, 0.12);
+      --high-border: rgba(159, 131, 184, 0.3);
+      --high-text: #7c5c96;
+
+      --medium-bg: rgba(230, 185, 115, 0.12);
+      --medium-border: rgba(230, 185, 115, 0.3);
+      --medium-text: #b38030;
+
+      --low-bg: rgba(110, 150, 180, 0.12);
+      --low-border: rgba(110, 150, 180, 0.3);
+      --low-text: #4a748c;
+
+      --user-impact-bg: rgba(159, 131, 184, 0.08);
+      --user-impact-border: rgba(159, 131, 184, 0.25);
+      --user-impact-text: #7c5c96;
+    }
+
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      padding: 0 0 80px 0;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Header Styling */
+    header {
+      background-color: rgba(255, 255, 255, 0.85);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .version-tag {
+      background-color: var(--secondary);
+      color: var(--muted-foreground);
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 9999px;
+    }
+
+    /* View Switcher Tabs */
+    .view-switcher {
+      display: flex;
+      background-color: var(--secondary);
+      padding: 4px;
+      border-radius: 9999px;
+      gap: 2px;
+    }
+
+    .switcher-btn {
+      padding: 6px 16px;
+      border-radius: 9999px;
+      border: none;
+      background: transparent;
+      color: var(--muted-foreground);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .switcher-btn.active {
+      background-color: var(--card);
+      color: var(--foreground);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1200px;
+      margin: 40px auto 24px;
+      padding: 0 24px;
+      text-align: left;
+    }
+
+    .hero h1 {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: var(--foreground);
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      color: var(--muted-foreground);
+      font-size: 16px;
+      font-weight: 500;
+      max-width: 700px;
+    }
+
+    /* Layout Containers */
+    .main-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      position: sticky;
+      top: 100px;
+      height: calc(100vh - 160px);
+      overflow-y: auto;
+      padding-right: 12px;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 99px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: static;
+        height: auto;
+        overflow-y: visible;
+        padding-right: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 16px;
+      }
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--muted-foreground);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: none;
+      border: none;
+      text-align: left;
+    }
+
+    @media (max-width: 768px) {
+      .nav-item {
+        width: auto;
+        padding: 8px 12px;
+      }
+    }
+
+    .nav-item:hover {
+      color: var(--foreground);
+      background-color: var(--secondary);
+    }
+
+    .nav-item.active {
+      color: var(--primary-foreground);
+      background-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Search & Filter Controls */
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      height: 48px;
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0 16px;
+      color: var(--foreground);
+      font-size: 14px;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Bug filter items */
+    .bug-filters-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-btn {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted-foreground);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--foreground);
+    }
+
+    .filter-btn.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    /* Category View wrapper */
+    .category-section {
+      margin-bottom: 48px;
+      scroll-margin-top: 100px;
+    }
+
+    .category-title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .category-title span {
+      opacity: 0.4;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Cards Grid */
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    /* Feature Cards and Bug Cards Unified */
+    .feature-card, .bug-card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-premium);
+      transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover, .bug-card:hover {
+      border-color: var(--accent);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .feature-id, .bug-id {
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--muted-foreground);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background-color: var(--secondary);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .feature-tag, .badge {
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* Badges & Tags Colors */
+    .feature-tag {
+      background-color: rgba(127, 169, 152, 0.15);
+      color: var(--primary);
+    }
+
+    .feature-tag.new-module {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    .feature-tag.intelligence {
+      background-color: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+
+    .badge-category {
+      background-color: var(--secondary);
+      color: var(--primary);
+    }
+
+    .badge-severity-critical {
+      background-color: var(--critical-bg);
+      color: var(--critical-text);
+      border: 1px solid var(--critical-border);
+    }
+    .badge-severity-high {
+      background-color: var(--high-bg);
+      color: var(--high-text);
+      border: 1px solid var(--high-border);
+    }
+    .badge-severity-medium {
+      background-color: var(--medium-bg);
+      color: var(--medium-text);
+      border: 1px solid var(--medium-border);
+    }
+    .badge-severity-low {
+      background-color: var(--low-bg);
+      color: var(--low-text);
+      border: 1px solid var(--low-border);
+    }
+
+    .feature-title, .bug-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: var(--foreground);
+    }
+
+    .feature-description, .bug-description {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted-foreground);
+      margin-bottom: 12px;
+    }
+
+    .feature-bullets {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .feature-bullets li {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+      opacity: 0.9;
+    }
+
+    .feature-bullets li::before {
+      content: "•";
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    /* Bug Specific styles */
+    .bug-card.severity-critical {
+      border-left: 4px solid var(--critical-text);
+      background-color: var(--critical-bg);
+    }
+    .bug-card.severity-high {
+      border-left: 4px solid var(--high-text);
+      background-color: var(--high-bg);
+    }
+    .bug-card.severity-medium {
+      border-left: 4px solid var(--medium-text);
+      background-color: var(--medium-bg);
+    }
+    .bug-card.severity-low {
+      border-left: 4px solid var(--low-text);
+      background-color: var(--low-bg);
+    }
+
+    .bug-file {
+      font-size: 12px;
+      color: var(--muted-foreground);
+      font-family: monospace;
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+    
+    .bug-file span {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .bug-description strong {
+      color: var(--foreground);
+      font-weight: 700;
+    }
+
+    .code-snippet {
+      background-color: #1e251f;
+      color: #e2e8e4;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin-top: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .code-snippet .keyword { color: #7fa998; font-weight: bold; }
+    .code-snippet .string { color: #c26d5c; }
+    .code-snippet .comment { color: #6e7a70; }
+    .code-snippet .danger { color: #d98880; font-weight: bold; }
+
+    /* User Impact Block */
+    .user-impact {
+      background-color: var(--user-impact-bg);
+      border: 1px solid var(--user-impact-border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px 14px 44px;
+      margin-top: 14px;
+      font-size: 13px;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    .user-impact::before {
+      content: '👤';
+      position: absolute;
+      left: 14px;
+      top: 13px;
+      font-size: 16px;
+    }
+
+    .user-impact-label {
+      display: block;
+      font-weight: 900;
+      color: var(--user-impact-text);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .user-impact p {
+      margin: 0;
+      color: var(--foreground);
+      font-weight: 500;
+    }
+
+    /* Summary Bar */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .summary-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 16px;
+      text-align: center;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-premium);
+    }
+
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+    }
+
+    .summary-card.critical::before { background: var(--critical-text); }
+    .summary-card.high::before { background: var(--high-text); }
+    .summary-card.medium::before { background: var(--medium-text); }
+    .summary-card.low::before { background: var(--low-text); }
+
+    .summary-number {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .summary-card.critical .summary-number { color: var(--critical-text); }
+    .summary-card.high .summary-number { color: var(--high-text); }
+    .summary-card.medium .summary-number { color: var(--medium-text); }
+    .summary-card.low .summary-number { color: var(--low-text); }
+
+    .summary-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted-foreground);
+    }
+
+    /* Category Breakdown Chips */
+    .category-breakdown {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .breakdown-chip {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted-foreground);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .breakdown-chip:hover {
+      border-color: var(--accent);
+      color: var(--foreground);
+    }
+
+    .breakdown-chip.active {
+      background-color: var(--secondary);
+      border-color: var(--primary);
+      color: var(--foreground);
+    }
+
+    .breakdown-chip .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* Utility Icons */
+    .emoji-icon {
+      font-size: 18px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    /* Theme Switcher Button */
+    .theme-switcher-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+    }
+
+    .theme-switcher-btn {
+      width: 56px;
+      height: 56px;
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border-radius: 50%;
+      border: 4px solid var(--background);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .theme-switcher-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .theme-dropdown {
+      position: absolute;
+      bottom: 72px;
+      right: 0;
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 190px;
+    }
+
+    .theme-dropdown-title {
+      font-size: 9px;
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: var(--muted-foreground);
+      text-align: center;
+      margin: 4px 0 8px;
+    }
+
+    .theme-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      background: none;
+      border: none;
+      color: var(--foreground);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .theme-option:hover {
+      background-color: var(--secondary);
+    }
+
+    .theme-option.active {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+
+    /* Hidden State */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted-foreground);
+      font-size: 13px;
+      font-weight: 600;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-title">Resiliessance</div>
+        <div class="version-tag">OS Dashboard Console</div>
+      </div>
+      
+      <!-- View Switcher -->
+      <div class="view-switcher">
+        <button id="bugs-tab" class="switcher-btn active" onclick="switchView('bugs')">
+          <span class="emoji-icon">🐛</span> Bug Report
+        </button>
+        <button id="features-tab" class="switcher-btn" onclick="switchView('features')">
+          <span class="emoji-icon">🚀</span> Feature Registry
+        </button>
+      </div>
+
+      <div>
+        <span class="version-tag" style="opacity: 0.7;">V1.new</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1 id="hero-title">Bug Report Console</h1>
+    <p id="hero-subtitle">Comprehensive diagnostic audit of logic errors, visual bugs, state crashes, and mobile optimization defects across 30+ codebase components.</p>
+  </div>
+
+  <!-- Layout Container -->
+  <div class="main-layout">
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar-nav">
+      <!-- Generated dynamically based on active view -->
+    </div>
+
+    <!-- Content Block -->
+    <div class="content">
+      
+      <!-- Search and Filters -->
+      <div class="controls">
+        <input type="text" id="search-bar" class="search-input" placeholder="Search bugs..." onkeyup="handleSearch()">
+        
+        <!-- Bug filter buttons (only shown in bug view) -->
+        <div id="bug-filters" class="bug-filters-bar">
+          <button class="filter-btn active" onclick="filterBugs('all')">All Severities</button>
+          <button class="filter-btn" onclick="filterBugs('critical')">🔴 Critical</button>
+          <button class="filter-btn" onclick="filterBugs('high')">🟠 High</button>
+          <button class="filter-btn" onclick="filterBugs('medium')">🟡 Medium</button>
+          <button class="filter-btn" onclick="filterBugs('low')">🔵 Low</button>
+        </div>
+      </div>
+
+      <!-- Bug Metrics Breakdown (only shown in bug view) -->
+      <div id="bug-summary-view">
+        <div class="summary-grid">
+          <div class="summary-card critical" onclick="filterBugs('critical')" style="cursor: pointer;">
+            <div class="summary-number">9</div>
+            <div class="summary-label">Critical</div>
+          </div>
+          <div class="summary-card high" onclick="filterBugs('high')" style="cursor: pointer;">
+            <div class="summary-number">14</div>
+            <div class="summary-label">High</div>
+          </div>
+          <div class="summary-card medium" onclick="filterBugs('medium')" style="cursor: pointer;">
+            <div class="summary-number">31</div>
+            <div class="summary-label">Medium</div>
+          </div>
+          <div class="summary-card low" onclick="filterBugs('low')" style="cursor: pointer;">
+            <div class="summary-number">12</div>
+            <div class="summary-label">Low</div>
+          </div>
+        </div>
+
+        <div class="category-breakdown">
+          <div class="breakdown-chip active" onclick="filterBugCategory('all')"><span class="dot" style="background-color: var(--primary);"></span> All Categories</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Logic')"><span class="dot" style="background-color: #ef4444;"></span> Logic: 18</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('UI / UX')"><span class="dot" style="background-color: #3b82f6;"></span> UI / UX: 20</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Data Handling')"><span class="dot" style="background-color: #f59e0b;"></span> Data Handling: 8</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Performance')"><span class="dot" style="background-color: #10b981;"></span> Performance: 6</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Async / State')"><span class="dot" style="background-color: #8b5cf6;"></span> Async / State: 5</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Security')"><span class="dot" style="background-color: #ec4899;"></span> Security: 2</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Config / Other')"><span class="dot" style="background-color: #6b7280;"></span> Config / Other: 7</div>
+        </div>
+      </div>
+
+      <!-- Bugs Section -->
+      <div id="bugs-section-view">
+        
+        <!-- Critical Category Section -->
+        <div class="category-section" id="section-critical">
+          <h2 class="category-title">🔴 Critical Severity <span>9 Bugs</span></h2>
+          <div class="grid-layout">
+            <div class="bug-card severity-critical" data-severity="critical">
+    <div class="bug-header">
+      <span class="bug-id">C-001</span>
+      <span class="bug-title">Supabase Queries Silently Fail — No Error Handling</span>
+      <span class="badge badge-severity-critical">Critical</span>
+      <span class="badge badge-category">Data Handling</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Lines ~80-200</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> Every Supabase database call on the main dashboard grabs <code>{ data }</code> but completely ignores the <code>{ error }</code> response. If any query fails (network drops, auth token expires, table gets renamed), <code>data</code> comes back as <code>null</code>.<br><br>
+      <strong>Why it's bad:</strong> The code then tries to run <code>.filter()</code> or <code>.map()</code> on <code>null</code>, which instantly crashes the entire page with a <em>"Cannot read properties of null"</em> TypeError. The user sees a blank white screen with no explanation of what went wrong.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If your internet is slow, disconnects for even a second, or the server has a hiccup, the <strong>entire dashboard goes completely blank</strong> — just a white screen with nothing on it. There's no error message, no "try again" button, nothing. You'd have to refresh the page and hope it works this time.</p>
+    </div>
+    <div class="code-snippet"><span class="comment">// ❌ Current: ignores errors</span>
+<span class="keyword">const</span> { data: tasks } = <span class="keyword">await</span> supabase.from(<span class="string">'tasks'</span>).select(<span class="string">'*'</span>);
+tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks is null</span>
+
+<span class="comment">// ✅ Should be:</span>
+<span class="keyword">const</span> { data: tasks, error } = <span class="keyword">await</span> supabase.from(<span class="string">'tasks'</span>).select(<span class="string">'*'</span>);
+<span class="keyword">if</span> (error) { setError(error.message); <span class="keyword">return</span>; }
+(tasks ?? []).filter(...)</div>
+  </div>
+<div class="bug-card severity-critical" data-severity="critical">
+    <div class="bug-header">
+      <span class="bug-id">C-002</span>
+      <span class="bug-title">Timezone Bug — Tasks &amp; Habits Appear on Wrong Day</span>
+      <span class="badge badge-severity-critical">Critical</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span>, app/habits/<span>page.tsx</span> — Multiple locations</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The code uses <code>new Date().toISOString().split('T')[0]</code> to figure out "today's date". But <code>toISOString()</code> converts to UTC time, not local time.<br><br>
+      <strong>Why it's bad:</strong> For users in India (IST = UTC+5:30), after 5:30 PM local time, <code>toISOString()</code> returns <em>tomorrow's date</em>. This means:
+      <ul style="margin: 8px 0 0 20px; color: var(--text-secondary);">
+        <li>Tasks due "today" disappear from the dashboard in the evening</li>
+        <li>Habit completions logged in the evening get saved to the wrong day</li>
+        <li>The "today" filter shows tomorrow's items instead</li>
+      </ul>
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>After around <strong>5:30 PM every evening, your tasks for today just disappear</strong> from the dashboard. If you mark a habit as done at 9 PM, it gets counted as <em>tomorrow's</em> completion — so today still shows as missed. Your habit streaks will break even though you actually did the work.</p>
+    </div>
+    <div class="code-snippet"><span class="comment">// ❌ Gives UTC date — WRONG after 5:30 PM IST</span>
+<span class="keyword">const</span> today = <span class="keyword">new</span> Date().toISOString().split(<span class="string">'T'</span>)[0];
+
+<span class="comment">// ✅ Use local date instead</span>
+<span class="keyword">const</span> today = <span class="keyword">new</span> Date().toLocaleDateString(<span class="string">'en-CA'</span>); <span class="comment">// returns YYYY-MM-DD in local tz</span></div>
+  </div>
+<div class="bug-card severity-critical" data-severity="critical">
+    <div class="bug-header">
+      <span class="bug-id">C-003</span>
+      <span class="bug-title">Habit Logs Can Be Duplicated — Race Condition on Double-Tap</span>
+      <span class="badge badge-severity-critical">Critical</span>
+      <span class="badge badge-category">Async / Logic</span>
+    </div>
+    <div class="bug-file">app/habits/<span>page.tsx</span> — Lines ~120-160</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> When a user taps the "complete habit" toggle, the code checks if a log exists for today and then inserts or deletes accordingly. But there's no debouncing or loading lock on the button.<br><br>
+      <strong>Why it's bad:</strong> If a user quickly double-taps the toggle (very common on mobile), two insert requests fire before either finishes. Both see "no existing log" and both insert a new row, creating <strong>duplicate log entries</strong>. This corrupts the habit streak data and scoring calculations.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you quickly tap the "done" button twice (which is really easy to do on a phone), your habit gets logged <strong>twice for the same day</strong>. This messes up your streaks and scores. You might also find it impossible to "un-check" the habit later because only one of the two entries gets removed.</p>
+    </div>
+  </div>
+<div class="bug-card severity-critical" data-severity="critical">
+    <div class="bug-header">
+      <span class="bug-id">C-004</span>
+      <span class="bug-title">Exposed Credentials in Git — .env Files Not Gitignored</span>
+      <span class="badge badge-severity-critical">Critical</span>
+      <span class="badge badge-category">Security</span>
+    </div>
+    <div class="bug-file"><span>.env.local</span>, <span>.env.production</span></div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The <code>.env.local</code> and <code>.env.production</code> files contain Supabase URL and anon key, and these files are <strong>not listed in .gitignore</strong>.<br><br>
+      <strong>Why it's bad:</strong> These files get committed to the Git repository. While the Supabase <code>anon</code> key is designed to be public, having env files in the repo is dangerous because someone could later add private keys (service role key, API secrets) to these files and accidentally push them to a public repo.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Your <strong>app's secret keys are saved in a way that could accidentally become public</strong>. If this code is ever shared or made open-source, someone could potentially access your database. It's like leaving your house key taped to the front door — it might be fine now, but it's a disaster waiting to happen.</p>
+    </div>
+  </div>
+<div class="bug-card severity-critical" data-severity="critical">
+    <div class="bug-header">
+      <span class="bug-id">C-005</span>
+      <span class="bug-title">Fuel Log Accepts Invalid Odometer — Causes Negative Mileage</span>
+      <span class="badge badge-severity-critical">Critical</span>
+      <span class="badge badge-category">Data Handling</span>
+    </div>
+    <div class="bug-file">app/vehicles/<span>page.tsx</span> — Lines ~300-350</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The fuel log form lets you enter any odometer reading without checking if it's greater than the previous reading.<br><br>
+      <strong>Why it's bad:</strong> If you accidentally type a lower number than your last reading, the distance calculation goes negative. This produces <strong>negative fuel efficiency</strong> values (e.g., "-15 km/l") that display in the dashboard and corrupt all the vehicle statistics permanently.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you accidentally type your odometer reading wrong (say you type 4500 instead of 45000), your vehicle dashboard starts showing <strong>crazy numbers like "-15 km per litre"</strong>. Once this bad data is saved, it <strong>permanently messes up all your fuel efficiency history and stats</strong>. There's no easy way to know which entry caused it.</p>
+    </div>
+  </div>
+<div class="bug-card severity-critical" data-severity="critical">
+    <div class="bug-header">
+      <span class="bug-id">C-006</span>
+      <span class="bug-title">Division by Zero — "Infinity km/l" Shown in Vehicle Dashboard</span>
+      <span class="badge badge-severity-critical">Critical</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">components/<span>VehicleDashboard.tsx</span> — Lines ~68-72</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> When calculating fuel efficiency, the code divides distance by fuel used: <code>distance / fuelUsed</code>. There's no guard against <code>fuelUsed</code> being zero.<br><br>
+      <strong>Why it's bad:</strong> If someone logs a trip with 0 fuel (electric vehicle, data entry mistake, or a free fuel log), the result is JavaScript <code>Infinity</code>. The dashboard literally displays <strong>"Infinity km/l"</strong> as the fuel efficiency, which looks broken and unprofessional.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you leave the fuel field empty or type 0 by mistake, your vehicle dashboard shows <strong>"Infinity km/l"</strong> — it literally says the word "Infinity" on screen. It looks like the app is broken and makes the whole fuel tracking feature feel unreliable.</p>
+    </div>
+  </div>
+<div class="bug-card severity-critical" data-severity="critical">
+    <div class="bug-header">
+      <span class="bug-id">C-007</span>
+      <span class="bug-title">Race Condition — Data Fetch Doesn't Cancel on Navigation</span>
+      <span class="badge badge-severity-critical">Critical</span>
+      <span class="badge badge-category">Async / State</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Lines ~70-200</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The main page <code>useEffect</code> fires off multiple async database queries but has no cleanup function. If you navigate away before the queries finish, the code still tries to call <code>setState</code> on the unmounted component.<br><br>
+      <strong>Why it's bad:</strong> This causes React's "Can't perform a state update on an unmounted component" memory leak warning. More dangerously, if you navigate away and back quickly, data from the <em>old</em> request could overwrite the <em>new</em> request's data, showing stale information.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you quickly switch between pages (like going to Tasks and coming right back to the Dashboard), you might see <strong>old, outdated information</strong> that doesn't match what you just changed. The app uses more and more memory over time, which can make your <strong>browser or phone slow down</strong> the longer you use it.</p>
+    </div>
+  </div>
+<div class="bug-card severity-critical" data-severity="critical">
+    <div class="bug-header">
+      <span class="bug-id">C-008</span>
+      <span class="bug-title">SearchableSelect is NOT Searchable — Input is ReadOnly</span>
+      <span class="badge badge-severity-critical">Critical</span>
+      <span class="badge badge-category">UI / Logic</span>
+    </div>
+    <div class="bug-file">components/<span>SearchableSelect.tsx</span> — Lines 58-76</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The search input has <code>readOnly={!isManualEntry}</code>. Since <code>isManualEntry</code> defaults to <code>false</code>, the input is <strong>read-only by default</strong> — users literally cannot type to search.<br><br>
+      <strong>Why it's bad:</strong> The entire point of a "Searchable Select" is that you can type to filter options. But this component forces users to click "Add New" just to be able to type, completely defeating its purpose. With many options, users have to manually scroll through the entire list instead of searching.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When you see a dropdown that looks like you should be able to type and search in it — <strong>you can't</strong>. Clicking on it does nothing. You have to scroll through a long list manually to find what you need. Imagine searching through 50+ expense categories one by one instead of just typing "food".</p>
+    </div>
+    <div class="code-snippet"><span class="comment">// ❌ readOnly by default — breaks core search functionality</span>
+&lt;input 
+  readOnly={!isManualEntry} <span class="danger">// Users CAN'T TYPE to search!</span>
+  onClick={() =&gt; { <span class="keyword">if</span> (!isManualEntry) setIsOpen(<span class="keyword">true</span>); }}
+/&gt;</div>
+  </div>
+<div class="bug-card severity-critical" data-severity="critical">
+    <div class="bug-header">
+      <span class="bug-id">C-009</span>
+      <span class="bug-title">Habit Streak Ignores "Today" — Always Starts From Yesterday</span>
+      <span class="badge badge-severity-critical">Critical</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">lib/<span>habit-scoring.ts</span> — Lines 10-43</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The <code>getStreak()</code> function counts consecutive completed days starting from <strong>yesterday</strong>, not today. Also, it subtracts 86400000 ms (24 hours) per day, which is wrong during Daylight Saving Time changes.<br><br>
+      <strong>Why it's bad:</strong> If a user just completed a habit <em>today</em> for the first time, their streak shows as <strong>0</strong> instead of 1. This is discouraging and incorrect. During DST transitions, the streak could also skip or double-count a day.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You just started a new habit today and marked it done — but your streak still says <strong>"0 days"</strong>. That's discouraging! It makes you feel like the app isn't tracking your effort. It'll only show "1 day" tomorrow if you do it again. Your work today is literally invisible.</p>
+    </div>
+  </div>
+          </div>
+        </div>
+
+        <!-- High Category Section -->
+        <div class="category-section" id="section-high">
+          <h2 class="category-title">🟠 High Severity <span>14 Bugs</span></h2>
+          <div class="grid-layout">
+            <div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-001</span>
+      <span class="bug-title">Sequential Database Queries — Page Loads 5-10× Slower Than Needed</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Performance</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Lines ~80-200</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The main dashboard makes 10+ Supabase queries one after another using <code>await</code> in sequence. Each query waits for the previous one to finish before starting.<br><br>
+      <strong>Why it's bad:</strong> If each query takes ~200ms, the total load time is ~2 seconds (10 × 200ms). Using <code>Promise.all()</code> would run them all at once, bringing the load time down to just ~200ms total. Users are staring at a loading spinner 5-10× longer than necessary.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Every time you open the app or go to the dashboard, you <strong>wait 2-3 seconds staring at a loading spinner</strong> when it could load almost instantly. This happens every single time. If your internet is slow, it could be 5+ seconds of waiting.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-002</span>
+      <span class="bug-title">65KB Single Component — Entire Dashboard in One File</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Performance</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — 1700+ lines</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The main page is a single 65KB file containing all dashboard logic, UI, state, and data fetching. There's no code splitting or lazy loading.<br><br>
+      <strong>Why it's bad:</strong> The browser has to download, parse, and execute this entire file before showing anything — even sections the user hasn't scrolled to. On mobile devices with slower processors, this causes a noticeable delay before the page becomes interactive.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>The app takes <strong>extra time to start up on your phone</strong>, and you might notice the page loads but buttons don't respond for a second or two. Older phones or phones with lots of apps open will feel this delay even more.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-003</span>
+      <span class="bug-title">Trip Distance Can Be Negative — No Start/End Validation</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">app/vehicles/<span>page.tsx</span> — Lines ~250-280</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> Trip distance is calculated as <code>endOdometer - startOdometer</code>. There's no check that end > start.<br><br>
+      <strong>Why it's bad:</strong> If numbers are entered wrong, the trip shows a negative distance (e.g., "-150 km"). This negative value then cascades into fuel efficiency and total distance statistics, making them all incorrect.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you accidentally swap the start and end odometer numbers, the app shows you drove <strong>"-150 km"</strong> — a negative distance. It doesn't warn you about the mistake, and this wrong number <strong>messes up your total distance and fuel reports going forward</strong>.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-004</span>
+      <span class="bug-title">15-20+ useState Calls — Unmanageable State, Excessive Re-renders</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">State / Performance</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Lines ~30-70</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The main page has 15-20+ individual <code>useState</code> calls for tasks, habits, expenses, vehicles, loading flags, selected items, filters, and more.<br><br>
+      <strong>Why it's bad:</strong> Each <code>setState</code> triggers a separate re-render of the entire component (which is already 65KB). During data loading, multiple state updates fire in rapid succession, causing the page to re-render 15-20 times in a row. This creates visible janky behavior — elements flickering, scroll jumping, and delayed interactions.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When the dashboard loads, you'll notice <strong>elements flickering, content jumping around, and the page feeling "janky"</strong>. Cards and numbers might briefly show wrong values before settling. It feels unpolished and sluggish, like the app is struggling to keep up.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-005</span>
+      <span class="bug-title">Habit Toggle Button — No Double-Click Prevention</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Async</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Lines ~500-550</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The habit completion toggle makes a Supabase call but doesn't disable the button or debounce clicks while the request is in flight.<br><br>
+      <strong>Why it's bad:</strong> Rapidly clicking the toggle sends multiple simultaneous requests. The habit could end up in an inconsistent state — toggled on, then off, then on again — with the final database state depending on which request finishes last (unpredictable).
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You tap "done" on a habit, but <strong>it flickers between checked and unchecked</strong>. Sometimes you end up with it unchecked even though you tapped "done". You're not sure if your habit was actually saved or not, so you <strong>lose confidence in the tracking</strong>.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-006</span>
+      <span class="bug-title">Habit Log Date Bug — Evening Completions Go to Wrong Day</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">app/habits/<span>page.tsx</span> — Lines ~120-160</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> Same as C-002 — habit logs use <code>toISOString()</code> to determine today's date. A user completing their evening meditation habit at 9 PM IST would have it logged as tomorrow's date (UTC).<br><br>
+      <strong>Why it's bad:</strong> The habit history shows wrong dates. Streaks break because "today" has no completion but "tomorrow" does. Users lose trust in the app's tracking accuracy.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You do your evening meditation at 9 PM and mark it done, but when you check your habit history, <strong>today shows as "missed" and tomorrow shows as "completed"</strong>. Your streak breaks. It feels like the app is gaslighting you — you know you did it, but the app says you didn't.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-007</span>
+      <span class="bug-title">No Loading Skeleton — Blank White Screen While Data Loads</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">UI / UX</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Lines ~70-80</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> While the dashboard loads data (which can take 2+ seconds due to sequential queries), users see a basic spinner or blank area.<br><br>
+      <strong>Why it's bad:</strong> Modern apps show skeleton/shimmer UIs that indicate where content will appear. A blank screen makes users think the app is broken, especially on slower connections. Combined with the sequential query issue, the blank screen period can be painfully long.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Every time you open the app, you see a <strong>blank white screen for 2-3 seconds</strong>. You wonder, "Did it crash? Should I refresh?" Modern apps like Instagram or Twitter show grey placeholder shapes while loading — this app just shows nothing.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-008</span>
+      <span class="bug-title">Env Variables Used Without Validation — Crash on Missing Config</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Data Handling</span>
+    </div>
+    <div class="bug-file">lib/<span>supabase.ts</span> — Lines 3-4</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The code uses TypeScript non-null assertions (<code>!</code>) on <code>process.env.NEXT_PUBLIC_SUPABASE_URL</code> and <code>process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.<br><br>
+      <strong>Why it's bad:</strong> If someone clones the repo and forgets to set up their <code>.env</code> file, or if this runs in a CI/CD pipeline without env vars, the app crashes with a cryptic Supabase error instead of a clear "Missing NEXT_PUBLIC_SUPABASE_URL environment variable" message.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you're a developer trying to set up this project, and you forget one setup step, the <strong>app crashes with a confusing error that doesn't tell you what went wrong</strong>. You'd waste time debugging when a simple "Hey, you forgot to add your database URL" message would solve it in seconds.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-009</span>
+      <span class="bug-title">Supabase Client Not SSR-Compatible — Auth Won't Work Properly</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Architecture</span>
+    </div>
+    <div class="bug-file">lib/<span>supabase.ts</span> — Lines 1-13</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The Supabase client is created using the basic <code>@supabase/supabase-js</code> <code>createClient</code> as a module-level singleton. This is the generic client, not the Next.js SSR-aware one from <code>@supabase/ssr</code>.<br><br>
+      <strong>Why it's bad:</strong> In Next.js, this client won't handle cookies/sessions correctly during server-side rendering. If you ever add authentication, session data won't persist across page navigations, and users will appear logged out on every server render.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If login is ever added, you'd <strong>get randomly logged out every time you navigate to a new page</strong>. You'd have to sign in again and again. It would make the app basically unusable with user accounts.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-010</span>
+      <span class="bug-title">VehicleDashboard — 500+ Lines Without Memoization</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Performance</span>
+    </div>
+    <div class="bug-file">components/<span>VehicleDashboard.tsx</span> — 19KB entire file</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The VehicleDashboard component is ~500 lines handling multiple tabs (dashboard, trips, fuel, service, insurance). There's no <code>useMemo</code> or <code>useCallback</code> for expensive operations.<br><br>
+      <strong>Why it's bad:</strong> Every keystroke in a form field on any tab re-renders the entire 500-line component, including all the other tabs that aren't visible. On lower-end devices, this causes input lag when typing in forms.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When you're filling out a fuel log or service record on the vehicles page, <strong>typing feels laggy</strong>. Each letter you type takes a moment to appear on screen, especially on older phones. It feels like the app is freezing after each keystroke.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-011</span>
+      <span class="bug-title">Derived State Recomputed Every Render — No useMemo</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Performance</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Various locations</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> Filtering and sorting of tasks, expenses, and habits is done inline in the render body. These operations re-run on every single render even if the underlying data hasn't changed.<br><br>
+      <strong>Why it's bad:</strong> With the 15-20 re-renders that happen during data loading, each render iterates through the full task/habit/expense arrays to filter and sort them. This is pure wasted computation that causes UI jank.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>The dashboard feels <strong>sluggish and choppy while it's loading</strong>. Lists of tasks and habits appear, disappear, and reappear rapidly. Scrolling during loading feels unresponsive. On budget phones, the app might briefly freeze.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-012</span>
+      <span class="bug-title">Tasks — Missing Input Validation for Creation</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Data Handling</span>
+    </div>
+    <div class="bug-file">app/tasks/<span>page.tsx</span> — Lines ~150-175</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The task creation form submits without validation. You can create a task with an empty title (just spaces), or set a due date in the past.<br><br>
+      <strong>Why it's bad:</strong> Empty tasks clutter the task list and can't be distinguished from each other. Past due dates immediately appear as overdue, which is confusing. The database gets polluted with garbage entries.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you accidentally hit "Add" without typing a task name, a <strong>blank task appears in your list</strong>. You'll also see it marked as "overdue" if you set a past date. Your task list gets cluttered with empty or confusing entries you didn't mean to create.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-013</span>
+      <span class="bug-title">Workout — No Validation on Reps and Weight</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Data Handling</span>
+    </div>
+    <div class="bug-file">app/workout/<span>page.tsx</span> — Lines ~150-190</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The workout form accepts any value for reps and weight — including 0, negative numbers, and absurdly large numbers.<br><br>
+      <strong>Why it's bad:</strong> A user could accidentally log -50 reps or 99,999 kg. These values corrupt workout statistics, personal records, and progress charts. A simple <code>min="1"</code> and <code>max</code> on inputs would prevent this.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you accidentally type "0" or "-5" for your reps, the app happily saves it. Now your workout stats and <strong>progress charts are ruined</strong> — they'll show you did negative exercises. Your personal bests and history become unreliable.</p>
+    </div>
+  </div>
+<div class="bug-card severity-high" data-severity="high">
+    <div class="bug-header">
+      <span class="bug-id">H-014</span>
+      <span class="bug-title">Expense Amount — Accepts Negative Values</span>
+      <span class="badge badge-severity-high">High</span>
+      <span class="badge badge-category">Data Handling</span>
+    </div>
+    <div class="bug-file">app/expenses/<span>page.tsx</span> — Lines ~100-130</div>
+    <div class="bug-description">
+      <strong>What happens:</strong> The expense amount input field doesn't prevent negative numbers.<br><br>
+      <strong>Why it's bad:</strong> Negative expenses mess up monthly totals, category summaries, and budget calculations. The reports page would show incorrect spending data, potentially showing that you "saved" money in a category when you actually spent.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you accidentally type a minus sign before your expense amount, the app saves a <strong>negative expense</strong>. This makes your monthly spending report show <strong>wrong totals</strong> — it might even show you spent less money than you actually did.</p>
+    </div>
+  </div>
+          </div>
+        </div>
+
+        <!-- Medium Category Section -->
+        <div class="category-section" id="section-medium">
+          <h2 class="category-title">🟡 Medium Severity <span>31 Bugs</span></h2>
+          <div class="grid-layout">
+            <div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-001</span>
+      <span class="bug-title">Modal Doesn't Trap Focus — Tab Key Escapes to Background</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / Accessibility</span>
+    </div>
+    <div class="bug-file">components/<span>TaskCompletionModal.tsx</span></div>
+    <div class="bug-description">
+      When the task completion modal is open, pressing Tab lets you focus on elements <em>behind</em> the modal overlay. Users can accidentally interact with the page behind the modal, triggering unintended actions. Screen reader users have no way to know they've left the modal context.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When a popup appears and you press Tab on your keyboard, <strong>your focus jumps to buttons hidden behind the popup</strong>. You might accidentally click something you can't see. If you use accessibility tools, it's even more confusing because the app doesn't tell you you've left the popup.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-002</span>
+      <span class="bug-title">Modal Can't Be Closed with Escape Key</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / UX</span>
+    </div>
+    <div class="bug-file">components/<span>TaskCompletionModal.tsx</span></div>
+    <div class="bug-description">
+      Users expect to press <strong>Escape</strong> to close any modal — it's a universal UI pattern. This modal only closes via the X button or clicking the overlay. This is especially frustrating for keyboard-heavy users who have to reach for the mouse just to dismiss a modal.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When a popup appears, pressing <strong>Escape doesn't close it</strong> like it does in every other app. You have to find and click the tiny X button or click outside the popup. It feels clunky and annoying, especially if you're used to just hitting Escape.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-003</span>
+      <span class="bug-title">Modal Doesn't Lock Body Scroll — Page Scrolls Behind Overlay</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI</span>
+    </div>
+    <div class="bug-file">components/<span>TaskCompletionModal.tsx</span></div>
+    <div class="bug-description">
+      When the modal is open, you can still scroll the page behind it. The modal appears to "float" while the content underneath moves, which is disorienting. The body should have <code>overflow: hidden</code> applied when any modal is open.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When a popup is showing, you can <strong>still scroll the page behind it</strong>. The popup stays still while everything behind it moves — it's disorienting and looks broken. On phones, an accidental swipe scrolls the whole page while you're trying to use the popup.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-004</span>
+      <span class="bug-title">Searchable Select — No Keyboard Navigation</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Accessibility</span>
+    </div>
+    <div class="bug-file">components/<span>SearchableSelect.tsx</span></div>
+    <div class="bug-description">
+      The searchable dropdown has zero keyboard support. You can't use arrow keys to navigate options, Enter to select, or Escape to close. Anyone using keyboard navigation (or a screen reader) is completely locked out of this component. This violates WCAG accessibility guidelines.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you prefer using your keyboard (or you have to, for accessibility reasons), <strong>you simply can't use these dropdowns at all</strong>. Arrow keys, Enter, Escape — none of them work. You're forced to use a mouse, which not everyone can do.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-005</span>
+      <span class="bug-title">Dropdown Outside-Click Detection Can Fail</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI</span>
+    </div>
+    <div class="bug-file">components/<span>SearchableSelect.tsx</span> — Lines ~25-40</div>
+    <div class="bug-description">
+      The outside-click detection uses <code>ref.current.contains(event.target)</code>. If the click target is removed from the DOM before the event handler runs (e.g., a conditionally rendered element disappears), <code>contains()</code> returns false incorrectly and the dropdown stays open when it shouldn't.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Sometimes when you click away from a dropdown to close it, <strong>it stubbornly stays open</strong>. You have to click somewhere else again or click the dropdown directly to close it. It feels like the app isn't responding to your clicks.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-006</span>
+      <span class="bug-title">Sidebar — Active Link Wrong for Query-Param Based Tabs</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / Logic</span>
+    </div>
+    <div class="bug-file">components/<span>sidebar.tsx</span> — Lines ~55-70</div>
+    <div class="bug-description">
+      The sidebar highlights the active page using <code>usePathname()</code>, but many features use query parameters for tab navigation (e.g., <code>/vehicles?tab=trips</code>). Since <code>pathname</code> doesn't include query params, clicking the "Trips" sub-tab still highlights "Vehicles" generically — you can't tell which sub-section you're in.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When you click on a sub-tab like "Trips" or "Fuel Log" within Vehicles, the <strong>sidebar doesn't show which sub-tab you're on</strong>. It just highlights "Vehicles" for all of them. You lose track of where you are in the app.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-007</span>
+      <span class="bug-title">Theme Flash (FOUC) — Wrong Theme Briefly Visible on Load</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI</span>
+    </div>
+    <div class="bug-file">components/<span>theme-provider.tsx</span></div>
+    <div class="bug-description">
+      On page load, there's a visible flash where the wrong theme is shown (e.g., light mode flashes before dark mode applies). This happens because the server doesn't know the user's theme preference and the JavaScript needs to hydrate before applying the correct theme class. A blocking inline script should set the theme before paint.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Every time you open the app, you see a <strong>quick flash of the wrong colour scheme</strong> — like a bright white flash before dark mode kicks in. It's jarring, especially at night when you have dark mode on and a bright white screen blinds you for a split second.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-008</span>
+      <span class="bug-title">Header — No Mobile Responsive Design</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI</span>
+    </div>
+    <div class="bug-file">components/<span>header.tsx</span></div>
+    <div class="bug-description">
+      The header component has no responsive handling for mobile screens. There's no hamburger menu, no collapsible navigation. On small screens, header elements overflow or stack in an unreadable mess. The app is essentially unusable on phones without zooming and horizontal scrolling.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>On your phone, the <strong>top navigation bar is a mess</strong>. Buttons and text overlap each other or go off the screen. You have to pinch-to-zoom or scroll sideways just to find what you need. It makes the app really hard to use on mobile.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-009</span>
+      <span class="bug-title">SectionNav — Items Overflow on Small Screens</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI</span>
+    </div>
+    <div class="bug-file">components/<span>SectionNav.tsx</span>, <span>SubNav.tsx</span></div>
+    <div class="bug-description">
+      The horizontal navigation tabs don't have overflow handling. When there are many items, they either wrap to multiple lines (breaking the layout) or get cut off. There's no horizontal scroll or "more" menu. On mobile, this makes some navigation items completely inaccessible.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>On smaller screens, some <strong>navigation tabs are cut off or hidden</strong> — you literally can't reach certain sections of the app. There's no way to scroll the tabs sideways. Features you need might be invisible.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-010</span>
+      <span class="bug-title">No Error Boundary — Any Component Crash = White Screen</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Logic / UI</span>
+    </div>
+    <div class="bug-file">components/<span>PageWrapper.tsx</span></div>
+    <div class="bug-description">
+      There's no React Error Boundary wrapping page content. If any child component throws an error during rendering (which can happen due to many of the bugs listed above), the <strong>entire app crashes to a white screen</strong> with no recovery option. Users have to manually refresh the page.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If anything goes wrong internally, the <strong>entire app just goes white</strong> — no error message, no "go back" button, nothing. You're stuck staring at a blank page and have to manually refresh. You lose whatever you were doing.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-011</span>
+      <span class="bug-title">Dark Mode — Some Hardcoded Colors Don't Switch</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI</span>
+    </div>
+    <div class="bug-file">app/<span>globals.css</span></div>
+    <div class="bug-description">
+      Some CSS uses hardcoded hex colors instead of CSS variables. These colors stay the same in both light and dark mode, causing contrast issues — for example, dark text on a dark background becomes invisible, or bright elements look jarring in dark mode.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>In dark mode, some <strong>text becomes invisible</strong> because it's dark text on a dark background. Other elements look weird — like bright white boxes that didn't switch to dark mode. It feels inconsistent and half-finished.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-012</span>
+      <span class="bug-title">Dashboard Grid — Tablet Layout Not Handled</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Lines ~900-1000</div>
+    <div class="bug-description">
+      The dashboard grid jumps from 1 column (mobile) to 3 columns (desktop) with no intermediate breakpoint for tablets (~768px-1024px). On an iPad, the dashboard widgets are either too cramped (3 columns) or awkwardly wide (1 column), wasting screen space.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>On an iPad or tablet, the <strong>dashboard layout looks awkward</strong>. Cards are either squished together too tightly, or stretched out way too wide with wasted space on the sides. It doesn't look like it was designed for your screen size.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-013</span>
+      <span class="bug-title">Expense Chart — Empty Months Create Gaps</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Logic / UI</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Lines ~700-780</div>
+    <div class="bug-description">
+      The expense summary groups data by month, but months with zero expenses are simply missing from the chart. This creates misleading gaps — a bar chart jumping from March to June makes it look like data is missing, when really there were just no expenses in April and May. Those months should show a zero bar.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Your spending chart <strong>skips months where you didn't spend anything</strong>. So it jumps from March straight to June, making it look like data is missing. You can't easily see that April and May were zero-spending months — the chart looks broken.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-014</span>
+      <span class="bug-title">Task Deletion — No Confirmation Dialog</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UX</span>
+    </div>
+    <div class="bug-file">app/tasks/<span>page.tsx</span> — Lines ~200-220</div>
+    <div class="bug-description">
+      Clicking the delete button on a task immediately removes it from the database with no confirmation. A single accidental tap (especially on mobile where touch targets are close together) permanently deletes the task. There's no undo option.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>One accidental tap on the delete button and your <strong>task is gone forever</strong> — no "Are you sure?" prompt, no undo button. On a phone where buttons are close together, it's easy to accidentally delete something important.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-015</span>
+      <span class="bug-title">No Optimistic UI — Actions Feel Laggy</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / UX</span>
+    </div>
+    <div class="bug-file">app/tasks/<span>page.tsx</span> — Lines ~180-250</div>
+    <div class="bug-description">
+      When creating, updating, or deleting items, the UI waits for the database response before updating. On slow connections, users click a button and <strong>nothing happens for 1-2 seconds</strong>. This makes users think their click didn't register, so they click again (potentially causing duplicates). The UI should update instantly and revert if the server call fails.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You tap a button and <strong>nothing happens for a second or two</strong>. You think, "Did it work?" and tap again. Now you've accidentally created two of the same thing. Every action in the app has this annoying delay — it feels slow and unresponsive.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-016</span>
+      <span class="bug-title">Expense Category Filter Doesn't Reset on Date Change</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Logic / UX</span>
+    </div>
+    <div class="bug-file">app/expenses/<span>page.tsx</span> — Lines ~70-90</div>
+    <div class="bug-description">
+      If you filter expenses by category (e.g., "Food") and then change the date range, the category filter persists. If the new date range has no "Food" expenses, you see an empty list. The user thinks there's no data at all, when really the stale category filter is hiding results.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You filter expenses by "Food," then change the date to last month. The page <strong>shows nothing — looks completely empty</strong>. You think you had zero expenses last month, but actually the "Food" filter is still on and there just weren't food expenses. Your data is hiding behind a forgotten filter.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-017</span>
+      <span class="bug-title">Skills Progress Bar Overflows Past 100%</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / Logic</span>
+    </div>
+    <div class="bug-file">app/skills/<span>page.tsx</span> — Lines ~150-180</div>
+    <div class="bug-description">
+      The skill progress bar width is calculated as <code>(currentXP / requiredXP) * 100 + '%'</code>. If XP exceeds the requirement (bonus XP, data correction), the bar renders wider than its container — spilling past the edge and breaking the card layout. Should be clamped to 100%.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>The progress bar for a skill <strong>overflows out of its box</strong>, breaking the layout of the card. It looks like a visual glitch — the bar stretches past where it should end, pushing other elements around. The whole skills page looks messy.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-018</span>
+      <span class="bug-title">Skills — XP Overflow Not Carried to Next Level</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">app/skills/<span>page.tsx</span> — Lines ~100-130</div>
+    <div class="bug-description">
+      When a user gains enough XP to level up, the excess XP doesn't carry over. If you need 100 XP for the next level and gain 130 XP, the 30 extra XP vanishes instead of being applied to the new level. Users lose progress.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You earn a big batch of experience points, enough to level up with some left over — but the <strong>leftover points just disappear</strong>. You leveled up, but you're back to zero on the new level even though you earned more than enough. You're losing progress you rightfully earned.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-019</span>
+      <span class="bug-title">Workout — Set Numbers Skip After Deletion</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / Logic</span>
+    </div>
+    <div class="bug-file">app/workout/<span>page.tsx</span> — Lines ~200-230</div>
+    <div class="bug-description">
+      Deleting a set from the middle of a workout doesn't renumber the remaining sets. If you have Sets 1-4 and delete Set 2, the display shows "Set 1, Set 3, Set 4" instead of "Set 1, Set 2, Set 3". This is confusing for users tracking their workout.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You remove a set from your workout and now the <strong>numbering jumps from Set 1 to Set 3</strong>. It looks like you skipped a set. It's confusing when you're trying to keep track of how many sets you've done during a workout.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-020</span>
+      <span class="bug-title">Reports — Empty Chart With No Message</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / UX</span>
+    </div>
+    <div class="bug-file">app/reports/<span>page.tsx</span> — Lines ~200-250</div>
+    <div class="bug-description">
+      When you select a date range with no data, the reports page shows an empty chart container — just a blank white box. There's no "No data for this period" message. Users think the page is broken rather than understanding there's simply nothing to show.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You go to Reports and select a date range, but the chart area is <strong>just a blank empty box</strong>. No message, no explanation. You think, "Is the app broken? Did my data get deleted?" when really there's just nothing for that time period.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-021</span>
+      <span class="bug-title">Quick-Add Form Doesn't Reset After Submit</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / UX</span>
+    </div>
+    <div class="bug-file">app/quick-add/<span>page.tsx</span> — Lines ~50-80</div>
+    <div class="bug-description">
+      After submitting a quick-add entry, the form keeps the old values. Users might accidentally submit the exact same entry twice because the fields look like they haven't been submitted yet. The form should clear all fields after successful submission.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You add something using Quick Add and hit submit. The form <strong>still shows your old text</strong>, so you think it didn't save and hit submit again. Now you've <strong>accidentally created a duplicate entry</strong>. The form should clear itself after you submit.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-022</span>
+      <span class="bug-title">Activity Timeline — Unstable Sort for Same-Time Events</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">app/activity-timeline/<span>page.tsx</span> — Lines ~80-100</div>
+    <div class="bug-description">
+      Events from different sources (tasks, habits, expenses) are combined and sorted by timestamp. Events with identical timestamps appear in random order on each page load because the sort is unstable. Adding a secondary sort key (like event type or ID) would make the order deterministic.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Events in your activity timeline <strong>shuffle around every time you refresh the page</strong>. Items that happened at the same time swap positions randomly. It's disorienting — your timeline looks different every time you check it.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-023</span>
+      <span class="bug-title">No Empty State Illustrations — New Users See Blank Pages</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / UX</span>
+    </div>
+    <div class="bug-file">Multiple feature pages</div>
+    <div class="bug-description">
+      When a brand-new user visits any feature (tasks, habits, expenses, etc.), they see either a blank area or a minimal "No items" text. There are no illustrations, onboarding messages, or "Create your first…" prompts. The app feels broken and unwelcoming for new users.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>The first time you open any section (Tasks, Habits, Expenses), it's <strong>just a blank page</strong>. No helpful message like "Add your first task!" or a friendly illustration. You're left wondering if something is broken or if you're missing a step. It's not welcoming at all.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-024</span>
+      <span class="bug-title">VehicleDashboard — Array Index Used as React Key</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / React</span>
+    </div>
+    <div class="bug-file">components/<span>VehicleDashboard.tsx</span> — Lines ~350-380</div>
+    <div class="bug-description">
+      Service history items use the array index as the React <code>key</code> prop. If items are reordered, deleted, or inserted, React may reuse the wrong DOM elements. This causes visual glitches like stale data being shown, inputs retaining old values, or animations applying to the wrong item.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>After adding or removing a service record, the <strong>list might show wrong information</strong> in the wrong rows — like old data sticking around in fields that should have changed. You might think a record was updated when it wasn't.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-025</span>
+      <span class="bug-title">Hardcoded Indian Rupee Currency — No User Configuration</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Internationalization</span>
+    </div>
+    <div class="bug-file">lib/<span>utils.ts</span> — Lines 4-10</div>
+    <div class="bug-description">
+      The <code>formatCurrency()</code> function is hardcoded to format everything as Indian Rupees (<code>en-IN</code>, <code>INR</code>). There's no way for users in other countries to see amounts in their own currency. If this app is ever used outside India, all financial data will display incorrectly.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>All money amounts are shown in <strong>Indian Rupees (₹) no matter what</strong>. If you're not in India or want to track expenses in dollars or euros, there's no way to change it. Every financial number in the app is in the wrong currency for you.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-026</span>
+      <span class="bug-title">Navigation Routes — Query Param Tab Navigation Fragile</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">lib/<span>navigation.tsx</span></div>
+    <div class="bug-description">
+      The vehicles section uses query parameters for tab navigation (e.g., <code>/vehicles?tab=trips</code>). On first load, if the page component doesn't parse query parameters correctly, the wrong tab displays. The sub-navigation highlighting can also be incorrect since <code>pathname</code> alone can't distinguish between tabs.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When you share a link to a specific tab (like the Fuel Log), the person who opens it might <strong>land on the wrong tab</strong>. Or when you refresh the page, it might jump back to the default tab instead of staying on the one you were viewing.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-027</span>
+      <span class="bug-title">Duplicate Currency Formatting Implementations</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Logic / Maintenance</span>
+    </div>
+    <div class="bug-file">components/<span>currency.tsx</span> vs lib/<span>utils.ts</span></div>
+    <div class="bug-description">
+      There are two separate currency formatting implementations: one in <code>components/currency.tsx</code> and one in <code>lib/utils.ts</code>. Different parts of the app may use different formatters, causing inconsistent currency display (e.g., different decimal places, different symbols).
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Money amounts <strong>look different in different parts of the app</strong>. One place might show "₹1,500" while another shows "₹1,500.00". It's inconsistent and makes the app feel unprofessional. You might question if the amounts are actually the same.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-028</span>
+      <span class="bug-title">Inline Styles Override Responsive Tailwind Classes</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI</span>
+    </div>
+    <div class="bug-file">app/<span>page.tsx</span> — Throughout</div>
+    <div class="bug-description">
+      The main page mixes inline <code>style</code> props with Tailwind CSS classes. Inline styles have higher specificity, so when a responsive Tailwind breakpoint tries to override padding or margin at a different screen size, the inline style wins. This makes the dashboard non-responsive in subtle but frustrating ways.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Some parts of the dashboard have <strong>weird spacing on your phone</strong> — things might be too close together or have too much empty space. The layout that looks fine on a computer doesn't properly adjust for your screen size in certain spots.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-029</span>
+      <span class="bug-title">Sidebar Overlay — Inline Component Kills Transitions</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">UI / React</span>
+    </div>
+    <div class="bug-file">components/<span>sidebar.tsx</span> — Lines 23-30</div>
+    <div class="bug-description">
+      The <code>DrawerOverlay</code> component is defined <strong>inside</strong> the <code>Sidebar</code>'s render function. React treats it as a brand-new component type on every render, so it unmounts and remounts the overlay each time instead of updating it. This means the fade-in/fade-out CSS transition (<code>transition-opacity duration-300</code>) <strong>never actually plays</strong> — the overlay just pops in and out abruptly.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When you open or close the sidebar menu, the <strong>dark overlay background just pops in and out suddenly</strong> instead of smoothly fading. It feels choppy and cheap. Every other app has smooth transitions for their side menus — this one just blinks.</p>
+    </div>
+    <div class="code-snippet"><span class="comment">// ❌ Defined INSIDE render — React recreates it every time</span>
+<span class="keyword">const</span> DrawerOverlay = () =&gt; (
+  &lt;div className={`transition-opacity duration-300 ${
+    isOpen ? <span class="string">"opacity-100"</span> : <span class="string">"opacity-0"</span>
+  }`} /&gt;
+); <span class="danger">// Transition NEVER plays — component is recreated each render</span></div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-030</span>
+      <span class="bug-title">SearchableSelect onBlur — Race Condition With 200ms Timeout</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Async / State</span>
+    </div>
+    <div class="bug-file">components/<span>SearchableSelect.tsx</span> — Lines 70-74</div>
+    <div class="bug-description">
+      The <code>onBlur</code> handler uses a hardcoded <code>setTimeout(200ms)</code> to delay closing the dropdown. If the user refocuses the input within 200ms, the timeout fires anyway and unexpectedly closes the dropdown while they're typing. If the component unmounts during the timeout, it tries to set state on an unmounted component — causing a React warning.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You start typing in a dropdown, click away briefly, then click back — and the <strong>dropdown suddenly closes while you're trying to use it</strong>. It feels like the app is fighting you. You have to click it again to reopen, which is frustrating.</p>
+    </div>
+  </div>
+<div class="bug-card severity-medium" data-severity="medium">
+    <div class="bug-header">
+      <span class="bug-id">M-031</span>
+      <span class="bug-title">SectionNav — setTimeout Not Cleaned Up on Unmount</span>
+      <span class="badge badge-severity-medium">Medium</span>
+      <span class="badge badge-category">Async / Memory Leak</span>
+    </div>
+    <div class="bug-file">components/<span>SectionNav.tsx</span> — Lines 55-58</div>
+    <div class="bug-description">
+      A <code>setTimeout</code> is used to scroll the active tab into view, but the <code>useEffect</code> has no cleanup function to clear it. If the user navigates away quickly, the callback fires on a removed DOM element, causing a potential error and memory leak.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you quickly switch between pages, the app <strong>gradually uses more and more memory</strong> in the background. Over a long session, this can make your browser tab or phone feel slower and slower until you refresh the page.</p>
+    </div>
+  </div>
+          </div>
+        </div>
+
+        <!-- Low Category Section -->
+        <div class="category-section" id="section-low">
+          <h2 class="category-title">🔵 Low Severity <span>12 Bugs</span></h2>
+          <div class="grid-layout">
+            <div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-001</span>
+      <span class="bug-title">Select Component — No Visual Disabled State</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">UI</span>
+    </div>
+    <div class="bug-file">components/<span>Select.tsx</span></div>
+    <div class="bug-description">
+      The <code>Select</code> component accepts a <code>disabled</code> prop but doesn't visually change when disabled. There's no reduced opacity, no changed cursor, and no visual indication. Users can't tell if a dropdown is interactive or locked.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>A dropdown that's supposed to be <strong>locked/greyed out looks exactly the same as a normal one</strong>. You click it, nothing happens, and you don't understand why. There's no visual hint that it's disabled.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-002</span>
+      <span class="bug-title">Score Functions Don't Handle NaN/Negative Values</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">lib/<span>habit-ui-utils.tsx</span> — Lines 3-19</div>
+    <div class="bug-description">
+      The <code>getScoreColor</code> and <code>getScoreLabel</code> functions don't handle edge cases like <code>NaN</code> or negative scores. If a calculation bug produces these values, the functions silently return misleading results (like a yellow "warning" color for a broken score).
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>In rare cases, your habit score might show a <strong>misleading colour or label</strong> — like showing yellow "needs work" when actually the score couldn't be calculated at all. You'd be making decisions based on wrong information.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-003</span>
+      <span class="bug-title">Habit Scoring — Division Produces Infinity With Zero Expected</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">lib/<span>habit-scoring.ts</span> — Lines ~45-100</div>
+    <div class="bug-description">
+      If <code>expectedCount</code> is 0 (habit created today), the consistency score calculation divides by zero, producing <code>Infinity</code>. <code>Math.min(Infinity, 1)</code> clamps it to 1, so it technically doesn't crash — but a brand-new habit showing "100% consistency" is semantically wrong.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>A habit you <strong>just created today shows "100% consistency"</strong> even though you haven't done anything yet. It's misleading — you haven't proven consistency, you just haven't had the chance to miss it yet.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-004</span>
+      <span class="bug-title">Pet Weight Accepts Zero/Negative Values</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Data Handling</span>
+    </div>
+    <div class="bug-file">app/pets/<span>page.tsx</span> — Lines ~80-120</div>
+    <div class="bug-description">
+      The pet form lets you enter 0 or negative weight/age. A pet weighing "-5 kg" would be saved and displayed in the UI. Simple <code>min="0.1"</code> on the input would prevent this.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you accidentally type a negative number for your pet's weight, the app saves it — your <strong>pet card shows "-5 kg"</strong>, which is obviously wrong. The app should prevent you from entering impossible values.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-005</span>
+      <span class="bug-title">Inventory Search Not Debounced</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Performance</span>
+    </div>
+    <div class="bug-file">app/inventory/<span>page.tsx</span> — Lines ~60-80</div>
+    <div class="bug-description">
+      The inventory search filters on every single keystroke. For large inventories, this means the list re-renders and re-filters with each character typed. Adding a 300ms debounce would eliminate unnecessary re-renders while the user is still typing.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When searching your inventory, the <strong>list flickers and jumps around with every letter you type</strong>. If you have lots of items, it feels sluggish. It would be smoother if it waited until you finished typing to update the results.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-006</span>
+      <span class="bug-title">Expense Date Picker Allows Future Dates</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Data Handling</span>
+    </div>
+    <div class="bug-file">app/expenses/<span>page.tsx</span> — Lines ~110-125</div>
+    <div class="bug-description">
+      The expense form lets you pick dates in the future. Users could log an expense for next month by accident, which would show up in future reports before it actually happened. Adding <code>max={today}</code> on the date input would prevent this.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You can accidentally set an expense date to <strong>next month or even next year</strong>. This makes your future spending reports show expenses that haven't happened yet, making your financial data misleading.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-007</span>
+      <span class="bug-title">Day-at-a-Glance — Hardcoded Time Ranges</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Logic</span>
+    </div>
+    <div class="bug-file">app/day-at-a-glance/<span>page.tsx</span> — Lines ~30-50</div>
+    <div class="bug-description">
+      The day is split into morning (6-12), afternoon (12-18), and evening (18-23) with hardcoded hours. Night shift workers, early risers, or people in different schedules can't customize these ranges. Their activities appear in the wrong time slots.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>If you work nights or have a non-standard schedule, your activities show up in the <strong>wrong time categories</strong>. Your 6 AM morning workout might show up under "Evening" because the app's definition of morning doesn't match yours. You can't customise it.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-008</span>
+      <span class="bug-title">Missing SEO Meta Tags in Layout</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">SEO</span>
+    </div>
+    <div class="bug-file">app/<span>layout.tsx</span></div>
+    <div class="bug-description">
+      The layout has minimal metadata — no Open Graph tags, no Twitter card tags, no structured data. When sharing links to the app, they show as plain URLs with no preview image or description.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>When you <strong>share a link to this app on WhatsApp, Twitter, or any chat</strong>, it just shows as a plain URL — no preview image, no description, no app name. It looks like a suspicious link that people might not want to click on.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-009</span>
+      <span class="bug-title">Images Not Optimized — Next.js Image Optimization Disabled</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Performance / Config</span>
+    </div>
+    <div class="bug-file"><span>next.config.mjs</span></div>
+    <div class="bug-description">
+      The Next.js config has <code>images.unoptimized: true</code>, which disables automatic image optimization. Images are served at full resolution regardless of screen size, making the app slower to load, especially on mobile data connections.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>Images load at <strong>full size even on your phone</strong>, using more mobile data and taking longer to appear. A picture that could be 50KB is instead 500KB, making pages slower — especially noticeable if you're on a slower internet connection.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-010</span>
+      <span class="bug-title">Mystery File "n" in Project Root</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Cleanup</span>
+    </div>
+    <div class="bug-file"><span>n</span> — 52KB file in project root</div>
+    <div class="bug-description">
+      There's a 52KB file simply named <code>n</code> in the project root. It appears to be an npm install log that was accidentally dumped as a file (perhaps from a shell redirect like <code>npm install 2>&1 | tee n</code>). It should be deleted and added to <code>.gitignore</code>.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>This doesn't affect you directly, but it <strong>adds unnecessary file size to the project</strong>. If you're a developer working on this code, it's confusing clutter — a random file named "n" with no explanation.</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-011</span>
+      <span class="bug-title">Inconsistent Style Patterns — Inline vs Tailwind vs CSS</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Maintenance</span>
+    </div>
+    <div class="bug-file">Multiple files</div>
+    <div class="bug-description">
+      The codebase uses three different styling approaches: Tailwind utility classes, inline <code>style</code> props, and global CSS. This makes it difficult to maintain consistent appearance, and changes to the design system require updating styles in multiple places with different syntaxes.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>You might notice <strong>subtle visual inconsistencies</strong> across the app — slightly different spacing here, a different shade of colour there. The app doesn't feel as polished or unified as it could be. Some things just look a little "off".</p>
+    </div>
+  </div>
+<div class="bug-card severity-low" data-severity="low">
+    <div class="bug-header">
+      <span class="bug-id">L-012</span>
+      <span class="bug-title">Empty Hooks Directory — Only Contains .gitkeep</span>
+      <span class="badge badge-severity-low">Low</span>
+      <span class="badge badge-category">Architecture</span>
+    </div>
+    <div class="bug-file">hooks/<span>.gitkeep</span></div>
+    <div class="bug-description">
+      The <code>hooks/</code> directory exists but only contains a <code>.gitkeep</code> placeholder. All the custom hooks that should be extracted from the massive components (data fetching, form handling, etc.) don't exist. This is a symptom of the larger architectural issue — logic is inline in components instead of being properly abstracted.
+    </div>
+    <div class="user-impact">
+      <span class="user-impact-label">For the user</span>
+      <p>This doesn't directly affect you, but it means <strong>new features and bug fixes will take longer to build</strong>. The code isn't well-organized, so improvements to the app will be slower to ship. It's like a messy kitchen — you can still cook, but everything takes longer.</p>
+    </div>
+  </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Features Section -->
+      <div id="features-section-view" class="hidden">
+        <div class="category-section" id="section-finance">
+        <h2 class="category-title">💰 Finance & Budget <span>10 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.1</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Recurring Transactions & Subscription Tracker</h3>
+            <p class="feature-description">A management ledger and dashboard calendar specifically for tracking fixed recurring expenses (subscriptions, rent, utilities, insurance, EMIs).</p>
+            <ul class="feature-bullets">
+              <li>Automatically calculates a "Commitment Forecast" showing pre-committed cash outflow for the upcoming month.</li>
+              <li>Highlights unused or forgotten "zombie" subscriptions.</li>
+              <li>Interactive calendar displaying renewal days countdowns.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.2</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Rule-Based Personal Finance Advisor</h3>
+            <p class="feature-description">A client-side analyzer that evaluates actual expenses, liquidity margins, and planned budget tables to yield Action Center reminders.</p>
+            <ul class="feature-bullets">
+              <li>Spend Velocity: Warns if dining out spends exceed the 4-week average by more than 25%.</li>
+              <li>Emergency Buffer: Flags when liquidity falls below 6 months of average expenses.</li>
+              <li>Asset Allocation: Advises shifting money from low-yield accounts to active assets when liquidity is high.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.3</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Side-Hustle Invoice & Payment Ledger</h3>
+            <p class="feature-description">A tracker for side incomes, freelancing invoices, or lease collections.</p>
+            <ul class="feature-bullets">
+              <li>Tracks payment statuses: Draft, Sent, Paid, Overdue.</li>
+              <li>Marking invoices as Paid automatically appends an Income record in Expenses.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.4</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Savings Goals Tracker</h3>
+            <p class="feature-description">Define specific financial savings targets like "Save ₹5L for trip" and monitor current status.</p>
+            <ul class="feature-bullets">
+              <li>Track progress dynamically against liquidity.</li>
+              <li>Visual progress percentages with projection timelines.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.5</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Investment Portfolio Tracker</h3>
+            <p class="feature-description">Active portfolio builder tracking assets valuation over time.</p>
+            <ul class="feature-bullets">
+              <li>SIP tracking and mutual fund NAV updates.</li>
+              <li>Portfolio allocation pie charts and return metrics (XIRR).</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.6</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Split Transactions</h3>
+            <p class="feature-description">Allow a single purchase or bill amount to be distributed among multiple categories.</p>
+            <ul class="feature-bullets">
+              <li>Split a ₹5,000 grocery bill between "Food" and "Household".</li>
+              <li>Track splits between accounts or with friends.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.7</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Income vs Expense Trend Charting</h3>
+            <p class="feature-description">Visualizing monthly savings rate margins.</p>
+            <ul class="feature-bullets">
+              <li>Am I spending more this month than last?</li>
+              <li>Sparklines showing 30-day expense velocity.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.8</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Receipt & Bill Photo Attachments</h3>
+            <p class="feature-description">Capture and link receipts to daily entries using Supabase storage.</p>
+            <ul class="feature-bullets">
+              <li>Attach receipt photos during daily entry.</li>
+              <li>History gallery showing attached bills.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.9</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Smart Auto-Categorization</h3>
+            <p class="feature-description">Learn from past transaction descriptions to suggest details automatically.</p>
+            <ul class="feature-bullets">
+              <li>Suggests category and subcategory as you type known vendor names.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Finance 1.10</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Precise Expense Time Logging</h3>
+            <p class="feature-description">Add an option to manually declare the time of purchase in the Daily Entry page.</p>
+            <ul class="feature-bullets">
+              <li>Replaces DB created_at time with custom manual purchase time.</li>
+              <li>Correctly maps expenses to exact chronologies on the timeline feed.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-habits">
+        <h2 class="category-title">🎯 Habits <span>7 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Habit 2.1</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Habit Stacking & Streak Freeze Jokers</h3>
+            <p class="feature-description">Mechanisms to build momentum and avoid breaking streaks due to travel or sickness.</p>
+            <ul class="feature-bullets">
+              <li>Habit Stacking: Trigger tasks associated immediately after completing habits.</li>
+              <li>Streak Freeze: Monthly configurable "Joker Days" to skip logs without breaking streaks.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Habit 2.2</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Gamified Habit Wizard (v2.0)</h3>
+            <p class="feature-description">Turn habit creation into a frictionless and rewarding process.</p>
+            <ul class="feature-bullets">
+              <li>Quick Templates: Auto-populate details for common habits (Water, Workout, Meditation).</li>
+              <li>Emoji search grid with a "most frequently used" selector.</li>
+              <li>Interactive dynamic sliders for configuring critical thresholds.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Habit 2.3</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Streak Heatmap Visualization</h3>
+            <p class="feature-description">A contribution-style habit log grid overlay showing daily progress patterns.</p>
+            <ul class="feature-bullets">
+              <li>GitHub-style contribution grid displaying year-round consistency.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Habit 2.4</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Weekly & Custom Frequency Habits</h3>
+            <p class="feature-description">Enable setups for custom recurring frequencies instead of daily limits only.</p>
+            <ul class="feature-bullets">
+              <li>Select specific days (e.g., Gym on Mon/Wed/Fri).</li>
+              <li>Set weekly targets (e.g., read 3 times a week).</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Habit 2.5</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Habit Time-of-Day Analysis</h3>
+            <p class="feature-description">Analysis showing optimal times for habit execution based on log data.</p>
+            <ul class="feature-bullets">
+              <li>Correlates habit completion success with completion times.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Habit 2.6</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Daily Habit Notes</h3>
+            <p class="feature-description">Add text comments or contextual notes to your daily checkmarks.</p>
+            <ul class="feature-bullets">
+              <li>Write reflection snippets (e.g. "Run felt heavy today").</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Habit 2.7</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Habit Templates Library</h3>
+            <p class="feature-description">A collection of routines designed to be loaded with a single click.</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-tasks">
+        <h2 class="category-title">📝 Tasks <span>6 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Task 3.1</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Due Dates on Tasks</h3>
+            <p class="feature-description">Add actual calendar due dates for core task structures instead of simple flags.</p>
+            <ul class="feature-bullets">
+              <li>Sort by urgency dynamically.</li>
+              <li>Calculate days remaining or overdue.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Task 3.2</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Recurring Task Schedules</h3>
+            <p class="feature-description">Support for recurring tasks that recreate themselves upon completion.</p>
+            <ul class="feature-bullets">
+              <li>Setup daily, weekly, or monthly repetitions (e.g. "File taxes", "Change filters").</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Task 3.3</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Deep Work Time Estimation</h3>
+            <p class="feature-description">Add time estimation values to tasks and track actual time spent.</p>
+            <ul class="feature-bullets">
+              <li>Compare initial estimation with actual logged task completion times.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Task 3.4</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Eisenhower Matrix Navigation</h3>
+            <p class="feature-description">A quadrant-based priority view organizing tasks dynamically by urgency and importance.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Task 3.5</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Integrated Calendar Agenda</h3>
+            <p class="feature-description">Display task items on a calendar schedule along with day structures.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Task 3.6</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Project & Context Tags</h3>
+            <p class="feature-description">Filter and sort tasks by tag markers (e.g. #Work, #Personal, #Phone).</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-workout">
+        <h2 class="category-title">🏋️ Workout & Fitness <span>7 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Workout 4.1</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Preset Workout Templates</h3>
+            <p class="feature-description">Save custom routine setups (e.g., "Leg Day A", "Upper Body Power") with standard weights and reps.</p>
+            <ul class="feature-bullets">
+              <li>Populates active exercises dynamically in one tap.</li>
+              <li>Avoids manual rep/weight entry exhaustion during sessions.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Workout 4.2</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Hydration Tracker & Weight Trend</h3>
+            <p class="feature-description">Quick tap hydration tracker plotted against weight logging history.</p>
+            <ul class="feature-bullets">
+              <li>Track water intake with quick presets (+250ml, +500ml).</li>
+              <li>Plot weight trends against hydration and training intensity on a chart.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Workout 4.3</span>
+              <span class="feature-tag">Time Logging</span>
+            </div>
+            <h3 class="feature-title">Workout Start Time & Duration Logging</h3>
+            <p class="feature-description">Declare precise start times and active session minutes to populate the timeline feed accurately.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Workout 4.4</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Rest Timer Between Sets</h3>
+            <p class="feature-description">A set-stop countdown stopwatch showing alerts on completion.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Workout 4.5</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Cardio Tracking</h3>
+            <p class="feature-description">Track distances, routes, and paces for runs or cycles.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Workout 4.6</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Body Measurements & Photos</h3>
+            <p class="feature-description">Log body fat, measurements, and upload progress photos.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Workout 4.7</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">1RM Calculator & Muscle Map</h3>
+            <p class="feature-description">Dynamically calculate estimated one-rep max metrics and map muscle load metrics.</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-vehicles">
+        <h2 class="category-title">🚗 Vehicles <span>7 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Vehicle 5.1</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Fuel Efficiency Drop Alert</h3>
+            <p class="feature-description">Auto-warn if a vehicle's mileage efficiency drops by over 15% across consecutive fuelings.</p>
+            <ul class="feature-bullets">
+              <li>Flags early diagnostic issues (tyre pressure, dirty air filter, engine misfires).</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Vehicle 5.2</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Trip Log & Business Tax Mileage Calculator</h3>
+            <p class="feature-description">Mark journeys as Business vs. Personal to calculate annual mileage tax reimbursements.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Vehicle 5.3</span>
+              <span class="feature-tag">Time Logging</span>
+            </div>
+            <h3 class="feature-title">Vehicle Action Time Logging</h3>
+            <p class="feature-description">Manually log time metrics for Refueling, Car Wash, Service entry/pickups, and mileage declarations.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Vehicle 5.4</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Document Storage</h3>
+            <p class="feature-description">Save vehicle insurance cards, RC papers, and driving license copies.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Vehicle 5.5</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">PUC & Emission Expiry Warnings</h3>
+            <p class="feature-description">Expiries notifications for Pollution certificates.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Vehicle 5.6</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Tire & Component Logs</h3>
+            <p class="feature-description">Track tire rotations and maintenance timelines (battery, brake pads).</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Vehicle 5.7</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Parking Location Tracker</h3>
+            <p class="feature-description">Save parking space locations with descriptions or maps.</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-skills">
+        <h2 class="category-title">🎓 Skills <span>5 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Skills 6.1</span>
+              <span class="feature-tag">Time Logging</span>
+            </div>
+            <h3 class="feature-title">Practice Session Timing</h3>
+            <p class="feature-description">Log practice duration along with precise start times to track habits on the timeline.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Skills 6.2</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Skill Levels & Progress Milestones</h3>
+            <p class="feature-description">Beginner to advanced skill progression based on practice hours logged.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Skills 6.3</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Tutorial & Reference Resource Links</h3>
+            <p class="feature-description">Attach online resource links or guides to your focus skill cards.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Skills 6.4</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Integrated Practice Stopwatch</h3>
+            <p class="feature-description">A stopwatch/Pomodoro built directly into skill sessions.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Skills 6.5</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Self-Assessment Logs</h3>
+            <p class="feature-description">Periodic 1-10 self-evaluations to log perceived growth.</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-inventory">
+        <h2 class="category-title">📦 Inventory <span>5 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Inventory 7.1</span>
+              <span class="feature-tag">Time Logging</span>
+            </div>
+            <h3 class="feature-title">Precise Asset Action Timestamps</h3>
+            <p class="feature-description">Track precise times for item purchases, gifts, lendings, borrowings, or retirements.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Inventory 7.2</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Asset Photo Cataloging</h3>
+            <p class="feature-description">Upload photos of assets for quick cataloging and insurance logs.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Inventory 7.3</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Warranty Tracker & Expiry Alerts</h3>
+            <p class="feature-description">Store digital warranties and trigger alerts before they expire.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Inventory 7.4</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Maintenance Interval Alerts</h3>
+            <p class="feature-description">Configure regular service timelines for assets (e.g. AC unit, water filter).</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Inventory 7.5</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Asset Wishlist</h3>
+            <p class="feature-description">Draft lists of items you want to buy with price tracking.</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-pets">
+        <h2 class="category-title">🐾 Pets <span>6 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Pets 8.1</span>
+              <span class="feature-tag">Time Logging</span>
+            </div>
+            <h3 class="feature-title">Pet Log Action Times</h3>
+            <p class="feature-description">Track manual times for activities (grooming, vet checkups, training).</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Pets 8.2</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Feeding Schedule & Log</h3>
+            <p class="feature-description">Log nutrition details, meals, and food types.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Pets 8.3</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Weight Progression Charting</h3>
+            <p class="feature-description">Track pet weights over time instead of single values.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Pets 8.4</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Medication & Vaccine Alerts</h3>
+            <p class="feature-description">Push alerts for vaccination schedules.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Pets 8.5</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Pet Expense Linking</h3>
+            <p class="feature-description">Link pet food or vet costs directly to the daily finance tracker.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Pets 8.6</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Growth Photo Gallery</h3>
+            <p class="feature-description">A photo album timeline of your pet's life.</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-system">
+        <h2 class="category-title">🔧 System & Platform <span>12 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.1</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">User Authentication & Row Level Security</h3>
+            <p class="feature-description">Implement secure Supabase Auth and configure per-user RLS policies to safeguard personal data.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.2</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Offline Support & Service Worker</h3>
+            <p class="feature-description">Enable offline caching and background synchronization (sync logs when back online).</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.3</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Web Push Notifications & Reminders</h3>
+            <p class="feature-description">Schedule daily alerts for habit logging and vehicle or document expiries.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.4</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">WhatsApp / Telegram Digest Bot</h3>
+            <p class="feature-description">Receive daily summary briefs (high priority tasks, renewal list, habit statuses) directly on messaging apps.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.5</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">JSON Data Backup & Exporter</h3>
+            <p class="feature-description">Download complete database records as a single portable JSON file.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.6</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Global Command Palette (Cmd+K)</h3>
+            <p class="feature-description">A quick-command overlay to navigate apps and search across all tables.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.7</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">CSV Statement Import</h3>
+            <p class="feature-description">Bulk upload bank statements and parse columns directly into daily entries.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.8</span>
+              <span class="feature-tag">New Idea</span>
+            </div>
+            <h3 class="feature-title">Keyboard Shortcuts</h3>
+            <p class="feature-description">Navigate, add expenses, or log habits instantly via global keyboard triggers.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.9</span>
+              <span class="feature-tag">Audit</span>
+            </div>
+            <h3 class="feature-title">Unified Glassmorphism CSS System</h3>
+            <p class="feature-description">Define global class utility structures (e.g. `.glass-premium`) to standardize transparency details.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.10</span>
+              <span class="feature-tag">Audit</span>
+            </div>
+            <h3 class="feature-title">Dashboard File Deconstruction</h3>
+            <p class="feature-description">Split the large `app/page.tsx` file into separate components (Financial, Health, Activity widgets).</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.11</span>
+              <span class="feature-tag">Audit</span>
+            </div>
+            <h3 class="feature-title">Strict Database Types Enforcement</h3>
+            <p class="feature-description">Generate Supabase typescript interfaces to remove `any` typings across database hooks.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">System 9.12</span>
+              <span class="feature-tag">Audit</span>
+            </div>
+            <h3 class="feature-title">Error Boundaries & Offline Recovery</h3>
+            <p class="feature-description">React ErrorBoundary wrappers showing fallback content if queries time out.</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-uiux">
+        <h2 class="category-title">🎨 UI & UX Enhancements <span>9 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">UI 10.1</span>
+              <span class="feature-tag">Codebase Audit</span>
+            </div>
+            <h3 class="feature-title">Tap Micro-Animations & Fluid SVG Waves</h3>
+            <p class="feature-description">Add Framer Motion spring physics on buttons and dynamic fluid level fills for trackers (water, fuel).</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">UI 10.2</span>
+              <span class="feature-tag">Codebase Audit</span>
+            </div>
+            <h3 class="feature-title">Dynamic Collapsible Sidebar</h3>
+            <p class="feature-description">Introduce a collapsed sidebar state showing icon-only widgets to maximize primary screen width on tablets.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">UI 10.3</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Product Onboarding Flow</h3>
+            <p class="feature-description">Create a guided setup walkthrough for new users setting up their first budget limits and habit lists.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">UI 10.4</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Unified Life Calendar</h3>
+            <p class="feature-description">A central calendar overlay displaying workouts, task due dates, vehicle renewals, and expenses together.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">UI 10.5</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Dashboard Trend Indicators</h3>
+            <p class="feature-description">Display inline sparklines and percent changes comparing metrics with the previous week/month.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">UI 10.6</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Gamified Celebrations & Badge Layer</h3>
+            <p class="feature-description">Pop confetti on 100% completions and award streak badges for consistent logging.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">UI 10.7</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Natural Language Parsing Input</h3>
+            <p class="feature-description">A single smart input parsing phrases like "Spent 450 on lunch at Saravana Bhavan" into database fields instantly.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">UI 10.8</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Smart Empty States</h3>
+            <p class="feature-description">Replace dry "No data" lists with visual placeholders and quick action triggers.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">UI 10.9</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Accessibility & ARIA Standards</h3>
+            <p class="feature-description">Optimize keyboard tab path focus rings and implement ARIA screen-reader specifications.</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-intelligence">
+        <h2 class="category-title">🧠 Intelligence & Insights <span>5 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Intel 11.1</span>
+              <span class="feature-tag">Proposals</span>
+            </div>
+            <h3 class="feature-title">Unified "Life Velocity" Index (0-100 Score)</h3>
+            <p class="feature-description">A radial gauge score tracking aggregated performance: 50% Habit, 20% Task, 20% Budget, 10% Workout.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Intel 11.2</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">AI Pattern Insights</h3>
+            <p class="feature-description">Proactive notices flagging links: e.g. "When you sleep more than 7 hours, task completion increases by 40%".</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Intel 11.3</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Predictive Savings & Streak Forecasting</h3>
+            <p class="feature-description">Display forecasts showing when you will reach targets or when streak risks are highest.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Intel 11.4</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Weekly & Monthly Structured Review System</h3>
+            <p class="feature-description">Guides through structured check-ins comparing targets with actual outputs.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Intel 11.5</span>
+              <span class="feature-tag">Product Gap</span>
+            </div>
+            <h3 class="feature-title">Correlation Dashboard Highlights</h3>
+            <p class="feature-description">Surfaces statistical correlations directly onto the homepage cards to drive behavior changes.</p>
+          </div>
+
+        </div>
+      </div>
+<div class="category-section" id="section-newmodules">
+        <h2 class="category-title">🌐 New Modules <span>9 Features</span></h2>
+        <div class="features-grid">
+          
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.1</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Journaling & Mood Logger</h3>
+            <p class="feature-description">Log mood/energy grids, gratitude journals, and evening self-reflections.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.2</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Outcomes Goals System</h3>
+            <p class="feature-description">Define core targets (e.g. Lose 5kg, read 20 books) and link them directly to daily habit actions.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.3</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Sleep Tracker</h3>
+            <p class="feature-description">Log sleep cycles, bedtime boundaries, and sleep quality indexes.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.4</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Meal & Calorie Tracking</h3>
+            <p class="feature-description">Log nutrition intake, macros, supplements, and upload meal photos.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.5</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Time Auditing & Pomodoro Clock</h3>
+            <p class="feature-description">Deep focus tracking session logs with category analysis.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.6</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Personal Relationship CRM</h3>
+            <p class="feature-description">Track meetings, contacts registry details, gifts history, and contact alerts.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.7</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Reading & Course library</h3>
+            <p class="feature-description">Track personal books shelf progress, video courses, and skills certifications.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.8</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Home Maintenance Scheduler</h3>
+            <p class="feature-description">Schedule appliance service routines and log bills.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.9</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Travel Packing & Trip Planner</h3>
+            <p class="feature-description">Packing lists checklists and trip expenses consolidation.</p>
+          </div>
+
+        </div>
+      </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Interactive Floating Theme Switcher -->
+  <div class="theme-switcher-container">
+    <div id="theme-dropdown" class="theme-dropdown hidden">
+      <div class="theme-dropdown-title">Select Theme</div>
+      <button class="theme-option active" onclick="changeTheme('nordic')">
+        <span>🌿 Nordic Sage</span>
+        <div class="color-dot" style="background-color: #f0f4f1;"></div>
+      </button>
+      <button class="theme-option" onclick="changeTheme('terracotta')">
+        <span>🏜️ Terracotta</span>
+        <div class="color-dot" style="background-color: #fbf9f6;"></div>
+      </button>
+      <button class="theme-option" onclick="changeTheme('ocean')">
+        <span>🌊 Ocean Mist</span>
+        <div class="color-dot" style="background-color: #f0f4f8;"></div>
+      </button>
+      <button class="theme-option" onclick="changeTheme('lavender')">
+        <span>🌸 Lavender</span>
+        <div class="color-dot" style="background-color: #f5f3f7;"></div>
+      </button>
+    </div>
+    <button class="theme-switcher-btn" onclick="toggleThemeDropdown()">
+      <!-- SVG Palette Icon -->
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.35626 19.5 5.56839 20.2189 5.37877 20.8931L5.22222 21.4504C5.07471 21.9768 5.47466 22 6 22H12Z"/>
+        <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/>
+        <circle cx="11.5" cy="7.5" r="1.5" fill="currentColor"/>
+        <circle cx="16.5" cy="9.5" r="1.5" fill="currentColor"/>
+        <circle cx="15.5" cy="14.5" r="1.5" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Consolidated Master Report • Resiliessance Life OS Platform Console</p>
+    <p style="margin-top: 4px; font-size: 11px; opacity: 0.7;">66 Bugs Audited • 88 Planned Upgrades & Enhancements Registered</p>
+  </footer>
+
+  <script>
+    // State Tracking
+    let currentView = 'bugs';
+    let activeBugSeverity = 'all';
+    let activeBugCategory = 'all';
+
+    // Navigation configuration
+    const featureNavItems = [
+      { id: 'finance', label: 'Finance & Budget', emoji: '💰' },
+      { id: 'habits', label: 'Habits', emoji: '🎯' },
+      { id: 'tasks', label: 'Tasks', emoji: '📝' },
+      { id: 'workout', label: 'Workout & Fitness', emoji: '🏋️' },
+      { id: 'vehicles', label: 'Vehicles', emoji: '🚗' },
+      { id: 'skills', label: 'Skills', emoji: '🎓' },
+      { id: 'inventory', label: 'Inventory', emoji: '📦' },
+      { id: 'pets', label: 'Pets', emoji: '🐾' },
+      { id: 'system', label: 'System & Platform', emoji: '🔧' },
+      { id: 'uiux', label: 'UI & UX Enhancements', emoji: '🎨' },
+      { id: 'intelligence', label: 'Intelligence & Insights', emoji: '🧠' },
+      { id: 'newmodules', label: 'New Modules', emoji: '🌐' }
+    ];
+
+    const bugNavItems = [
+      { id: 'critical', label: 'Critical Severity', emoji: '🔴' },
+      { id: 'high', label: 'High Severity', emoji: '🟠' },
+      { id: 'medium', label: 'Medium Severity', emoji: '🟡' },
+      { id: 'low', label: 'Low Severity', emoji: '🔵' }
+    ];
+
+    // Initialize Page
+    document.addEventListener("DOMContentLoaded", () => {
+      // Load saved theme or default to nordic
+      const savedTheme = localStorage.getItem("resiliessance_ui_theme") || "nordic";
+      changeTheme(savedTheme);
+      renderSidebar();
+    });
+
+    // Theme Switcher Functions
+    function toggleThemeDropdown() {
+      const dropdown = document.getElementById("theme-dropdown");
+      dropdown.classList.toggle("hidden");
+    }
+
+    function changeTheme(themeId) {
+      document.documentElement.setAttribute("data-theme", themeId);
+      localStorage.setItem("resiliessance_ui_theme", themeId);
+      
+      // Update active states in selector dropdown
+      const options = document.querySelectorAll(".theme-option");
+      options.forEach(opt => opt.classList.remove("active"));
+      
+      const themeIndices = { 'nordic': 0, 'terracotta': 1, 'ocean': 2, 'lavender': 3 };
+      if (themeId in themeIndices) {
+        options[themeIndices[themeId]].classList.add("active");
+      }
+      
+      // Close dropdown
+      document.getElementById("theme-dropdown").classList.add("hidden");
+    }
+
+    // Tab Switch Logic
+    function switchView(view) {
+      currentView = view;
+      
+      const bugsTab = document.getElementById("bugs-tab");
+      const featuresTab = document.getElementById("features-tab");
+      const bugFilters = document.getElementById("bug-filters");
+      const bugSummary = document.getElementById("bug-summary-view");
+      const bugsView = document.getElementById("bugs-section-view");
+      const featuresView = document.getElementById("features-section-view");
+      const searchInput = document.getElementById("search-bar");
+
+      // Reset Search input value
+      searchInput.value = "";
+      
+      if (view === 'bugs') {
+        bugsTab.classList.add("active");
+        featuresTab.classList.remove("active");
+        bugFilters.classList.remove("hidden");
+        bugSummary.classList.remove("hidden");
+        bugsView.classList.remove("hidden");
+        featuresView.classList.add("hidden");
+        searchInput.placeholder = "Search bugs by title, file, category...";
+        
+        document.getElementById("hero-title").innerText = "Bug Report Console";
+        document.getElementById("hero-subtitle").innerText = "Comprehensive diagnostic audit of logic errors, visual bugs, state crashes, and mobile optimization defects across 30+ codebase components.";
+      } else {
+        bugsTab.classList.remove("active");
+        featuresTab.classList.add("active");
+        bugFilters.classList.add("hidden");
+        bugSummary.classList.add("hidden");
+        bugsView.classList.add("hidden");
+        featuresView.classList.remove("hidden");
+        searchInput.placeholder = "Search upcoming features...";
+        
+        document.getElementById("hero-title").innerText = "Upcoming Features Registry";
+        document.getElementById("hero-subtitle").innerText = "A consolidated master list of upcoming enhancements, product proposals, and strategic improvements mapped to the Resiliessance Life OS design system.";
+      }
+      
+      renderSidebar();
+      handleSearch(); // Reset any filters / search lists
+    }
+
+    // Sidebar Rendering
+    function renderSidebar() {
+      const sidebarNav = document.getElementById("sidebar-nav");
+      sidebarNav.innerHTML = "";
+      
+      const items = currentView === 'bugs' ? bugNavItems : featureNavItems;
+      
+      items.forEach((item, index) => {
+        const btn = document.createElement("button");
+        btn.className = `nav-item ${index === 0 ? 'active' : ''}`;
+        btn.onclick = () => scrollToSection(item.id);
+        btn.innerHTML = `<span class="emoji-icon">${item.emoji}</span> ${item.label}`;
+        sidebarNav.appendChild(btn);
+      });
+    }
+
+    // Smooth Scroll Navigation
+    function scrollToSection(id) {
+      const element = document.getElementById('section-' + id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Active Sidebar Highlight based on Scroll Position
+    window.addEventListener('scroll', () => {
+      const prefix = 'section-';
+      const sections = document.querySelectorAll('.category-section');
+      const navItems = document.querySelectorAll('.nav-item');
+      let currentSectionId = '';
+
+      sections.forEach(sec => {
+        const top = sec.getBoundingClientRect().top;
+        if (top <= 120) {
+          currentSectionId = sec.id.replace(prefix, '');
+        }
+      });
+
+      if (currentSectionId) {
+        navItems.forEach(item => {
+          item.classList.remove('active');
+          if (item.getAttribute('onclick').includes(currentSectionId)) {
+            item.classList.add('active');
+          }
+        });
+      }
+    });
+
+    // Bug Severity Filtering logic
+    function filterBugs(severity) {
+      activeBugSeverity = severity;
+      
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      
+      const indexMap = { 'all': 0, 'critical': 1, 'high': 2, 'medium': 3, 'low': 4 };
+      buttons[indexMap[severity]].classList.add('active');
+      
+      applyBugFilters();
+    }
+
+    // Bug Category Chip Filtering logic
+    function filterBugCategory(category) {
+      activeBugCategory = category;
+      
+      const chips = document.querySelectorAll('.breakdown-chip');
+      chips.forEach(chip => chip.classList.remove('active'));
+      
+      event.currentTarget.classList.add('active');
+      
+      applyBugFilters();
+    }
+
+    // Apply combined search + severity + category filters to bugs
+    function applyBugFilters() {
+      const query = document.getElementById('search-bar').value.toLowerCase();
+      const cards = document.querySelectorAll('.bug-card');
+      const sections = document.querySelectorAll('#bugs-section-view .category-section');
+      
+      cards.forEach(card => {
+        const severity = card.dataset.severity;
+        const title = card.querySelector('.bug-title').innerText.toLowerCase();
+        const desc = card.querySelector('.bug-description').innerText.toLowerCase();
+        const file = card.querySelector('.bug-file').innerText.toLowerCase();
+        const categoryBadge = card.querySelector('.badge-category');
+        const category = categoryBadge ? categoryBadge.innerText : '';
+        
+        let userImpactText = '';
+        const userImpactEl = card.querySelector('.user-impact p');
+        if (userImpactEl) userImpactText = userImpactEl.innerText.toLowerCase();
+        
+        const matchesSearch = title.includes(query) || 
+                              desc.includes(query) || 
+                              file.includes(query) || 
+                              category.toLowerCase().includes(query) ||
+                              userImpactText.includes(query);
+                              
+        const matchesSeverity = (activeBugSeverity === 'all' || severity === activeBugSeverity);
+        
+        let matchesCategory = false;
+        if (activeBugCategory === 'all') {
+          matchesCategory = true;
+        } else {
+          const cleanCategory = activeBugCategory.toLowerCase();
+          const cleanCardCategory = category.toLowerCase();
+          
+          if (cleanCategory === 'ui / ux') {
+            matchesCategory = cleanCardCategory.includes('ui') || cleanCardCategory.includes('ux');
+          } else if (cleanCategory === 'async / state') {
+            matchesCategory = cleanCardCategory.includes('async') || cleanCardCategory.includes('state');
+          } else if (cleanCategory === 'config / other') {
+            matchesCategory = cleanCardCategory.includes('config') || cleanCardCategory.includes('cleanup') || cleanCardCategory.includes('maintenance') || cleanCardCategory.includes('seo') || cleanCardCategory.includes('internationalization');
+          } else {
+            matchesCategory = cleanCardCategory.includes(cleanCategory);
+          }
+        }
+
+        if (matchesSearch && matchesSeverity && matchesCategory) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      sections.forEach(sec => {
+        const visibleCards = sec.querySelectorAll('.bug-card:not(.hidden)');
+        if (visibleCards.length === 0) {
+          sec.classList.add('hidden');
+        } else {
+          sec.classList.remove('hidden');
+        }
+      });
+    }
+
+    // Features Search Logic
+    function applyFeatureFilters() {
+      const query = document.getElementById('search-bar').value.toLowerCase();
+      const cards = document.querySelectorAll('.feature-card');
+      const sections = document.querySelectorAll('#features-section-view .category-section');
+
+      cards.forEach(card => {
+        const title = card.querySelector('.feature-title').innerText.toLowerCase();
+        const desc = card.querySelector('.feature-description').innerText.toLowerCase();
+        let bullets = '';
+        const bulletEls = card.querySelectorAll('.feature-bullets li');
+        bulletEls.forEach(li => bullets += li.innerText.toLowerCase() + ' ');
+
+        if (title.includes(query) || desc.includes(query) || bullets.includes(query)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      sections.forEach(sec => {
+        const visibleCards = sec.querySelectorAll('.feature-card:not(.hidden)');
+        if (visibleCards.length === 0) {
+          sec.classList.add('hidden');
+        } else {
+          sec.classList.remove('hidden');
+        }
+      });
+    }
+
+    function handleSearch() {
+      if (currentView === 'bugs') {
+        applyBugFilters();
+      } else {
+        applyFeatureFilters();
+      }
+    }
+  </script>
+
+</body>
+</html>
