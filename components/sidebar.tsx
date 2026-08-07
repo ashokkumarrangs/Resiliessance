@@ -13,6 +13,7 @@ import {
   PlusCircle,
   Clock,
   Apple,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -82,6 +83,9 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
 
           {/* New Divider below Inventory */}
           <div className="h-px bg-slate-100 mt-[14px] mb-[6px] mx-4" />
+
+          {/* Settings */}
+          <NavItem href="/settings" icon={<Settings size={20} />} title="Settings" onClick={onClose} />
         </ul>
 
       </nav>

@@ -1,6 +1,7 @@
-import { Menu } from "lucide-react";
+import { Menu, Settings } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const [dateStr, setDateStr] = useState("");
@@ -29,8 +30,13 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
         <span>Resiliessance</span>
       </div>
       
-      <div className="hidden sm:block text-[9px] font-black text-slate-400 text-right uppercase tracking-widest leading-tight">
-        {dateStr}
+      <div className="flex items-center gap-2">
+        <div className="hidden sm:block text-[9px] font-black text-slate-400 text-right uppercase tracking-widest leading-tight">
+          {dateStr}
+        </div>
+        <Link href="/settings" className="p-2 -mr-2 text-foreground hover:bg-muted rounded-xl transition-colors" title="Settings">
+          <Settings size={20} />
+        </Link>
       </div>
     </header>
   );
