@@ -10,6 +10,37 @@ const cleanKey = (key: string) => {
   return key.replace(/['"\s]/g, '').trim();
 };
 
+const normalizePrivateKey = (privateKeyB64: string): string => {
+  const cleaned = cleanKey(privateKeyB64);
+  if (!cleaned) return '';
+
+  try {
+    // Convert base64url to standard base64 for Buffer
+    const base64 = cleaned.replace(/-/g, '+').replace(/_/g, '/');
+    const buffer = Buffer.from(base64, 'base64');
+
+    if (buffer.length === 32) {
+      return cleaned;
+    }
+
+    if (buffer.length < 32) {
+      // Pad with leading zeros to make it exactly 32 bytes
+      const padded = Buffer.alloc(32);
+      buffer.copy(padded, 32 - buffer.length);
+      
+      // Convert back to base64url
+      return padded.toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+    }
+  } catch (e) {
+    console.error('Error normalizing private key:', e);
+  }
+
+  return cleaned;
+};
+
 // Initialize web-push with VAPID details
 const initWebPush = () => {
   const rawPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
@@ -21,7 +52,7 @@ const initWebPush = () => {
   }
 
   const publicKey = cleanKey(rawPublicKey);
-  const privateKey = cleanKey(rawPrivateKey);
+  const privateKey = normalizePrivateKey(rawPrivateKey);
 
   try {
     webpush.setVapidDetails(
