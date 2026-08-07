@@ -47,10 +47,21 @@ export default function SettingsPage() {
       else if (/Macintosh/.test(ua)) setDeviceName("Mac");
       else if (/Android/.test(ua)) setDeviceName("Android Device");
       else setDeviceName("Desktop Browser");
-
-      // Load public VAPID key from env
-      setVapidPublicKey(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "");
     }
+
+    // Fetch VAPID public key dynamically from the server at runtime
+    const fetchVapidKey = async () => {
+      try {
+        const res = await fetch("/api/push/config");
+        const data = await res.json();
+        if (data.publicKey) {
+          setVapidPublicKey(data.publicKey);
+        }
+      } catch (err) {
+        console.error("Error fetching VAPID key dynamically:", err);
+      }
+    };
+    fetchVapidKey();
   }, []);
 
   useEffect(() => {
