@@ -92,7 +92,7 @@ async function sendPushNotification(
   const response = await fetch(subscription.endpoint, {
     method: 'POST',
     headers: payload.headers as HeadersInit,
-    body: payload.body,
+    body: payload.body as any,
   });
 
   if (!response.ok) {
