@@ -19,8 +19,8 @@
   "vars": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://mfkzyryotmsmevnweuws.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ma3p5cnlvdG1zbWV2bndldXdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0MjM4MTksImV4cCI6MjA5Nzk5OTgxOX0.er7t42Dh7UkAN-Udda1dOMiXvpbylv8-RWyqXBDy6cA",
-    "NEXT_PUBLIC_VAPID_PUBLIC_KEY": "BBXqq_HHXTnph5KGNF0Gbnoh85pEK-c0_AtD5bWoMu8jINWpK71lwdQokt1kJVc8e8V-0QP4omFDAk-r_pR_790",
-    "VAPID_PRIVATE_KEY": "OpCeTBohoaVJvLLWsEyvU0Klww7Lw2QD--hx-luhPI"
+    "NEXT_PUBLIC_VAPID_PUBLIC_KEY": "BCgrgG00p0lPtv5qiEiQLoKjKOdjynZHO4HWlvpZVRojB1jNR-3qCcbWbaqCj9IlEiXCm2W5tk4G8caf_0rT7sY",
+    "VAPID_PRIVATE_KEY": "IGjl5cq26aUPPxC6SWKA38Bj2uKqH_7V4XjnDKl-U0Q"
   },
   "observability": {
     "enabled": true
