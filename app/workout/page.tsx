@@ -220,6 +220,18 @@ export default function WorkoutPage() {
         toast.error(`At least one set required for ${ex.name}`);
         return;
       }
+      for (const s of ex.sets) {
+        const w = parseFloat(s.weight);
+        const r = parseInt(s.reps);
+        if (isNaN(w) || w < 0) {
+          toast.error(`Invalid weight for ${ex.name}`);
+          return;
+        }
+        if (isNaN(r) || r <= 0) {
+          toast.error(`Reps must be at least 1 for ${ex.name}`);
+          return;
+        }
+      }
     }
 
     setIsSaving(true);

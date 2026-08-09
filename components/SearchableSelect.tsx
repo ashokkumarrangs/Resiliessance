@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ChevronDown, CheckCircle2, PlusCircle } from "lucide-react";
 
 interface SearchableSelectProps {
@@ -31,7 +31,10 @@ export function SearchableSelect({
   const [search, setSearch] = useState(value);
   const [isTyping, setIsTyping] = useState(false);
   const [isManualEntry, setIsManualEntry] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const blurTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   if (value !== prevValue) {
     setPrevValue(value);
@@ -42,8 +45,57 @@ export function SearchableSelect({
     ? options.filter(opt => opt?.toLowerCase().includes(search.toLowerCase()))
     : options;
 
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+        setIsTyping(false);
+        setIsManualEntry(false);
+        setFocusedIndex(-1);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
+    };
+  }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) {
+      if (e.key === 'ArrowDown' || e.key === 'Enter') {
+        setIsOpen(true);
+        e.preventDefault();
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setFocusedIndex(prev => (prev < displayOptions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setFocusedIndex(prev => (prev > 0 ? prev - 1 : displayOptions.length - 1));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (focusedIndex >= 0 && focusedIndex < displayOptions.length) {
+        const selected = displayOptions[focusedIndex];
+        onChange(selected);
+        setSearch(selected);
+        setIsOpen(false);
+        setFocusedIndex(-1);
+      } else if (search && isManualEntry) {
+        onChange(search);
+        setIsOpen(false);
+      }
+    } else if (e.key === 'Escape') {
+      setIsOpen(false);
+      setFocusedIndex(-1);
+    }
+  };
+
   return (
-    <div className={`relative space-y-2 ${isOpen ? 'z-[100]' : ''}`}>
+    <div ref={containerRef} className={`relative space-y-2 ${isOpen ? 'z-[100]' : ''}`}>
       {!hideLabel && (
         <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
           {headerIcon}
@@ -57,24 +109,31 @@ export function SearchableSelect({
           placeholder={placeholder || "Select/Type"}
           value={search}
           autoComplete="off"
-          readOnly={!isManualEntry}
-          onClick={() => { if (!isManualEntry) setIsOpen(true); }}
+          onClick={() => setIsOpen(true)}
+          onKeyDown={handleKeyDown}
           onChange={(e) => {
-            setSearch(e.target.value);
-            onChange(e.target.value);
+            const val = e.target.value;
+            setSearch(val);
+            if (isManualEntry) {
+              onChange(val);
+            }
             setIsTyping(true);
             setIsOpen(true);
+            setFocusedIndex(-1);
           }}
           onFocus={() => {
             setIsTyping(false);
             setIsOpen(true);
           }}
-          onBlur={() => setTimeout(() => {
-            setIsOpen(false);
-            setIsTyping(false);
-            setIsManualEntry(false);
-          }, 200)}
-          className={`w-full min-w-0 h-11 bg-muted border-none rounded-lg px-4 pr-10 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30 font-sans ${!isManualEntry ? 'cursor-pointer' : ''}`}
+          onBlur={() => {
+            blurTimerRef.current = setTimeout(() => {
+              setIsOpen(false);
+              setIsTyping(false);
+              setIsManualEntry(false);
+              setFocusedIndex(-1);
+            }, 200);
+          }}
+          className="w-full min-w-0 h-11 bg-muted border-none rounded-lg px-4 pr-10 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30 font-sans cursor-text"
         />
         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-accent transition-colors">
           {icon || <ChevronDown size={16} />}
@@ -87,12 +146,15 @@ export function SearchableSelect({
             <button
               key={`${opt}-${i}`}
               type="button"
+              onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
                 onChange(opt);
                 setSearch(opt);
                 setIsOpen(false);
+                setFocusedIndex(-1);
               }}
               className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-between mb-0.5 last:mb-0
+                ${focusedIndex === i ? "bg-accent/10 text-accent" : ""}
                 ${value === opt 
                   ? "bg-primary text-primary-foreground font-black" 
                   : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
@@ -124,6 +186,7 @@ export function SearchableSelect({
           {isManualEntry && search && !options.includes(search) && (
             <button
               type="button"
+              onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
                 onChange(search);
                 setIsOpen(false);

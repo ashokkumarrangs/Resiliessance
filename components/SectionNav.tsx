@@ -49,14 +49,18 @@ export function SectionNav({ tabs, activePath }: { tabs: TabItem[], activePath?:
   };
 
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (scrollRef.current) {
       const activeEl = scrollRef.current.querySelector('[data-active="true"]');
       if (activeEl) {
-        setTimeout(() => {
+        timer = setTimeout(() => {
           activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }, 50);
       }
     }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [pathname]);
 
   return (

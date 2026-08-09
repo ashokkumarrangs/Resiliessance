@@ -369,7 +369,7 @@ export default function InventoryPage() {
       const { error } = await supabase.from('inventory_items').update({
         status: 'lent_out',
         lent_to_person: lendToPerson,
-        lent_date: new Date().toISOString().split('T')[0],
+        lent_date: new Date().toLocaleDateString('en-CA'),
         lent_time: lendTime,
         return_due_date: lendDueDate || null
       }).eq('id', selectedItem.id);

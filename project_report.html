@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
   <style>
     :root, [data-theme="nordic"] {
+      --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       /* Nordic Sage (Default Theme) */
       --background: #f0f4f1;
       --foreground: #2c332d;
@@ -561,6 +562,12 @@
       border: 1px solid var(--low-border);
     }
 
+    .badge-status-resolved {
+      background-color: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
     .feature-title, .bug-title {
       font-size: 18px;
       font-weight: 800;
@@ -956,32 +963,32 @@
       <div id="bug-summary-view">
         <div class="summary-grid">
           <div class="summary-card critical" onclick="filterBugs('critical')" style="cursor: pointer;">
-            <div class="summary-number">9</div>
+            <div class="summary-number">0</div>
             <div class="summary-label">Critical</div>
           </div>
           <div class="summary-card high" onclick="filterBugs('high')" style="cursor: pointer;">
-            <div class="summary-number">14</div>
+            <div class="summary-number">0</div>
             <div class="summary-label">High</div>
           </div>
           <div class="summary-card medium" onclick="filterBugs('medium')" style="cursor: pointer;">
-            <div class="summary-number">31</div>
+            <div class="summary-number">0</div>
             <div class="summary-label">Medium</div>
           </div>
           <div class="summary-card low" onclick="filterBugs('low')" style="cursor: pointer;">
-            <div class="summary-number">12</div>
+            <div class="summary-number">0</div>
             <div class="summary-label">Low</div>
           </div>
         </div>
 
         <div class="category-breakdown">
-          <div class="breakdown-chip active" onclick="filterBugCategory('all')"><span class="dot" style="background-color: var(--primary);"></span> All Categories</div>
-          <div class="breakdown-chip" onclick="filterBugCategory('Logic')"><span class="dot" style="background-color: #ef4444;"></span> Logic: 18</div>
-          <div class="breakdown-chip" onclick="filterBugCategory('UI / UX')"><span class="dot" style="background-color: #3b82f6;"></span> UI / UX: 20</div>
-          <div class="breakdown-chip" onclick="filterBugCategory('Data Handling')"><span class="dot" style="background-color: #f59e0b;"></span> Data Handling: 8</div>
-          <div class="breakdown-chip" onclick="filterBugCategory('Performance')"><span class="dot" style="background-color: #10b981;"></span> Performance: 6</div>
-          <div class="breakdown-chip" onclick="filterBugCategory('Async / State')"><span class="dot" style="background-color: #8b5cf6;"></span> Async / State: 5</div>
-          <div class="breakdown-chip" onclick="filterBugCategory('Security')"><span class="dot" style="background-color: #ec4899;"></span> Security: 2</div>
-          <div class="breakdown-chip" onclick="filterBugCategory('Config / Other')"><span class="dot" style="background-color: #6b7280;"></span> Config / Other: 7</div>
+          <div class="breakdown-chip active" onclick="filterBugCategory('all', event)"><span class="dot" style="background-color: var(--primary);"></span> All Categories</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Logic', event)"><span class="dot" style="background-color: #ef4444;"></span> Logic</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('UI / UX', event)"><span class="dot" style="background-color: #3b82f6;"></span> UI / UX</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Data Handling', event)"><span class="dot" style="background-color: #f59e0b;"></span> Data Handling</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Performance', event)"><span class="dot" style="background-color: #10b981;"></span> Performance</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Async / State', event)"><span class="dot" style="background-color: #8b5cf6;"></span> Async / State</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Security', event)"><span class="dot" style="background-color: #ec4899;"></span> Security</div>
+          <div class="breakdown-chip" onclick="filterBugCategory('Config / Other', event)"><span class="dot" style="background-color: #6b7280;"></span> Config / Other</div>
         </div>
       </div>
 
@@ -992,126 +999,6 @@
         <div class="category-section" id="section-critical">
           <h2 class="category-title">🔴 Critical Severity <span>9 Bugs</span></h2>
           <div class="grid-layout">
-            <div class="bug-card severity-critical" data-severity="critical">
-    <div class="bug-header">
-      <span class="bug-id">C-001</span>
-      <span class="bug-title">Supabase Queries Silently Fail — No Error Handling</span>
-      <span class="badge badge-severity-critical">Critical</span>
-      <span class="badge badge-category">Data Handling</span>
-    </div>
-    <div class="bug-file">app/<span>page.tsx</span> — Lines ~80-200</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> Every Supabase database call on the main dashboard grabs <code>{ data }</code> but completely ignores the <code>{ error }</code> response. If any query fails (network drops, auth token expires, table gets renamed), <code>data</code> comes back as <code>null</code>.<br><br>
-      <strong>Why it's bad:</strong> The code then tries to run <code>.filter()</code> or <code>.map()</code> on <code>null</code>, which instantly crashes the entire page with a <em>"Cannot read properties of null"</em> TypeError. The user sees a blank white screen with no explanation of what went wrong.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If your internet is slow, disconnects for even a second, or the server has a hiccup, the <strong>entire dashboard goes completely blank</strong> — just a white screen with nothing on it. There's no error message, no "try again" button, nothing. You'd have to refresh the page and hope it works this time.</p>
-    </div>
-    <div class="code-snippet"><span class="comment">// ❌ Current: ignores errors</span>
-<span class="keyword">const</span> { data: tasks } = <span class="keyword">await</span> supabase.from(<span class="string">'tasks'</span>).select(<span class="string">'*'</span>);
-tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks is null</span>
-
-<span class="comment">// ✅ Should be:</span>
-<span class="keyword">const</span> { data: tasks, error } = <span class="keyword">await</span> supabase.from(<span class="string">'tasks'</span>).select(<span class="string">'*'</span>);
-<span class="keyword">if</span> (error) { setError(error.message); <span class="keyword">return</span>; }
-(tasks ?? []).filter(...)</div>
-  </div>
-<div class="bug-card severity-critical" data-severity="critical">
-    <div class="bug-header">
-      <span class="bug-id">C-002</span>
-      <span class="bug-title">Timezone Bug — Tasks &amp; Habits Appear on Wrong Day</span>
-      <span class="badge badge-severity-critical">Critical</span>
-      <span class="badge badge-category">Logic</span>
-    </div>
-    <div class="bug-file">app/<span>page.tsx</span>, app/habits/<span>page.tsx</span> — Multiple locations</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> The code uses <code>new Date().toISOString().split('T')[0]</code> to figure out "today's date". But <code>toISOString()</code> converts to UTC time, not local time.<br><br>
-      <strong>Why it's bad:</strong> For users in India (IST = UTC+5:30), after 5:30 PM local time, <code>toISOString()</code> returns <em>tomorrow's date</em>. This means:
-      <ul style="margin: 8px 0 0 20px; color: var(--text-secondary);">
-        <li>Tasks due "today" disappear from the dashboard in the evening</li>
-        <li>Habit completions logged in the evening get saved to the wrong day</li>
-        <li>The "today" filter shows tomorrow's items instead</li>
-      </ul>
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>After around <strong>5:30 PM every evening, your tasks for today just disappear</strong> from the dashboard. If you mark a habit as done at 9 PM, it gets counted as <em>tomorrow's</em> completion — so today still shows as missed. Your habit streaks will break even though you actually did the work.</p>
-    </div>
-    <div class="code-snippet"><span class="comment">// ❌ Gives UTC date — WRONG after 5:30 PM IST</span>
-<span class="keyword">const</span> today = <span class="keyword">new</span> Date().toISOString().split(<span class="string">'T'</span>)[0];
-
-<span class="comment">// ✅ Use local date instead</span>
-<span class="keyword">const</span> today = <span class="keyword">new</span> Date().toLocaleDateString(<span class="string">'en-CA'</span>); <span class="comment">// returns YYYY-MM-DD in local tz</span></div>
-  </div>
-<div class="bug-card severity-critical" data-severity="critical">
-    <div class="bug-header">
-      <span class="bug-id">C-003</span>
-      <span class="bug-title">Habit Logs Can Be Duplicated — Race Condition on Double-Tap</span>
-      <span class="badge badge-severity-critical">Critical</span>
-      <span class="badge badge-category">Async / Logic</span>
-    </div>
-    <div class="bug-file">app/habits/<span>page.tsx</span> — Lines ~120-160</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> When a user taps the "complete habit" toggle, the code checks if a log exists for today and then inserts or deletes accordingly. But there's no debouncing or loading lock on the button.<br><br>
-      <strong>Why it's bad:</strong> If a user quickly double-taps the toggle (very common on mobile), two insert requests fire before either finishes. Both see "no existing log" and both insert a new row, creating <strong>duplicate log entries</strong>. This corrupts the habit streak data and scoring calculations.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If you quickly tap the "done" button twice (which is really easy to do on a phone), your habit gets logged <strong>twice for the same day</strong>. This messes up your streaks and scores. You might also find it impossible to "un-check" the habit later because only one of the two entries gets removed.</p>
-    </div>
-  </div>
-<div class="bug-card severity-critical" data-severity="critical">
-    <div class="bug-header">
-      <span class="bug-id">C-004</span>
-      <span class="bug-title">Exposed Credentials in Git — .env Files Not Gitignored</span>
-      <span class="badge badge-severity-critical">Critical</span>
-      <span class="badge badge-category">Security</span>
-    </div>
-    <div class="bug-file"><span>.env.local</span>, <span>.env.production</span></div>
-    <div class="bug-description">
-      <strong>What happens:</strong> The <code>.env.local</code> and <code>.env.production</code> files contain Supabase URL and anon key, and these files are <strong>not listed in .gitignore</strong>.<br><br>
-      <strong>Why it's bad:</strong> These files get committed to the Git repository. While the Supabase <code>anon</code> key is designed to be public, having env files in the repo is dangerous because someone could later add private keys (service role key, API secrets) to these files and accidentally push them to a public repo.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>Your <strong>app's secret keys are saved in a way that could accidentally become public</strong>. If this code is ever shared or made open-source, someone could potentially access your database. It's like leaving your house key taped to the front door — it might be fine now, but it's a disaster waiting to happen.</p>
-    </div>
-  </div>
-<div class="bug-card severity-critical" data-severity="critical">
-    <div class="bug-header">
-      <span class="bug-id">C-005</span>
-      <span class="bug-title">Fuel Log Accepts Invalid Odometer — Causes Negative Mileage</span>
-      <span class="badge badge-severity-critical">Critical</span>
-      <span class="badge badge-category">Data Handling</span>
-    </div>
-    <div class="bug-file">app/vehicles/<span>page.tsx</span> — Lines ~300-350</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> The fuel log form lets you enter any odometer reading without checking if it's greater than the previous reading.<br><br>
-      <strong>Why it's bad:</strong> If you accidentally type a lower number than your last reading, the distance calculation goes negative. This produces <strong>negative fuel efficiency</strong> values (e.g., "-15 km/l") that display in the dashboard and corrupt all the vehicle statistics permanently.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If you accidentally type your odometer reading wrong (say you type 4500 instead of 45000), your vehicle dashboard starts showing <strong>crazy numbers like "-15 km per litre"</strong>. Once this bad data is saved, it <strong>permanently messes up all your fuel efficiency history and stats</strong>. There's no easy way to know which entry caused it.</p>
-    </div>
-  </div>
-<div class="bug-card severity-critical" data-severity="critical">
-    <div class="bug-header">
-      <span class="bug-id">C-006</span>
-      <span class="bug-title">Division by Zero — "Infinity km/l" Shown in Vehicle Dashboard</span>
-      <span class="badge badge-severity-critical">Critical</span>
-      <span class="badge badge-category">Logic</span>
-    </div>
-    <div class="bug-file">components/<span>VehicleDashboard.tsx</span> — Lines ~68-72</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> When calculating fuel efficiency, the code divides distance by fuel used: <code>distance / fuelUsed</code>. There's no guard against <code>fuelUsed</code> being zero.<br><br>
-      <strong>Why it's bad:</strong> If someone logs a trip with 0 fuel (electric vehicle, data entry mistake, or a free fuel log), the result is JavaScript <code>Infinity</code>. The dashboard literally displays <strong>"Infinity km/l"</strong> as the fuel efficiency, which looks broken and unprofessional.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If you leave the fuel field empty or type 0 by mistake, your vehicle dashboard shows <strong>"Infinity km/l"</strong> — it literally says the word "Infinity" on screen. It looks like the app is broken and makes the whole fuel tracking feature feel unreliable.</p>
-    </div>
-  </div>
 <div class="bug-card severity-critical" data-severity="critical">
     <div class="bug-header">
       <span class="bug-id">C-007</span>
@@ -1129,43 +1016,21 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
       <p>If you quickly switch between pages (like going to Tasks and coming right back to the Dashboard), you might see <strong>old, outdated information</strong> that doesn't match what you just changed. The app uses more and more memory over time, which can make your <strong>browser or phone slow down</strong> the longer you use it.</p>
     </div>
   </div>
-<div class="bug-card severity-critical" data-severity="critical">
+  <div class="bug-card severity-critical" data-severity="critical">
     <div class="bug-header">
-      <span class="bug-id">C-008</span>
-      <span class="bug-title">SearchableSelect is NOT Searchable — Input is ReadOnly</span>
+      <span class="bug-id">C-010</span>
+      <span class="bug-title">Architectural Monolith Bug (Report Duplication)</span>
       <span class="badge badge-severity-critical">Critical</span>
-      <span class="badge badge-category">UI / Logic</span>
+      <span class="badge badge-category">Architecture</span>
     </div>
-    <div class="bug-file">components/<span>SearchableSelect.tsx</span> — Lines 58-76</div>
+    <div class="bug-file">app/reports/*/<span>page.tsx</span> — All 8 modules</div>
     <div class="bug-description">
-      <strong>What happens:</strong> The search input has <code>readOnly={!isManualEntry}</code>. Since <code>isManualEntry</code> defaults to <code>false</code>, the input is <strong>read-only by default</strong> — users literally cannot type to search.<br><br>
-      <strong>Why it's bad:</strong> The entire point of a "Searchable Select" is that you can type to filter options. But this component forces users to click "Add New" just to be able to type, completely defeating its purpose. With many options, users have to manually scroll through the entire list instead of searching.
+      <strong>What happens:</strong> 8 different report pages (Finance, Pets, Skills, Habits, Vehicles, etc.) are currently identical monoliths (~3400 lines each) processing the exact same consolidated application data instead of rendering module-specific bounded context data.<br><br>
+      <strong>Why it's bad:</strong> Loading <code>/reports/finance</code> processes vehicle usage heatmaps, habit graphs, and workout plateaus redundantly. This causes severe runtime performance issues, UI blocking, memory bloat, and defeats Next.js code splitting. It also means any bug fix has to be copied 8 times.
     </div>
     <div class="user-impact">
       <span class="user-impact-label">For the user</span>
-      <p>When you see a dropdown that looks like you should be able to type and search in it — <strong>you can't</strong>. Clicking on it does nothing. You have to scroll through a long list manually to find what you need. Imagine searching through 50+ expense categories one by one instead of just typing "food".</p>
-    </div>
-    <div class="code-snippet"><span class="comment">// ❌ readOnly by default — breaks core search functionality</span>
-&lt;input 
-  readOnly={!isManualEntry} <span class="danger">// Users CAN'T TYPE to search!</span>
-  onClick={() =&gt; { <span class="keyword">if</span> (!isManualEntry) setIsOpen(<span class="keyword">true</span>); }}
-/&gt;</div>
-  </div>
-<div class="bug-card severity-critical" data-severity="critical">
-    <div class="bug-header">
-      <span class="bug-id">C-009</span>
-      <span class="bug-title">Habit Streak Ignores "Today" — Always Starts From Yesterday</span>
-      <span class="badge badge-severity-critical">Critical</span>
-      <span class="badge badge-category">Logic</span>
-    </div>
-    <div class="bug-file">lib/<span>habit-scoring.ts</span> — Lines 10-43</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> The <code>getStreak()</code> function counts consecutive completed days starting from <strong>yesterday</strong>, not today. Also, it subtracts 86400000 ms (24 hours) per day, which is wrong during Daylight Saving Time changes.<br><br>
-      <strong>Why it's bad:</strong> If a user just completed a habit <em>today</em> for the first time, their streak shows as <strong>0</strong> instead of 1. This is discouraging and incorrect. During DST transitions, the streak could also skip or double-count a day.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>You just started a new habit today and marked it done — but your streak still says <strong>"0 days"</strong>. That's discouraging! It makes you feel like the app isn't tracking your effort. It'll only show "1 day" tomorrow if you do it again. Your work today is literally invisible.</p>
+      <p>When you click on the "Finance" report, your phone freezes for 2 seconds because it's secretly calculating your vehicle's odometer readings and your gym workout plateaus behind the scenes before showing you your money.</p>
     </div>
   </div>
           </div>
@@ -1175,23 +1040,6 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
         <div class="category-section" id="section-high">
           <h2 class="category-title">🟠 High Severity <span>14 Bugs</span></h2>
           <div class="grid-layout">
-            <div class="bug-card severity-high" data-severity="high">
-    <div class="bug-header">
-      <span class="bug-id">H-001</span>
-      <span class="bug-title">Sequential Database Queries — Page Loads 5-10× Slower Than Needed</span>
-      <span class="badge badge-severity-high">High</span>
-      <span class="badge badge-category">Performance</span>
-    </div>
-    <div class="bug-file">app/<span>page.tsx</span> — Lines ~80-200</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> The main dashboard makes 10+ Supabase queries one after another using <code>await</code> in sequence. Each query waits for the previous one to finish before starting.<br><br>
-      <strong>Why it's bad:</strong> If each query takes ~200ms, the total load time is ~2 seconds (10 × 200ms). Using <code>Promise.all()</code> would run them all at once, bringing the load time down to just ~200ms total. Users are staring at a loading spinner 5-10× longer than necessary.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>Every time you open the app or go to the dashboard, you <strong>wait 2-3 seconds staring at a loading spinner</strong> when it could load almost instantly. This happens every single time. If your internet is slow, it could be 5+ seconds of waiting.</p>
-    </div>
-  </div>
 <div class="bug-card severity-high" data-severity="high">
     <div class="bug-header">
       <span class="bug-id">H-002</span>
@@ -1207,24 +1055,6 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
     <div class="user-impact">
       <span class="user-impact-label">For the user</span>
       <p>The app takes <strong>extra time to start up on your phone</strong>, and you might notice the page loads but buttons don't respond for a second or two. Older phones or phones with lots of apps open will feel this delay even more.</p>
-    </div>
-  </div>
-<div class="bug-card severity-high" data-severity="high">
-    <div class="bug-header">
-      <span class="bug-id">H-003</span>
-      <span class="bug-title">Trip Distance Can Be Negative — No Start/End Validation</span>
-      <span class="badge badge-severity-high">High</span>
-      <span class="badge badge-category">Logic</span>
-    </div>
-    <div class="bug-file">app/vehicles/<span>page.tsx</span> — Lines ~250-280</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> Trip distance is calculated as <code>endOdometer - startOdometer</code>. There's no check that end > start.<br><br>
-      <strong>Why it's bad:</strong> If numbers are entered wrong, the trip shows a negative distance (e.g., "-150 km"). This negative value then cascades into fuel efficiency and total distance statistics, making them all incorrect.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If you accidentally swap the start and end odometer numbers, the app shows you drove <strong>"-150 km"</strong> — a negative distance. It doesn't warn you about the mistake, and this wrong number <strong>messes up your total distance and fuel reports going forward</strong>.</p>
-    </div>
   </div>
 <div class="bug-card severity-high" data-severity="high">
     <div class="bug-header">
@@ -1291,24 +1121,7 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
     </div>
     <div class="user-impact">
       <span class="user-impact-label">For the user</span>
-      <p>Every time you open the app, you see a <strong>blank white screen for 2-3 seconds</strong>. You wonder, "Did it crash? Should I refresh?" Modern apps like Instagram or Twitter show grey placeholder shapes while loading — this app just shows nothing.</p>
-    </div>
-  </div>
-<div class="bug-card severity-high" data-severity="high">
-    <div class="bug-header">
-      <span class="bug-id">H-008</span>
-      <span class="bug-title">Env Variables Used Without Validation — Crash on Missing Config</span>
-      <span class="badge badge-severity-high">High</span>
-      <span class="badge badge-category">Data Handling</span>
-    </div>
-    <div class="bug-file">lib/<span>supabase.ts</span> — Lines 3-4</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> The code uses TypeScript non-null assertions (<code>!</code>) on <code>process.env.NEXT_PUBLIC_SUPABASE_URL</code> and <code>process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY</code>.<br><br>
-      <strong>Why it's bad:</strong> If someone clones the repo and forgets to set up their <code>.env</code> file, or if this runs in a CI/CD pipeline without env vars, the app crashes with a cryptic Supabase error instead of a clear "Missing NEXT_PUBLIC_SUPABASE_URL environment variable" message.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If you're a developer trying to set up this project, and you forget one setup step, the <strong>app crashes with a confusing error that doesn't tell you what went wrong</strong>. You'd waste time debugging when a simple "Hey, you forgot to add your database URL" message would solve it in seconds.</p>
+      <p>Every time you open the app, you see a <strong>blank white screen for 2-3 seconds</strong>. You wonder, "Did it crash? Should I refresh?" Modern apps show placeholder shapes while loading — this app just shows nothing.</p>
     </div>
   </div>
 <div class="bug-card severity-high" data-severity="high">
@@ -1326,23 +1139,6 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
     <div class="user-impact">
       <span class="user-impact-label">For the user</span>
       <p>If login is ever added, you'd <strong>get randomly logged out every time you navigate to a new page</strong>. You'd have to sign in again and again. It would make the app basically unusable with user accounts.</p>
-    </div>
-  </div>
-<div class="bug-card severity-high" data-severity="high">
-    <div class="bug-header">
-      <span class="bug-id">H-010</span>
-      <span class="bug-title">VehicleDashboard — 500+ Lines Without Memoization</span>
-      <span class="badge badge-severity-high">High</span>
-      <span class="badge badge-category">Performance</span>
-    </div>
-    <div class="bug-file">components/<span>VehicleDashboard.tsx</span> — 19KB entire file</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> The VehicleDashboard component is ~500 lines handling multiple tabs (dashboard, trips, fuel, service, insurance). There's no <code>useMemo</code> or <code>useCallback</code> for expensive operations.<br><br>
-      <strong>Why it's bad:</strong> Every keystroke in a form field on any tab re-renders the entire 500-line component, including all the other tabs that aren't visible. On lower-end devices, this causes input lag when typing in forms.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>When you're filling out a fuel log or service record on the vehicles page, <strong>typing feels laggy</strong>. Each letter you type takes a moment to appear on screen, especially on older phones. It feels like the app is freezing after each keystroke.</p>
     </div>
   </div>
 <div class="bug-card severity-high" data-severity="high">
@@ -1379,40 +1175,6 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
       <p>If you accidentally hit "Add" without typing a task name, a <strong>blank task appears in your list</strong>. You'll also see it marked as "overdue" if you set a past date. Your task list gets cluttered with empty or confusing entries you didn't mean to create.</p>
     </div>
   </div>
-<div class="bug-card severity-high" data-severity="high">
-    <div class="bug-header">
-      <span class="bug-id">H-013</span>
-      <span class="bug-title">Workout — No Validation on Reps and Weight</span>
-      <span class="badge badge-severity-high">High</span>
-      <span class="badge badge-category">Data Handling</span>
-    </div>
-    <div class="bug-file">app/workout/<span>page.tsx</span> — Lines ~150-190</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> The workout form accepts any value for reps and weight — including 0, negative numbers, and absurdly large numbers.<br><br>
-      <strong>Why it's bad:</strong> A user could accidentally log -50 reps or 99,999 kg. These values corrupt workout statistics, personal records, and progress charts. A simple <code>min="1"</code> and <code>max</code> on inputs would prevent this.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If you accidentally type "0" or "-5" for your reps, the app happily saves it. Now your workout stats and <strong>progress charts are ruined</strong> — they'll show you did negative exercises. Your personal bests and history become unreliable.</p>
-    </div>
-  </div>
-<div class="bug-card severity-high" data-severity="high">
-    <div class="bug-header">
-      <span class="bug-id">H-014</span>
-      <span class="bug-title">Expense Amount — Accepts Negative Values</span>
-      <span class="badge badge-severity-high">High</span>
-      <span class="badge badge-category">Data Handling</span>
-    </div>
-    <div class="bug-file">app/expenses/<span>page.tsx</span> — Lines ~100-130</div>
-    <div class="bug-description">
-      <strong>What happens:</strong> The expense amount input field doesn't prevent negative numbers.<br><br>
-      <strong>Why it's bad:</strong> Negative expenses mess up monthly totals, category summaries, and budget calculations. The reports page would show incorrect spending data, potentially showing that you "saved" money in a category when you actually spent.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If you accidentally type a minus sign before your expense amount, the app saves a <strong>negative expense</strong>. This makes your monthly spending report show <strong>wrong totals</strong> — it might even show you spent less money than you actually did.</p>
-    </div>
-  </div>
           </div>
         </div>
 
@@ -1421,70 +1183,6 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
           <h2 class="category-title">🟡 Medium Severity <span>31 Bugs</span></h2>
           <div class="grid-layout">
             <div class="bug-card severity-medium" data-severity="medium">
-    <div class="bug-header">
-      <span class="bug-id">M-001</span>
-      <span class="bug-title">Modal Doesn't Trap Focus — Tab Key Escapes to Background</span>
-      <span class="badge badge-severity-medium">Medium</span>
-      <span class="badge badge-category">UI / Accessibility</span>
-    </div>
-    <div class="bug-file">components/<span>TaskCompletionModal.tsx</span></div>
-    <div class="bug-description">
-      When the task completion modal is open, pressing Tab lets you focus on elements <em>behind</em> the modal overlay. Users can accidentally interact with the page behind the modal, triggering unintended actions. Screen reader users have no way to know they've left the modal context.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>When a popup appears and you press Tab on your keyboard, <strong>your focus jumps to buttons hidden behind the popup</strong>. You might accidentally click something you can't see. If you use accessibility tools, it's even more confusing because the app doesn't tell you you've left the popup.</p>
-    </div>
-  </div>
-<div class="bug-card severity-medium" data-severity="medium">
-    <div class="bug-header">
-      <span class="bug-id">M-002</span>
-      <span class="bug-title">Modal Can't Be Closed with Escape Key</span>
-      <span class="badge badge-severity-medium">Medium</span>
-      <span class="badge badge-category">UI / UX</span>
-    </div>
-    <div class="bug-file">components/<span>TaskCompletionModal.tsx</span></div>
-    <div class="bug-description">
-      Users expect to press <strong>Escape</strong> to close any modal — it's a universal UI pattern. This modal only closes via the X button or clicking the overlay. This is especially frustrating for keyboard-heavy users who have to reach for the mouse just to dismiss a modal.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>When a popup appears, pressing <strong>Escape doesn't close it</strong> like it does in every other app. You have to find and click the tiny X button or click outside the popup. It feels clunky and annoying, especially if you're used to just hitting Escape.</p>
-    </div>
-  </div>
-<div class="bug-card severity-medium" data-severity="medium">
-    <div class="bug-header">
-      <span class="bug-id">M-003</span>
-      <span class="bug-title">Modal Doesn't Lock Body Scroll — Page Scrolls Behind Overlay</span>
-      <span class="badge badge-severity-medium">Medium</span>
-      <span class="badge badge-category">UI</span>
-    </div>
-    <div class="bug-file">components/<span>TaskCompletionModal.tsx</span></div>
-    <div class="bug-description">
-      When the modal is open, you can still scroll the page behind it. The modal appears to "float" while the content underneath moves, which is disorienting. The body should have <code>overflow: hidden</code> applied when any modal is open.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>When a popup is showing, you can <strong>still scroll the page behind it</strong>. The popup stays still while everything behind it moves — it's disorienting and looks broken. On phones, an accidental swipe scrolls the whole page while you're trying to use the popup.</p>
-    </div>
-  </div>
-<div class="bug-card severity-medium" data-severity="medium">
-    <div class="bug-header">
-      <span class="bug-id">M-004</span>
-      <span class="bug-title">Searchable Select — No Keyboard Navigation</span>
-      <span class="badge badge-severity-medium">Medium</span>
-      <span class="badge badge-category">Accessibility</span>
-    </div>
-    <div class="bug-file">components/<span>SearchableSelect.tsx</span></div>
-    <div class="bug-description">
-      The searchable dropdown has zero keyboard support. You can't use arrow keys to navigate options, Enter to select, or Escape to close. Anyone using keyboard navigation (or a screen reader) is completely locked out of this component. This violates WCAG accessibility guidelines.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If you prefer using your keyboard (or you have to, for accessibility reasons), <strong>you simply can't use these dropdowns at all</strong>. Arrow keys, Enter, Escape — none of them work. You're forced to use a mouse, which not everyone can do.</p>
-    </div>
-  </div>
-<div class="bug-card severity-medium" data-severity="medium">
     <div class="bug-header">
       <span class="bug-id">M-005</span>
       <span class="bug-title">Dropdown Outside-Click Detection Can Fail</span>
@@ -1562,23 +1260,6 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
     <div class="user-impact">
       <span class="user-impact-label">For the user</span>
       <p>On smaller screens, some <strong>navigation tabs are cut off or hidden</strong> — you literally can't reach certain sections of the app. There's no way to scroll the tabs sideways. Features you need might be invisible.</p>
-    </div>
-  </div>
-<div class="bug-card severity-medium" data-severity="medium">
-    <div class="bug-header">
-      <span class="bug-id">M-010</span>
-      <span class="bug-title">No Error Boundary — Any Component Crash = White Screen</span>
-      <span class="badge badge-severity-medium">Medium</span>
-      <span class="badge badge-category">Logic / UI</span>
-    </div>
-    <div class="bug-file">components/<span>PageWrapper.tsx</span></div>
-    <div class="bug-description">
-      There's no React Error Boundary wrapping page content. If any child component throws an error during rendering (which can happen due to many of the bugs listed above), the <strong>entire app crashes to a white screen</strong> with no recovery option. Users have to manually refresh the page.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If anything goes wrong internally, the <strong>entire app just goes white</strong> — no error message, no "go back" button, nothing. You're stuck staring at a blank page and have to manually refresh. You lose whatever you were doing.</p>
-    </div>
   </div>
 <div class="bug-card severity-medium" data-severity="medium">
     <div class="bug-header">
@@ -1870,28 +1551,6 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
   </div>
 <div class="bug-card severity-medium" data-severity="medium">
     <div class="bug-header">
-      <span class="bug-id">M-029</span>
-      <span class="bug-title">Sidebar Overlay — Inline Component Kills Transitions</span>
-      <span class="badge badge-severity-medium">Medium</span>
-      <span class="badge badge-category">UI / React</span>
-    </div>
-    <div class="bug-file">components/<span>sidebar.tsx</span> — Lines 23-30</div>
-    <div class="bug-description">
-      The <code>DrawerOverlay</code> component is defined <strong>inside</strong> the <code>Sidebar</code>'s render function. React treats it as a brand-new component type on every render, so it unmounts and remounts the overlay each time instead of updating it. This means the fade-in/fade-out CSS transition (<code>transition-opacity duration-300</code>) <strong>never actually plays</strong> — the overlay just pops in and out abruptly.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>When you open or close the sidebar menu, the <strong>dark overlay background just pops in and out suddenly</strong> instead of smoothly fading. It feels choppy and cheap. Every other app has smooth transitions for their side menus — this one just blinks.</p>
-    </div>
-    <div class="code-snippet"><span class="comment">// ❌ Defined INSIDE render — React recreates it every time</span>
-<span class="keyword">const</span> DrawerOverlay = () =&gt; (
-  &lt;div className={`transition-opacity duration-300 ${
-    isOpen ? <span class="string">"opacity-100"</span> : <span class="string">"opacity-0"</span>
-  }`} /&gt;
-); <span class="danger">// Transition NEVER plays — component is recreated each render</span></div>
-  </div>
-<div class="bug-card severity-medium" data-severity="medium">
-    <div class="bug-header">
       <span class="bug-id">M-030</span>
       <span class="bug-title">SearchableSelect onBlur — Race Condition With 200ms Timeout</span>
       <span class="badge badge-severity-medium">Medium</span>
@@ -1922,30 +1581,12 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
       <p>If you quickly switch between pages, the app <strong>gradually uses more and more memory</strong> in the background. Over a long session, this can make your browser tab or phone feel slower and slower until you refresh the page.</p>
     </div>
   </div>
-          </div>
-        </div>
 
-        <!-- Low Category Section -->
-        <div class="category-section" id="section-low">
-          <h2 class="category-title">🔵 Low Severity <span>12 Bugs</span></h2>
-          <div class="grid-layout">
-            <div class="bug-card severity-low" data-severity="low">
-    <div class="bug-header">
-      <span class="bug-id">L-001</span>
-      <span class="bug-title">Select Component — No Visual Disabled State</span>
-      <span class="badge badge-severity-low">Low</span>
-      <span class="badge badge-category">UI</span>
-    </div>
-    <div class="bug-file">components/<span>Select.tsx</span></div>
-    <div class="bug-description">
-      The <code>Select</code> component accepts a <code>disabled</code> prop but doesn't visually change when disabled. There's no reduced opacity, no changed cursor, and no visual indication. Users can't tell if a dropdown is interactive or locked.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>A dropdown that's supposed to be <strong>locked/greyed out looks exactly the same as a normal one</strong>. You click it, nothing happens, and you don't understand why. There's no visual hint that it's disabled.</p>
-    </div>
-  </div>
-<div class="bug-card severity-low" data-severity="low">
+  <!-- Low Category Section -->
+  <div class="category-section" id="section-low">
+    <h2 class="category-title">🔵 Low Severity <span>10 Bugs</span></h2>
+    <div class="grid-layout">
+      <div class="bug-card severity-low" data-severity="low">
     <div class="bug-header">
       <span class="bug-id">L-002</span>
       <span class="bug-title">Score Functions Don't Handle NaN/Negative Values</span>
@@ -1975,22 +1616,6 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
     <div class="user-impact">
       <span class="user-impact-label">For the user</span>
       <p>A habit you <strong>just created today shows "100% consistency"</strong> even though you haven't done anything yet. It's misleading — you haven't proven consistency, you just haven't had the chance to miss it yet.</p>
-    </div>
-  </div>
-<div class="bug-card severity-low" data-severity="low">
-    <div class="bug-header">
-      <span class="bug-id">L-004</span>
-      <span class="bug-title">Pet Weight Accepts Zero/Negative Values</span>
-      <span class="badge badge-severity-low">Low</span>
-      <span class="badge badge-category">Data Handling</span>
-    </div>
-    <div class="bug-file">app/pets/<span>page.tsx</span> — Lines ~80-120</div>
-    <div class="bug-description">
-      The pet form lets you enter 0 or negative weight/age. A pet weighing "-5 kg" would be saved and displayed in the UI. Simple <code>min="0.1"</code> on the input would prevent this.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>If you accidentally type a negative number for your pet's weight, the app saves it — your <strong>pet card shows "-5 kg"</strong>, which is obviously wrong. The app should prevent you from entering impossible values.</p>
     </div>
   </div>
 <div class="bug-card severity-low" data-severity="low">
@@ -2071,22 +1696,6 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
     <div class="user-impact">
       <span class="user-impact-label">For the user</span>
       <p>Images load at <strong>full size even on your phone</strong>, using more mobile data and taking longer to appear. A picture that could be 50KB is instead 500KB, making pages slower — especially noticeable if you're on a slower internet connection.</p>
-    </div>
-  </div>
-<div class="bug-card severity-low" data-severity="low">
-    <div class="bug-header">
-      <span class="bug-id">L-010</span>
-      <span class="bug-title">Mystery File "n" in Project Root</span>
-      <span class="badge badge-severity-low">Low</span>
-      <span class="badge badge-category">Cleanup</span>
-    </div>
-    <div class="bug-file"><span>n</span> — 52KB file in project root</div>
-    <div class="bug-description">
-      There's a 52KB file simply named <code>n</code> in the project root. It appears to be an npm install log that was accidentally dumped as a file (perhaps from a shell redirect like <code>npm install 2>&1 | tee n</code>). It should be deleted and added to <code>.gitignore</code>.
-    </div>
-    <div class="user-impact">
-      <span class="user-impact-label">For the user</span>
-      <p>This doesn't affect you directly, but it <strong>adds unnecessary file size to the project</strong>. If you're a developer working on this code, it's confusing clutter — a random file named "n" with no explanation.</p>
     </div>
   </div>
 <div class="bug-card severity-low" data-severity="low">
@@ -2990,7 +2599,7 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
         </div>
       </div>
 <div class="category-section" id="section-newmodules">
-        <h2 class="category-title">🌐 New Modules <span>9 Features</span></h2>
+        <h2 class="category-title">🌐 New Modules <span>13 Features</span></h2>
         <div class="features-grid">
           
           <div class="feature-card">
@@ -3081,6 +2690,46 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
             </div>
             <h3 class="feature-title">Daily Reflection Journal</h3>
             <p class="feature-description">Log how was your day, mood of the day, 3 good things, 3 bad things, and 3 things you are grateful for via a daily entry.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.11</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Health & Medical Vault (Bio-Marker Tracking)</h3>
+            <p class="feature-description">A secure vault for logging medical history, blood test results, vaccines, and doctor appointments.</p>
+            <ul class="feature-bullets">
+              <li>Log and graph blood test results over time (e.g., Vitamin D, cholesterol).</li>
+              <li>Medication and supplement schedule tracker with refill reminders.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.12</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">"Second Brain" Knowledge Base (Zettelkasten)</h3>
+            <p class="feature-description">A personal, interconnected wiki for your thoughts, saved articles, and book highlights.</p>
+            <ul class="feature-bullets">
+              <li>Create Idea Cards and use bidirectional linking across modules.</li>
+              <li>"Surprise Me" button surfaces old notes to spark creativity.</li>
+            </ul>
+          </div>
+
+          <div class="feature-card">
+            <div class="card-header">
+              <span class="feature-id">Module 12.13</span>
+              <span class="feature-tag">New Module</span>
+            </div>
+            <h3 class="feature-title">Life RPG (Gamification Engine)</h3>
+            <p class="feature-description">Turn your daily life and habits into a role-playing game with custom stats and rewards.</p>
+            <ul class="feature-bullets">
+              <li>Stat Leveling: Earn XP (Strength, Wisdom, Resource) based on habit completions.</li>
+              <li>Reward Store: Spend your earned XP on real-life rewards you define.</li>
+              <li>Boss Battles: Set giant monthly goals to defeat by making good choices.</li>
+            </ul>
           </div>
 
         </div>
@@ -3269,7 +2918,7 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
   <!-- Footer -->
   <footer>
     <p>Consolidated Master Report • Resiliessance Life OS Platform Console</p>
-    <p style="margin-top: 4px; font-size: 11px; opacity: 0.7;">66 Bugs Audited • 88 Planned Upgrades & Enhancements Registered</p>
+    <p style="margin-top: 4px; font-size: 11px; opacity: 0.7;">69 Bugs Audited • 88 Planned Upgrades & Enhancements Registered</p>
   </footer>
 
   <script>
@@ -3309,7 +2958,86 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
       const savedTheme = localStorage.getItem("resiliessance_ui_theme") || "nordic";
       changeTheme(savedTheme);
       renderSidebar();
+      updateDynamicMetrics();
     });
+
+    // Dynamically calculate and update bug counts for summary cards and breakdown chips
+    function updateDynamicMetrics() {
+      const cards = document.querySelectorAll('.bug-card');
+      const counts = {
+        critical: 0,
+        high: 0,
+        medium: 0,
+        low: 0,
+        categories: {
+          logic: 0,
+          uiux: 0,
+          data: 0,
+          performance: 0,
+          async: 0,
+          security: 0,
+          other: 0
+        }
+      };
+
+      cards.forEach(card => {
+        const severity = card.dataset.severity;
+        if (severity in counts) counts[severity]++;
+
+        const categoryBadge = card.querySelector('.badge-category');
+        const cat = categoryBadge ? categoryBadge.innerText.toLowerCase() : '';
+
+        if (cat.includes('logic')) {
+          counts.categories.logic++;
+        } else if (cat.includes('ui') || cat.includes('ux')) {
+          counts.categories.uiux++;
+        } else if (cat.includes('data')) {
+          counts.categories.data++;
+        } else if (cat.includes('performance')) {
+          counts.categories.performance++;
+        } else if (cat.includes('async') || cat.includes('state')) {
+          counts.categories.async++;
+        } else if (cat.includes('security')) {
+          counts.categories.security++;
+        } else {
+          counts.categories.other++;
+        }
+      });
+
+      // Update Summary Cards
+      const critEl = document.querySelector('.summary-card.critical .summary-number');
+      const highEl = document.querySelector('.summary-card.high .summary-number');
+      const medEl = document.querySelector('.summary-card.medium .summary-number');
+      const lowEl = document.querySelector('.summary-card.low .summary-number');
+
+      if (critEl) critEl.innerText = counts.critical;
+      if (highEl) highEl.innerText = counts.high;
+      if (medEl) medEl.innerText = counts.medium;
+      if (lowEl) lowEl.innerText = counts.low;
+
+      // Update Section Header Subtitles
+      const secCrit = document.querySelector('#section-critical .category-title span');
+      const secHigh = document.querySelector('#section-high .category-title span');
+      const secMed = document.querySelector('#section-medium .category-title span');
+      const secLow = document.querySelector('#section-low .category-title span');
+
+      if (secCrit) secCrit.innerText = `${counts.critical} Bugs`;
+      if (secHigh) secHigh.innerText = `${counts.high} Bugs`;
+      if (secMed) secMed.innerText = `${counts.medium} Bugs`;
+      if (secLow) secLow.innerText = `${counts.low} Bugs`;
+
+      // Update Breakdown Chips
+      const chips = document.querySelectorAll('.breakdown-chip');
+      if (chips.length >= 8) {
+        chips[1].innerHTML = `<span class="dot" style="background-color: #ef4444;"></span> Logic: ${counts.categories.logic}`;
+        chips[2].innerHTML = `<span class="dot" style="background-color: #3b82f6;"></span> UI / UX: ${counts.categories.uiux}`;
+        chips[3].innerHTML = `<span class="dot" style="background-color: #f59e0b;"></span> Data Handling: ${counts.categories.data}`;
+        chips[4].innerHTML = `<span class="dot" style="background-color: #10b981;"></span> Performance: ${counts.categories.performance}`;
+        chips[5].innerHTML = `<span class="dot" style="background-color: #8b5cf6;"></span> Async / State: ${counts.categories.async}`;
+        chips[6].innerHTML = `<span class="dot" style="background-color: #ec4899;"></span> Security: ${counts.categories.security}`;
+        chips[7].innerHTML = `<span class="dot" style="background-color: #6b7280;"></span> Config / Other: ${counts.categories.other}`;
+      }
+    }
 
     // Theme Switcher Functions
     function toggleThemeDropdown() {
@@ -3401,27 +3129,34 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
       }
     }
 
-    // Active Sidebar Highlight based on Scroll Position
+    // Active Sidebar Highlight based on Scroll Position (Throttled via requestAnimationFrame)
+    let isTicking = false;
     window.addEventListener('scroll', () => {
-      const prefix = 'section-';
-      const sections = document.querySelectorAll('.category-section');
-      const navItems = document.querySelectorAll('.nav-item');
-      let currentSectionId = '';
+      if (!isTicking) {
+        window.requestAnimationFrame(() => {
+          const prefix = 'section-';
+          const sections = document.querySelectorAll('.category-section');
+          const navItems = document.querySelectorAll('.nav-item');
+          let currentSectionId = '';
 
-      sections.forEach(sec => {
-        const top = sec.getBoundingClientRect().top;
-        if (top <= 120) {
-          currentSectionId = sec.id.replace(prefix, '');
-        }
-      });
+          sections.forEach(sec => {
+            const top = sec.getBoundingClientRect().top;
+            if (top <= 120) {
+              currentSectionId = sec.id.replace(prefix, '');
+            }
+          });
 
-      if (currentSectionId) {
-        navItems.forEach(item => {
-          item.classList.remove('active');
-          if (item.getAttribute('onclick').includes(currentSectionId)) {
-            item.classList.add('active');
+          if (currentSectionId) {
+            navItems.forEach(item => {
+              item.classList.remove('active');
+              if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(currentSectionId)) {
+                item.classList.add('active');
+              }
+            });
           }
+          isTicking = false;
         });
+        isTicking = true;
       }
     });
 
@@ -3433,19 +3168,26 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
       buttons.forEach(btn => btn.classList.remove('active'));
       
       const indexMap = { 'all': 0, 'critical': 1, 'high': 2, 'medium': 3, 'low': 4 };
-      buttons[indexMap[severity]].classList.add('active');
+      if (severity in indexMap) {
+        buttons[indexMap[severity]].classList.add('active');
+      }
       
       applyBugFilters();
     }
 
     // Bug Category Chip Filtering logic
-    function filterBugCategory(category) {
+    function filterBugCategory(category, evt) {
       activeBugCategory = category;
       
       const chips = document.querySelectorAll('.breakdown-chip');
       chips.forEach(chip => chip.classList.remove('active'));
       
-      event.currentTarget.classList.add('active');
+      if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+      } else {
+        const targetChip = Array.from(chips).find(c => c.innerText.toLowerCase().includes(category.toLowerCase()));
+        if (targetChip) targetChip.classList.add('active');
+      }
       
       applyBugFilters();
     }
@@ -3458,9 +3200,9 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
       
       cards.forEach(card => {
         const severity = card.dataset.severity;
-        const title = card.querySelector('.bug-title').innerText.toLowerCase();
-        const desc = card.querySelector('.bug-description').innerText.toLowerCase();
-        const file = card.querySelector('.bug-file').innerText.toLowerCase();
+        const title = card.querySelector('.bug-title') ? card.querySelector('.bug-title').innerText.toLowerCase() : '';
+        const desc = card.querySelector('.bug-description') ? card.querySelector('.bug-description').innerText.toLowerCase() : '';
+        const file = card.querySelector('.bug-file') ? card.querySelector('.bug-file').innerText.toLowerCase() : '';
         const categoryBadge = card.querySelector('.badge-category');
         const category = categoryBadge ? categoryBadge.innerText : '';
         
@@ -3488,7 +3230,14 @@ tasks.filter(...)  <span class="danger">// 💥 CRASH if query failed — tasks 
           } else if (cleanCategory === 'async / state') {
             matchesCategory = cleanCardCategory.includes('async') || cleanCardCategory.includes('state');
           } else if (cleanCategory === 'config / other') {
-            matchesCategory = cleanCardCategory.includes('config') || cleanCardCategory.includes('cleanup') || cleanCardCategory.includes('maintenance') || cleanCardCategory.includes('seo') || cleanCardCategory.includes('internationalization');
+            matchesCategory = !cleanCardCategory.includes('logic') &&
+                              !cleanCardCategory.includes('ui') &&
+                              !cleanCardCategory.includes('ux') &&
+                              !cleanCardCategory.includes('data') &&
+                              !cleanCardCategory.includes('performance') &&
+                              !cleanCardCategory.includes('async') &&
+                              !cleanCardCategory.includes('state') &&
+                              !cleanCardCategory.includes('security');
           } else {
             matchesCategory = cleanCardCategory.includes(cleanCategory);
           }

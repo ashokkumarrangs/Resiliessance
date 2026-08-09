@@ -36,7 +36,10 @@ function getVehicleIcon(type: string) {
 function getInsuranceStatus(expiry: string | null) {
   const now = new Date();
   if (!expiry) return { color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border', icon: ShieldAlert, label: 'No Data', days: null, pill: 'bg-muted text-muted-foreground' };
-  const days = differenceInDays(new Date(expiry), now);
+  const dObj = new Date(expiry);
+  if (isNaN(dObj.getTime())) return { color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border', icon: ShieldAlert, label: 'Invalid Date', days: null, pill: 'bg-muted text-muted-foreground' };
+  const days = differenceInDays(dObj, now);
+  if (isNaN(days)) return { color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border', icon: ShieldAlert, label: 'Invalid Date', days: null, pill: 'bg-muted text-muted-foreground' };
   if (days < 0) return { color: 'text-destructive', bg: 'bg-destructive/10', border: 'border-destructive/20', icon: ShieldX, label: 'Expired', days, pill: 'bg-destructive/10 text-destructive' };
   if (days < 30) return { color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', icon: ShieldAlert, label: `${days}d left`, days, pill: 'bg-amber-500/10 text-amber-400' };
   return { color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: ShieldCheck, label: `${days}d left`, days, pill: 'bg-emerald-500/10 text-emerald-400' };
@@ -45,7 +48,10 @@ function getInsuranceStatus(expiry: string | null) {
 function getServiceStatus(date: string | null) {
   const now = new Date();
   if (!date) return { color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border', label: 'Not Set', days: null, pill: 'bg-muted text-muted-foreground' };
-  const days = differenceInDays(new Date(date), now);
+  const dObj = new Date(date);
+  if (isNaN(dObj.getTime())) return { color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border', label: 'Invalid Date', days: null, pill: 'bg-muted text-muted-foreground' };
+  const days = differenceInDays(dObj, now);
+  if (isNaN(days)) return { color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border', label: 'Invalid Date', days: null, pill: 'bg-muted text-muted-foreground' };
   if (days < 0) return { color: 'text-destructive', bg: 'bg-destructive/10', border: 'border-destructive/20', label: 'Overdue', days, pill: 'bg-destructive/10 text-destructive' };
   if (days < 14) return { color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', label: `${days}d away`, days, pill: 'bg-amber-500/10 text-amber-400' };
   return { color: 'text-sky-400', bg: 'bg-sky-500/10', border: 'border-sky-500/20', label: `${days}d away`, days, pill: 'bg-sky-500/10 text-sky-400' };
@@ -91,7 +97,7 @@ function VehicleCard({ v, idx }: { v: VehicleStats; idx: number }) {
   const insurance = getInsuranceStatus(v.insurance_expiry);
   const service = getServiceStatus(v.next_service_date);
   const InsuranceIcon = insurance.icon;
-  const distanceTraveled = v.current_odometer - v.initial_odometer;
+  const distanceTraveled = Math.max(0, v.current_odometer - v.initial_odometer);
   const costPerKm = distanceTraveled > 0 ? (v.total_spent / distanceTraveled).toFixed(1) : null;
 
   return (

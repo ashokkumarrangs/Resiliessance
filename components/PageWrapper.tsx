@@ -24,6 +24,44 @@ interface PageWrapperProps {
   children: React.ReactNode;
 }
 
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("PageWrapper Error Boundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="bg-card border border-rose-500/20 rounded-2xl p-6 my-4 text-center space-y-3">
+          <h3 className="text-sm font-black text-rose-500 uppercase tracking-wider">Something went wrong</h3>
+          <p className="text-xs font-medium text-muted-foreground">
+            {this.state.error?.message || "An unexpected error occurred while rendering this page."}
+          </p>
+          <button
+            onClick={() => this.setState({ hasError: false })}
+            className="px-4 py-2 bg-primary text-primary-foreground text-xs font-bold rounded-lg hover:opacity-90 transition-opacity"
+          >
+            Try Again
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export function PageWrapper({
   title,
   reportHref,
@@ -51,7 +89,7 @@ export function PageWrapper({
           </div>
         )}
 
-        {children}
+        <ErrorBoundary>{children}</ErrorBoundary>
       </div>
     </div>
   );

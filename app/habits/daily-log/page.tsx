@@ -1,5 +1,6 @@
-'use client'
-import { Select } from "@/components/Select";;
+'use client';
+
+import { Select } from "@/components/Select";
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';

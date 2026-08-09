@@ -113,7 +113,8 @@ export default function DailyEntryPage() {
         }));
       }
     } catch (error: any) {
-      // Error handled via silent failure or future toast
+      console.error("Error loading expense options:", error);
+      toast.error("Failed to load options");
     }
     return tree;
   };
@@ -390,6 +391,7 @@ export default function DailyEntryPage() {
               </label>
               <input
                 type="date"
+                max={new Date().toLocaleDateString('en-CA')}
                 value={formData.date}
                 onChange={(e) => handleChange('date', e.target.value)}
                 className="w-full h-11 min-h-[44px] bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner appearance-none"

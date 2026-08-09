@@ -33,7 +33,8 @@ export interface HabitConfig {
 }
 
 export function calculateHabitStatus(config: HabitConfig, rawValue: string): HabitStatus {
-  if (!rawValue && rawValue !== '0') {
+  const trimmed = typeof rawValue === 'string' ? rawValue.trim() : rawValue;
+  if (!trimmed && trimmed !== '0') {
     return config.unlogged_is_success ? 'Success' : 'Not Entered';
   }
 

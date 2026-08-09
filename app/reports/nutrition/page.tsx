@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from "react";
 import { PageWrapper } from "@/components/PageWrapper";
+import { Select } from "@/components/Select";
 import { REPORT_TABS } from "@/lib/navigation";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { dietService, DietLogEntry, BiometricLog, BiometricDefinition, BiometricTarget, DietTarget } from "@/lib/services/diet";
@@ -211,17 +212,17 @@ export default function NutritionReportsPage() {
             </span>
             <div className="flex-1">
               <span className="text-[10px] font-black uppercase text-muted-foreground/50 tracking-wider">Active Metric</span>
-              <select
+              <Select
                 value={activeMetricId}
                 onChange={(e) => setActiveMetricId(e.target.value)}
                 className="bg-transparent border-none p-0 text-sm font-black text-foreground focus:ring-0 cursor-pointer block mt-0.5"
               >
                 {biometricDefs.map((def) => (
-                  <option key={def.id} value={def.id} className="bg-card text-foreground">
+                  <option key={def.id} value={def.id}>
                     {def.name} ({def.unit})
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
           

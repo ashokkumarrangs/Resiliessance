@@ -136,7 +136,7 @@ function VehicleFuelServiceContent() {
         return;
       }
       const tripDistance = currentOdo - prevOdo;
-      const reserveMileage = tripDistance > 0 ? (tripDistance / currentLiters).toFixed(2) : 0;
+      const reserveMileage = (tripDistance > 0 && currentLiters > 0) ? (tripDistance / currentLiters).toFixed(2) : 0;
 
       // B. Full Tank Mileage (Tank-to-Tank Cycle)
       let ftMileage = null;
@@ -147,12 +147,12 @@ function VehicleFuelServiceContent() {
           // Sum liters since last full tank
           const intermediateLogs = allFuelLogs?.filter(l => l.odometer > lastFT.odometer) || [];
           const totalLitersInCycle = intermediateLogs.reduce((sum, l) => sum + (l.liters || 0), 0) + currentLiters;
-          ftMileage = ftDistance > 0 ? (ftDistance / totalLitersInCycle).toFixed(2) : 0;
+          ftMileage = (ftDistance > 0 && totalLitersInCycle > 0) ? (ftDistance / totalLitersInCycle).toFixed(2) : 0;
         } else {
           // If this is the first full tank, use initial odo
           const ftDistance = currentOdo - initialOdo;
           const totalLitersInCycle = (allFuelLogs?.filter(l => l.odometer > initialOdo).reduce((sum, l) => sum + (l.liters || 0), 0) || 0) + currentLiters;
-          ftMileage = ftDistance > 0 ? (ftDistance / totalLitersInCycle).toFixed(2) : 0;
+          ftMileage = (ftDistance > 0 && totalLitersInCycle > 0) ? (ftDistance / totalLitersInCycle).toFixed(2) : 0;
         }
       }
 

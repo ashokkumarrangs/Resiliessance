@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { X, Clock, Check } from "lucide-react";
 import { format, subMinutes, subHours } from "date-fns";
 
@@ -20,6 +20,7 @@ export function TaskCompletionModal({
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   const [option, setOption] = useState<"now" | "15m" | "1h" | "custom">("now");
   const [customDateTime, setCustomDateTime] = useState("");
+  const modalRef = useRef<HTMLDivElement>(null);
 
   if (isOpen !== prevIsOpen) {
     setPrevIsOpen(isOpen);
@@ -28,6 +29,25 @@ export function TaskCompletionModal({
       setCustomDateTime(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
     }
   }
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 

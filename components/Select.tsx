@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, CheckCircle2 } from "lucide-react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function Select({ value, onChange, className, children, ...props }: { value: any; onChange: (e: any) => void; className?: string; children: React.ReactNode }) {
+export function Select({ value, onChange, className, disabled, dropdownClassName, children, ...props }: { value: any; onChange: (e: any) => void; className?: string; disabled?: boolean; dropdownClassName?: string; children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -33,12 +33,27 @@ export function Select({ value, onChange, className, children, ...props }: { val
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (disabled) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setIsOpen(!isOpen);
+    } else if (e.key === "Escape") {
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div 
       ref={containerRef}
-      tabIndex={0}
-      className={`relative z-30 flex items-center justify-between cursor-pointer select-none outline-none ${className || ''}`} 
+      role="combobox"
+      aria-expanded={isOpen}
+      aria-haspopup="listbox"
+      tabIndex={disabled ? -1 : 0}
+      onKeyDown={handleKeyDown}
+      className={`relative z-30 flex items-center justify-between cursor-pointer select-none outline-none ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''} ${className || ''}`} 
       onClick={(e) => {
+        if (disabled) return;
         e.preventDefault();
         e.stopPropagation();
         setIsOpen(!isOpen);
@@ -49,7 +64,7 @@ export function Select({ value, onChange, className, children, ...props }: { val
       <ChevronDown size={14} className="ml-2 opacity-50 shrink-0 pointer-events-none" />
       
       {isOpen && (
-        <div className="absolute z-[100] left-0 right-0 top-full mt-1 w-full bg-card rounded-xl shadow-2xl border border-border/40 max-h-72 overflow-y-auto p-1.5">
+        <div className={`absolute z-[100] right-0 top-full mt-1 min-w-[130px] w-max max-w-[260px] bg-card rounded-xl shadow-2xl border border-border/40 max-h-72 overflow-y-auto p-1.5 ${dropdownClassName || ''}`}>
           {options.map((opt, i) => (
             <div
               key={i}
@@ -60,12 +75,12 @@ export function Select({ value, onChange, className, children, ...props }: { val
                 if (onChange) onChange({ target: { value: opt.value } });
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-between mb-0.5 last:mb-0 cursor-pointer
+              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-between gap-3 mb-0.5 last:mb-0 cursor-pointer whitespace-nowrap
                 ${String(value) === String(opt.value) 
                   ? "bg-primary text-primary-foreground shadow-sm font-black" 
                   : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
             >
-              <span className="truncate pr-4">{opt.label}</span>
+              <span className="whitespace-nowrap">{opt.label}</span>
               {String(value) === String(opt.value) && <CheckCircle2 size={14} className="text-primary-foreground/60 shrink-0" />}
             </div>
           ))}

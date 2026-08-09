@@ -103,6 +103,7 @@ export default function AddPetPage() {
               <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest ml-1 mb-1 block">Date of Birth</label>
               <input
                 type="date"
+                max={new Date().toLocaleDateString('en-CA')}
                 value={formData.dob}
                 onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
                 className="w-full bg-muted p-4 rounded-xl font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
