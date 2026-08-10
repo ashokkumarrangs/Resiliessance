@@ -425,6 +425,36 @@ export default function TaskManagerPage() {
   };
 
   const renderTaskTree = (parentId: string | null = null, depth = 0) => {
+    const getDepthStyles = (d: number) => {
+      switch (d) {
+        case 1:
+          return {
+            card: "bg-card border border-border/40 shadow-sm",
+            text: "text-xs font-black text-foreground"
+          };
+        case 2:
+          return {
+            card: "bg-muted/35 border border-border/50 shadow-sm",
+            text: "text-[11px] font-bold text-foreground/75"
+          };
+        case 3:
+          return {
+            card: "bg-muted/65 border border-border/60 shadow-sm",
+            text: "text-[10.5px] font-semibold text-muted-foreground"
+          };
+        case 4:
+          return {
+            card: "bg-muted border border-border/70 shadow-sm",
+            text: "text-[10px] font-medium text-muted-foreground/80"
+          };
+        default:
+          return {
+            card: "bg-muted-foreground/10 border border-border/80 shadow-sm",
+            text: "text-[9.5px] font-medium text-muted-foreground/60"
+          };
+      }
+    };
+
     let filtered = tasks.filter(t => t.parent_id === parentId);
     if (depth === 0) {
       filtered = filtered.filter(t => view === 'inbox' ? t.is_inbox : !t.is_inbox);
@@ -447,87 +477,183 @@ export default function TaskManagerPage() {
                     const hasChildren = tasks.some(t => t.parent_id === task.id);
                     const isCollapsed = collapsed.has(task.id);
                     const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60';
+                    const isMenuOpen = activeMenuTaskId === task.id;
 
                     return (
                         <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
-                            <div 
-                              className={`flex items-center gap-2 bg-card border border-border/40 border-l-4 rounded-xl px-3 h-14 shadow-sm transition-all group ${accentClass}`}
-                            >
-                                {/* Checkbox */}
-                                <div className="w-6 flex items-center justify-center shrink-0">
-                                    <button 
-                                      onClick={() => toggleStatus(task)}
-                                      className="w-5 h-5 rounded-md border border-border/40 text-muted-foreground/30 hover:border-primary hover:text-primary flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-                                    >
-                                      <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </button>
-                                </div>
+                            {depth === 0 ? (() => {
+                                    const hasSubtasksVisible = (!isCollapsed && hasChildren) || addingSubtaskToId === task.id;
+                                    const isExpanded = expandedNotes.has(task.id) || hasSubtasksVisible;
+                                    const headerRoundness = isExpanded ? 'rounded-t-2xl' : 'rounded-2xl';
+                                    const borderBottomClass = isExpanded ? 'border-b border-border/30' : '';
 
-                                {/* Task Text */}
-                                <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
-                                    <span className={`text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 ${task.is_high_priority ? 'text-foreground font-black' : 'font-bold text-foreground/90'}`}>
-                                        {task.task}
-                                        {task.is_high_priority && <Flame size={12} className="text-rose-500 shrink-0" />}
-                                    </span>
-                                </div>
-                                
-                                {/* Subtask Expand Toggle */}
-                                <div className="w-6 flex items-center justify-center shrink-0">
-                                    {view === 'all' && hasChildren && (
-                                      <button 
-                                        onClick={() => toggleCollapse(task.id)}
-                                        className={`text-muted-foreground/60 hover:text-primary transition-transform ${isCollapsed ? '' : 'rotate-90'}`}
-                                      >
-                                        <ChevronRight size={16} />
-                                      </button>
-                                    )}
-                                </div>
+                                    return (
+                                        <div className="bg-card border border-border/40 rounded-2xl shadow-sm mb-3">
+                                            {/* Main Task Header Box */}
+                                            <div 
+                                              className={`flex items-center gap-2 bg-muted/15 px-4 h-14 transition-all group border-l-4 relative ${isMenuOpen ? 'z-50' : 'z-10'} ${headerRoundness} ${borderBottomClass} ${accentClass}`}
+                                            >
+                                                {/* Checkbox */}
+                                                <div className="w-6 flex items-center justify-center shrink-0">
+                                                    <button 
+                                                      onClick={() => toggleStatus(task)}
+                                                      className="w-5 h-5 rounded-md border border-border/40 text-muted-foreground/30 hover:border-primary hover:text-primary flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+                                                    >
+                                                      <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    </button>
+                                                </div>
 
-                                {/* Dropdown Actions */}
-                                <div className="w-10 flex items-center justify-end shrink-0 relative z-30">
-                                    {renderDropdown(task)}
-                                </div>
-                            </div>
+                                                {/* Task Text */}
+                                                <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
+                                                    <span className={`text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 ${task.is_high_priority ? 'text-foreground font-black' : 'font-bold text-foreground/90'}`}>
+                                                        {task.task}
+                                                        {task.is_high_priority && <Flame size={12} className="text-rose-500 shrink-0" />}
+                                                    </span>
+                                                </div>
+                                                
+                                                {/* Subtask Expand Toggle */}
+                                                <div className="w-6 flex items-center justify-center shrink-0">
+                                                    {view === 'all' && hasChildren && (
+                                                      <button 
+                                                        onClick={() => toggleCollapse(task.id)}
+                                                        className={`text-muted-foreground/60 hover:text-primary transition-transform ${isCollapsed ? '' : 'rotate-90'}`}
+                                                      >
+                                                        <ChevronRight size={16} />
+                                                      </button>
+                                                    )}
+                                                </div>
 
-                            {/* Notes Area */}
-                            {expandedNotes.has(task.id) && (
-                                <div className="w-full pl-8 pr-3 pb-3 pt-2">
-                                    <textarea
-                                        defaultValue={task.notes || ''}
-                                        onBlur={(e) => saveNotes(task.id, e.target.value)}
-                                        className="w-full min-h-[60px] text-xs text-foreground font-bold bg-muted/20 border border-border/40 rounded-xl p-3 focus:ring-2 focus:ring-primary/10 outline-none resize-y"
-                                        placeholder="Add notes..."
-                                    />
-                                </div>
-                            )}
+                                                {/* Dropdown Actions */}
+                                                <div className="w-10 flex items-center justify-end shrink-0 relative z-30">
+                                                    {renderDropdown(task)}
+                                                </div>
+                                            </div>
 
-                            {/* INLINE SUBTASKS */}
-                            {view === 'all' && !isCollapsed && hasChildren && (
-                                <div className="pb-2 border-t border-border/60 bg-muted/30">
-                                    <div className="ml-[22px] pl-[12px] border-l-2 border-border/50 mt-2 pr-2">
-                                        {renderTaskTree(task.id, depth + 1)}
-                                    </div>
-                                </div>
-                            )}
+                                            {/* Notes Area */}
+                                            {expandedNotes.has(task.id) && (
+                                                <div className={`w-full px-4 pb-3 pt-2 bg-card/5 ${hasSubtasksVisible ? 'border-b border-border/30' : 'rounded-b-2xl'}`}>
+                                                    <textarea
+                                                        defaultValue={task.notes || ''}
+                                                        onBlur={(e) => saveNotes(task.id, e.target.value)}
+                                                        className="w-full min-h-[60px] text-xs text-foreground font-bold bg-muted/20 border border-border/40 rounded-xl p-3 focus:ring-2 focus:ring-primary/10 outline-none resize-y"
+                                                        placeholder="Add notes..."
+                                                    />
+                                                </div>
+                                            )}
 
-                            {/* Inline Subtask Input */}
-                            {addingSubtaskToId === task.id && (
-                                <div className="w-full pl-8 pr-3 pb-3 mt-2">
-                                    <input
-                                        type="text"
-                                        autoFocus
-                                        placeholder="Sub-task name..."
-                                        value={newSubtaskName}
-                                        onChange={(e) => setNewSubtaskName(e.target.value)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') handleAddTask(task.id);
-                                            if (e.key === 'Escape') setAddingSubtaskToId(null);
-                                        }}
-                                        onBlur={() => setAddingSubtaskToId(null)}
-                                        className="w-full bg-muted/15 border border-border/40 rounded-lg px-3 py-1.5 text-xs text-foreground font-bold focus:outline-none focus:bg-card focus:border-primary/45 shadow-sm transition-all"
-                                    />
-                                </div>
-                            )}
+                                            {/* Subtasks area inside the container */}
+                                            {hasSubtasksVisible && (
+                                                <div className="p-3 bg-muted/5 space-y-2 rounded-b-2xl">
+                                                    {/* INLINE SUBTASKS */}
+                                                    {!isCollapsed && hasChildren && renderTaskTree(task.id, depth + 1)}
+
+                                                    {/* Inline Subtask Input */}
+                                                    {addingSubtaskToId === task.id && (
+                                                        <div className="w-full pr-2 py-1">
+                                                            <input
+                                                                type="text"
+                                                                autoFocus
+                                                                placeholder="Sub-task name..."
+                                                                value={newSubtaskName}
+                                                                onChange={(e) => setNewSubtaskName(e.target.value)}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') handleAddTask(task.id);
+                                                                    if (e.key === 'Escape') setAddingSubtaskToId(null);
+                                                                }}
+                                                                onBlur={() => setAddingSubtaskToId(null)}
+                                                                className="w-full bg-muted/15 border border-border/40 rounded-lg px-3 py-1.5 text-xs text-foreground font-bold focus:outline-none focus:bg-card focus:border-primary/45 shadow-sm transition-all"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })() : (() => {
+                                    const styles = getDepthStyles(depth);
+                                    return (
+                                        // For nested subtasks (depth >= 1) with no rightward indentation
+                                        <div className="space-y-2">
+                                            <div 
+                                              className={`flex items-center gap-2 border rounded-xl px-3 h-12 shadow-sm transition-all group relative ${isMenuOpen ? 'z-50' : 'z-10'} ${styles.card}`}
+                                            >
+                                                {/* Checkbox */}
+                                                <div className="w-6 flex items-center justify-center shrink-0">
+                                                    <button 
+                                                      onClick={() => toggleStatus(task)}
+                                                      className="w-5 h-5 rounded-md border border-border/40 text-muted-foreground/30 hover:border-primary hover:text-primary flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+                                                    >
+                                                      <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    </button>
+                                                </div>
+
+                                                {/* Task Text */}
+                                                <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
+                                                    <span className={`text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 ${styles.text}`}>
+                                                        {task.task}
+                                                        {task.is_high_priority && <Flame size={12} className="text-rose-500 shrink-0" />}
+                                                    </span>
+                                                </div>
+                                                
+                                                {/* Subtask Expand Toggle */}
+                                                <div className="w-6 flex items-center justify-center shrink-0">
+                                                    {view === 'all' && hasChildren && (
+                                                      <button 
+                                                        onClick={() => toggleCollapse(task.id)}
+                                                        className={`text-muted-foreground/60 hover:text-primary transition-transform ${isCollapsed ? '' : 'rotate-90'}`}
+                                                      >
+                                                        <ChevronRight size={16} />
+                                                      </button>
+                                                    )}
+                                                </div>
+
+                                                {/* Dropdown Actions */}
+                                                <div className="w-10 flex items-center justify-end shrink-0 relative z-30">
+                                                    {renderDropdown(task)}
+                                                </div>
+                                            </div>
+
+                                            {/* Notes Area */}
+                                            {expandedNotes.has(task.id) && (
+                                                <div className="w-full pr-2 pb-2">
+                                                    <textarea
+                                                        defaultValue={task.notes || ''}
+                                                        onBlur={(e) => saveNotes(task.id, e.target.value)}
+                                                        className="w-full min-h-[60px] text-xs text-foreground font-bold bg-muted/20 border border-border/40 rounded-xl p-3 focus:ring-2 focus:ring-primary/10 outline-none resize-y"
+                                                        placeholder="Add notes..."
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {/* Subtasks area (depth >= 1) with no indentation */}
+                                            {((!isCollapsed && hasChildren) || addingSubtaskToId === task.id) && (
+                                                <div className="space-y-2 py-1">
+                                                    {/* INLINE SUBTASKS */}
+                                                    {!isCollapsed && hasChildren && renderTaskTree(task.id, depth + 1)}
+
+                                                    {/* Inline Subtask Input */}
+                                                    {addingSubtaskToId === task.id && (
+                                                        <div className="w-full pr-2 pb-2">
+                                                            <input
+                                                                type="text"
+                                                                autoFocus
+                                                                placeholder="Sub-task name..."
+                                                                value={newSubtaskName}
+                                                                onChange={(e) => setNewSubtaskName(e.target.value)}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter') handleAddTask(task.id);
+                                                                    if (e.key === 'Escape') setAddingSubtaskToId(null);
+                                                                }}
+                                                                onBlur={() => setAddingSubtaskToId(null)}
+                                                                className="w-full bg-muted/15 border border-border/40 rounded-lg px-3 py-1.5 text-xs text-foreground font-bold focus:outline-none focus:bg-card focus:border-primary/45 shadow-sm transition-all"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })()}
                         </div>
                     );
                 })}
@@ -545,12 +671,11 @@ export default function TaskManagerPage() {
                     {completed.map(task => {
                         const hasChildren = tasks.some(t => t.parent_id === task.id);
                         const isCollapsed = collapsed.has(task.id);
-                        const isRoot = depth === 0;
-                        const gridClass = 'grid-cols-[24px_22px_1fr_24px_40px]';
+                        const isMenuOpen = activeMenuTaskId === task.id;
 
                         return (
                             <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
-                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-3 h-14 opacity-55 hover:opacity-90 transition-opacity group`} style={{ gridTemplateColumns: "22px 1fr 24px 40px" }}>
+                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-3 h-14 opacity-55 hover:opacity-90 transition-opacity group relative ${isMenuOpen ? 'z-50' : 'z-10'}`} style={{ gridTemplateColumns: "22px 1fr 24px 40px" }}>
                                     
                                     {/* Checked Checkbox */}
                                     <button 
@@ -579,18 +704,15 @@ export default function TaskManagerPage() {
                                         )}
                                     </div>
                                     
-                                    <div className="flex items-center gap-1 justify-end">
-                                    </div>
-                                    
                                     <div className="flex gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity bg-transparent relative z-30">
                                         {renderDropdown(task)}
                                     </div>
                                 </div>
                                 
-                                {/* INLINE SUBTASKS */}
+                                {/* INLINE SUBTASKS (NO INDENTATION) */}
                                 {view === 'all' && !isCollapsed && hasChildren && (
                                     <div className="pb-2 border-t border-border/60 bg-muted/30">
-                                        <div className="ml-[22px] pl-[12px] border-l-2 border-border/50 mt-2 pr-2">
+                                        <div className="mt-2 pr-2">
                                             {renderTaskTree(task.id, depth + 1)}
                                         </div>
                                     </div>
