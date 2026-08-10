@@ -134,7 +134,10 @@ function AccountPageContent() {
     if (!confirm("Are you sure you want to delete this account?")) return;
 
     try {
-      const { error } = await supabase.from('liquidity').delete().eq('account_name', formData.account_name);
+      const query = formData.id 
+        ? supabase.from('liquidity').delete().eq('id', formData.id)
+        : supabase.from('liquidity').delete().eq('account_name', formData.account_name);
+      const { error } = await query;
       if (error) throw error;
       toast.success("Account deleted");
       router.push("/expenses/liquidity");

@@ -31,7 +31,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
       />
       <nav
         aria-hidden={!isOpen}
-        className={`fixed top-0 left-0 h-[100dvh] w-[min(230px,70vw)] bg-white z-[60] transform transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[20px_0_40px_rgba(0,0,0,0.05)] overflow-y-auto no-scrollbar ${
+        className={`fixed top-0 left-0 h-[100dvh] w-[min(230px,70vw)] bg-card border-r border-border/40 z-[60] transform transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] shadow-[20px_0_40px_rgba(0,0,0,0.05)] overflow-y-auto no-scrollbar ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

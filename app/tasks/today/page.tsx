@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Bookmark, Check, ChevronRight, Edit3, Eye, EyeOff, FileText, Flame, GripVertical, Inbox, List, PlusSquare, Star, Trash2, MoreVertical } from "lucide-react";
+import { Bookmark, Check, ChevronRight, ChevronUp, ChevronDown, Edit3, Eye, EyeOff, FileText, Flame, GripVertical, Inbox, List, PlusSquare, Star, Trash2, MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import { PageWrapper } from "@/components/PageWrapper";
 import { TASK_TABS } from "@/lib/navigation";
@@ -52,6 +52,23 @@ export default function TaskManagerPage() {
     document.addEventListener("click", handleOutsideClick);
   }, []);
 
+  const moveTaskInList = async (task: Task, direction: 'up' | 'down') => {
+    const siblings = tasks.filter(t => t.parent_id === task.parent_id);
+    const index = siblings.findIndex(t => t.id === task.id);
+    if (index === -1) return;
+    
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= siblings.length) return;
+    
+    const sibling = siblings[targetIndex];
+    const currentOrder = task.sort_order ?? index;
+    const siblingOrder = sibling.sort_order ?? targetIndex;
+    
+    await supabase.from('tasks').update({ sort_order: siblingOrder }).eq('id', task.id);
+    await supabase.from('tasks').update({ sort_order: currentOrder }).eq('id', sibling.id);
+    loadTasks();
+  };
+
   const renderDropdown = (task: Task) => {
     const isOpen = activeMenuTaskId === task.id;
     return (
@@ -69,6 +86,22 @@ export default function TaskManagerPage() {
         
         {isOpen && (
           <div className="absolute right-0 top-full mt-1.5 w-44 bg-card border border-border/40 rounded-xl shadow-xl z-50 py-1.5 dropdown-menu animate-in fade-in slide-in-from-top-1">
+            <button
+              type="button"
+              onClick={() => { moveTaskInList(task, 'up'); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <ChevronUp size={13} className="text-muted-foreground/40" />
+              Move Up
+            </button>
+            <button
+              type="button"
+              onClick={() => { moveTaskInList(task, 'down'); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <ChevronDown size={13} className="text-muted-foreground/40" />
+              Move Down
+            </button>
             <button
               type="button"
               onClick={() => { toggleFlag(task.id, 'is_today', !task.is_today); setActiveMenuTaskId(null); }}
@@ -417,21 +450,13 @@ export default function TaskManagerPage() {
                     const isRoot = depth === 0;
 
                     const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60';
-                    const gridClass = 'grid-cols-[24px_22px_1fr_24px_40px]';
+                    const gridClass = 'grid-cols-[22px_1fr_24px_40px]';
 
                     return (
                         <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
                             <div 
-                              draggable
-                              onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
-                              onDragOver={(e) => e.preventDefault()}
-                              onDrop={() => isRoot && handleTaskDrop(idx, parentId, depth)}
-                              className={`grid gap-2 items-center bg-card border border-border/40 border-l-4 rounded-xl px-2 h-14 shadow-sm transition-all group ${accentClass}`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}
+                              className={`grid gap-2 items-center bg-card border border-border/40 border-l-4 rounded-xl px-3 h-14 shadow-sm transition-all group ${accentClass}`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "22px 1fr 40px" : "22px 1fr 24px 40px" }}
                             >
-                                {/* Drag Handle */}
-                                <div className="p-1 text-muted-foreground/20 hover:text-primary rounded-md cursor-grab active:cursor-grabbing">
-                                    <GripVertical size={16} />
-                                </div>
 
                                 {/* Checkbox */}
                                 <button 
@@ -528,10 +553,7 @@ export default function TaskManagerPage() {
 
                         return (
                             <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
-                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}>
-                                    <div className="p-1 text-muted-foreground/20">
-                                        <GripVertical size={16} />
-                                    </div>
+                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-3 h-14 opacity-55 hover:opacity-90 transition-opacity group`} style={{ gridTemplateColumns: "22px 1fr 40px" }}>
                                     
                                     {/* Checked Checkbox */}
                                     <button 
@@ -614,21 +636,12 @@ export default function TaskManagerPage() {
                 {pending.map((task, idx) => {
                     const isRoot = true;
                     const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60';
-                    const gridClass = 'grid-cols-[24px_22px_1fr_40px]';
 
                     return (
                         <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
                             <div 
-                              draggable
-                              onDragStart={() => isRoot && setDraggedTaskIndex(idx)}
-                              onDragOver={(e) => e.preventDefault()}
-                              onDrop={() => isRoot && handleTaskDrop(idx, null, 0)}
-                              className={`grid gap-2 items-center bg-card border border-border/40 border-l-4 rounded-xl px-2 h-14 shadow-sm transition-all group ${accentClass}`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}
+                              className={`grid gap-2 items-center bg-card border border-border/40 border-l-4 rounded-xl px-3 h-14 shadow-sm transition-all group ${accentClass}`} style={{ gridTemplateColumns: "22px 1fr 40px" }}
                             >
-                                {/* Drag Handle */}
-                                <div className="p-1 text-muted-foreground/20 hover:text-primary rounded-md cursor-grab active:cursor-grabbing">
-                                    <GripVertical size={16} />
-                                </div>
 
                                 {/* Checkbox */}
                                 <button 
@@ -682,10 +695,7 @@ export default function TaskManagerPage() {
 
                         return (
                             <div key={task.id} className={`w-full relative ${isRelatedToActiveMenu(task.id) ? 'z-[60]' : 'z-10'}`}>
-                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-2 h-14 opacity-55 hover:opacity-90 transition-opacity group`} style={{ gridTemplateColumns: gridClass.includes("24px_40px") ? "24px 22px 1fr 40px" : "24px 22px 1fr 24px 40px" }}>
-                                    <div className="p-1 text-muted-foreground/20">
-                                        <GripVertical size={16} />
-                                    </div>
+                                <div className={`grid gap-2 items-center bg-muted/10 border border-border/20 rounded-xl px-3 h-14 opacity-55 hover:opacity-90 transition-opacity group`} style={{ gridTemplateColumns: "22px 1fr 40px" }}>
                                     
                                     {/* Checked Checkbox */}
                                     <button 

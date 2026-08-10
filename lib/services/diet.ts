@@ -124,7 +124,10 @@ const getLocal = <T>(key: string, fallback: T): T => {
 const setLocal = <T>(key: string, value: T): void => {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(`resiliessance_diet_${key}`, JSON.stringify(value));
+    const fullKey = `resiliessance_diet_${key}`;
+    const jsonVal = JSON.stringify(value);
+    localStorage.setItem(fullKey, jsonVal);
+    window.dispatchEvent(new StorageEvent("storage", { key: fullKey, newValue: jsonVal }));
   } catch (e) {
     console.error("Local storage error:", e);
   }
@@ -176,6 +179,21 @@ export const dietService = {
       console.warn("Supabase save target failed, using local storage fallback", e);
     }
     return target;
+  },
+
+  async getWorkoutBurnForDate(dateStr: string): Promise<number> {
+    try {
+      const { data, error } = await supabase
+        .from("workout_log")
+        .select("weight, reps, duration_minutes")
+        .eq("date", dateStr);
+      if (error || !data) return 0;
+      const totalVol = data.reduce((acc, curr) => acc + (Number(curr.weight) || 0) * (Number(curr.reps) || 0), 0);
+      const totalMins = data.reduce((acc, curr) => acc + (Number(curr.duration_minutes) || 0), 0);
+      return Math.round(totalMins * 5 + totalVol * 0.02);
+    } catch {
+      return 0;
+    }
   },
 
   // ─── Food Preset Library ──────────────────────────────────────────────────

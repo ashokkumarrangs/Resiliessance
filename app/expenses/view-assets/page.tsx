@@ -74,8 +74,8 @@ export default function ViewAssetsPage() {
             items={["View Assets", "Add Asset", "Update Values"]}
             activeItem="View Assets"
             onChange={(val) => {
-              if (val === "Add Asset") router.push("/expenses/add-asset");
-              if (val === "Update Values") router.push("/expenses/update-asset");
+              if (val === "Add Asset") router.push("/expenses/capital/assets?action=add");
+              if (val === "Update Values") router.push("/expenses/capital/assets?action=update");
             }}
             className="!mb-0 !mx-0"
           />
@@ -181,7 +181,7 @@ export default function ViewAssetsPage() {
 
             <button 
               className="w-full h-16 bg-primary text-primary-foreground rounded-xl font-black text-center flex items-center justify-center hover:bg-primary/95 transition-all shadow-xl shadow-primary/20"
-              onClick={() => router.push(`/expenses/update-asset?id=${selectedAsset.id}`)}
+              onClick={() => router.push(`/expenses/capital/assets?action=update&id=${selectedAsset.id}`)}
             >
               Update Valuation
             </button>

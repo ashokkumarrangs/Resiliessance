@@ -161,25 +161,13 @@ export default function HabitDailyPage() {
       const inserts = allRecords.filter(r => r.value !== '');
       const allHabits = allRecords.map(r => r.habit);
 
-      // 1. Delete all existing records for these habits on this date
-      if (allHabits.length > 0) {
-        const { error: clearError } = await supabase
-          .from('habit_data')
-          .delete()
-          .eq('date', selectedDate)
-          .eq('source', 'daily')
-          .in('habit', allHabits);
-        
-        if (clearError) throw clearError;
-      }
-
-      // 2. Insert the active values
+      // 1. Upsert active values atomically to prevent loss on network failure
       if (inserts.length > 0) {
-        const { error: insertError } = await supabase
+        const { error: upsertError } = await supabase
           .from('habit_data')
-          .insert(inserts);
+          .upsert(inserts, { onConflict: 'date,habit' });
           
-        if (insertError) throw insertError;
+        if (upsertError) throw upsertError;
       }
 
       toast.success('Habit Tracker updated!');

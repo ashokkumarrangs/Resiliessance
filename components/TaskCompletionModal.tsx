@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X, Clock, Check } from "lucide-react";
 import { format, subMinutes, subHours } from "date-fns";
+import { toast } from "sonner";
 
 interface TaskCompletionModalProps {
   isOpen: boolean;
@@ -60,12 +61,12 @@ export function TaskCompletionModal({
     } else if (option === "1h") {
       completedAtISO = subHours(new Date(), 1).toISOString();
     } else if (option === "custom" && customDateTime) {
-      try {
-        completedAtISO = new Date(customDateTime).toISOString();
-      } catch (err) {
-        console.error("Invalid custom date time:", err);
-        completedAtISO = new Date().toISOString();
+      const parsed = new Date(customDateTime);
+      if (isNaN(parsed.getTime())) {
+        toast.error("Please enter a valid completion date and time.");
+        return;
       }
+      completedAtISO = parsed.toISOString();
     }
 
     onConfirm(completedAtISO);
@@ -97,7 +98,7 @@ export function TaskCompletionModal({
 
         {/* Task Name */}
         <div className="bg-muted/30 p-3 rounded-lg border border-border/20">
-          <p className="text-xs font-bold text-foreground line-clamp-2">
+          <p className="text-xs font-bold text-foreground line-clamp-2 break-words break-all">
             {taskTitle}
           </p>
         </div>

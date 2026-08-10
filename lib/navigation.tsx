@@ -35,7 +35,7 @@ import {
 
 // ─── Finance ──────────────────────────────────────────────────────────────────
 export const EXPENSE_TABS = [
-  { title: "Daily Entry", href: "/expenses/daily-entry", icon: <Edit3 size={16} /> },
+  { title: "Transactions", href: "/expenses/transactions/expense", icon: <Edit3 size={16} /> },
   { title: "Liquidity", href: "/expenses/liquidity", icon: <Droplets size={16} /> },
   { title: "Liabilities", href: "/expenses/view-liability", icon: <Eye size={16} /> },
   { title: "Receivables", href: "/expenses/view-receivable", icon: <HandCoins size={16} /> },

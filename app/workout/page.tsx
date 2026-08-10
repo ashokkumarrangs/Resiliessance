@@ -242,7 +242,7 @@ export default function WorkoutPage() {
           workout_day: workoutDay,
           workout_name: ex.name,
           set_no: idx + 1,
-          weight: parseFloat(set.weight) || 0,
+          weight: parseFloat(String(set.weight).replace(',', '.')) || 0,
           reps: parseInt(set.reps) || 0,
           notes: ex.notes,
           time,

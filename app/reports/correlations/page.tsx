@@ -88,13 +88,15 @@ export default function CorrelationsPage() {
     async function load(){
       setLoading(true);
       const minDate=format(subDays(new Date(),days),"yyyy-MM-dd");
-      const [{data:habits},{data:workouts},{data:expenses},{data:tasks}]=await Promise.all([
+      const [{data:habits},{data:workouts},{data:expenses},{data:tasks},{data:actionTasks}]=await Promise.all([
         supabase.from("habit_data").select("date,habit,value").gte("date",minDate),
         supabase.from("workout_log").select("date,weight,reps").gte("date",minDate),
         supabase.from("history_expenses").select("date,amount").eq("type","Expense").gte("date",minDate),
         supabase.from("tasks").select("completed_at").eq("status","Completed").gte("completed_at",minDate+"T00:00:00"),
+        supabase.from("action_tasks").select("completed_at").eq("completed",true).gte("completed_at",minDate+"T00:00:00"),
       ]);
-      setRawData({habits:habits||[],workouts:workouts||[],expenses:expenses||[],tasks:tasks||[]});
+      const combinedTasks = [...(tasks || []), ...(actionTasks || [])];
+      setRawData({habits:habits||[],workouts:workouts||[],expenses:expenses||[],tasks:combinedTasks});
       setLoading(false);
     }
     load();

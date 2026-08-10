@@ -16,3 +16,10 @@ ON push_subscriptions
 FOR ALL
 USING (true)
 WITH CHECK (true);
+
+-- SquareShift action_tasks columns for Today tab and High Priority support
+ALTER TABLE action_tasks 
+ADD COLUMN IF NOT EXISTS is_today BOOLEAN DEFAULT false;
+
+ALTER TABLE action_tasks 
+ADD COLUMN IF NOT EXISTS is_high_priority BOOLEAN DEFAULT false;

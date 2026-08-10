@@ -20,8 +20,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
 
   return (
     <header className="absolute top-0 left-0 right-0 h-[64px] bg-background/80 backdrop-blur-md border-b border-border/40 flex items-center justify-between px-6 z-40 text-foreground">
-      <button onClick={onMenuClick} className="p-2 -ml-2 text-foreground hover:bg-muted rounded-xl transition-colors">
-
+      <button onClick={onMenuClick} className="min-w-[44px] min-h-[44px] p-2 flex items-center justify-center -ml-2 text-foreground hover:bg-muted active:bg-muted rounded-xl transition-colors">
         <Menu size={22} />
       </button>
       
@@ -34,7 +33,7 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
         <div className="hidden sm:block text-[9px] font-black text-slate-400 text-right uppercase tracking-widest leading-tight">
           {dateStr}
         </div>
-        <Link href="/settings" className="p-2 -mr-2 text-foreground hover:bg-muted rounded-xl transition-colors" title="Settings">
+        <Link href="/settings" className="min-w-[44px] min-h-[44px] p-2 flex items-center justify-center -mr-2 text-foreground hover:bg-muted active:bg-muted rounded-xl transition-colors" title="Settings">
           <Settings size={20} />
         </Link>
       </div>

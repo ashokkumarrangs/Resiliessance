@@ -116,7 +116,8 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
 
        const { error } = await supabase.from('pet_logs').insert(payload);
        if (error) {
-          toast.error("Failed to insert log. Did you run the SQL script to add category?");
+          console.error("Supabase pet log insert error:", error);
+          toast.error("Failed to save pet log. Please try again.");
           return;
        }
        toast.success("Entry logged successfully!");

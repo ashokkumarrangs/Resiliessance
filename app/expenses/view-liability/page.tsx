@@ -69,7 +69,7 @@ export default function ViewLiabilityPage() {
             items={["View Liabilities", "Add Liability"]}
             activeItem="View Liabilities"
             onChange={(val) => {
-              if (val === "Add Liability") router.push("/expenses/add-liability");
+              if (val === "Add Liability") router.push("/expenses/capital/liabilities");
             }}
             className="!mb-0 !mx-0"
           />
@@ -172,7 +172,7 @@ export default function ViewLiabilityPage() {
             <div className="flex gap-4">
               <button 
                 className="flex-1 h-16 bg-primary text-primary-foreground rounded-xl font-black text-center flex items-center justify-center hover:bg-primary/95 transition-all shadow-xl shadow-primary/20"
-                onClick={() => router.push(`/expenses/add-liability?party=${encodeURIComponent(selectedLiability.party)}`)}
+              onClick={() => router.push(`/expenses/capital/liabilities?party=${encodeURIComponent(selectedLiability.party)}`)}
               >
                 Record Payment
               </button>

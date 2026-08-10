@@ -101,7 +101,7 @@ export default function NetWorthPage() {
         <div className="bg-card rounded-2xl p-6 shadow-sm border border-border/40 flex flex-col items-center relative overflow-hidden">
            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-bl-[60px] pointer-events-none" />
            
-           <div className={`text-[44px] font-black tracking-tighter leading-none ${isPositive ? 'text-emerald-600' : 'text-rose-500'}`}>
+           <div className={`text-2xl sm:text-3xl md:text-[44px] font-black tracking-tighter leading-none truncate max-w-full ${isPositive ? 'text-emerald-600' : 'text-rose-500'}`}>
               {isLoading ? "..." : <Currency value={data.netWorth} />}
            </div>
         </div>

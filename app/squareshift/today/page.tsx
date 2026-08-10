@@ -14,7 +14,7 @@ import { TaskCompletionModal } from "@/components/TaskCompletionModal";
 
 const NOTES_ID = "__notes__";
 
-export default function SquareShiftNotesPage() {
+export default function SquareShiftTodayPage() {
   const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [projects, setProjects] = useState<any[]>([]);
@@ -50,9 +50,10 @@ export default function SquareShiftNotesPage() {
   const fetchTasks = async () => {
     const { data } = await supabase.from("action_tasks").select("*").order("sort_order");
     if (data) {
-      setTasks(data.filter(t => !t.project_id || t.project_id === NOTES_ID));
+      // Show tasks marked is_today
+      setTasks(data.filter(t => t.is_today));
       
-      // Calculate open task counts per project
+      // Calculate open task counts per category
       const counts: Record<string, number> = {};
       let todayCount = 0;
       data.forEach(t => {
@@ -75,15 +76,16 @@ export default function SquareShiftNotesPage() {
         text: newTaskText.trim(),
         project_id: null,
         completed: false,
+        is_today: true,
         sort_order: tasks.length
     }).select();
     if (!error && data) {
         setNewTaskText("");
-        toast.success("Note added");
+        toast.success("Task added to Today");
         fetchTasks();
     } else if (error) {
-        console.error("Error adding note:", error);
-        toast.error(`Failed to add note: ${error.message}`);
+        console.error("Error adding task:", error);
+        toast.error(`Failed to add task: ${error.message}`);
     }
   };
 
@@ -132,13 +134,13 @@ export default function SquareShiftNotesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if(!confirm("Delete this note?")) return;
+    if(!confirm("Delete this item?")) return;
     const { error } = await supabase.from('action_tasks').delete().eq('id', id);
     if (!error) fetchTasks();
   };
 
   const handleRename = async (task: any) => {
-    const newName = prompt("Rename note:", task.text);
+    const newName = prompt("Rename item:", task.text);
     if (newName && newName.trim()) {
         await supabase.from('action_tasks').update({ text: newName.trim() }).eq('id', task.id);
         fetchTasks();
@@ -160,8 +162,30 @@ export default function SquareShiftNotesPage() {
   };
 
   const focusInput = () => {
-    const inputEl = document.getElementById("squareshift-note-input");
+    const inputEl = document.getElementById("squareshift-task-input");
     if (inputEl) inputEl.focus();
+  };
+
+  const getProjectBadge = (task: any) => {
+    const isNote = !task.project_id || task.project_id === NOTES_ID;
+    const projName = isNote 
+      ? "Quick Notes" 
+      : (projects.find(p => p.id === task.project_id)?.name || "Project");
+    
+    return (
+      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border inline-flex items-center gap-1 w-fit shrink-0 ${
+        isNote 
+          ? "bg-slate-500/10 text-slate-400 border-slate-500/20" 
+          : "bg-primary/10 text-primary border-primary/20"
+      }`}>
+        {isNote ? (
+          <Notebook size={11} className="shrink-0" />
+        ) : (
+          <Folder size={11} className="shrink-0" />
+        )}
+        <span className="truncate max-w-[140px]">{projName}</span>
+      </span>
+    );
   };
 
   const moveTask = async (task: any, direction: 'up' | 'down') => {
@@ -192,7 +216,7 @@ export default function SquareShiftNotesPage() {
             setActiveMenuTaskId(isOpen ? null : task.id);
           }}
           className="p-1.5 text-muted-foreground/50 hover:text-primary hover:bg-muted rounded-md transition-colors cursor-pointer dropdown-trigger flex items-center justify-center"
-          title="Note Options"
+          title="Task Options"
         >
           <MoreVertical size={16} />
         </button>
@@ -278,7 +302,7 @@ export default function SquareShiftNotesPage() {
     >
 
         {isLoading ? (
-          <LoadingScreen message="Synthesizing quick notes..." />
+          <LoadingScreen message="Synthesizing today's tasks..." />
         ) : (
           <>
             <div className="-mt-2 mb-6">
@@ -286,13 +310,13 @@ export default function SquareShiftNotesPage() {
             {
               title: `Notes${openCounts[NOTES_ID] ? ` (${openCounts[NOTES_ID]})` : ""}`,
               icon: <Notebook size={16} />,
-              isActive: true,
+              isActive: false,
               onClick: () => router.push("/squareshift/notes"),
             },
             {
               title: `Today${openCounts["__today__"] ? ` (${openCounts["__today__"]})` : ""}`,
               icon: <Calendar size={16} />,
-              isActive: false,
+              isActive: true,
               onClick: () => router.push("/squareshift/today"),
             },
             ...projects.map(proj => ({
@@ -310,15 +334,15 @@ export default function SquareShiftNotesPage() {
           ]} />
         </div>
 
-        {/* Quick Notes Header */}
+        {/* Today Tasks Header */}
         <div className="flex items-center gap-2.5 mb-5">
-          <div className="w-8 h-8 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-center shrink-0">
-            <Notebook size={15} className="text-primary" />
+          <div className="w-8 h-8 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center justify-center shrink-0">
+            <Calendar size={15} className="text-amber-500" />
           </div>
           <div>
-            <h2 className="text-sm font-black text-foreground leading-none">Quick Notes</h2>
+            <h2 className="text-sm font-black text-foreground leading-none">Today's Tasks</h2>
             <p className="text-[10px] text-muted-foreground/50 font-medium mt-0.5 uppercase tracking-wide">
-              {openCounts[NOTES_ID] ?? 0} open note{openCounts[NOTES_ID] !== 1 ? 's' : ''}
+              {openCounts["__today__"] ?? 0} open item{openCounts["__today__"] !== 1 ? 's' : ''}
             </p>
           </div>
         </div>
@@ -327,9 +351,9 @@ export default function SquareShiftNotesPage() {
         <div className="bg-card rounded-xl p-4 shadow-sm border border-border/40 flex flex-col gap-3">
             <div className="flex gap-2">
                 <input 
-                    id="squareshift-note-input"
+                    id="squareshift-task-input"
                     type="text" 
-                    placeholder="Capture a quick note..."
+                    placeholder="Capture a task for today..."
                     value={newTaskText}
                     onChange={(e) => setNewTaskText(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && addTask()}
@@ -360,7 +384,7 @@ export default function SquareShiftNotesPage() {
                 const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60 bg-card';
                 return (
                   <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-10'}`}>
-                      <div className={`flex items-center gap-2 border border-border/40 border-l-4 ${accentClass} rounded-xl px-3 h-14 shadow-sm transition-all group`}>
+                      <div className={`flex items-center gap-2 border border-border/40 border-l-4 ${accentClass} rounded-xl px-3 min-h-[56px] py-2 shadow-sm transition-all group`}>
                           <div className="w-6 flex items-center justify-center shrink-0">
                               <button 
                                   onClick={() => toggleStatus(task)}
@@ -369,11 +393,12 @@ export default function SquareShiftNotesPage() {
                                   <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                               </button>
                           </div>
-                          <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
+                          <div className="flex-1 min-w-0 pr-2 flex flex-col justify-center">
                               <span className={`text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 ${task.is_high_priority ? 'text-foreground font-black' : 'font-bold text-foreground/90'}`}>
                                   {task.is_high_priority && <Flame size={12} className="text-rose-500 fill-rose-500 shrink-0" />}
                                   {task.text}
                               </span>
+                              <div className="flex items-center w-fit mt-0.5">{getProjectBadge(task)}</div>
                           </div>
                           
                           {renderDropdown(task)}
@@ -394,7 +419,7 @@ export default function SquareShiftNotesPage() {
                   </div>
                   {tasks.filter(t => t.completed).map(task => (
                       <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-10'}`}>
-                          <div className="flex items-center gap-2 bg-muted/10 border border-border/20 rounded-xl px-3 h-14 opacity-55 hover:opacity-90 transition-opacity group">
+                          <div className="flex items-center gap-2 bg-muted/10 border border-border/20 rounded-xl px-3 min-h-[56px] py-2 opacity-55 hover:opacity-90 transition-opacity group">
                               <div className="w-6 flex items-center justify-center shrink-0">
                                   <button 
                                       onClick={() => toggleStatus(task)}
@@ -403,10 +428,11 @@ export default function SquareShiftNotesPage() {
                                       <Check size={12} />
                                   </button>
                               </div>
-                              <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
+                              <div className="flex-1 min-w-0 pr-2 flex flex-col justify-center">
                                   <span className="text-xs font-semibold text-muted-foreground/45 line-through decoration-muted-foreground/30 leading-tight block truncate cursor-pointer hover:text-foreground transition-colors">
                                       {task.text}
                                   </span>
+                                  <div className="flex items-center w-fit mt-0.5">{getProjectBadge(task)}</div>
                               </div>
                               
                               {renderDropdown(task)}
@@ -418,11 +444,11 @@ export default function SquareShiftNotesPage() {
 
           {tasks.length === 0 && (
             <div className="text-center py-20 px-10 bg-muted/10 border-2 border-dashed border-border/40 rounded-2xl">
-              <div className="w-16 h-16 bg-card border border-border/40 text-primary/70 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-sm">
-                <List size={32} />
+              <div className="w-16 h-16 bg-card border border-border/40 text-amber-500/70 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                <Calendar size={32} />
               </div>
-              <h3 className="text-foreground font-black">Quick Notes is empty</h3>
-              <p className="text-muted-foreground/60 font-medium text-sm mt-2">Start adding notes above!</p>
+              <h3 className="text-foreground font-black">No tasks assigned to Today</h3>
+              <p className="text-muted-foreground/60 font-medium text-sm mt-2">Add a task above or move notes/tasks to Today!</p>
             </div>
           )}
         </div>

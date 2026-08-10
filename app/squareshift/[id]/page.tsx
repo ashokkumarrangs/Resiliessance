@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { 
-    Folder, Notebook, Plus, Check, Edit3, Trash2, GripVertical, List, Eye, EyeOff
+    Folder, Notebook, Plus, Check, Edit3, Trash2, GripVertical, List, Eye, EyeOff, ChevronUp, ChevronDown, MoreVertical, Calendar, Flame, PlusSquare, Star
 } from "lucide-react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -29,9 +29,19 @@ export default function SquareShiftProjectPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [activeTask, setActiveTask] = useState<any | null>(null);
   const [newTaskText, setNewTaskText] = useState("");
+  const [activeMenuTaskId, setActiveMenuTaskId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([fetchProjects(), fetchTasks()]).then(() => setIsLoading(false));
+
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.dropdown-trigger') && !target.closest('.dropdown-menu')) {
+        setActiveMenuTaskId(null);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
   }, [projectId]);
 
   const fetchProjects = async () => {
@@ -46,12 +56,15 @@ export default function SquareShiftProjectPage() {
       
       // Calculate open task counts per project
       const counts: Record<string, number> = {};
+      let todayCount = 0;
       data.forEach(t => {
         if (!t.completed) {
+          if (t.is_today) todayCount++;
           const pid = t.project_id || NOTES_ID;
           counts[pid] = (counts[pid] || 0) + 1;
         }
       });
+      counts["__today__"] = todayCount;
       setOpenCounts(counts);
     }
   };
@@ -99,6 +112,23 @@ export default function SquareShiftProjectPage() {
     }
   };
 
+  const toggleFlag = async (task: any, field: 'is_today' | 'is_high_priority', val: boolean) => {
+    const { error } = await supabase
+      .from('action_tasks')
+      .update({ [field]: val })
+      .eq('id', task.id);
+    if (!error) {
+      toast.success(field === 'is_today' 
+        ? (val ? "Moved to Today" : "Removed from Today") 
+        : (val ? "Marked as High Priority" : "Priority set to Normal")
+      );
+      fetchTasks();
+    } else {
+      console.error(`Error toggling ${field}:`, error);
+      toast.error(`Failed to update ${field === 'is_today' ? 'today status' : 'priority'}`);
+    }
+  };
+
   const handleDelete = async (id: string) => {
     if(!confirm("Delete this task?")) return;
     const { error } = await supabase.from('action_tasks').delete().eq('id', id);
@@ -108,7 +138,7 @@ export default function SquareShiftProjectPage() {
   const handleRename = async (task: any) => {
     const newName = prompt("Rename task:", task.text);
     if (newName && newName.trim()) {
-        await supabase.from('action_tasks').update({ text: newName }).eq('id', task.id);
+        await supabase.from('action_tasks').update({ text: newName.trim() }).eq('id', task.id);
         fetchTasks();
     }
   };
@@ -162,6 +192,109 @@ export default function SquareShiftProjectPage() {
     }
   };
 
+  const focusInput = () => {
+    const inputEl = document.getElementById("squareshift-project-input");
+    if (inputEl) inputEl.focus();
+  };
+
+  const moveTask = async (task: any, direction: 'up' | 'down') => {
+    const list = tasks.filter(t => !t.completed);
+    const index = list.findIndex(t => t.id === task.id);
+    if (index === -1) return;
+    
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= list.length) return;
+    
+    const sibling = list[targetIndex];
+    const currentOrder = task.sort_order ?? index;
+    const siblingOrder = sibling.sort_order ?? targetIndex;
+    
+    await supabase.from('action_tasks').update({ sort_order: siblingOrder }).eq('id', task.id);
+    await supabase.from('action_tasks').update({ sort_order: currentOrder }).eq('id', sibling.id);
+    fetchTasks();
+  };
+
+  const renderDropdown = (task: any) => {
+    const isOpen = activeMenuTaskId === task.id;
+    return (
+      <div className="relative flex justify-end shrink-0">
+        <button 
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setActiveMenuTaskId(isOpen ? null : task.id);
+          }}
+          className="p-1.5 text-muted-foreground/50 hover:text-primary hover:bg-muted rounded-md transition-colors cursor-pointer dropdown-trigger flex items-center justify-center"
+          title="Task Options"
+        >
+          <MoreVertical size={16} />
+        </button>
+        
+        {isOpen && (
+          <div className="absolute right-0 top-full mt-1.5 w-44 bg-card border border-border/40 rounded-xl shadow-xl z-50 py-1.5 dropdown-menu animate-in fade-in slide-in-from-top-1">
+            <button
+              type="button"
+              onClick={() => { focusInput(); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <PlusSquare size={13} className="text-muted-foreground/40" />
+              Add
+            </button>
+            <button
+              type="button"
+              onClick={() => { moveTask(task, 'up'); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <ChevronUp size={13} className="text-muted-foreground/40" />
+              Move Up
+            </button>
+            <button
+              type="button"
+              onClick={() => { moveTask(task, 'down'); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <ChevronDown size={13} className="text-muted-foreground/40" />
+              Move Down
+            </button>
+            <button
+              type="button"
+              onClick={() => { toggleFlag(task, 'is_today', !task.is_today); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <Star size={13} className={task.is_today ? "text-amber-500 fill-amber-500" : "text-muted-foreground/40"} />
+              {task.is_today ? "Remove Today" : "Move to Today"}
+            </button>
+            <button
+              type="button"
+              onClick={() => { toggleFlag(task, 'is_high_priority', !task.is_high_priority); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <Flame size={13} className={task.is_high_priority ? "text-rose-500 fill-rose-500" : "text-muted-foreground/40"} />
+              {task.is_high_priority ? "Normal Priority" : "High Priority"}
+            </button>
+            <button
+              type="button"
+              onClick={() => { handleRename(task); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
+            >
+              <Edit3 size={13} className="text-muted-foreground/40" />
+              Edit
+            </button>
+            <div className="h-px bg-border/40 my-1"></div>
+            <button
+              type="button"
+              onClick={() => { handleDelete(task.id); setActiveMenuTaskId(null); }}
+              className="w-full text-left px-3 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center gap-2"
+            >
+              <Trash2 size={13} className="text-rose-500" />
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <PageWrapper
       title="SquareShift"
@@ -188,6 +321,12 @@ export default function SquareShiftProjectPage() {
               icon: <Notebook size={16} />,
               isActive: false,
               onClick: () => router.push("/squareshift/notes"),
+            },
+            {
+              title: `Today${openCounts["__today__"] ? ` (${openCounts["__today__"]})` : ""}`,
+              icon: <Calendar size={16} />,
+              isActive: false,
+              onClick: () => router.push("/squareshift/today"),
             },
             ...projects.map(proj => ({
               title: `${proj.name}${openCounts[proj.id] ? ` (${openCounts[proj.id]})` : ""}`,
@@ -237,10 +376,11 @@ export default function SquareShiftProjectPage() {
           </div>
         )}
 
-        {/* Input Area matches Task Manager */}
+        {/* Input Area */}
         <div className="bg-card rounded-xl p-4 shadow-sm border border-border/40 flex flex-col gap-3">
             <div className="flex gap-2">
                 <input 
+                    id="squareshift-project-input"
                     type="text" 
                     placeholder="Capture something to do..."
                     value={newTaskText}
@@ -260,42 +400,40 @@ export default function SquareShiftProjectPage() {
         <div className="space-y-4 mt-6">
           {/* Headers */}
           {tasks.length > 0 && (
-              <div className="grid gap-2 px-3 text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest grid-cols-[24px_22px_1fr_64px]">
+              <div className="grid gap-2 px-3 text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest grid-cols-[24px_22px_1fr_32px]">
                 <span></span>
                 <span></span>
                 <span>Task</span>
-                <span className="text-right">Actions</span>
+                <span className="text-right"></span>
               </div>
           )}
           
           <div className="space-y-3">
-            {tasks.filter(t => !t.completed).map(task => (
-                <div key={task.id} className="w-full">
-                    <div className="flex items-center gap-2 bg-card border border-border/40 border-l-4 border-l-primary/60 rounded-xl px-3 h-14 shadow-sm transition-all group">
-                        <div className="w-6 flex items-center justify-center text-muted-foreground/20 hover:text-primary cursor-grab active:cursor-grabbing shrink-0">
-                            <GripVertical size={16} />
-                        </div>
-                        <div className="w-6 flex items-center justify-center shrink-0">
-                            <button 
-                                onClick={() => toggleStatus(task)}
-                                className="w-5 h-5 rounded-md border border-border/40 text-muted-foreground/30 hover:border-primary hover:text-primary flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-                            >
-                                <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </button>
-                        </div>
-                        <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
-                            <span className="text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 font-bold text-foreground/90">
-                                {task.text}
-                            </span>
-                        </div>
-                        
-                        <div className="w-16 flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-card shrink-0">
-                            <button onClick={() => handleRename(task)} className="p-1 text-muted-foreground/40 hover:text-primary hover:bg-muted rounded-md cursor-pointer"><Edit3 size={13} /></button>
-                            <button onClick={() => handleDelete(task.id)} className="p-1 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-md cursor-pointer"><Trash2 size={13} /></button>
-                        </div>
-                    </div>
-                </div>
-            ))}
+            {tasks.filter(t => !t.completed).map(task => {
+                const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60 bg-card';
+                return (
+                  <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-10'}`}>
+                      <div className={`flex items-center gap-2 border border-border/40 border-l-4 ${accentClass} rounded-xl px-3 h-14 shadow-sm transition-all group`}>
+                          <div className="w-6 flex items-center justify-center shrink-0">
+                              <button 
+                                  onClick={() => toggleStatus(task)}
+                                  className="w-5 h-5 rounded-md border border-border/40 text-muted-foreground/30 hover:border-primary hover:text-primary flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+                              >
+                                  <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </button>
+                          </div>
+                          <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
+                              <span className={`text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 ${task.is_high_priority ? 'text-foreground font-black' : 'font-bold text-foreground/90'}`}>
+                                  {task.is_high_priority && <Flame size={12} className="text-rose-500 fill-rose-500 shrink-0" />}
+                                  {task.text}
+                              </span>
+                          </div>
+                          
+                          {renderDropdown(task)}
+                      </div>
+                  </div>
+                );
+            })}
           </div>
 
           {/* Completed Wrapper */}
@@ -308,11 +446,8 @@ export default function SquareShiftProjectPage() {
                       <div className="h-px flex-1 bg-border/20"></div>
                   </div>
                   {tasks.filter(t => t.completed).map(task => (
-                      <div key={task.id} className="w-full">
+                      <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-10'}`}>
                           <div className="flex items-center gap-2 bg-muted/10 border border-border/20 rounded-xl px-3 h-14 opacity-55 hover:opacity-90 transition-opacity group">
-                              <div className="w-6 flex items-center justify-center text-muted-foreground/20 shrink-0">
-                                  <GripVertical size={16} />
-                              </div>
                               <div className="w-6 flex items-center justify-center shrink-0">
                                   <button 
                                       onClick={() => toggleStatus(task)}
@@ -327,9 +462,7 @@ export default function SquareShiftProjectPage() {
                                   </span>
                               </div>
                               
-                              <div className="w-16 flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-transparent shrink-0">
-                                  <button onClick={() => handleDelete(task.id)} className="p-1 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-md cursor-pointer"><Trash2 size={13} /></button>
-                              </div>
+                              {renderDropdown(task)}
                           </div>
                       </div>
                   ))}

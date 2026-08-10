@@ -13,6 +13,7 @@ interface SearchableSelectProps {
   createLabel?: string;
   placeholder?: string;
   hideLabel?: boolean;
+  disableCreate?: boolean;
 }
 
 export function SearchableSelect({ 
@@ -24,7 +25,8 @@ export function SearchableSelect({
   options,
   createLabel,
   placeholder,
-  hideLabel
+  hideLabel,
+  disableCreate = false
 }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [prevValue, setPrevValue] = useState(value);
@@ -85,6 +87,15 @@ export function SearchableSelect({
         setSearch(selected);
         setIsOpen(false);
         setFocusedIndex(-1);
+      } else if (!isManualEntry) {
+        const match = safeOptions.find(opt => opt?.toLowerCase() === search?.trim().toLowerCase());
+        if (match) {
+          onChange(match);
+          setSearch(match);
+        } else {
+          setSearch(value);
+        }
+        setIsOpen(false);
       } else if (search && isManualEntry) {
         onChange(search);
         setIsOpen(false);
@@ -132,6 +143,16 @@ export function SearchableSelect({
               setIsTyping(false);
               setIsManualEntry(false);
               setFocusedIndex(-1);
+              
+              if (!isManualEntry) {
+                const match = safeOptions.find(opt => opt?.toLowerCase() === search?.trim().toLowerCase());
+                if (match) {
+                  onChange(match);
+                  setSearch(match);
+                } else {
+                  setSearch(value);
+                }
+              }
             }, 200);
           }}
           className="w-full min-w-0 h-11 bg-muted border-none rounded-lg px-4 pr-10 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30 font-sans cursor-text"
@@ -165,7 +186,7 @@ export function SearchableSelect({
             </button>
           ))}
           
-          {!isManualEntry && (
+          {!isManualEntry && !disableCreate && (
             <button
               type="button"
               onMouseDown={(e) => e.preventDefault()}
@@ -184,7 +205,7 @@ export function SearchableSelect({
             </button>
           )}
           
-          {isManualEntry && search && !options.includes(search) && (
+          {isManualEntry && search && !options.includes(search) && !disableCreate && (
             <button
               type="button"
               onMouseDown={(e) => e.preventDefault()}

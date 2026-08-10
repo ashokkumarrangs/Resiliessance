@@ -67,7 +67,7 @@ export default function ViewReceivablePage() {
             items={["View Receivables", "Add Receivable"]}
             activeItem="View Receivables"
             onChange={(val) => {
-              if (val === "Add Receivable") router.push("/expenses/add-receivable");
+              if (val === "Add Receivable") router.push("/expenses/capital/receivables");
             }}
             className="!mb-0 !mx-0"
           />
@@ -170,7 +170,7 @@ export default function ViewReceivablePage() {
             <div className="flex gap-4">
               <button 
                 className="flex-1 h-16 bg-primary text-primary-foreground rounded-xl font-black text-center flex items-center justify-center hover:bg-primary/95 transition-all shadow-xl shadow-primary/20"
-                onClick={() => router.push(`/expenses/add-receivable?party=${encodeURIComponent(selectedReceivable.party)}`)}
+                onClick={() => router.push(`/expenses/capital/receivables?party=${encodeURIComponent(selectedReceivable.party)}`)}
               >
                 Record Payment
               </button>

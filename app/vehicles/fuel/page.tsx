@@ -130,8 +130,8 @@ function VehicleFuelServiceContent() {
 
       // A. Reserve Mileage (Trip-to-Trip)
       const prevOdo = lastLog && lastLog.length > 0 ? lastLog[0].odometer : initialOdo;
-      if (currentOdo <= prevOdo && prevOdo !== 0) {
-        toast.error("Odometer reading must be higher than the previous reading (" + prevOdo + ")");
+      if (currentOdo < prevOdo && prevOdo !== 0) {
+        toast.error("Odometer reading cannot be lower than previous reading (" + prevOdo + ")");
         setSaving(false);
         return;
       }
