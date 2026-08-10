@@ -254,6 +254,16 @@ export default function DailyEntryPage() {
       toast.error("Required fields missing");
       return;
     }
+    if (isTransfer) {
+      if (!formData.to_account) {
+        toast.error("Please select a destination account for the transfer");
+        return;
+      }
+      if (formData.account === formData.to_account) {
+        toast.error("Source and destination accounts must be different");
+        return;
+      }
+    }
 
     setIsSubmitting(true);
     try {

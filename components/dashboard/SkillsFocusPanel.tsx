@@ -61,7 +61,7 @@ export function SkillsFocusPanel({ focusSkillDash }: SkillsFocusPanelProps) {
       
       <div className="bg-muted rounded-md h-1.5 w-full overflow-hidden">
         <div className="h-full rounded-full transition-all"
-          style={{ width: `${Math.min((focusSkillDash.sessions / focusSkillDash.target) * 100, 100)}%`, backgroundColor: focusSkillDash.sessions >= focusSkillDash.target ? "#10b981" : focusSkillDash.color }} />
+          style={{ width: `${Math.min((focusSkillDash.sessions / (focusSkillDash.target || 1)) * 100, 100)}%`, backgroundColor: focusSkillDash.sessions >= (focusSkillDash.target || 1) ? "#10b981" : focusSkillDash.color }} />
       </div>
     </Link>
   );

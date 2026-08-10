@@ -148,6 +148,7 @@ export default function DashboardPage() {
   const workoutScrollRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let isMounted = true;
     const hr = new Date().getHours();
     setGreeting(hr < 12 ? "Good Morning! 🌅" : hr < 17 ? "Good Afternoon! ☀️" : "Good Evening! 🌙");
 
@@ -156,7 +157,11 @@ export default function DashboardPage() {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     setDateStr(`${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`);
 
-    fetchDashboardData();
+    fetchDashboardData(() => isMounted);
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -193,7 +198,7 @@ export default function DashboardPage() {
     triggerTaskCompletion(taskId, taskText, 'squareshift');
   };
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (checkIsMounted?: () => boolean) => {
     setIsLoading(true);
     const today = format(new Date(), "yyyy-MM-dd");
     const sevenDaysAgo = format(new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), "yyyy-MM-dd");
@@ -201,6 +206,7 @@ export default function DashboardPage() {
     const currentMonthLabel = format(new Date(), "yyyy-MM") + "-01";
 
     try {
+      if (checkIsMounted && !checkIsMounted()) return;
       const [
         { data: liquidityData },
         { data: assetsData },
@@ -715,7 +721,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <button 
-            onClick={fetchDashboardData}
+            onClick={() => fetchDashboardData()}
             className="p-3.5 bg-card rounded-md shadow-sm text-foreground hover:bg-muted transition-all active:scale-95 border border-border/40"
           >
             <RefreshCw size={18} className={isLoading ? "animate-spin" : ""} />

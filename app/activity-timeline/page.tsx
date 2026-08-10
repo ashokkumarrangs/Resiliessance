@@ -498,7 +498,7 @@ function ActivityTimelineContent() {
     if (dateStr === yesterdayStr) return "Yesterday";
 
     try {
-      const d = new Date(dateStr);
+      const d = new Date(`${dateStr}T00:00:00`);
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
     } catch (e) {

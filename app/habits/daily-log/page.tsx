@@ -36,6 +36,7 @@ const parseDurationStr = (valStr: string) => {
 };
 
 const formatDurationStr = (hrs: string, mins: string) => {
+  if (hrs.trim() === '' && mins.trim() === '') return '';
   const h = hrs.trim() === '' ? '0' : hrs;
   const m = mins.trim() === '' ? '0' : mins;
   return `${h.padStart(2, '0')}:${m.padStart(2, '0')}`;

@@ -356,7 +356,7 @@ export default function ReportsPage() {
       wIntMap[r.date].weight += (parseFloat(r.weight) || 0) * (parseInt(r.reps) || 0);
       wIntMap[r.date].reps += parseInt(r.reps) || 0;
     });
-    setWorkoutIntensityData(Object.entries(wIntMap).map(([date, v]) => ({ date: format(new Date(date), "dd MMM"), intensity: v.reps > 0 ? Math.round(v.weight / v.reps) : 0 })));
+    setWorkoutIntensityData(Object.entries(wIntMap).map(([date, v]) => ({ date: format(new Date(date), "dd MMM"), intensity: (v.reps > 0 && !isNaN(v.weight)) ? Math.round(v.weight / v.reps) : 0 })));
   }, [workoutIntensityRange, workoutData]);
 
   // 13. Workout Exercise Bias Range changed
@@ -486,13 +486,14 @@ export default function ReportsPage() {
     let completedCount = 0;
 
     rawTasksData.forEach((t) => {
-      const created = new Date(t.created_at || t.id.replace('ID_', ''));
+      const rawCreatedStr = t.created_at || (t.id && t.id.startsWith('ID_') ? t.id.replace('ID_', '') : null);
+      const created = rawCreatedStr ? new Date(rawCreatedStr) : null;
       const completed = t.completed_at ? new Date(t.completed_at) : null;
       
-      if (created >= cutoff) {
+      if (created && !isNaN(created.getTime()) && created >= cutoff) {
         createdCount++;
       }
-      if (completed && completed >= cutoff) {
+      if (completed && !isNaN(completed.getTime()) && completed >= cutoff) {
         completedCount++;
       }
     });

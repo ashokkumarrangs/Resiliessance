@@ -110,7 +110,12 @@ const getLocal = <T>(key: string, fallback: T): T => {
   if (typeof window === "undefined") return fallback;
   try {
     const val = localStorage.getItem(`resiliessance_diet_${key}`);
-    return val ? JSON.parse(val) : fallback;
+    if (!val) return fallback;
+    const parsed = JSON.parse(val);
+    if (Array.isArray(fallback)) {
+      return (Array.isArray(parsed) ? parsed : fallback) as T;
+    }
+    return parsed;
   } catch {
     return fallback;
   }

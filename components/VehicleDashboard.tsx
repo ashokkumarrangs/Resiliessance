@@ -35,7 +35,7 @@ function getVehicleIcon(type: string) {
 
 function getInsuranceStatus(expiry: string | null) {
   const now = new Date();
-  if (!expiry) return { color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border', icon: ShieldAlert, label: 'No Data', days: null, pill: 'bg-muted text-muted-foreground' };
+  if (!expiry || !expiry.trim()) return { color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border', icon: ShieldAlert, label: 'No Data', days: null, pill: 'bg-muted text-muted-foreground' };
   const dObj = new Date(expiry);
   if (isNaN(dObj.getTime())) return { color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border', icon: ShieldAlert, label: 'Invalid Date', days: null, pill: 'bg-muted text-muted-foreground' };
   const days = differenceInDays(dObj, now);
@@ -333,7 +333,11 @@ export function VehicleDashboard() {
           ?.filter(l => l.vehicle_id === v.id)
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) || [];
 
-        const maxOdo = Math.max(...(fuelLogs.map(l => l.odometer)), ...(serviceLogs.map(l => l.odometer)), v.initial_odometer || 0);
+        const maxOdo = Math.max(
+          ...(fuelLogs.map(l => Number(l.odometer) || 0)), 
+          ...(serviceLogs.map(l => Number(l.odometer) || 0)), 
+          v.initial_odometer || 0
+        );
         const validFuelLogs = fuelLogs.filter(l => l.odometer > (v.initial_odometer || 0));
         const totalLiters = validFuelLogs.reduce((acc, curr) => acc + (curr.liters || 0), 0) || 0;
         const totalDist = maxOdo - (v.initial_odometer || 0);

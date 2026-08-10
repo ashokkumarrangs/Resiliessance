@@ -10,8 +10,13 @@ const dmSans = DM_Sans({
 });
 
 export const metadata = {
-  title: "Resiliessance",
-  description: "Personal Operating System by Heyyy",
+  title: "Resiliessance — Life OS",
+  description: "Comprehensive personal operating system for habits, finance, workout, nutrition, tasks, and vehicles.",
+  openGraph: {
+    title: "Resiliessance — Life OS",
+    description: "Comprehensive personal operating system for habits, finance, workout, nutrition, tasks, and vehicles.",
+    type: "website",
+  },
 };
 
 export const viewport = {
@@ -31,6 +36,11 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="ocean" suppressHydrationWarning className={cn("antialiased", dmSans.variable)}>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("resiliessance_ui_theme")||"ocean";document.documentElement.setAttribute("data-theme",t);}catch(e){}})()`,
+          }}
+        />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="icon" href="/favicon.ico" sizes="any" />

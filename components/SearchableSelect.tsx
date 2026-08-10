@@ -41,9 +41,10 @@ export function SearchableSelect({
     setSearch(value);
   }
 
+  const safeOptions = Array.isArray(options) ? options : [];
   const displayOptions = (isTyping && search)
-    ? options.filter(opt => opt?.toLowerCase().includes(search.toLowerCase()))
-    : options;
+    ? safeOptions.filter(opt => opt?.toLowerCase().includes(search.toLowerCase()))
+    : safeOptions;
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {

@@ -63,11 +63,12 @@ export function calculateHabitStatus(config: HabitConfig, rawValue: string): Hab
   const value = parseNumeric(rawValue);
   if (isNaN(value)) return 'Failure';
 
-  const { condition_type, target_value = 0, suc_min, suc_max, tol_min, tol_max, crit_min, crit_max, direction } = config;
-
-  const baseCondition = condition_type.endsWith('_count') ? condition_type.replace('_count', '') : condition_type;
+  const { condition_type, target_value = 0, suc_min, suc_max, tol_min, tol_max, crit_min, crit_max, direction } = config || {};
+  const condType = condition_type || '';
+  const baseCondition = condType.endsWith('_count') ? condType.replace('_count', '') : condType;
   switch (baseCondition) {
     case 'between': {
+      if (suc_min == null && suc_max == null && tol_min == null && tol_max == null) return 'Success';
       const isSuc = (suc_min == null || value >= suc_min) && (suc_max == null || value <= suc_max);
       if (isSuc && (suc_min != null || suc_max != null)) return 'Success';
 

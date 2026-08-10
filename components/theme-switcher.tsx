@@ -4,31 +4,22 @@ import { useEffect, useState } from "react";
 import { Palette } from "lucide-react";
 
 const THEMES = [
-  { id: "nordic", label: "🌿 Nordic Sage", color: "#f0f4f1" },
-  { id: "terracotta", label: "🏜️ Terracotta", color: "#fbf9f6" },
-  { id: "ocean", label: "🌊 Ocean Mist", color: "#f0f4f8" },
-  { id: "lavender", label: "🌸 Lavender", color: "#f5f3f7" }
+  { id: "ocean", label: "🌊 Ocean Mist (Active)", color: "#f0f4f8" }
 ];
 
 export function ThemeSwitcher() {
-  const [activeTheme, setActiveTheme] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("resiliessance_ui_theme") || "nordic";
-    }
-    return "nordic";
-  });
+  const [activeTheme, setActiveTheme] = useState("ocean");
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Set theme attribute on root element
-    document.documentElement.setAttribute("data-theme", activeTheme);
-  }, [activeTheme]);
+    document.documentElement.setAttribute("data-theme", "ocean");
+    localStorage.setItem("resiliessance_ui_theme", "ocean");
+  }, []);
 
   const changeTheme = (tId: string) => {
-    console.log("🎨 ThemeSwitcher: Changing theme to ->", tId);
-    setActiveTheme(tId);
-    document.documentElement.setAttribute("data-theme", tId);
-    localStorage.setItem("resiliessance_ui_theme", tId);
+    setActiveTheme("ocean");
+    document.documentElement.setAttribute("data-theme", "ocean");
+    localStorage.setItem("resiliessance_ui_theme", "ocean");
     setIsOpen(false);
   };
 

@@ -96,7 +96,8 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
 
 function NavItem({ icon, title, onClick, href }: { icon: React.ReactNode; title: string; onClick?: () => void; href?: string }) {
   const pathname = usePathname();
-  const isActive = href && pathname === href;
+  const basePath = href ? href.split('?')[0] : '';
+  const isActive = href && (pathname === href || (href !== '/' && pathname.startsWith(basePath)));
   
   const content = (
     <div className={`flex items-center gap-3 py-2.5 px-3 rounded-xl text-[15px] font-bold cursor-pointer transition-all duration-300 select-none

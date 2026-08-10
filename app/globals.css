@@ -3,70 +3,8 @@
 @import "shadcn/tailwind.css";
 
 /* --- THEME SYSTEM --- */
-:root {
-  /* Default Palette: Nordic Sage */
-  --background: #f0f4f1;
-  --foreground: #2c332d;
-  --card: #ffffff;
-  --card-foreground: #2c332d;
-  --popover: #ffffff;
-  --popover-foreground: #2c332d;
-  --primary: #3d4a3e;
-  --primary-foreground: #ffffff;
-  --secondary: #e2e8e4;
-  --secondary-foreground: #3d4a3e;
-  --muted: #e2e8e4;
-  --muted-foreground: #6e7a70;
-  --accent: #7fa998;
-  --accent-foreground: #ffffff;
-  --destructive: #d98880;
-  --border: #dce3dd;
-  --input: #dce3dd;
-  --ring: #7fa998;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #2c332d;
-  --sidebar-primary: #3d4a3e;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f2f5f1;
-  --sidebar-accent-foreground: #3d4a3e;
-  --sidebar-border: #dce3dd;
-  --sidebar-ring: #7fa998;
-
-  /* Zenith Specific Tokens (Hardened Rich Style) */
-
-  --shadow-zenith: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
-}
-
-[data-theme="terracotta"] {
-  --background: #fbf9f6;
-  --foreground: #3d312a;
-  --card: #ffffff;
-  --card-foreground: #3d312a;
-  --popover: #ffffff;
-  --popover-foreground: #3d312a;
-  --primary: #c26d5c;
-  --primary-foreground: #ffffff;
-  --secondary: #f2ebe3;
-  --secondary-foreground: #3d312a;
-  --muted: #f2ebe3;
-  --muted-foreground: #8a736a;
-  --accent: #d88c7d;
-  --accent-foreground: #ffffff;
-  --destructive: #c26d5c;
-  --border: #e8ded5;
-  --input: #e8ded5;
-  --ring: #d88c7d;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #3d312a;
-  --sidebar-primary: #c26d5c;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #fbf9f6;
-  --sidebar-accent-foreground: #3d312a;
-  --sidebar-border: #e8ded5;
-  --sidebar-ring: #d88c7d;
-}
-
-[data-theme="ocean"] {
+:root, [data-theme="ocean"] {
+  /* Sole Theme Palette: Ocean Blue */
   --background: #f0f4f8;
   --foreground: #1c2a38;
   --card: #ffffff;
@@ -93,35 +31,8 @@
   --sidebar-accent-foreground: #1c2a38;
   --sidebar-border: #d3dce6;
   --sidebar-ring: #588bbd;
-}
 
-[data-theme="lavender"] {
-  --background: #f5f3f7;
-  --foreground: #2d2438;
-  --card: #ffffff;
-  --card-foreground: #2d2438;
-  --popover: #ffffff;
-  --popover-foreground: #2d2438;
-  --primary: #7c5c96;
-  --primary-foreground: #ffffff;
-  --secondary: #e6e1ea;
-  --secondary-foreground: #2d2438;
-  --muted: #e6e1ea;
-  --muted-foreground: #7a6e85;
-  --accent: #9f83b8;
-  --accent-foreground: #ffffff;
-  --destructive: #d98880;
-  --border: #d8d2df;
-  --input: #d8d2df;
-  --ring: #9f83b8;
-  --sidebar: #ffffff;
-  --sidebar-foreground: #2d2438;
-  --sidebar-primary: #7c5c96;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f5f3f7;
-  --sidebar-accent-foreground: #2d2438;
-  --sidebar-border: #d8d2df;
-  --sidebar-ring: #9f83b8;
+  --shadow-zenith: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
 }
 
 @theme inline {

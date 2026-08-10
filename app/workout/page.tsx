@@ -250,7 +250,8 @@ export default function WorkoutPage() {
         }))
       );
 
-      await supabase.from('workout_log').delete().eq('date', date);
+      const { error: delError } = await supabase.from('workout_log').delete().eq('date', date);
+      if (delError) throw delError;
       const { error } = await supabase.from('workout_log').insert(payload);
       if (error) throw error;
 

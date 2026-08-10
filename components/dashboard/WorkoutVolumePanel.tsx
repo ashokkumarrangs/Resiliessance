@@ -42,9 +42,11 @@ export function WorkoutVolumePanel({
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         onScroll={(e) => {
           const el = e.currentTarget;
-          const idx = Math.round(el.scrollLeft / el.clientWidth);
-          if (idx !== activeWorkoutIndex && idx >= 0 && idx < 7) {
-            setActiveWorkoutIndex(idx);
+          if (el.clientWidth > 0) {
+            const idx = Math.round(el.scrollLeft / el.clientWidth);
+            if (idx !== activeWorkoutIndex && idx >= 0 && idx < 7) {
+              setActiveWorkoutIndex(idx);
+            }
           }
         }}
       >

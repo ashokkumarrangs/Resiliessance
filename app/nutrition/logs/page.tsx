@@ -238,10 +238,11 @@ function DailyLogPageContent() {
         const selectedCombo = combos.find((c) => c.id === selectedComboId);
         if (!selectedCombo) throw new Error("Combo not found");
 
-        for (const item of selectedCombo.items) {
-          const food = foodLibrary.find((f) => f.id === item.food_id);
-          if (food) {
-            await dietService.addLogEntry({
+        const comboPromises = selectedCombo.items
+          .map((item) => {
+            const food = foodLibrary.find((f) => f.id === item.food_id);
+            if (!food) return null;
+            return dietService.addLogEntry({
               date: selectedDate,
               meal_type: logMealType,
               food_name: food.name,
@@ -255,8 +256,10 @@ function DailyLogPageContent() {
               fiber: food.fiber,
               is_supplement: false
             });
-          }
-        }
+          })
+          .filter((p): p is Promise<any> => p !== null);
+
+        await Promise.all(comboPromises);
       } else {
         // Supplement
         if (!supplementName.trim()) {

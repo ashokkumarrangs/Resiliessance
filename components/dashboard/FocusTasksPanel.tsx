@@ -55,7 +55,7 @@ export function FocusTasksPanel({
           <div>
             <span className="text-[9px] font-black text-rose-500 uppercase tracking-wider block mb-1">Today (High Priority)</span>
             <div className="space-y-1 pr-1">
-              {pendingTasks.todayHigh.length > 0 ? (
+              {(pendingTasks?.todayHigh?.length || 0) > 0 ? (
                 pendingTasks.todayHigh.map((task, idx) => (
                   <div key={idx} className="flex items-center gap-2.5 text-xs font-bold text-foreground group/item">
                     <div
@@ -86,7 +86,7 @@ export function FocusTasksPanel({
           <div>
             <span className="text-[9px] font-black text-accent uppercase tracking-wider block mb-1">Today (Normal)</span>
             <div className="space-y-1 pr-1">
-              {pendingTasks.todayNormal.length > 0 ? (
+              {(pendingTasks?.todayNormal?.length || 0) > 0 ? (
                 pendingTasks.todayNormal.map((task, idx) => (
                   <div key={idx} className="flex items-center gap-2.5 text-xs font-bold text-foreground group/item">
                     <div
@@ -117,7 +117,7 @@ export function FocusTasksPanel({
           <div>
             <span className="text-[9px] font-black text-primary uppercase tracking-wider block mb-1">This Week</span>
             <div className="space-y-1 pr-1">
-              {pendingTasks.thisWeek.length > 0 ? (
+              {(pendingTasks?.thisWeek?.length || 0) > 0 ? (
                 pendingTasks.thisWeek.map((task, idx) => (
                   <div key={idx} className="flex items-center gap-2.5 text-xs font-bold text-foreground group/item">
                     <div
