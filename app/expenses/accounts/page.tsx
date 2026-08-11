@@ -11,9 +11,11 @@ import { SearchableSelect } from "@/components/SearchableSelect";
 import { PageWrapper } from "@/components/PageWrapper";
 import { EXPENSE_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
+import { useDialog } from "@/components/dialog-provider";
 
 function AccountPageContent() {
   const router = useRouter();
+  const { confirm } = useDialog();
   const searchParams = useSearchParams();
   const initialName = searchParams.get('name');
 
@@ -131,7 +133,7 @@ function AccountPageContent() {
 
   const handleDelete = async () => {
     if (!formData.account_name) return;
-    if (!confirm("Are you sure you want to delete this account?")) return;
+    if (!(await confirm("Are you sure you want to delete this account?"))) return;
 
     try {
       const query = formData.id 

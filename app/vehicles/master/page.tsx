@@ -7,6 +7,7 @@ import { Car, Edit3, Trash2 , Hash, Calendar, Gauge, Fuel, Info } from "lucide-r
 import { PageWrapper } from "@/components/PageWrapper";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { VEHICLE_TABS } from "@/lib/navigation";
+import { useDialog } from "@/components/dialog-provider";
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -33,6 +34,7 @@ interface Vehicle {
 
 export default function VehicleMasterPage() {
   const router = useRouter();
+  const { confirm } = useDialog();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -84,7 +86,7 @@ export default function VehicleMasterPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Permanently delete "${name}"?\nThis will remove all fuel and service logs associated with it.`)) return;
+    if (!(await confirm(`Permanently delete "${name}"?\nThis will remove all fuel and service logs associated with it.`))) return;
     try {
       // Assuming cascade delete or manual delete logic
       await supabase.from('vehicle_fuel_logs').delete().eq('vehicle_id', id);

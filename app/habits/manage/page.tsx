@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { HABIT_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 import { PageWrapper } from "@/components/PageWrapper";
+import { useDialog } from "@/components/dialog-provider";
  // NOTE: This will be adjusted for subfolders
 
 interface HabitConfig {
@@ -30,6 +31,7 @@ interface HabitConfig {
 export default function HabitManagePage() {
 
   const router = useRouter();
+  const { confirm } = useDialog();
   const [configs, setConfigs] = useState<HabitConfig[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -67,7 +69,7 @@ export default function HabitManagePage() {
   };
 
   const handleHardDelete = async (id: string, name: string) => {
-    if (!confirm(`PERMANENTLY delete "${name}"?\n\nThis cannot be undone and will wipe all history.`)) return;
+    if (!(await confirm(`PERMANENTLY delete "${name}"?\n\nThis cannot be undone and will wipe all history.`))) return;
     try {
       const { error } = await supabase.from('habit_config').delete().eq('id', id);
       if (error) throw error;
@@ -152,8 +154,8 @@ export default function HabitManagePage() {
                         variant="ghost" 
                         size="icon" 
                         className="h-10 w-10 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10 rounded-md"
-                        onClick={() => {
-                           if (confirm(`Pause "${habit.habit_name}"?\n\nIt will be moved to the Inactive tab and its streak will be frozen.`)) {
+                        onClick={async () => {
+                           if (await confirm(`Pause "${habit.habit_name}"?\n\nIt will be moved to the Inactive tab and its streak will be frozen.`)) {
                               handleStateChange(habit.id, habit.habit_name, 'is_paused', true, `Paused ${habit.habit_name}`);
                            }
                         }}
@@ -165,8 +167,8 @@ export default function HabitManagePage() {
                         variant="ghost" 
                         size="icon" 
                         className="h-10 w-10 text-muted-foreground hover:text-slate-500 hover:bg-slate-500/10 rounded-md"
-                        onClick={() => {
-                           if (confirm(`Archive "${habit.habit_name}"?\n\nIt will be moved to the Inactive tab.`)) {
+                        onClick={async () => {
+                           if (await confirm(`Archive "${habit.habit_name}"?\n\nIt will be moved to the Inactive tab.`)) {
                               handleStateChange(habit.id, habit.habit_name, 'is_archived', true, `Archived ${habit.habit_name}`);
                            }
                         }}
@@ -178,8 +180,8 @@ export default function HabitManagePage() {
                         variant="ghost" 
                         size="icon" 
                         className="h-10 w-10 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md"
-                        onClick={() => {
-                           if (confirm(`Move "${habit.habit_name}" to Trash?\n\nIt will be moved to the Inactive tab.`)) {
+                        onClick={async () => {
+                           if (await confirm(`Move "${habit.habit_name}" to Trash?\n\nIt will be moved to the Inactive tab.`)) {
                               handleStateChange(habit.id, habit.habit_name, 'is_deleted', true, `Moved ${habit.habit_name} to Trash`);
                            }
                         }}

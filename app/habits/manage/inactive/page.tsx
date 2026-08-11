@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { HABIT_TABS } from "@/lib/navigation";
 import { SubNav } from "@/components/SubNav";
 import { PageWrapper } from "@/components/PageWrapper";
+import { useDialog } from "@/components/dialog-provider";
  // NOTE: This will be adjusted for subfolders
 
 interface HabitConfig {
@@ -29,6 +30,7 @@ interface HabitConfig {
 export default function HabitManageInactivePage() {
 
   const router = useRouter();
+  const { confirm } = useDialog();
   const [configs, setConfigs] = useState<HabitConfig[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,7 +68,7 @@ export default function HabitManageInactivePage() {
   };
 
   const handleHardDelete = async (id: string, name: string) => {
-    if (!confirm(`PERMANENTLY delete "${name}"?\n\nThis cannot be undone and will wipe all history.`)) return;
+    if (!(await confirm(`PERMANENTLY delete "${name}"?\n\nThis cannot be undone and will wipe all history.`))) return;
     try {
       const { error } = await supabase.from('habit_config').delete().eq('id', id);
       if (error) throw error;

@@ -22,6 +22,7 @@ import {
 } from "@/lib/services/diet";
 import { PageWrapper } from "@/components/PageWrapper";
 import { SubNav } from "@/components/SubNav";
+import { useDialog } from "@/components/dialog-provider";
 
 const sectionTabs = [
   {
@@ -43,6 +44,7 @@ const sectionTabs = [
 
 function BiometricsPageContent() {
   const router = useRouter();
+  const { confirm } = useDialog();
   const searchParams = useSearchParams();
   const activeMetricId = searchParams.get("metric") || "weight";
 
@@ -215,8 +217,8 @@ function BiometricsPageContent() {
 
   const handleDeleteBiometricDefinition = async (id: string) => {
     if (!id) return;
-    const confirm = window.confirm(`Are you sure you want to delete the metric "${activeMetric.name}" and all its logged history? This cannot be undone.`);
-    if (!confirm) return;
+    const confirmed = await confirm(`Are you sure you want to delete the metric "${activeMetric.name}" and all its logged history? This cannot be undone.`);
+    if (!confirmed) return;
 
     setIsSaving(true);
     try {

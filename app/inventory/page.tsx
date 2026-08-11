@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { ArrowLeft, ArrowRightLeft, Check, ChevronRight, Gift, History, Home, IndianRupee, Move, Package, Plus, PlusCircle, Search, Share2, Trash2, Users, X } from "lucide-react";
 import { toast } from "sonner";
 import { PageWrapper } from "@/components/PageWrapper";
+import { useDialog } from "@/components/dialog-provider";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { format} from "date-fns";
 
@@ -70,6 +71,7 @@ const Modal = ({ title, children, onClose }: { title: string, children: React.Re
   );
 
 export default function InventoryPage() {
+  const { confirm } = useDialog();
   // Navigation & View State
   const [view, setView] = useState<ViewMode>('HOME');
   const [currentLocationId, setCurrentLocationId] = useState<string | null>(null);
@@ -261,8 +263,8 @@ export default function InventoryPage() {
 
   const handleDeleteLocation = async () => {
     if (!currentLocationId) return;
-    const confirm = window.confirm("Are you sure? This will delete this location and all its sub-folders. Items will be un-categorized.");
-    if (!confirm) return;
+    const confirmed = await confirm("Are you sure? This will delete this location and all its sub-folders. Items will be un-categorized.");
+    if (!confirmed) return;
     
     try {
       const { data: subs } = await supabase.from('inventory_locations').select('id').eq('parent_id', currentLocationId).limit(1);

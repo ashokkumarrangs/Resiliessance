@@ -11,11 +11,13 @@ import { SectionNav } from "@/components/SectionNav";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { TaskCompletionModal } from "@/components/TaskCompletionModal";
+import { useDialog } from "@/components/dialog-provider";
 
 const NOTES_ID = "__notes__";
 
 export default function SquareShiftProjectPage() {
   const router = useRouter();
+  const { confirm, prompt } = useDialog();
   const params = useParams();
   const projectId = params.id as string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -130,13 +132,13 @@ export default function SquareShiftProjectPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if(!confirm("Delete this task?")) return;
+    if(!(await confirm("Delete this task?"))) return;
     const { error } = await supabase.from('action_tasks').delete().eq('id', id);
     if (!error) fetchTasks();
   };
 
   const handleRename = async (task: any) => {
-    const newName = prompt("Rename task:", task.text);
+    const newName = await prompt("Rename task:", task.text);
     if (newName && newName.trim()) {
         await supabase.from('action_tasks').update({ text: newName.trim() }).eq('id', task.id);
         fetchTasks();
@@ -144,7 +146,7 @@ export default function SquareShiftProjectPage() {
   };
 
   const createProject = async () => {
-      const name = prompt("New project name:");
+      const name = await prompt("New project name:");
       if (name && name.trim()) {
           const newId = crypto.randomUUID();
           const { data, error } = await supabase.from('action_projects').insert({ id: newId, name: name.trim(), sort_order: projects.length }).select();
@@ -161,7 +163,7 @@ export default function SquareShiftProjectPage() {
 
   const handleRenameProject = async () => {
     if (!currentProject) return;
-    const newName = prompt("Rename project:", currentProject.name);
+    const newName = await prompt("Rename project:", currentProject.name);
     if (newName && newName.trim() && newName.trim() !== currentProject.name) {
       const { error } = await supabase
         .from('action_projects')
@@ -178,7 +180,7 @@ export default function SquareShiftProjectPage() {
 
   const handleDeleteProject = async () => {
     if (!currentProject) return;
-    const confirmed = confirm(`Are you sure you want to delete the project "${currentProject.name}" and all its tasks? This action cannot be undone.`);
+    const confirmed = await confirm(`Are you sure you want to delete the project "${currentProject.name}" and all its tasks? This action cannot be undone.`);
     if (!confirmed) return;
     const { error } = await supabase
       .from('action_projects')

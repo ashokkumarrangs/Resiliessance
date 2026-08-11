@@ -11,11 +11,13 @@ import { SectionNav } from "@/components/SectionNav";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { TaskCompletionModal } from "@/components/TaskCompletionModal";
+import { useDialog } from "@/components/dialog-provider";
 
 const NOTES_ID = "__notes__";
 
 export default function SquareShiftNotesPage() {
   const router = useRouter();
+  const { confirm, prompt } = useDialog();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [projects, setProjects] = useState<any[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -132,13 +134,13 @@ export default function SquareShiftNotesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if(!confirm("Delete this note?")) return;
+    if(!(await confirm("Delete this note?"))) return;
     const { error } = await supabase.from('action_tasks').delete().eq('id', id);
     if (!error) fetchTasks();
   };
 
   const handleRename = async (task: any) => {
-    const newName = prompt("Rename note:", task.text);
+    const newName = await prompt("Rename note:", task.text);
     if (newName && newName.trim()) {
         await supabase.from('action_tasks').update({ text: newName.trim() }).eq('id', task.id);
         fetchTasks();
@@ -146,7 +148,7 @@ export default function SquareShiftNotesPage() {
   };
 
   const createProject = async () => {
-      const name = prompt("New project name:");
+      const name = await prompt("New project name:");
       if (name && name.trim()) {
           const newId = crypto.randomUUID();
           const { data, error } = await supabase.from('action_projects').insert({ id: newId, name: name.trim(), sort_order: projects.length }).select();

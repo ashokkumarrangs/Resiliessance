@@ -9,6 +9,7 @@ import { PageWrapper } from "@/components/PageWrapper";
 import { TASK_TABS } from "@/lib/navigation";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { TaskCompletionModal } from "@/components/TaskCompletionModal";
+import { useDialog } from "@/components/dialog-provider";
 
 interface Task {
   id: string;
@@ -25,6 +26,7 @@ interface Task {
 
 export default function TaskManagerPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const { confirm, prompt } = useDialog();
   const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const view: any = "all";
@@ -284,7 +286,7 @@ export default function TaskManagerPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this task and all sub-tasks?")) return;
+    if (!(await confirm("Delete this task and all sub-tasks?"))) return;
 
     try {
       const idsToDelete: string[] = [id];
@@ -308,7 +310,7 @@ export default function TaskManagerPage() {
   };
 
   const handleRename = async (task: Task) => {
-    const n = prompt("Rename task:", task.task);
+    const n = await prompt("Rename task:", task.task);
     if (n && n !== task.task) {
       try {
         const { error } = await supabase.from('tasks').update({ task: n }).eq('id', task.id);

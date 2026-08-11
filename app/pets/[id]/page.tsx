@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { SearchableSelect } from "@/components/SearchableSelect";
 import { SaveButton } from "@/components/ui/SaveButton";
+import { useDialog } from "@/components/dialog-provider";
 const DEFAULT_CATEGORIES: Record<string, string[]> = {
   Grooming: ['Bath', 'Nail Trim', 'Teeth Brushing', 'Ear Cleaning', 'Haircut', 'Coat Brushing'],
   Activities: ['Beach Trip', 'Park Visit', 'Hike', 'Playdate', 'Swimming', 'Long Car Ride', 'Time Apart'],
@@ -19,6 +20,7 @@ const DEFAULT_CATEGORIES: Record<string, string[]> = {
 
 export default function PetDashboard({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const { confirm } = useDialog();
   const { id: petId } = use(params);
   
   const [loading, setLoading] = useState(true);
@@ -137,7 +139,7 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
   };
 
   const handleDeletePet = async () => {
-    if (window.confirm("Are you sure you want to delete this pet? This action cannot be undone.")) {
+    if (await confirm("Are you sure you want to delete this pet? This action cannot be undone.")) {
       const { error } = await supabase.from('pet_profile').delete().eq('id', petId);
       if (error) {
         toast.error("Failed to delete pet.");
@@ -149,7 +151,7 @@ export default function PetDashboard({ params }: { params: Promise<{ id: string 
   };
 
   const handleDeleteLog = async (logId: string) => {
-    if (window.confirm("Delete this log entry?")) {
+    if (await confirm("Delete this log entry?")) {
       const { error } = await supabase.from('pet_logs').delete().eq('id', logId);
       if (error) {
         toast.error("Failed to delete log.");
