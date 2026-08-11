@@ -51,7 +51,7 @@ export function Select({ value, onChange, className, disabled, dropdownClassName
       aria-haspopup="listbox"
       tabIndex={disabled ? -1 : 0}
       onKeyDown={handleKeyDown}
-      className={`relative z-30 flex items-center justify-between cursor-pointer select-none outline-none ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''} ${className || ''}`} 
+      className={`relative z-30 flex items-center justify-between cursor-pointer select-none outline-none ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''} ${className || 'w-full h-11 bg-muted border border-border rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20'}`} 
       onClick={(e) => {
         if (disabled) return;
         e.preventDefault();
@@ -64,7 +64,7 @@ export function Select({ value, onChange, className, disabled, dropdownClassName
       <ChevronDown size={14} className="ml-2 opacity-50 shrink-0 pointer-events-none" />
       
       {isOpen && (
-        <div className={`absolute z-[100] right-0 top-full mt-1 min-w-[130px] w-max max-w-[260px] bg-card rounded-xl shadow-2xl border border-border/40 max-h-72 overflow-y-auto p-1.5 ${dropdownClassName || ''}`}>
+        <div className={`absolute z-[100] right-0 top-full mt-1 min-w-[130px] w-max max-w-[260px] bg-popover rounded-lg shadow-md border border-border max-h-72 overflow-y-auto p-1 before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 ${dropdownClassName || ''}`}>
           {options.map((opt, i) => (
             <div
               key={i}
@@ -75,13 +75,13 @@ export function Select({ value, onChange, className, disabled, dropdownClassName
                 if (onChange) onChange({ target: { value: opt.value } });
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-between gap-3 mb-0.5 last:mb-0 cursor-pointer whitespace-nowrap
+              className={`w-full text-left px-3 py-2 rounded-md text-xs font-bold transition-all flex items-center justify-between gap-3 mb-0.5 last:mb-0 cursor-pointer whitespace-nowrap
                 ${String(value) === String(opt.value) 
-                  ? "bg-primary text-primary-foreground shadow-sm font-black" 
-                  : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
+                  ? "bg-accent text-accent-foreground shadow-sm font-black" 
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
             >
               <span className="whitespace-nowrap">{opt.label}</span>
-              {String(value) === String(opt.value) && <CheckCircle2 size={14} className="text-primary-foreground/60 shrink-0" />}
+              {String(value) === String(opt.value) && <CheckCircle2 size={12} className="text-accent-foreground shrink-0" />}
             </div>
           ))}
           {options.length === 0 && (

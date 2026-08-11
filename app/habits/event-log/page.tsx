@@ -4,10 +4,10 @@ import { Select } from "@/components/Select";;
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Calendar, ChevronDown, ChevronRight, Plus, RefreshCw, Trash2} from "lucide-react";
+import { Calendar, ChevronDown, ChevronRight, Plus, RefreshCw, Trash2, ChevronLeft} from "lucide-react";
 import { getStatusIcon, getStatusStyles} from "@/lib/habit-ui-utils";
 import { calculateHabitStatus, HabitStatus, sumDurations } from '@/lib/habit-scoring';
-import { format } from 'date-fns';
+import { format, addDays, subDays } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -279,17 +279,31 @@ export default function HabitEventLogPage() {
           }}
         />
 
-        {/* Integrated Date Picker */}
+        {/* Date Swapper */}
         <div className="flex justify-center mb-6 mt-6 w-full">
-            <div className="bg-card px-6 py-2 rounded-xl border border-border/40 shadow-sm flex items-center gap-3 w-full max-w-xs justify-center group hover:bg-muted transition-all">
-               <Calendar className="w-4 h-4 text-primary opacity-40 group-hover:opacity-100 transition-opacity" />
-               <input 
-                 type="date" 
-                 value={selectedDate}
-                 onChange={(e) => setSelectedDate(e.target.value)}
-                 className="font-black text-md bg-transparent border-none focus:ring-0 cursor-pointer text-foreground uppercase tracking-tight"
-               />
-            </div>
+          <div className="bg-card px-4 py-1.5 rounded-xl border border-border/40 shadow-sm flex items-center justify-between w-full max-w-sm">
+             <button 
+               onClick={() => setSelectedDate(prev => format(subDays(new Date(prev), 1), 'yyyy-MM-dd'))}
+               className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+             >
+                <ChevronLeft size={16} />
+             </button>
+             <div className="flex items-center gap-2 font-black text-xs text-foreground uppercase tracking-tight">
+                <Calendar className="w-3.5 h-3.5 text-primary opacity-50" />
+                <input 
+                  type="date" 
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="bg-transparent border-none focus:ring-0 cursor-pointer font-black text-center text-sm text-foreground"
+                />
+             </div>
+             <button 
+               onClick={() => setSelectedDate(prev => format(addDays(new Date(prev), 1), 'yyyy-MM-dd'))}
+               className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+             >
+                <ChevronRight size={16} />
+             </button>
+          </div>
         </div>
 
         {loading ? (
@@ -402,12 +416,11 @@ export default function HabitEventLogPage() {
                                 <Select 
                                   value={formValues[habit.habit_name] || 'Yes'} 
                                   onChange={(e) => setFormValues(prev => ({ ...prev, [habit.habit_name]: e.target.value }))}
-                                  className="w-full h-9 min-h-[36px] bg-muted/50 border-none rounded-md pl-1.5 pr-5 text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 appearance-none shadow-inner transition-all py-0"
+                                  className="w-full h-9 min-h-[36px] bg-muted border border-border/40 rounded-md px-3 text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 shadow-sm transition-all py-0"
                                 >
                                   <option value="Yes">Yes</option>
                                   <option value="No">No</option>
                                 </Select>
-                                <ChevronDown size={10} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none group-hover:text-primary transition-colors" />
                               </div>
                            </div>
                          ) : (

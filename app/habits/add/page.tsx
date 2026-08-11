@@ -332,7 +332,7 @@ export default function HabitConfigPage() {
                         placeholder="e.g. Sleep, Morning Walk, Water" 
                         value={formData.habit_name}
                         onChange={(e) => handleChange('habit_name', e.target.value)}
-                        className="h-16 rounded-md bg-muted/50 border border-border shadow-inner text-lg font-bold placeholder:text-muted-foreground/30 focus:ring-primary/20 text-foreground"
+                        className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground placeholder:text-muted-foreground/30 focus:ring-2 focus:ring-primary/20 shadow-inner"
                       />
                    </div>
                    <div className="space-y-3">
@@ -361,31 +361,23 @@ export default function HabitConfigPage() {
                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Frequency</span>
                 </div>
                 <div className="space-y-1">
-                   <Label className="text-sm font-black text-foreground">How often? <span className="text-primary">*</span></Label>
-                   <div className="flex gap-2 pt-2">
+                   <Label className="text-sm font-black text-muted-foreground/60 leading-none">How often? <span className="text-primary">*</span></Label>
+                   <div className="flex bg-muted rounded-lg p-1 gap-1 w-full mt-2">
                       <button 
+                        type="button"
                         onClick={() => handleChange('frequency', 'daily')}
-                        className={`flex-1 h-14 rounded-md flex items-center justify-center gap-2 font-black text-xs transition-all shadow-sm ${formData.frequency === 'daily' ? 'bg-primary text-primary-foreground shadow-primary/20' : 'bg-muted/50 border border-border text-muted-foreground'}`}
+                        className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 flex items-center justify-center gap-1.5 ${formData.frequency === 'daily' ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}
                       >
-                        <div className={`p-1.5 rounded-md ${formData.frequency === 'daily' ? 'bg-white/20' : 'bg-muted'}`}>
-                          <CheckCircle2 size={16} />
-                        </div>
-                        <div className="text-left leading-none">
-                          <div>Daily</div>
-                          <div className="text-[7px] opacity-80 font-medium">once a day</div>
-                        </div>
+                        <CheckCircle2 size={12} />
+                        <span>Daily</span>
                       </button>
                       <button 
+                        type="button"
                         onClick={() => handleChange('frequency', 'event')}
-                        className={`flex-1 h-14 rounded-md flex items-center justify-center gap-2 font-black text-xs transition-all shadow-sm ${formData.frequency === 'event' ? 'bg-primary text-primary-foreground shadow-primary/20' : 'bg-muted/50 border border-border text-muted-foreground'}`}
+                        className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 flex items-center justify-center gap-1.5 ${formData.frequency === 'event' ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}
                       >
-                        <div className={`p-1.5 rounded-md ${formData.frequency === 'event' ? 'bg-white/20' : 'bg-muted'}`}>
-                          <Flame size={16} />
-                        </div>
-                        <div className="text-left leading-none">
-                          <div>Event</div>
-                          <div className="text-[7px] opacity-80 font-medium">multiple times</div>
-                        </div>
+                        <Flame size={12} />
+                        <span>Event</span>
                       </button>
                    </div>
                 </div>
@@ -416,7 +408,7 @@ export default function HabitConfigPage() {
                           placeholder="hrs, glasses, steps, km..." 
                           value={formData.unit}
                           onChange={(e) => handleChange('unit', e.target.value)}
-                          className="h-14 rounded-md bg-muted/50 border border-border shadow-inner font-bold text-foreground placeholder:text-muted-foreground/30"
+                          className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground placeholder:text-muted-foreground/30 focus:ring-2 focus:ring-primary/20 shadow-inner"
                         />
                      </div>
                   </div>
@@ -435,9 +427,8 @@ export default function HabitConfigPage() {
                          <div className="w-4 h-4 bg-primary rounded-md flex items-center justify-center text-primary-foreground"><ArrowRight size={10} /></div>
                          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Group</span>
                       </div>
-                      <Label className="text-lg font-black text-foreground">Group <span className="text-primary ml-1 font-black">*</span> <span className="text-[9px] font-bold text-muted-foreground/60 ml-2 uppercase tracking-tighter opacity-70 italic">groups habits into cards</span></Label>
+                      <Label className="text-sm font-black text-foreground">Group <span className="text-primary ml-1 font-black">*</span> <span className="text-[9px] font-bold text-muted-foreground/60 ml-2 uppercase tracking-tighter opacity-70 italic">groups habits into cards</span></Label>
                       <div className="relative pt-2">
-                        <div className="absolute left-6 top-[2.4rem] w-1.5 h-1.5 rounded-md bg-muted-foreground/30 z-10" />
                         <Select 
                           value={isNewGroup ? 'NEW' : formData.group_name} 
                           onChange={(e) => {
@@ -449,7 +440,7 @@ export default function HabitConfigPage() {
                               handleChange('group_name', e.target.value);
                             }
                           }}
-                          className="w-full h-16 rounded-md bg-muted/50 border border-border shadow-inner px-12 font-bold text-foreground appearance-none focus:ring-primary/20 cursor-pointer"
+                          className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner cursor-pointer"
                         >
                           <option value="">— Select existing group —</option>
                           {existingGroups.map(g => <option key={g} value={g}>{g}</option>)}
@@ -461,7 +452,7 @@ export default function HabitConfigPage() {
                           <Input 
                             placeholder="Enter new group name..." 
                             value={formData.group_name}
-                            className="h-14 rounded-md border border-primary/20 bg-muted/30 font-bold text-foreground"
+                            className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground placeholder:text-muted-foreground/30 focus:ring-2 focus:ring-primary/20 shadow-inner"
                             onChange={(e) => handleChange('group_name', e.target.value)}
                           />
                         </div>
@@ -524,13 +515,21 @@ export default function HabitConfigPage() {
                        <>
                          {['number', 'duration'].includes(formData.input_type) && (
                            <div className="mb-6 space-y-3">
-                             <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground">Event Scoring Strategy</Label>
-                             <div className="flex gap-2">
-                               <button type="button" onClick={() => setEventScoringMethod('sum')} className={`flex-1 h-12 rounded-lg font-black text-xs transition-all ${eventScoringMethod === 'sum' ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20' : 'bg-muted/50 text-muted-foreground border border-border'}`}>
-                                 Sum of Values
+                             <Label className="text-sm font-black text-muted-foreground/60 leading-none">Event Scoring Strategy</Label>
+                             <div className="flex bg-muted rounded-lg p-1 gap-1 w-full mt-2">
+                               <button 
+                                 type="button" 
+                                 onClick={() => setEventScoringMethod('sum')} 
+                                 className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 ${eventScoringMethod === 'sum' ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}
+                               >
+                                 Sum Values
                                </button>
-                               <button type="button" onClick={() => setEventScoringMethod('count')} className={`flex-1 h-12 rounded-lg font-black text-xs transition-all ${eventScoringMethod === 'count' ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20' : 'bg-muted/50 text-muted-foreground border border-border'}`}>
-                                 Count of Events
+                               <button 
+                                 type="button" 
+                                 onClick={() => setEventScoringMethod('count')} 
+                                 className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 ${eventScoringMethod === 'count' ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}
+                               >
+                                 Count Events
                                </button>
                              </div>
                            </div>
@@ -550,7 +549,7 @@ export default function HabitConfigPage() {
                     )}
                    {formData.input_type !== 'boolean' && (
                    <div className="space-y-4">
-                      <Label className="text-lg font-black text-foreground">Condition Type <span className="text-primary">*</span></Label>
+                      <Label className="text-sm font-black text-foreground">Condition Type <span className="text-primary">*</span></Label>
                       <div className="flex flex-wrap gap-2">
                          <ConditionBtn icon={<AlignLeft size={16}/>} label="Between" active={formData.condition_type === 'between'} onClick={() => handleChange('condition_type', 'between')} color="bg-primary" />
                          <ConditionBtn icon={<ArrowRight size={16}/>} label="Above/Below" active={formData.condition_type === 'above_below'} onClick={() => handleChange('condition_type', 'above_below')} color="bg-primary" />
@@ -562,7 +561,7 @@ export default function HabitConfigPage() {
                    {/* BOOLEAN TARGET */}
                    {formData.input_type === 'boolean' && (
                       <div className="space-y-4">
-                         <Label className="text-lg font-black text-foreground">Target Answer <span className="text-primary">*</span></Label>
+                         <Label className="text-sm font-black text-foreground">Target Answer <span className="text-primary">*</span></Label>
                          <InputRange label="SUCCESS" value={formData.target_value ?? 1} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType="boolean" />
                          <p className="text-xs text-muted-foreground/60 italic">If you select NO, logging a NO will be treated as a success.</p>
                       </div>
@@ -608,14 +607,28 @@ export default function HabitConfigPage() {
                     {formData.condition_type === 'above_below' && (
                       <div className="space-y-6">
                          <div className="space-y-3">
-                            <Label className="text-lg font-black text-foreground">Direction</Label>
-                            <div className="flex gap-4">
-                               <SelectBtn active={formData.direction === 'more'} label="More is better" icon={<CheckCircle2 size={16}/>} onClick={() => handleChange('direction', 'more')} />
-                               <SelectBtn active={formData.direction === 'less'} label="Less is better" icon={<AlertTriangle size={16}/>} onClick={() => handleChange('direction', 'less')} />
-                            </div>
-                         </div>
+                             <Label className="text-sm font-black text-muted-foreground/60 leading-none">Direction</Label>
+                             <div className="flex bg-muted rounded-lg p-1 gap-1 w-full mt-2">
+                               <button 
+                                 type="button"
+                                 onClick={() => handleChange('direction', 'more')}
+                                 className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 flex items-center justify-center gap-1.5 ${formData.direction === 'more' ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}
+                               >
+                                 <CheckCircle2 size={12} />
+                                 <span>More is better</span>
+                               </button>
+                               <button 
+                                 type="button"
+                                 onClick={() => handleChange('direction', 'less')}
+                                 className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 flex items-center justify-center gap-1.5 ${formData.direction === 'less' ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}
+                               >
+                                 <AlertTriangle size={12} />
+                                 <span>Less is better</span>
+                               </button>
+                             </div>
+                          </div>
                          <div className="space-y-4">
-                            <Label className="text-lg font-black text-foreground">Success Threshold</Label>
+                            <Label className="text-sm font-black text-foreground">Success Threshold</Label>
                             <InputRange label="TARGET" value={formData.target_value} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
                              {formData.frequency === 'event' && (
                                <div className="mt-2 mb-2 bg-muted/40 border border-border/40 rounded-md p-2.5 flex items-start gap-2">
@@ -632,7 +645,7 @@ export default function HabitConfigPage() {
                          </div>
                          <div className="space-y-4">
                             <div className="flex items-center justify-between">
-                               <Label className="text-lg font-black text-foreground">Tolerance <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — just below/above target</span></Label>
+                               <Label className="text-sm font-black text-foreground">Tolerance <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — just below/above target</span></Label>
                                <Switch checked={formData.enable_tol} onCheckedChange={(v) => handleChange("enable_tol", v)} />
                             </div>
                             {formData.enable_tol && (
@@ -641,7 +654,7 @@ export default function HabitConfigPage() {
                          </div>
                          <div className="space-y-4">
                             <div className="flex items-center justify-between">
-                               <Label className="text-lg font-black text-foreground">Critical Threshold <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 inline-flex"><Info size={8}/> optional</span></Label>
+                               <Label className="text-sm font-black text-foreground">Critical Threshold <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 inline-flex"><Info size={8}/> optional</span></Label>
                                <Switch checked={formData.enable_crit} onCheckedChange={(v) => handleChange("enable_crit", v)} />
                             </div>
                             {formData.enable_crit && (
@@ -654,7 +667,7 @@ export default function HabitConfigPage() {
                     {formData.condition_type === 'at_least_n' && formData.input_type !== 'boolean' && (
                        <div className="space-y-6">
                           <div className="space-y-4">
-                             <Label className="text-lg font-black text-foreground">Success Threshold</Label>
+                             <Label className="text-sm font-black text-foreground">Success Threshold</Label>
                              <InputRange label="TARGET" value={formData.target_value} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
                              {formData.frequency === 'event' && (
                                <div className="mt-2 mb-2 bg-muted/40 border border-border/40 rounded-md p-2.5 flex items-start gap-2">
@@ -671,7 +684,7 @@ export default function HabitConfigPage() {
                           </div>
                           <div className="space-y-4">
                              <div className="flex items-center justify-between">
-                               <Label className="text-lg font-black text-foreground">Tolerance <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — just below target</span></Label>
+                               <Label className="text-sm font-black text-foreground">Tolerance <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — just below target</span></Label>
                                <Switch checked={formData.enable_tol} onCheckedChange={(v) => handleChange("enable_tol", v)} />
                             </div>
                             {formData.enable_tol && (
@@ -680,7 +693,7 @@ export default function HabitConfigPage() {
                           </div>
                           <div className="space-y-4">
                              <div className="flex items-center justify-between">
-                               <Label className="text-lg font-black text-foreground">Critical Threshold <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 inline-flex"><Info size={8}/> optional</span></Label>
+                               <Label className="text-sm font-black text-foreground">Critical Threshold <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 inline-flex"><Info size={8}/> optional</span></Label>
                                <Switch checked={formData.enable_crit} onCheckedChange={(v) => handleChange("enable_crit", v)} />
                             </div>
                             {formData.enable_crit && (
@@ -693,7 +706,7 @@ export default function HabitConfigPage() {
                     {formData.condition_type === 'at_most_n' && formData.input_type !== 'boolean' && (
                        <div className="space-y-6">
                           <div className="space-y-4">
-                             <Label className="text-lg font-black text-foreground">Success Threshold</Label>
+                             <Label className="text-sm font-black text-foreground">Success Threshold</Label>
                              <InputRange label="TARGET" value={formData.target_value} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
                              {formData.frequency === 'event' && (
                                <div className="mt-2 mb-2 bg-muted/40 border border-border/40 rounded-md p-2.5 flex items-start gap-2">
@@ -710,7 +723,7 @@ export default function HabitConfigPage() {
                           </div>
                           <div className="space-y-4">
                              <div className="flex items-center justify-between">
-                               <Label className="text-lg font-black text-foreground">Tolerance <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — just above target</span></Label>
+                               <Label className="text-sm font-black text-foreground">Tolerance <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 flex items-center gap-1 inline-flex"><Info size={8}/> optional — just above target</span></Label>
                                <Switch checked={formData.enable_tol} onCheckedChange={(v) => handleChange("enable_tol", v)} />
                             </div>
                             {formData.enable_tol && (
@@ -719,7 +732,7 @@ export default function HabitConfigPage() {
                           </div>
                           <div className="space-y-4">
                              <div className="flex items-center justify-between">
-                               <Label className="text-lg font-black text-foreground">Critical Threshold <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 inline-flex"><Info size={8}/> optional</span></Label>
+                               <Label className="text-sm font-black text-foreground">Critical Threshold <span className="text-[8px] font-normal italic opacity-60 lowercase ml-2 inline-flex"><Info size={8}/> optional</span></Label>
                                <Switch checked={formData.enable_crit} onCheckedChange={(v) => handleChange("enable_crit", v)} />
                             </div>
                             {formData.enable_crit && (
@@ -732,7 +745,7 @@ export default function HabitConfigPage() {
                     {formData.condition_type === 'exactly_n' && formData.input_type !== 'boolean' && (
                        <div className="space-y-6">
                           <div className="space-y-4">
-                             <Label className="text-lg font-black text-foreground">Success Target</Label>
+                             <Label className="text-sm font-black text-foreground">Success Target</Label>
                              <InputRange label="TARGET" value={formData.target_value} onChange={(v) => handleChange('target_value', v)} color="border-accent/40 bg-accent/10 text-accent-foreground" inputType={formData.input_type} />
                              {formData.frequency === 'event' && (
                                <div className="mt-2 mb-2 bg-muted/40 border border-border/40 rounded-md p-2.5 flex items-start gap-2">
@@ -1170,35 +1183,29 @@ function InputRange({ label, value, onChange, color, inputType }: InputRangeProp
 
   if (inputType === 'boolean') {
     return (
-      <div className={`rounded-md border border-border bg-card/50 p-3 transition-colors ${color}`}>
-         <div className="flex items-center gap-2 mb-1">
-            <CheckSquare size={10} className="opacity-60" />
-            <span className="text-[8px] font-black uppercase tracking-widest opacity-60">{label}</span>
-         </div>
-         <select 
+      <div className="space-y-1.5 flex-1 min-w-0">
+         <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest font-mono">{label}</Label>
+         <Select 
            value={value === 1 ? 'yes' : 'no'} 
            onChange={(e) => onChange(e.target.value === 'yes' ? 1 : 0)}
-           className="bg-transparent border-none p-0 text-3xl font-black w-full focus:outline-none focus:ring-0 appearance-none cursor-pointer text-foreground"
+           className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/20 shadow-inner cursor-pointer"
          >
-           <option value="yes" className="bg-card">YES</option>
-           <option value="no" className="bg-card">NO</option>
-         </select>
+           <option value="yes">YES</option>
+           <option value="no">NO</option>
+         </Select>
       </div>
     );
   }
 
   if (inputType === 'time' || inputType === 'duration') {
     return (
-      <div className={`rounded-md border border-border bg-card/50 p-3 transition-colors ${color}`}>
-         <div className="flex items-center gap-2 mb-1">
-            <Clock size={10} className="opacity-60" />
-            <span className="text-[8px] font-black uppercase tracking-widest opacity-60">{label}</span>
-         </div>
-         <input 
+      <div className="space-y-1.5 flex-1 min-w-0">
+         <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest font-mono">{label}</Label>
+         <Input 
            type="time" 
            value={decimalToTime(typeof value === 'number' ? value : parseFloat(value || '0'))} 
            onChange={(e) => onChange(timeToDecimal(e.target.value))}
-           className="bg-transparent border-none p-0 text-3xl font-black w-full focus:outline-none focus:ring-0 placeholder:opacity-20 text-foreground"
+           className="w-full h-11 bg-muted border border-border/50 rounded-md px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/20 shadow-inner"
          />
       </div>
     );
@@ -1207,16 +1214,13 @@ function InputRange({ label, value, onChange, color, inputType }: InputRangeProp
   const isText = inputType === 'text';
 
   return (
-    <div className={`rounded-md border border-border bg-card/50 p-3 transition-colors ${color}`}>
-       <div className="flex items-center gap-2 mb-1">
-          <CheckSquare size={10} className="opacity-60" />
-          <span className="text-[8px] font-black uppercase tracking-widest opacity-60">{label}</span>
-       </div>
-       <input 
+    <div className="space-y-1.5 flex-1 min-w-0">
+       <Label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest font-mono">{label}</Label>
+       <Input 
          type={isText ? "text" : "number"} 
          value={isText ? (value ?? '') : (value ?? 0)} 
          onChange={(e) => onChange(isText ? e.target.value : (e.target.value === '' ? 0 : parseFloat(e.target.value)))}
-         className="bg-transparent border-none p-0 text-3xl font-black w-full focus:outline-none focus:ring-0 placeholder:opacity-20 text-foreground"
+         className="w-full h-11 bg-muted border-none rounded-md px-4 text-sm font-bold text-foreground placeholder:text-muted-foreground/30 focus:ring-2 focus:ring-primary/20 shadow-inner"
          placeholder={isText ? "abc..." : "0"}
        />
     </div>

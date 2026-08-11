@@ -5,8 +5,8 @@ import { Select } from "@/components/Select";
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { Calendar, ChevronDown, ChevronUp, Clock} from "lucide-react";
-import { format} from 'date-fns';
+import { Calendar, ChevronDown, ChevronUp, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { format, addDays, subDays } from 'date-fns';
 import { Input } from '@/components/ui/input';
 
 import { toast } from 'sonner';
@@ -208,16 +208,30 @@ export default function HabitDailyPage() {
           <div className="space-y-6">{[1, 2].map(i => <div key={i} className="h-64 bg-muted animate-pulse rounded-2xl" />)}</div>
         ) : (
           <div className="space-y-6">
-            {/* Integrated Date Picker (Standardized) */}
+            {/* Date Swapper */}
             <div className="flex justify-center mb-6 mt-6 w-full">
-              <div className="bg-card px-6 py-2 rounded-xl border border-border/40 shadow-sm flex items-center gap-3 w-full max-w-xs justify-center group hover:bg-muted transition-all">
-                   <Calendar className="w-4 h-4 text-primary opacity-40 group-hover:opacity-100 transition-opacity" />
-                   <input 
-                     type="date" 
-                     value={selectedDate}
-                     onChange={(e) => setSelectedDate(e.target.value)}
-                     className="font-black text-md bg-transparent border-none focus:ring-0 cursor-pointer text-foreground uppercase tracking-tight"
-                   />
+              <div className="bg-card px-4 py-1.5 rounded-xl border border-border/40 shadow-sm flex items-center justify-between w-full max-w-sm">
+                 <button 
+                   onClick={() => setSelectedDate(prev => format(subDays(new Date(prev), 1), 'yyyy-MM-dd'))}
+                   className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                 >
+                    <ChevronLeft size={16} />
+                 </button>
+                 <div className="flex items-center gap-2 font-black text-xs text-foreground uppercase tracking-tight">
+                    <Calendar className="w-3.5 h-3.5 text-primary opacity-50" />
+                    <input 
+                      type="date" 
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      className="bg-transparent border-none focus:ring-0 cursor-pointer font-black text-center text-sm text-foreground"
+                    />
+                 </div>
+                 <button 
+                   onClick={() => setSelectedDate(prev => format(addDays(new Date(prev), 1), 'yyyy-MM-dd'))}
+                   className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
+                 >
+                    <ChevronRight size={16} />
+                 </button>
               </div>
             </div>
 

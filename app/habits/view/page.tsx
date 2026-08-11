@@ -253,7 +253,7 @@ export default function HabitViewPage() {
                   type="date" 
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="bg-transparent border-none focus:ring-0 cursor-pointer font-black text-center"
+                  className="bg-transparent border-none focus:ring-0 cursor-pointer font-black text-center text-sm text-foreground"
                 />
              </div>
              <button 
@@ -297,26 +297,26 @@ export default function HabitViewPage() {
                   </svg>
                   <div className="absolute text-center">
                      <span className="text-2xl font-black text-foreground">{consistencyRate}%</span>
-                     <span className="text-[7px] font-black text-muted-foreground uppercase tracking-widest block leading-none">Daily Score</span>
+                     <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest block leading-none">Daily Score</span>
                   </div>
                 </div>
 
                 {/* Score Stats Pills */}
                 <div className="flex-1 grid grid-cols-2 gap-2 text-center">
                   <div className="bg-emerald-500/5 border border-emerald-500/10 p-2 rounded-lg">
-                    <span className="text-[7px] font-black text-emerald-600 uppercase tracking-wider block">Success</span>
+                    <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider block">Success</span>
                     <span className="text-lg font-black text-emerald-600 leading-none">{successCount}</span>
                   </div>
                   <div className="bg-amber-500/5 border border-amber-500/10 p-2 rounded-lg">
-                    <span className="text-[7px] font-black text-amber-600 uppercase tracking-wider block">Tolerance</span>
+                    <span className="text-[9px] font-black text-amber-600 uppercase tracking-wider block">Tolerance</span>
                     <span className="text-lg font-black text-amber-600 leading-none">{toleranceCount}</span>
                   </div>
                   <div className="bg-rose-500/5 border border-rose-500/10 p-2 rounded-lg">
-                    <span className="text-[7px] font-black text-rose-600 uppercase tracking-wider block">Failure</span>
+                    <span className="text-[9px] font-black text-rose-600 uppercase tracking-wider block">Failure</span>
                     <span className="text-lg font-black text-rose-600 leading-none">{failureCount}</span>
                   </div>
                   <div className="bg-red-500/5 border border-red-500/10 p-2 rounded-lg">
-                    <span className="text-[7px] font-black text-red-600 uppercase tracking-wider block">Critical</span>
+                    <span className="text-[9px] font-black text-red-600 uppercase tracking-wider block">Critical</span>
                     <span className="text-lg font-black text-red-600 leading-none">{criticalCount}</span>
                   </div>
                 </div>
