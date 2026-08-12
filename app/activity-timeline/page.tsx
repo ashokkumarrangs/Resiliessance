@@ -144,7 +144,8 @@ function ActivityTimelineContent() {
         { data: inventoryItems },
         { data: inventoryLocations },
         { data: habitsConfig },
-        { data: activityLogs }
+        { data: activityLogs },
+        { data: scheduledWorkouts }
       ] = await Promise.all([
         supabase.from('history_expenses').select('*').eq('date', dateStr),
         supabase.from('habit_data').select('*').eq('date', dateStr),
@@ -164,6 +165,7 @@ function ActivityTimelineContent() {
         supabase.from('inventory_locations').select('id, name'),
         supabase.from('habit_config').select('habit_name, input_type'),
         supabase.from('activity_logs').select('*').eq('date', dateStr),
+        supabase.from('scheduled_workout').select('*, workout_template(name)').eq('scheduled_date', dateStr)
       ]);
 
 
@@ -274,6 +276,25 @@ function ActivityTimelineContent() {
             icon: <Activity size={14} />,
             colorClass: "bg-violet-500 text-white"
           });
+        });
+      }
+
+      if (scheduledWorkouts) {
+        scheduledWorkouts.forEach(sw => {
+          if (sw.status === 'planned') {
+            formattedEvents.push({
+              id: sw.id,
+              timestamp: dateStr,
+              sortMs: getSortMs(dateStr) - 1, // put them early in the day
+              time: 'Planned',
+              type: "Workout",
+              title: `Scheduled: ${sw.workout_template?.name || 'Workout'}`,
+              value: "Start Session",
+              icon: <Activity size={14} />,
+              colorClass: "bg-violet-400 text-white",
+              onClick: () => router.push(`/workout?template=${sw.template_id}&schedule_id=${sw.id}`)
+            });
+          }
         });
       }
 

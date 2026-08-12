@@ -7,6 +7,7 @@ import {
     CalendarDays,
   Car,
   Dog,
+  ClipboardList,
   Droplets,
   Edit3,
   Eye,
@@ -64,6 +65,7 @@ export const VEHICLE_TABS = [
 // ─── Workout ──────────────────────────────────────────────────────────────────
 export const WORKOUT_TABS = [
   { title: "Logger", href: "/workout", icon: <PlusCircle size={16} /> },
+  { title: "Templates", href: "/workout/templates", icon: <ClipboardList size={16} /> },
   { title: "History", href: "/workout/history", icon: <CalendarDays size={16} /> },
 ];
 

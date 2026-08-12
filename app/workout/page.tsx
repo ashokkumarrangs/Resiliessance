@@ -5,7 +5,8 @@ import { supabase } from "@/lib/supabase";
 import { format } from "date-fns";
 import { Activity, CalendarDays, Dumbbell, Flame, PlusCircle, Trash2, Trophy, X } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { SaveButton } from "@/components/ui/SaveButton";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -24,8 +25,9 @@ interface Exercise {
   sets: WorkoutSet[];
 }
 
-export default function WorkoutPage() {
+function WorkoutPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [workoutDay, setWorkoutDay] = useState("");
   const [time, setTime] = useState(format(new Date(), "HH:mm"));
@@ -40,9 +42,77 @@ export default function WorkoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  const [templates, setTemplates] = useState<{id: string, name: string}[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState("");
+  const [scheduleId, setScheduleId] = useState<string | null>(null);
+
   useEffect(() => {
     fetchHistory();
-  }, []);
+    fetchTemplates();
+    
+    // Check URL params
+    const tId = searchParams.get("template");
+    const sId = searchParams.get("schedule_id");
+    if (tId) {
+      setSelectedTemplateId(tId);
+      handleLoadTemplate(tId);
+    }
+    if (sId) {
+      setScheduleId(sId);
+    }
+  }, [searchParams]);
+
+  async function fetchTemplates() {
+    try {
+      const { data, error } = await supabase
+        .from('workout_template')
+        .select('id, name')
+        .order('name');
+      if (data) {
+        setTemplates(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function handleLoadTemplate(templateId: string) {
+    if (!templateId) return;
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('workout_template_exercise')
+        .select('*, workout_template_set(*)')
+        .eq('template_id', templateId)
+        .order('sort_order', { ascending: true });
+
+      if (error) throw error;
+
+      const loadedExercises: Exercise[] = (data || []).map(ex => ({
+        id: Math.random().toString(36).substr(2, 9),
+        name: ex.exercise_name,
+        notes: ex.notes || "",
+        sets: (ex.workout_template_set || [])
+          .sort((a: any, b: any) => a.set_no - b.set_no)
+          .map((s: any) => ({
+            weight: s.target_weight?.toString() || "",
+            reps: s.target_reps?.toString() || ""
+          }))
+      }));
+
+      setExercises(loadedExercises);
+      
+      const t = templates.find(t => t.id === templateId);
+      if (t) setWorkoutDay(t.name);
+      
+      toast.success("Template loaded successfully");
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to load template");
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
     if (date) loadWorkoutData(date);
@@ -255,6 +325,13 @@ export default function WorkoutPage() {
       const { error } = await supabase.from('workout_log').insert(payload);
       if (error) throw error;
 
+      if (scheduleId) {
+        await supabase
+          .from('scheduled_workout')
+          .update({ status: 'completed' })
+          .eq('id', scheduleId);
+      }
+
       toast.success("Workout saved successfully!");
       fetchHistory(); 
       router.push('/');
@@ -278,6 +355,29 @@ export default function WorkoutPage() {
         <div className="space-y-6 w-full">
         <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="w-full space-y-6">
           <div className="bg-card rounded-md p-7 shadow-sm border border-border/40 space-y-7 relative z-40">
+            {templates.length > 0 && (
+              <div className="grid grid-cols-1 gap-4 relative z-40">
+                <div className="space-y-2">
+                  <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
+                    Start from Template
+                  </label>
+                  <select
+                    value={selectedTemplateId}
+                    onChange={(e) => {
+                      setSelectedTemplateId(e.target.value);
+                      handleLoadTemplate(e.target.value);
+                    }}
+                    className="w-full min-w-0 h-11 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner"
+                  >
+                    <option value="">Select a template...</option>
+                    {templates.map(t => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+            
             <div className="grid grid-cols-2 gap-4 relative z-30">
               <div className="space-y-2">
                 <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-1.5 leading-none">
@@ -466,5 +566,13 @@ export default function WorkoutPage() {
       </form>
         </div>
     </PageWrapper>
+  );
+}
+
+export default function WorkoutPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <WorkoutPageContent />
+    </Suspense>
   );
 }

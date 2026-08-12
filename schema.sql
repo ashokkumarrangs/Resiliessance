@@ -54,3 +54,53 @@ USING (true)
 WITH CHECK (true);
 
 
+-- Workout Templates
+CREATE TABLE IF NOT EXISTS workout_template (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  description TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS workout_template_exercise (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  template_id UUID REFERENCES workout_template(id) ON DELETE CASCADE,
+  exercise_name TEXT NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  notes TEXT
+);
+
+CREATE TABLE IF NOT EXISTS workout_template_set (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  template_exercise_id UUID REFERENCES workout_template_exercise(id) ON DELETE CASCADE,
+  set_no INT NOT NULL,
+  target_weight NUMERIC,
+  target_reps INT
+);
+
+-- Enable RLS and add policies for templates
+ALTER TABLE workout_template ENABLE ROW LEVEL SECURITY;
+ALTER TABLE workout_template_exercise ENABLE ROW LEVEL SECURITY;
+ALTER TABLE workout_template_set ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous read/write on workout_template"
+ON workout_template FOR ALL USING (true) WITH CHECK (true);
+
+CREATE POLICY "Allow anonymous read/write on workout_template_exercise"
+ON workout_template_exercise FOR ALL USING (true) WITH CHECK (true);
+
+CREATE POLICY "Allow anonymous read/write on workout_template_set"
+ON workout_template_set FOR ALL USING (true) WITH CHECK (true);
+
+-- Scheduled Workouts
+CREATE TABLE IF NOT EXISTS scheduled_workout (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  template_id UUID REFERENCES workout_template(id) ON DELETE CASCADE,
+  scheduled_date DATE NOT NULL,
+  status TEXT NOT NULL DEFAULT 'planned', -- 'planned', 'completed'
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE scheduled_workout ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow anonymous read/write on scheduled_workout"
+ON scheduled_workout FOR ALL USING (true) WITH CHECK (true);
