@@ -763,6 +763,227 @@
       display: none !important;
     }
 
+    /* ── Roadmap Tab Styles ── */
+    .roadmap-header {
+      margin-bottom: 32px;
+    }
+
+    .roadmap-header h2 {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: var(--foreground);
+      margin-bottom: 6px;
+    }
+
+    .roadmap-header p {
+      color: var(--muted-foreground);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .roadmap-card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      box-shadow: var(--shadow-premium);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .roadmap-card:hover {
+      border-color: var(--accent);
+    }
+
+    .roadmap-card-accent {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 4px;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .roadmap-card-inner {
+      padding-left: 16px;
+    }
+
+    .roadmap-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .roadmap-card-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .roadmap-card h3 {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--foreground);
+    }
+
+    .roadmap-area-tag {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      background-color: var(--secondary);
+      color: var(--muted-foreground);
+    }
+
+    .roadmap-tagline {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .roadmap-section-label {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+      margin-top: 20px;
+    }
+
+    .roadmap-flow {
+      list-style: none;
+      padding: 0;
+      counter-reset: flow-counter;
+    }
+
+    .roadmap-flow li {
+      counter-increment: flow-counter;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--foreground);
+      line-height: 1.6;
+    }
+
+    .roadmap-flow li::before {
+      content: counter(flow-counter);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      background-color: var(--secondary);
+      color: var(--primary);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 900;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .roadmap-bullets {
+      list-style: none;
+      padding: 0;
+    }
+
+    .roadmap-bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--foreground);
+      line-height: 1.6;
+    }
+
+    .roadmap-bullets li::before {
+      content: "→";
+      color: var(--accent);
+      font-weight: 900;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .roadmap-note {
+      background-color: var(--user-impact-bg);
+      border: 1px solid var(--user-impact-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--user-impact-text);
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .roadmap-note strong {
+      color: var(--primary);
+    }
+
+    .roadmap-divider {
+      height: 1px;
+      background-color: var(--border);
+      margin: 20px 0;
+    }
+
+    .roadmap-screens {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .roadmap-screen-chip {
+      background-color: var(--secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .roadmap-screen-chip .chip-icon {
+      font-size: 16px;
+    }
+
+    .roadmap-group-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--foreground);
+      margin: 40px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     /* Footer */
     footer {
       text-align: center;
@@ -792,6 +1013,9 @@
         </button>
         <button id="features-tab" class="switcher-btn" onclick="switchView('features')">
           <span class="emoji-icon">🚀</span> Feature Registry
+        </button>
+        <button id="roadmap-tab" class="switcher-btn" onclick="switchView('roadmap')">
+          <span class="emoji-icon">🗺️</span> Build Roadmap
         </button>
       </div>
 
@@ -2035,8 +2259,6 @@
 
       </div>
 
-    </div>
-  </div>
 
   <!-- Interactive Floating Theme Switcher -->
   <div class="theme-switcher-container">
@@ -2071,10 +2293,676 @@
     </button>
   </div>
 
+  <!-- ══════════════════════════════════════════════════
+       BUILD ROADMAP SECTION
+  ══════════════════════════════════════════════════ -->
+  <div id="roadmap-section-view" class="hidden">
+    <div style="max-width: 860px;">
+
+      <div class="roadmap-header">
+        <h2>🗺️ Implementation Roadmap</h2>
+        <p>15 features selected for implementation — detailed user-POV plans covering every screen, interaction, and data field. We build one at a time.</p>
+      </div>
+
+      <!-- ─────────────────────────────────────────── -->
+      <!-- GROUP: FINANCE & BUDGETING -->
+      <!-- ─────────────────────────────────────────── -->
+      <div class="roadmap-group-title">💰 Finance &amp; Budgeting</div>
+
+      <!-- FEATURE 1 -->
+      <div class="roadmap-card" id="roadmap-1">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #2b5c8f, #588bbd);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">1</div>
+            <h3>Subscription Manager &amp; Commitment Calendar</h3>
+            <span class="roadmap-area-tag">Finance</span>
+          </div>
+          <p class="roadmap-tagline">One place to manage every fixed recurring commitment — subscriptions, EMIs, insurance, rent — and a one-click flow to mark them paid so they automatically land in your expense log.</p>
+
+          <div class="roadmap-section-label">📋 The Manager Screen (Add / Edit / Remove)</div>
+          <ul class="roadmap-flow">
+            <li>You open a dedicated <strong>Subscriptions</strong> page from the Finance section. You see a clean list of all your active commitments — each card showing the name, icon, amount, and next due date.</li>
+            <li>Tap <strong>"+ Add Subscription"</strong> — a slide-up sheet appears with these fields: <em>Name</em> (e.g. Netflix), <em>Amount</em>, <em>Renewal Frequency</em> (Monthly / Quarterly / Yearly), <em>Next Due Date</em>, <strong>Category &amp; Sub-Category</strong> (e.g. Entertainment → Streaming), <strong>Vendor / Brand</strong> (used across all reports), and a small <em>Notes</em> field.</li>
+            <li>Tap any existing subscription card → an Edit sheet opens pre-filled with the same fields. You can update or tap the red <strong>Remove</strong> button at the bottom to delete it.</li>
+            <li>The list auto-sorts by "Due Soonest" so you always see what's coming up first.</li>
+          </ul>
+
+          <div class="roadmap-divider"></div>
+
+          <div class="roadmap-section-label">📅 The Calendar View (Commitment Forecast)</div>
+          <ul class="roadmap-flow">
+            <li>Switch to <strong>Calendar View</strong> — a month-grid lights up with due-date dots for each subscription. Hover or tap a date to see what renews.</li>
+            <li>A sticky <strong>"Committed This Month"</strong> banner at the top shows the total pre-committed spend, so you know before the month starts how much is already locked away.</li>
+            <li>Subscriptions that haven't been paid past their due date are highlighted in amber as <strong>"Zombie"</strong> — unused but still renewing.</li>
+          </ul>
+
+          <div class="roadmap-divider"></div>
+
+          <div class="roadmap-section-label">✅ The Mark-as-Paid Flow (Renamed: "Log Payment")</div>
+          <ul class="roadmap-flow">
+            <li>Each subscription card has a <strong>"Log Payment"</strong> button. When the due date arrives, you tap it.</li>
+            <li>A quick confirm sheet appears pre-filled with: the Name, the Amount, the Category, Sub-Category, and Vendor — all pulled from what you set up. You can tweak any field before confirming.</li>
+            <li>Hit <strong>"Confirm &amp; Add to Expenses"</strong> — the transaction is instantly added to your daily expense log with the correct category and vendor, and simultaneously posted to the <strong>Activity Timeline</strong> as a timestamped event.</li>
+            <li>The subscription card resets its due date to the next cycle automatically.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where this data shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">📊</span> Finance Reports — by category/vendor</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🕐</span> Activity Timeline — as paid event</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📅</span> Calendar — as due-date dots</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">💡</span> Dashboard — committed spend banner</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> You no longer miss renewal dates or wonder where your money went before the month even started. Every subscription payment is a real expense entry — tracked by category, sub-category, and vendor — so it feeds all your finance reports accurately.</div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────── -->
+      <!-- GROUP: HABITS & PRODUCTIVITY -->
+      <!-- ─────────────────────────────────────────── -->
+      <div class="roadmap-group-title">🎯 Habits &amp; Productivity</div>
+
+      <!-- FEATURE 6 -->
+      <div class="roadmap-card" id="roadmap-6">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #10b981, #34d399);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">6</div>
+            <h3>Streak Freeze Joker Cards</h3>
+            <span class="roadmap-area-tag">Habits</span>
+          </div>
+          <p class="roadmap-tagline">Life happens — travel, sickness, a rough day. Joker Cards let you skip logging a habit without torching a long streak. A safety net, not a cheat code.</p>
+
+          <div class="roadmap-section-label">⚙️ How You Set It Up</div>
+          <ul class="roadmap-flow">
+            <li>Inside each habit's settings, a new <strong>"Streak Protection"</strong> toggle appears. Turn it on to activate Joker Cards for that habit.</li>
+            <li>Set how many Jokers you get per month (e.g. 2). This is your monthly allowance for guilt-free skips.</li>
+          </ul>
+
+          <div class="roadmap-section-label">🃏 How You Use a Joker</div>
+          <ul class="roadmap-flow">
+            <li>On any day you missed logging a habit, the habit card shows a small <strong>🃏 Use Joker</strong> option — visible until midnight or the next day.</li>
+            <li>Tap it → a quick confirmation appears: <em>"Use 1 of your 2 Jokers for [Habit Name]?"</em></li>
+            <li>Confirm → the day is marked with a special joker icon instead of blank. Your streak is preserved. Your joker count ticks down.</li>
+            <li>When all Jokers are used up for the month, the option disappears. Streak risk is real again.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">🎯</span> Habit Card — Joker icon on skipped days</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📅</span> Heatmap — distinct color for Joker days</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📊</span> Habit Report — Jokers used this month</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> A 90-day streak on hydration shouldn't die because you had food poisoning on one day. Jokers keep momentum alive and make the system feel human.</div>
+        </div>
+      </div>
+
+      <!-- FEATURE 7 -->
+      <div class="roadmap-card" id="roadmap-7">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #10b981, #34d399);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">7</div>
+            <h3>Weekly &amp; Custom Frequency Habits</h3>
+            <span class="roadmap-area-tag">Habits</span>
+          </div>
+          <p class="roadmap-tagline">Not every good habit needs to happen every single day. Set habits that recur on specific days or a set number of times per week — and log them without breaking a streak on off-days.</p>
+
+          <div class="roadmap-section-label">⚙️ Setting Up a Non-Daily Habit</div>
+          <ul class="roadmap-flow">
+            <li>When creating or editing a habit, a new <strong>"Frequency"</strong> option replaces the plain daily toggle. Options are: <em>Every Day</em>, <em>Specific Days</em>, or <em>X Times Per Week</em>.</li>
+            <li><strong>Specific Days:</strong> A row of day-buttons (Mon–Sun) appears. Tap to select which days this habit is active. e.g. Gym only on Mon, Wed, Fri.</li>
+            <li><strong>X Times Per Week:</strong> A stepper lets you pick a target count (e.g. 3). The app tracks how many times you've logged it in the current week vs. your target.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📱 How It Looks While Using</div>
+          <ul class="roadmap-flow">
+            <li>On days a habit is not scheduled, its card shows a <em>"Rest Day"</em> pill — greyed out, not checkable. Your streak is not at risk on rest days.</li>
+            <li>For "X times per week" habits, the card shows a mini progress bar: <em>"2 / 3 this week"</em> and counts down days left to hit the target.</li>
+            <li>A week is Mon–Sun. If you hit your target early (e.g. read on Mon, Tue, Wed when target is 3), the habit card shows a <strong>✅ Weekly Goal Met</strong> banner for the rest of the week.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏠</span> Dashboard — weekly progress mini-bar</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📊</span> Habit Reports — weekly completion %</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📅</span> Heatmap — rest days shown distinctly</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> Going to the gym 3x a week is a perfectly healthy routine — the app should support it, not punish you with a broken streak on Thursday when you're supposed to rest.</div>
+        </div>
+      </div>
+
+      <!-- FEATURE 8 -->
+      <div class="roadmap-card" id="roadmap-8">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #10b981, #34d399);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">8</div>
+            <h3>Habit Consistency Heatmap (in Reports)</h3>
+            <span class="roadmap-area-tag">Habits · Reports</span>
+          </div>
+          <p class="roadmap-tagline">A full-year visual grid — like GitHub's contribution chart — that shows at a glance which days you were consistent, which days you slipped, and which days were rest days or Jokers. Lives inside the Habits Report section.</p>
+
+          <div class="roadmap-section-label">📍 Where It Lives</div>
+          <ul class="roadmap-flow">
+            <li>Navigate to <strong>Reports → Habits</strong>. At the top, before charts and tables, is the new <strong>"Consistency Heatmap"</strong> section.</li>
+            <li>A dropdown lets you pick <em>which habit</em> to view (or "All Habits — Combined Score").</li>
+          </ul>
+
+          <div class="roadmap-section-label">📅 What the Grid Shows</div>
+          <ul class="roadmap-flow">
+            <li>52 columns × 7 rows — one square per day of the year. Each square is color-coded:
+              <br>• <strong>Dark green</strong> = logged and fully completed
+              <br>• <strong>Light green</strong> = partially completed
+              <br>• <strong>Amber</strong> = Joker used (Feature 6)
+              <br>• <strong>Blue-grey</strong> = scheduled rest day (Feature 7)
+              <br>• <strong>Empty/light</strong> = missed or not yet
+            </li>
+            <li>Hover or tap any square → a tooltip shows: <em>Date, Habit, Logged value, and any note you left that day.</em></li>
+            <li>Below the grid, a row of stats: <strong>Current Streak</strong>, <strong>Longest Streak This Year</strong>, <strong>Completion Rate</strong>, and <strong>Jokers Used</strong>.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">📊</span> Reports → Habits — primary location</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🎯</span> Individual Habit Detail Page</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> Seeing 300 green squares vs. 65 grey ones tells you more about your discipline than any number. The heatmap is the single most motivating view in any habit tracker — it makes consistency visual and addictive.</div>
+        </div>
+      </div>
+
+      <!-- FEATURE 9 -->
+      <div class="roadmap-card" id="roadmap-9">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #f59e0b, #fbbf24);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">9</div>
+            <h3>Eisenhower Priority Matrix</h3>
+            <span class="roadmap-area-tag">Tasks</span>
+          </div>
+          <p class="roadmap-tagline">A 4-quadrant view for your tasks — organized by urgency and importance. Instead of a flat list, you see immediately what you must do today, what to plan, what to delegate, and what to drop.</p>
+
+          <div class="roadmap-section-label">📍 Where It Lives</div>
+          <ul class="roadmap-flow">
+            <li>In the <strong>Tasks</strong> section, a new <strong>"Matrix View"</strong> toggle appears alongside the existing list view — switch between them freely.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📱 The 4 Quadrants</div>
+          <ul class="roadmap-flow">
+            <li><strong>Q1 — Do First</strong> (Urgent + Important): Highlighted in red. These demand action today. Deadlines, crises.</li>
+            <li><strong>Q2 — Schedule</strong> (Not Urgent + Important): Highlighted in blue. Your growth work — planning, health, skills. Should dominate your week.</li>
+            <li><strong>Q3 — Delegate</strong> (Urgent + Not Important): Highlighted in amber. Requests, errands — things that feel urgent but don't move the needle.</li>
+            <li><strong>Q4 — Eliminate</strong> (Not Urgent + Not Important): Grey. Busywork and low-value activities.</li>
+          </ul>
+
+          <div class="roadmap-section-label">⚙️ Tagging Tasks</div>
+          <ul class="roadmap-flow">
+            <li>When creating or editing a task, two quick toggles appear: <strong>Urgent? (Yes/No)</strong> and <strong>Important? (Yes/No)</strong>. The app places it into the correct quadrant automatically.</li>
+            <li>Tasks with a due date within 48 hours are auto-flagged as Urgent unless you say otherwise.</li>
+            <li>You can drag tasks between quadrants directly on the matrix view to re-classify them.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">📝</span> Tasks — Matrix View toggle</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏠</span> Dashboard — Q1 count badge</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> Most people spend their days in Q1 and Q3 — fires and interruptions. The matrix makes it obvious when you're neglecting Q2 (your real growth), which is the single biggest thing successful people do differently.</div>
+        </div>
+      </div>
+
+      <!-- FEATURE 10 -->
+      <div class="roadmap-card" id="roadmap-10">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #10b981, #34d399);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">10</div>
+            <h3>Habit Stacking</h3>
+            <span class="roadmap-area-tag">Habits</span>
+          </div>
+          <p class="roadmap-tagline">Attach a task directly to a habit — so the moment you check off your morning run, a follow-up task (like "Drink protein shake") is automatically triggered and added to your task list.</p>
+
+          <div class="roadmap-section-label">⚙️ Setting Up a Stack</div>
+          <ul class="roadmap-flow">
+            <li>In a habit's settings, a new <strong>"Habit Stack"</strong> section appears. Tap <strong>"+ Add Linked Action"</strong>.</li>
+            <li>A sheet appears where you type a short task description (e.g. "Journal for 5 min"), set its priority level, and optionally add a note. This becomes the auto-created task every time the habit is checked off.</li>
+            <li>You can stack multiple tasks to a single habit (e.g. After Workout → "Log macros" + "Record weight").</li>
+          </ul>
+
+          <div class="roadmap-section-label">📱 When You Log the Habit</div>
+          <ul class="roadmap-flow">
+            <li>You tap <strong>Done</strong> on your Workout habit → a subtle toast notification slides in: <em>"2 stacked tasks added to your list."</em></li>
+            <li>The Tasks section shows these auto-added items with a small 🔗 link icon indicating they were stacked from a habit.</li>
+            <li>Completing the stacked tasks also shows up in your activity timeline as linked events.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">🎯</span> Habit Settings — Stack section</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📝</span> Tasks — auto-added with 🔗 tag</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🕐</span> Activity Timeline — linked events</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> The science of habit stacking says attaching a new behaviour to an existing one is the most reliable way to make it stick. This feature turns that principle into a built-in system.</div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────── -->
+      <!-- GROUP: HEALTH & FITNESS -->
+      <!-- ─────────────────────────────────────────── -->
+      <div class="roadmap-group-title">🏋️ Health &amp; Fitness</div>
+
+      <!-- FEATURE 11 -->
+      <div class="roadmap-card" id="roadmap-11">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #ef4444, #f87171);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">11</div>
+            <h3>Workout Templates &amp; Pre-Planned Sessions</h3>
+            <span class="roadmap-area-tag">Workout</span>
+          </div>
+          <p class="roadmap-tagline">Two things in one — save your favourite routines as reusable templates, and plan tomorrow's workout tonight so you walk into the gym knowing exactly what to do.</p>
+
+          <div class="roadmap-section-label">💾 Part A — Workout Templates</div>
+          <ul class="roadmap-flow">
+            <li>In the Workout section, a <strong>"Templates"</strong> tab appears alongside Log. Here you see saved routines like "Leg Day A", "Push Day", "Upper Body Power".</li>
+            <li>Tap <strong>"+ New Template"</strong> → give it a name, a tag (Strength / Cardio / Mobility), then add exercises one by one: <em>Exercise Name, Default Sets, Default Reps, Default Weight, and Rest Duration</em>.</li>
+            <li>Exercises inside a template have a drag handle so you can reorder them.</li>
+            <li>To start a session from a template: tap the template → tap <strong>"Start Workout"</strong> → all exercises load pre-filled with your last used weights. You just adjust and log sets.</li>
+          </ul>
+
+          <div class="roadmap-divider"></div>
+
+          <div class="roadmap-section-label">📅 Part B — Pre-Planning a Workout</div>
+          <ul class="roadmap-flow">
+            <li>A <strong>"Plan Ahead"</strong> button lets you schedule a workout for a future date — e.g. tomorrow at 7am.</li>
+            <li>Pick a template (or build from scratch), set the planned date and time, and optionally add a goal note (e.g. "Aim for new PR on squat").</li>
+            <li>The planned session appears on your <strong>Unified Calendar</strong> (Feature 24) and on the Dashboard under "Tomorrow's Plan".</li>
+            <li>When the scheduled day arrives, a notification says <em>"Your Leg Day A session is planned for today."</em> Tap it to open the pre-loaded workout and start logging.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏋️</span> Workout — Templates tab</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📅</span> Calendar — planned session dot</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏠</span> Dashboard — "Tomorrow's Plan" card</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📊</span> Reports — template usage frequency</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> Deciding what to do at the gym is one of the biggest time wasters. Templates eliminate this completely. Pre-planning takes it further — you arrive with intention, not improvisation.</div>
+        </div>
+      </div>
+
+      <!-- FEATURE 14 -->
+      <div class="roadmap-card" id="roadmap-14">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #ef4444, #f87171);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">14</div>
+            <h3>Rest Timer Between Sets</h3>
+            <span class="roadmap-area-tag">Workout</span>
+          </div>
+          <p class="roadmap-tagline">A built-in countdown timer that auto-starts the moment you log a completed set — so you rest exactly the right amount and get a clear go-signal for the next one. No more phone-watching.</p>
+
+          <div class="roadmap-section-label">📱 How It Works During a Session</div>
+          <ul class="roadmap-flow">
+            <li>When you log a set (e.g. tap <strong>"Log Set 1: 80kg × 8"</strong>), a <strong>Rest Timer</strong> panel slides up from the bottom of the screen automatically.</li>
+            <li>It counts down from your pre-configured rest duration (e.g. 90 seconds). A circular progress ring fills as time passes.</li>
+            <li>At 10 seconds remaining, the ring turns amber. At 0, a gentle vibration + sound alert fires: <em>"Rest complete — start Set 2."</em></li>
+            <li>You can tap <strong>Skip Rest</strong> to go early, or <strong>+30s</strong> to extend if you need more recovery.</li>
+          </ul>
+
+          <div class="roadmap-section-label">⚙️ Configuring Rest Durations</div>
+          <ul class="roadmap-flow">
+            <li>Each exercise in a template (Feature 11) has its own default rest duration — set when you build the template. Heavy compounds (squat, deadlift) can have 3 min; accessories 60 sec.</li>
+            <li>You can also override it on-the-fly during a session without touching settings.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏋️</span> Live Workout Session — floating timer panel</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📊</span> Reports — avg rest duration per session</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> Rest period discipline is one of the most overlooked variables in training. Too short = performance drops. Too long = session drags. A built-in timer removes the guesswork entirely.</div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────── -->
+      <!-- GROUP: GAMIFICATION & LIFE OS -->
+      <!-- ─────────────────────────────────────────── -->
+      <div class="roadmap-group-title">🎮 Gamification &amp; Life OS</div>
+
+      <!-- FEATURE 15 -->
+      <div class="roadmap-card" id="roadmap-15">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #8b5cf6, #a78bfa);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">15</div>
+            <h3>Life RPG — Gamification Engine</h3>
+            <span class="roadmap-area-tag">Gamification</span>
+          </div>
+          <p class="roadmap-tagline">Turn daily life actions into a role-playing game. Earn XP for completing habits, staying on budget, and finishing workouts. Level up personal stats. Spend XP on rewards you define. Fight monthly Boss Battles.</p>
+
+          <div class="roadmap-section-label">⚔️ The Core Mechanic — XP &amp; Stats</div>
+          <ul class="roadmap-flow">
+            <li>Everything you do earns <strong>XP (Experience Points)</strong>. Completing a habit = 10 XP. Finishing a workout = 25 XP. Hitting weekly budget = 50 XP. A new streak milestone = bonus XP burst.</li>
+            <li>XP feeds into 4 core <strong>Stats</strong> based on the action category: <em>Strength</em> (Workouts), <em>Wisdom</em> (Habits/Skills), <em>Resource</em> (Finance), <em>Endurance</em> (Streaks &amp; Consistency).</li>
+            <li>Each stat has a level (1–100) shown as a filling bar on your <strong>Character Sheet</strong> — a dedicated profile page in the app.</li>
+          </ul>
+
+          <div class="roadmap-section-label">🏪 The Reward Store</div>
+          <ul class="roadmap-flow">
+            <li>You define your own real-life rewards and assign them an XP cost. e.g. "Order pizza night" = 200 XP. "New book" = 500 XP. "Weekend trip" = 5000 XP.</li>
+            <li>When you accumulate enough XP, tap <strong>"Redeem"</strong> on a reward. The XP is deducted. The reward is yours — guilt-free, because you earned it.</li>
+          </ul>
+
+          <div class="roadmap-section-label">🐉 Boss Battles (Monthly Goals)</div>
+          <ul class="roadmap-flow">
+            <li>At the start of each month, you can set a <strong>Boss Battle</strong> — a big audacious goal (e.g. "Complete 20 workouts", "Save ₹15,000"). The boss has an HP bar.</li>
+            <li>Every relevant logged action chips away at the boss's HP. Defeating the boss by month end = a big XP reward and a special badge.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">⚔️</span> Character Sheet page</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏪</span> Reward Store tab</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🐉</span> Boss Battle — monthly modal</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏠</span> Dashboard — XP streak ribbon</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> Willpower is finite. External reward loops are not. By turning your real life into an RPG, you create a dopamine cycle that makes showing up feel genuinely fun rather than obligatory.</div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────── -->
+      <!-- GROUP: KNOWLEDGE & INSIGHTS -->
+      <!-- ─────────────────────────────────────────── -->
+      <div class="roadmap-group-title">🧠 Knowledge &amp; Insights</div>
+
+      <!-- FEATURE 17 -->
+      <div class="roadmap-card" id="roadmap-17">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #0ea5e9, #38bdf8);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">17</div>
+            <h3>"Second Brain" — Personal Knowledge Base</h3>
+            <span class="roadmap-area-tag">Knowledge</span>
+          </div>
+          <p class="roadmap-tagline">A personal wiki where you capture thoughts, save book highlights, store articles, and link ideas together. Everything you know, organised and searchable — not scattered across notes apps.</p>
+
+          <div class="roadmap-section-label">📝 Creating Idea Cards</div>
+          <ul class="roadmap-flow">
+            <li>Open <strong>Second Brain</strong> from the main nav. Tap <strong>"+ New Card"</strong>.</li>
+            <li>Each card has: a <em>Title</em>, a <em>Type tag</em> (Idea / Book Highlight / Article / Insight / Quote), a rich <em>Body</em> (text with basic formatting), and optional <em>Source</em> (book name, URL, or linked habit/skill).</li>
+            <li>Tags: add free-form tags like #finance, #health, #leadership to group cards cross-topic.</li>
+          </ul>
+
+          <div class="roadmap-section-label">🔗 Linking Cards Together</div>
+          <ul class="roadmap-flow">
+            <li>Inside any card body, type <strong>[[</strong> to trigger a search of all your other cards. Select one to create a bidirectional link — both cards now reference each other.</li>
+            <li>Tap a linked card name to jump directly to it. A back-link section at the bottom of each card shows all other cards that reference it.</li>
+          </ul>
+
+          <div class="roadmap-section-label">✨ Surprise Me</div>
+          <ul class="roadmap-flow">
+            <li>A <strong>"Surprise Me"</strong> button on the home of Second Brain surfaces a random old card you haven't revisited in 30+ days — perfect for rediscovering forgotten ideas and making unexpected connections.</li>
+          </ul>
+
+          <div class="roadmap-section-label">🔍 Search &amp; Browse</div>
+          <ul class="roadmap-flow">
+            <li>A global search bar searches card titles, body text, and tags simultaneously. Results are instant.</li>
+            <li>A <em>Graph View</em> (optional toggle) shows all your cards as nodes with links between them — revealing how your thinking clusters.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">🧠</span> Second Brain — dedicated section</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📚</span> Skills — link resource cards to skills</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🎯</span> Habits — attach book notes to habit</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> Most people re-read books but remember nothing because there's no system. Second Brain is that system — built into the same app where you're already tracking your life, so ideas connect to actions naturally.</div>
+        </div>
+      </div>
+
+      <!-- FEATURE 20 -->
+      <div class="roadmap-card" id="roadmap-20">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #f59e0b, #fbbf24);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">20</div>
+            <h3>Unified "Life Velocity" Score (0–100)</h3>
+            <span class="roadmap-area-tag">Intelligence</span>
+          </div>
+          <p class="roadmap-tagline">A single number — 0 to 100 — that tells you how well you are living your life today, based on a weighted blend of your habits, tasks, budget, and workouts.</p>
+
+          <div class="roadmap-section-label">🧮 How the Score is Calculated</div>
+          <ul class="roadmap-bullets">
+            <li><strong>50% — Habits:</strong> % of scheduled habits completed today vs. target.</li>
+            <li><strong>20% — Tasks:</strong> % of Q1 and Q2 tasks completed this week.</li>
+            <li><strong>20% — Budget:</strong> How close actual spending is to planned budget (within target = full 20).</li>
+            <li><strong>10% — Workout:</strong> Sessions completed vs. your weekly goal.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📱 How It Looks</div>
+          <ul class="roadmap-flow">
+            <li>On the Dashboard, a large <strong>radial gauge</strong> (like a speedometer) fills with your current score. Color shifts: red (0–40), amber (41–70), green (71–100).</li>
+            <li>Below the gauge: a small breakdown showing your score contribution from each pillar — so you instantly see which area is dragging your number down.</li>
+            <li>A 30-day trend sparkline below that shows if your Life Velocity is rising or falling over the past month.</li>
+          </ul>
+
+          <div class="roadmap-divider"></div>
+
+          <div class="roadmap-section-label">⚡ How is Feature 20 Different from Feature 15 (Life RPG)?</div>
+          <ul class="roadmap-bullets">
+            <li><strong>Feature 15 (Life RPG)</strong> is a <em>motivational reward system</em> — it gamifies your actions to make you want to do them. It's about fun, dopamine, and streaks. XP goes up; you buy rewards; you fight boss battles. It's forward-looking and playful.</li>
+            <li><strong>Feature 20 (Life Velocity)</strong> is a <em>diagnostic measurement tool</em> — it tells you objectively how well-balanced your life is right now. It has no rewards, no XP. It's a score that goes up when you're balanced and drops when you neglect an area. It's analytical and honest.</li>
+            <li>Together: RPG makes you want to take action → Life Velocity tells you if the actions you're taking are the right ones in the right proportions.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏠</span> Dashboard — primary radial gauge</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📊</span> Reports — 30-day trend chart</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📅</span> Weekly Review — score comparison</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> On a bad week you might hit your workouts but blow your budget and skip your habits. Without a unified score, you feel fine because one metric is green. Life Velocity catches the imbalance and puts a number on it.</div>
+        </div>
+      </div>
+
+      <!-- FEATURE 21 -->
+      <div class="roadmap-card" id="roadmap-21">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #f59e0b, #fbbf24);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">21</div>
+            <h3>Behavioural Correlation Engine</h3>
+            <span class="roadmap-area-tag">Intelligence</span>
+          </div>
+          <p class="roadmap-tagline">The app automatically scans your data and surfaces surprising connections between different areas of your life — insights you would never find by looking at one module at a time.</p>
+
+          <div class="roadmap-section-label">💡 What Kind of Insights It Finds</div>
+          <ul class="roadmap-bullets">
+            <li>"When you complete your morning workout, you spend 32% less on dining out that day."</li>
+            <li>"Your task completion rate is 45% higher on days when you slept 7+ hours."</li>
+            <li>"You overspend on weekends by an average of ₹1,200 when your habit score drops below 60%."</li>
+            <li>"Your workout volume drops by 3 sets on weeks where you have more than 5 Q1 tasks."</li>
+          </ul>
+
+          <div class="roadmap-section-label">📍 Where You See These Insights</div>
+          <ul class="roadmap-flow">
+            <li>A dedicated <strong>"Insights"</strong> card on the Dashboard shows 1–2 top correlations, refreshed weekly. Tap it to open the full Insights Panel.</li>
+            <li>The <strong>Insights Panel</strong> lists all detected correlations, sorted by statistical strength. Each one shows a mini chart visualising the two variables plotted against each other.</li>
+            <li>You can tap <strong>"Explore This"</strong> on any insight to drill into the underlying data — e.g. see every day where you worked out and overlay your spending on the same chart.</li>
+          </ul>
+
+          <div class="roadmap-section-label">⚙️ How It Works (User Perspective)</div>
+          <ul class="roadmap-flow">
+            <li>It requires at least 30 days of data to start generating reliable insights. A progress indicator shows: <em>"12 more days of logging needed to unlock Behavioral Insights."</em></li>
+            <li>Insights are generated once per week automatically — no manual action required.</li>
+            <li>You can mark an insight as <strong>"Not Relevant"</strong> to dismiss it. The engine learns over time.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏠</span> Dashboard — top insight card</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🧠</span> Insights Panel — full list</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📊</span> Each Report — relevant insights sidebar</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> You can't see patterns in your own life when you're living it. This engine acts as a passive analyst that watches everything and tells you what the data actually says — not what you assume it says.</div>
+        </div>
+      </div>
+
+      <!-- FEATURE 23 -->
+      <div class="roadmap-card" id="roadmap-23">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #6366f1, #818cf8);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">23</div>
+            <h3>Chat With Your Data</h3>
+            <span class="roadmap-area-tag">AI</span>
+          </div>
+          <p class="roadmap-tagline">Instead of clicking through filters and reports to find an answer, just ask in plain English. The app reads your data and responds with a direct, human-language answer and a supporting chart.</p>
+
+          <div class="roadmap-section-label">📱 The Experience</div>
+          <ul class="roadmap-flow">
+            <li>A <strong>"Ask Your Data"</strong> button (or Cmd+K shortcut) opens a clean chat panel from anywhere in the app.</li>
+            <li>You type a question in plain text. Examples: <em>"How much did I spend on food in July?"</em>, <em>"Which habit do I miss the most on Mondays?"</em>, <em>"Am I saving more this month than last?"</em>, <em>"What was my best workout week this year?"</em></li>
+            <li>The app reads your actual database and responds in 2–3 seconds with: a direct answer sentence, a supporting mini-chart or table, and — where relevant — a recommendation or follow-up question.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📋 Types of Questions It Handles</div>
+          <ul class="roadmap-bullets">
+            <li><strong>Lookups:</strong> "What did I spend on Swiggy last month?"</li>
+            <li><strong>Comparisons:</strong> "Compare my workout frequency in June vs July."</li>
+            <li><strong>Trends:</strong> "Is my spending increasing or decreasing?"</li>
+            <li><strong>Root cause:</strong> "Why did my Life Velocity score drop last week?"</li>
+            <li><strong>Forecasts:</strong> "At this savings rate, how long until I reach ₹5L?"</li>
+          </ul>
+
+          <div class="roadmap-section-label">🔒 Privacy Note</div>
+          <ul class="roadmap-flow">
+            <li>All data stays in your Supabase database. Queries are processed against your local data only — no data is sent to external AI training systems.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">💬</span> Global — floating "Ask" button</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">⌨️</span> Cmd+K — Command Palette</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">📊</span> Reports — contextual "Ask about this" link</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> Reports are built for questions you anticipated. Chat handles the questions you didn't. It's the difference between a static dashboard and a personal analyst you can have a conversation with.</div>
+        </div>
+      </div>
+
+      <!-- ─────────────────────────────────────────── -->
+      <!-- GROUP: SYSTEM & PLATFORM -->
+      <!-- ─────────────────────────────────────────── -->
+      <div class="roadmap-group-title">🔧 System &amp; Platform</div>
+
+      <!-- FEATURE 24 -->
+      <div class="roadmap-card" id="roadmap-24">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #0ea5e9, #38bdf8);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">24</div>
+            <h3>Unified Master Calendar</h3>
+            <span class="roadmap-area-tag">System</span>
+          </div>
+          <p class="roadmap-tagline">One calendar that shows everything — tasks with due dates, planned workouts, subscription renewal dates, vehicle/document expiries, and pet vet visits — so you never have to mentally stitch your schedule together from five different places.</p>
+
+          <div class="roadmap-section-label">📅 What You See</div>
+          <ul class="roadmap-flow">
+            <li>Open <strong>Calendar</strong> from the main navigation. A standard month grid appears, but each day cell can hold coloured dots or chips from different life areas.</li>
+            <li>Each event type has a <em>distinct colour</em>: 🔵 Tasks, 🔴 Workouts, 💛 Subscriptions, 🟠 Vehicle/Documents, 🟢 Habit milestones, 🟣 Vet/Pet reminders.</li>
+            <li>Tap any day → a day-detail panel slides up listing all events for that day with the source module and action buttons.</li>
+          </ul>
+
+          <div class="roadmap-section-label">🔍 Filtering the Calendar</div>
+          <ul class="roadmap-flow">
+            <li>A row of filter chips above the calendar lets you toggle which categories are visible. If you only want to see Task deadlines, tap Tasks only. The dots disappear for everything else.</li>
+            <li>A <strong>"This Week"</strong> strip view (timeline) shows a horizontal agenda — useful for weekly planning mode.</li>
+          </ul>
+
+          <div class="roadmap-section-label">➕ Adding Events from Calendar</div>
+          <ul class="roadmap-flow">
+            <li>Tap any empty date → a quick-add sheet lets you pick the event type (Task, Workout, Reminder) and fill in basic details — routing the entry to the correct module automatically.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">📅</span> Calendar — dedicated top-level section</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🏠</span> Dashboard — "Upcoming This Week" strip</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🔧</span> All modules feed events into calendar</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> Most apps are silos. This calendar breaks those walls. When you see your big presentation deadline, your leg day, and your car insurance renewal all on the same Thursday — you plan the week very differently.</div>
+        </div>
+      </div>
+
+      <!-- FEATURE 26 -->
+      <div class="roadmap-card" id="roadmap-26">
+        <div class="roadmap-card-accent" style="background: linear-gradient(180deg, #0ea5e9, #38bdf8);"></div>
+        <div class="roadmap-card-inner">
+          <div class="roadmap-card-title-row">
+            <div class="roadmap-number">26</div>
+            <h3>Offline Mode &amp; Background Sync</h3>
+            <span class="roadmap-area-tag">System</span>
+          </div>
+          <p class="roadmap-tagline">The app works fully even without internet — you can log habits, add expenses, and track workouts in the gym basement or on a flight. Everything syncs silently to the cloud the moment you're back online.</p>
+
+          <div class="roadmap-section-label">📱 The Offline Experience</div>
+          <ul class="roadmap-flow">
+            <li>When you lose connectivity, a small <strong>"Offline"</strong> indicator badge appears in the header — subtle, not alarming. The app continues to function normally.</li>
+            <li>All actions you take offline are saved locally in the browser's storage (IndexedDB). You can log habits, add expenses, update tasks, and log sets — all without internet.</li>
+            <li>Locally cached data means previously loaded pages (today's dashboard, your habit list, recent expenses) are available even with zero connectivity.</li>
+          </ul>
+
+          <div class="roadmap-section-label">🔄 Syncing Back Online</div>
+          <ul class="roadmap-flow">
+            <li>The moment the internet returns, a <strong>Service Worker</strong> running in the background detects the connection and automatically pushes all queued offline actions to the Supabase database — in the order they were made.</li>
+            <li>A brief <strong>"Synced ✓"</strong> toast confirms everything is saved. No manual action needed.</li>
+            <li>If there's ever a conflict (e.g. you edited something on two devices while offline), the app shows a simple merge prompt asking which version to keep.</li>
+          </ul>
+
+          <div class="roadmap-section-label">🔔 Push Notifications (Bonus, Part of This Feature)</div>
+          <ul class="roadmap-flow">
+            <li>When you grant notification permission, the app can send daily reminders (e.g. <em>"You haven't logged your habits today"</em>), subscription renewal alerts (e.g. <em>"Netflix renews tomorrow — ₹649"</em>), and workout reminders for planned sessions.</li>
+            <li>All notification schedules are configurable per-item and in a central <strong>Notification Settings</strong> panel.</li>
+          </ul>
+
+          <div class="roadmap-section-label">📊 Where it shows up</div>
+          <div class="roadmap-screens">
+            <div class="roadmap-screen-chip"><span class="chip-icon">📶</span> Header — Offline status badge</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🔄</span> Background — auto-sync on reconnect</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">🔔</span> System — push notification centre</div>
+            <div class="roadmap-screen-chip"><span class="chip-icon">⚙️</span> Settings — Notification preferences</div>
+          </div>
+
+          <div class="roadmap-note"><strong>User value:</strong> A life-tracking app that requires internet is broken by design. The gym has spotty WiFi. The plane has none. Offline mode means the app is always with you — not conditionally with you.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+    </div> <!-- content -->
+  </div> <!-- main-layout -->
+
   <!-- Footer -->
   <footer>
     <p>Consolidated Master Report • Resiliessance Life OS Platform Console</p>
-    <p style="margin-top: 4px; font-size: 11px; opacity: 0.7;">69 Bugs Audited • 88 Planned Upgrades & Enhancements Registered</p>
+    <p style="margin-top: 4px; font-size: 11px; opacity: 0.7;">69 Bugs Audited • 88 Planned Upgrades &amp; Enhancements Registered • 15 Features Selected for Build</p>
   </footer>
 
   <script>
@@ -2106,6 +2994,24 @@
       { id: 'high', label: 'High Severity', emoji: '🟠' },
       { id: 'medium', label: 'Medium Severity', emoji: '🟡' },
       { id: 'low', label: 'Low Severity', emoji: '🔵' }
+    ];
+
+    const roadmapNavItems = [
+      { id: 'roadmap-1', label: 'Subscription Manager', emoji: '💰' },
+      { id: 'roadmap-6', label: 'Streak Freeze Jokers', emoji: '🃏' },
+      { id: 'roadmap-7', label: 'Custom Frequency Habits', emoji: '🔁' },
+      { id: 'roadmap-8', label: 'Habit Heatmap', emoji: '🔥' },
+      { id: 'roadmap-9', label: 'Eisenhower Matrix', emoji: '🎯' },
+      { id: 'roadmap-10', label: 'Habit Stacking', emoji: '🔗' },
+      { id: 'roadmap-11', label: 'Workout Templates', emoji: '🏋️' },
+      { id: 'roadmap-14', label: 'Rest Timer', emoji: '⏱️' },
+      { id: 'roadmap-15', label: 'Life RPG', emoji: '⚔️' },
+      { id: 'roadmap-17', label: 'Second Brain', emoji: '🧠' },
+      { id: 'roadmap-20', label: 'Life Velocity Score', emoji: '⚡' },
+      { id: 'roadmap-21', label: 'Correlation Engine', emoji: '🔍' },
+      { id: 'roadmap-23', label: 'Chat With Data', emoji: '💬' },
+      { id: 'roadmap-24', label: 'Master Calendar', emoji: '📅' },
+      { id: 'roadmap-26', label: 'Offline Mode', emoji: '📡' }
     ];
 
     // Initialize Page
@@ -2221,44 +3127,55 @@
     // Tab Switch Logic
     function switchView(view) {
       currentView = view;
-      
-      const bugsTab = document.getElementById("bugs-tab");
-      const featuresTab = document.getElementById("features-tab");
-      const bugFilters = document.getElementById("bug-filters");
-      const bugSummary = document.getElementById("bug-summary-view");
-      const bugsView = document.getElementById("bugs-section-view");
-      const featuresView = document.getElementById("features-section-view");
-      const searchInput = document.getElementById("search-bar");
 
-      // Reset Search input value
+      const bugsTab       = document.getElementById("bugs-tab");
+      const featuresTab   = document.getElementById("features-tab");
+      const roadmapTab    = document.getElementById("roadmap-tab");
+      const bugFilters    = document.getElementById("bug-filters");
+      const bugSummary    = document.getElementById("bug-summary-view");
+      const bugsView      = document.getElementById("bugs-section-view");
+      const featuresView  = document.getElementById("features-section-view");
+      const roadmapView   = document.getElementById("roadmap-section-view");
+      const searchInput   = document.getElementById("search-bar");
+
+      // ── Reset everything first ──
+      bugsTab.classList.remove("active");
+      featuresTab.classList.remove("active");
+      roadmapTab.classList.remove("active");
+      bugFilters.classList.add("hidden");
+      bugSummary.classList.add("hidden");
+      bugsView.classList.add("hidden");
+      featuresView.classList.add("hidden");
+      roadmapView.classList.add("hidden");
       searchInput.value = "";
-      
+
+      // ── Activate the chosen view ──
       if (view === 'bugs') {
         bugsTab.classList.add("active");
-        featuresTab.classList.remove("active");
         bugFilters.classList.remove("hidden");
         bugSummary.classList.remove("hidden");
         bugsView.classList.remove("hidden");
-        featuresView.classList.add("hidden");
         searchInput.placeholder = "Search bugs by title, file, category...";
-        
         document.getElementById("hero-title").innerText = "Bug Report Console";
         document.getElementById("hero-subtitle").innerText = "Comprehensive diagnostic audit of logic errors, visual bugs, state crashes, and mobile optimization defects across 30+ codebase components.";
-      } else {
-        bugsTab.classList.remove("active");
+
+      } else if (view === 'features') {
         featuresTab.classList.add("active");
-        bugFilters.classList.add("hidden");
-        bugSummary.classList.add("hidden");
-        bugsView.classList.add("hidden");
         featuresView.classList.remove("hidden");
         searchInput.placeholder = "Search upcoming features...";
-        
         document.getElementById("hero-title").innerText = "Upcoming Features Registry";
         document.getElementById("hero-subtitle").innerText = "A consolidated master list of upcoming enhancements, product proposals, and strategic improvements mapped to the Resiliessance Life OS design system.";
+
+      } else if (view === 'roadmap') {
+        roadmapTab.classList.add("active");
+        roadmapView.classList.remove("hidden");
+        searchInput.placeholder = "Jump to a feature by number or name...";
+        document.getElementById("hero-title").innerText = "🗺️ Build Roadmap";
+        document.getElementById("hero-subtitle").innerText = "15 selected features — detailed user-POV plans covering every screen, interaction, and data field. We build one at a time.";
       }
-      
+
       renderSidebar();
-      handleSearch(); // Reset any filters / search lists
+      handleSearch();
     }
 
     // Sidebar Rendering
@@ -2266,20 +3183,24 @@
       const sidebarNav = document.getElementById("sidebar-nav");
       sidebarNav.innerHTML = "";
       
-      const items = currentView === 'bugs' ? bugNavItems : featureNavItems;
+      let items;
+      if (currentView === 'bugs') items = bugNavItems;
+      else if (currentView === 'roadmap') items = roadmapNavItems;
+      else items = featureNavItems;
       
       items.forEach((item, index) => {
         const btn = document.createElement("button");
         btn.className = `nav-item ${index === 0 ? 'active' : ''}`;
-        btn.onclick = () => scrollToSection(item.id);
+        btn.onclick = () => scrollToSection(item.id, currentView === 'roadmap');
         btn.innerHTML = `<span class="emoji-icon">${item.emoji}</span> ${item.label}`;
         sidebarNav.appendChild(btn);
       });
     }
 
     // Smooth Scroll Navigation
-    function scrollToSection(id) {
-      const element = document.getElementById('section-' + id);
+    function scrollToSection(id, isFullId = false) {
+      const elementId = isFullId ? id : 'section-' + id;
+      const element = document.getElementById(elementId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
@@ -2446,9 +3367,51 @@
       });
     }
 
+    // Roadmap Search Logic
+    function applyRoadmapFilters() {
+      const query = document.getElementById('search-bar').value.toLowerCase();
+      const cards = document.querySelectorAll('.roadmap-card');
+
+      cards.forEach(card => {
+        const title = card.querySelector('h3').innerText.toLowerCase();
+        const tagline = card.querySelector('.roadmap-tagline').innerText.toLowerCase();
+        let content = '';
+        const textElements = card.querySelectorAll('.roadmap-flow li, .roadmap-bullets li, .roadmap-note');
+        textElements.forEach(el => content += el.innerText.toLowerCase() + ' ');
+
+        if (title.includes(query) || tagline.includes(query) || content.includes(query)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      // Show/hide group titles based on visible sibling cards
+      const groupTitles = document.querySelectorAll('.roadmap-group-title');
+      groupTitles.forEach(title => {
+        // Find all roadmap-cards following this group title until the next group title
+        let nextSibling = title.nextElementSibling;
+        let hasVisibleCards = false;
+        while (nextSibling && !nextSibling.classList.contains('roadmap-group-title')) {
+          if (nextSibling.classList.contains('roadmap-card') && !nextSibling.classList.contains('hidden')) {
+            hasVisibleCards = true;
+            break;
+          }
+          nextSibling = nextSibling.nextElementSibling;
+        }
+        if (hasVisibleCards) {
+          title.classList.remove('hidden');
+        } else {
+          title.classList.add('hidden');
+        }
+      });
+    }
+
     function handleSearch() {
       if (currentView === 'bugs') {
         applyBugFilters();
+      } else if (currentView === 'roadmap') {
+        applyRoadmapFilters();
       } else {
         applyFeatureFilters();
       }
