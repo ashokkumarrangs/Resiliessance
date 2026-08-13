@@ -10,6 +10,7 @@ import { PageWrapper } from "@/components/PageWrapper";
 import pkg from "../package.json";
 
 import { useHabits } from "@/hooks/useHabits";
+import { isHabitActiveOnDate } from "@/lib/habit-scoring";
 import { useVehicles } from "@/hooks/useVehicles";
 import { usePets } from "@/hooks/usePets";
 import Link from "next/link";
@@ -288,19 +289,26 @@ export default function DashboardPage() {
       const lib = (liabilitiesData || []).reduce((s, l) => s + (parseFloat(l.remaining) || 0), 0);
       const nw = liq + ast + rec - lib;
 
-      // 2. Habits
-      const dailyCfg = (habitConfigs || []).filter(h => h.frequency === 'daily' || !h.frequency);
-      const eventCfg = (habitConfigs || []).filter(h => h.frequency === 'event');
-      const hTotal = dailyCfg.length + eventCfg.length;
+      // 2. Habits (Only include daily/weekly/custom configs active today, and all event configs)
+      const activeConfigs = (habitConfigs || []).filter(c => {
+        if (c.frequency === 'event') return true;
+        const isActive = isHabitActiveOnDate(c as any, today);
+        const isFlexible = c.frequency_type === 'flexible_weekly' || c.frequency_type === 'flexible_monthly';
+        return isActive && !isFlexible;
+      });
+
+      const activeDailyCfg = activeConfigs.filter(h => h.frequency !== 'event');
+      const eventCfg = activeConfigs.filter(h => h.frequency === 'event');
+      const hTotal = activeDailyCfg.length + eventCfg.length;
       
       const loggedNames = new Set((habitsData || []).map(h => h.habit));
-      const avoidUnloggedCount = dailyCfg.filter(c => c.unlogged_is_success && !loggedNames.has(c.habit_name)).length;
+      const avoidUnloggedCount = activeDailyCfg.filter(c => c.unlogged_is_success && !loggedNames.has(c.habit_name)).length;
       
       // 'done' means it was logged/added today, not necessarily 'Success'
-      const hSuccess = (habitsData || []).length + avoidUnloggedCount;
+      const hSuccess = (habitsData || []).filter(h => loggedNames.has(h.habit)).length + avoidUnloggedCount;
 
       const habitsByGroup: { [key: string]: { done: number; total: number; order: number } } = {};
-      (habitConfigs || []).forEach(config => {
+      activeConfigs.forEach(config => {
         const group = config.group_name || 'Core';
         if (!habitsByGroup[group]) {
           habitsByGroup[group] = { done: 0, total: 0, order: config.group_display_order ?? 999 };

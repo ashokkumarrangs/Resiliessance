@@ -10,6 +10,12 @@ export interface HabitConfig {
   is_paused?: boolean;
   is_archived?: boolean;
   is_deleted?: boolean;
+  frequency_type?: string;
+  days_of_week?: number[] | null;
+  interval_count?: number | null;
+  interval_unit?: string | null;
+  interval_anchor?: string | null;
+  flexible_target_count?: number | null;
 }
 
 export interface HabitLog {
@@ -25,7 +31,7 @@ export function useHabits() {
   const getActiveConfigs = async () => {
     const { data, error } = await supabase
       .from('habit_config')
-      .select('habit_name, frequency, unlogged_is_success, group_name, group_display_order')
+      .select('*')
       .eq('is_paused', false)
       .eq('is_archived', false)
       .eq('is_deleted', false);

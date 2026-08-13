@@ -9,8 +9,9 @@ import { Activity, AlertTriangle, BarChart2, CalendarDays, Car, CheckCircle2, Ch
 import { useRouter } from "next/navigation";
 import { 
   format, subDays, startOfMonth, eachDayOfInterval,   startOfWeek, endOfWeek, endOfMonth, addMonths, subMonths,
-  differenceInDays
+  differenceInDays, addDays, parseISO
 } from "date-fns";
+import { isHabitActiveOnDate } from "@/lib/habit-scoring";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -39,7 +40,8 @@ const STATUS_COLORS: Record<string, string> = {
   "Failure": "bg-rose-500",
   "Tolerance": "bg-amber-500",
   "Critical": "bg-orange-600",
-  "Not Entered": "bg-muted/40"
+  "Not Entered": "bg-muted/40",
+  "Off Day": "bg-muted/10 opacity-20"
 };
 
 function SectionCard({ title, icon, children, headerRight, className = "" }: { title: string; icon: React.ReactNode; children: React.ReactNode; headerRight?: React.ReactNode; className?: string }) {
@@ -734,25 +736,148 @@ export default function ReportsPage() {
     const streaks: Record<string, { current: number; max: number; success: number; failure: number; tolerance: number; critical: number; consistency: number; recoveries: number }> = {};
     (habitCfg || []).forEach(cfg => {
       const name = cfg.habit_name;
-      const hLogs = (habitData || []).filter(h => h.habit === name).sort((a,b) => b.date.localeCompare(a.date));
+      const hLogs = (habitData || []).filter(h => h.habit === name).sort((a,b) => a.date.localeCompare(b.date));
+      
       let currentStreak = 0;
       let maxStreak = 0;
-      let runningStreak = 0;
-      [...hLogs].reverse().forEach(log => {
-        if (log.status === 'Success') {
-          runningStreak++;
-          if (runningStreak > maxStreak) maxStreak = runningStreak;
-        } else runningStreak = 0;
-      });
-      let checkDate = new Date();
-      for (let i = 0; i < 15; i++) {
-        const dStr = format(checkDate, "yyyy-MM-dd");
-        const log = hLogs.find(l => l.date === dStr);
-        if (log) {
-          if (log.status === 'Success') currentStreak++;
-          else break;
-        } else if (i > 0) break;
-        checkDate = subDays(checkDate, 1);
+
+      const isFlexibleWeekly = cfg.frequency === 'weekly' && cfg.frequency_type === 'flexible_weekly';
+      const isFlexibleMonthly = cfg.frequency === 'custom' && cfg.frequency_type === 'flexible_monthly';
+      const isInterval = cfg.frequency === 'custom' && cfg.frequency_type === 'interval';
+      const isSpecificDays = cfg.frequency === 'weekly' && cfg.frequency_type === 'specific_days';
+
+      if (isFlexibleWeekly) {
+        const weekMap: Record<string, number> = {};
+        hLogs.forEach(log => {
+          if (log.status === 'Success') {
+            const date = parseISO(log.date);
+            const start = startOfWeek(date, { weekStartsOn: 1 });
+            const weekKey = format(start, "yyyy-MM-dd");
+            weekMap[weekKey] = (weekMap[weekKey] || 0) + 1;
+          }
+        });
+        const weeks = Object.keys(weekMap).sort();
+        let maxStr = 0;
+        const target = cfg.flexible_target_count || 3;
+        
+        if (weeks.length > 0) {
+          const firstWeek = parseISO(weeks[0]);
+          const lastWeek = new Date();
+          let currentWeek = firstWeek;
+          
+          let consecutiveMet = 0;
+          while (currentWeek <= lastWeek) {
+            const wKey = format(currentWeek, "yyyy-MM-dd");
+            const met = (weekMap[wKey] || 0) >= target;
+            if (met) {
+              consecutiveMet++;
+              if (consecutiveMet > maxStr) maxStr = consecutiveMet;
+            } else {
+              consecutiveMet = 0;
+            }
+            currentWeek = addDays(currentWeek, 7);
+          }
+          maxStreak = maxStr;
+          
+          const thisWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+          const prevWeekStart = subDays(thisWeekStart, 7);
+          const thisWeekKey = format(thisWeekStart, "yyyy-MM-dd");
+          const prevWeekKey = format(prevWeekStart, "yyyy-MM-dd");
+          const metThisWeek = (weekMap[thisWeekKey] || 0) >= target;
+          const metPrevWeek = (weekMap[prevWeekKey] || 0) >= target;
+          
+          if (metThisWeek || metPrevWeek) {
+            let scanWeek = metThisWeek ? thisWeekStart : prevWeekStart;
+            let current = 0;
+            while (true) {
+              const k = format(scanWeek, "yyyy-MM-dd");
+              if ((weekMap[k] || 0) >= target) {
+                current++;
+                scanWeek = subDays(scanWeek, 7);
+              } else {
+                break;
+              }
+            }
+            currentStreak = current;
+          }
+        }
+      } else if (isFlexibleMonthly) {
+        const monthMap: Record<string, number> = {};
+        hLogs.forEach(log => {
+          if (log.status === 'Success') {
+            const monthKey = log.date.substring(0, 7);
+            monthMap[monthKey] = (monthMap[monthKey] || 0) + 1;
+          }
+        });
+        const months = Object.keys(monthMap).sort();
+        let maxStr = 0;
+        const target = cfg.flexible_target_count || 4;
+        
+        if (months.length > 0) {
+          const firstMonth = parseISO(months[0] + "-01");
+          const lastMonth = new Date();
+          let currentMonth = firstMonth;
+          
+          let consecutiveMet = 0;
+          while (currentMonth <= lastMonth) {
+            const mKey = format(currentMonth, "yyyy-MM");
+            const met = (monthMap[mKey] || 0) >= target;
+            if (met) {
+              consecutiveMet++;
+              if (consecutiveMet > maxStr) maxStr = consecutiveMet;
+            } else {
+              consecutiveMet = 0;
+            }
+            currentMonth = addMonths(currentMonth, 1);
+          }
+          maxStreak = maxStr;
+          
+          const thisMonthKey = format(new Date(), "yyyy-MM");
+          const prevMonthKey = format(subMonths(new Date(), 1), "yyyy-MM");
+          const metThisMonth = (monthMap[thisMonthKey] || 0) >= target;
+          const metPrevMonth = (monthMap[prevMonthKey] || 0) >= target;
+          
+          if (metThisMonth || metPrevMonth) {
+            let scanMonth = metThisMonth ? new Date() : subMonths(new Date(), 1);
+            let current = 0;
+            while (true) {
+              const k = format(scanMonth, "yyyy-MM");
+              if ((monthMap[k] || 0) >= target) {
+                current++;
+                scanMonth = subMonths(scanMonth, 1);
+              } else {
+                break;
+              }
+            }
+            currentStreak = current;
+          }
+        }
+      } else {
+        const activeLogs = hLogs.filter(log => isHabitActiveOnDate(cfg as any, log.date));
+        let runningStreak = 0;
+        let maxStr = 0;
+        activeLogs.forEach(log => {
+          if (log.status === 'Success') {
+            runningStreak++;
+            if (runningStreak > maxStr) maxStr = runningStreak;
+          } else {
+            runningStreak = 0;
+          }
+        });
+        maxStreak = maxStr;
+        
+        let current = 0;
+        const reversedActive = [...activeLogs].reverse();
+        if (reversedActive.length > 0) {
+          for (let i = 0; i < reversedActive.length; i++) {
+            if (reversedActive[i].status === 'Success') {
+              current++;
+            } else {
+              break;
+            }
+          }
+          currentStreak = current;
+        }
       }
 
       let success = 0;
@@ -2107,7 +2232,11 @@ export default function ReportsPage() {
                           const log = allHabitData.find(h => h.date === dStr && h.habit === cfg.habit_name);
                           
                           let hStatus = log?.status || "Not Entered";
-                          if (hStatus === "Not Entered" && cfg.unlogged_is_success && isCur) {
+                          const isFlexible = cfg.frequency_type === 'flexible_weekly' || cfg.frequency_type === 'flexible_monthly';
+                          const active = isHabitActiveOnDate(cfg as any, dStr);
+                          if (!active && !isFlexible && isCur) {
+                            hStatus = "Off Day";
+                          } else if (hStatus === "Not Entered" && cfg.unlogged_is_success && isCur) {
                             hStatus = "Success";
                           }
 
@@ -2186,14 +2315,23 @@ export default function ReportsPage() {
                       </div>
 
                       <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[9px] font-bold text-muted-foreground border-y border-border/15 py-2">
-                        <div className="flex items-center justify-between">
-                          <span>Current Streak:</span>
-                          <strong className="text-primary font-black">{str.current}d</strong>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span>Max Streak:</span>
-                          <strong className="text-amber-500 font-black">{str.max}d</strong>
-                        </div>
+                        {(() => {
+                          const isWeekly = c.frequency === 'weekly' && c.frequency_type === 'flexible_weekly';
+                          const isMonthly = c.frequency === 'custom' && c.frequency_type === 'flexible_monthly';
+                          const unit = isWeekly ? 'w' : isMonthly ? 'm' : 'd';
+                          return (
+                            <>
+                              <div className="flex items-center justify-between">
+                                <span>Current Streak:</span>
+                                <strong className="text-primary font-black">{str.current}{unit}</strong>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span>Max Streak:</span>
+                                <strong className="text-amber-500 font-black">{str.max}{unit}</strong>
+                              </div>
+                            </>
+                          );
+                        })()}
                         <div className="flex items-center justify-between col-span-2">
                           <span>Recoveries Bounce-back:</span>
                           <strong className="text-emerald-500 font-black">{str.recoveries} times</strong>

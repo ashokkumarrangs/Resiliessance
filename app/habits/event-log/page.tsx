@@ -272,10 +272,11 @@ export default function HabitEventLogPage() {
         
         
         <SubNav 
-          items={["Daily Log", "Event Log"]}
+          items={["Daily Log", "Event Log", "Off-Day Habits"]}
           activeItem="Event Log"
           onChange={(val) => {
             if (val === "Daily Log") router.push("/habits/daily-log");
+            if (val === "Off-Day Habits") router.push("/habits/daily-log?tab=off-day");
           }}
         />
 

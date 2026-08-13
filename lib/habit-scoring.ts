@@ -3,6 +3,8 @@
  * Evaluates the status of a habit based on its configuration and the logged value.
  */
 
+import { parseISO, getDay, differenceInDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, format } from 'date-fns';
+
 export const sumDurations = (d1: string, d2: string) => {
   const toMin = (s: string) => {
     if (!s || !s.includes(':')) return 0;
@@ -30,6 +32,81 @@ export interface HabitConfig {
   crit_max?: number;
   direction?: 'more' | 'less'; // for above_below
   unlogged_is_success?: boolean;
+  frequency?: string;
+  frequency_type?: string;
+  days_of_week?: number[] | null;
+  interval_count?: number | null;
+  interval_unit?: string | null;
+  interval_anchor?: string | null;
+  flexible_target_count?: number | null;
+}
+
+export function isHabitActiveOnDate(config: HabitConfig, dateStr: string): boolean {
+  if (config.frequency === 'daily' || !config.frequency) {
+    return true;
+  }
+  if (config.frequency === 'event') {
+    return true;
+  }
+  if (config.frequency === 'weekly') {
+    if (config.frequency_type === 'specific_days') {
+      const date = parseISO(dateStr);
+      const jsDay = date.getDay();
+      return config.days_of_week?.includes(jsDay) ?? false;
+    }
+    if (config.frequency_type === 'flexible_weekly') {
+      return true;
+    }
+  }
+  if (config.frequency === 'custom') {
+    if (config.frequency_type === 'interval') {
+      if (!config.interval_anchor || !config.interval_count) return true;
+      const date = parseISO(dateStr);
+      const anchor = parseISO(config.interval_anchor);
+      const diff = differenceInDays(date, anchor);
+      if (diff < 0) return false;
+      
+      const count = config.interval_count;
+      const unit = config.interval_unit || 'days';
+      
+      if (unit === 'days') {
+        return diff % count === 0;
+      } else if (unit === 'weeks') {
+        return diff % (count * 7) === 0;
+      } else if (unit === 'months') {
+        const monthsDiff = (date.getFullYear() - anchor.getFullYear()) * 12 + (date.getMonth() - anchor.getMonth());
+        if (monthsDiff >= 0 && monthsDiff % count === 0) {
+          return date.getDate() === anchor.getDate();
+        }
+        return false;
+      }
+    }
+    if (config.frequency_type === 'flexible_monthly') {
+      return true;
+    }
+  }
+  return true;
+}
+
+export function getFlexiblePeriodBounds(config: HabitConfig, dateStr: string): { start: string; end: string } {
+  const date = parseISO(dateStr);
+  if (config.frequency_type === 'flexible_weekly' || config.frequency === 'weekly') {
+    const start = startOfWeek(date, { weekStartsOn: 1 });
+    const end = endOfWeek(date, { weekStartsOn: 1 });
+    return {
+      start: format(start, 'yyyy-MM-dd'),
+      end: format(end, 'yyyy-MM-dd'),
+    };
+  }
+  if (config.frequency_type === 'flexible_monthly' || config.frequency === 'custom') {
+    const start = startOfMonth(date);
+    const end = endOfMonth(date);
+    return {
+      start: format(start, 'yyyy-MM-dd'),
+      end: format(end, 'yyyy-MM-dd'),
+    };
+  }
+  return { start: dateStr, end: dateStr };
 }
 
 export function calculateHabitStatus(config: HabitConfig, rawValue: string): HabitStatus {

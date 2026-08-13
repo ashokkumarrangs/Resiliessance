@@ -4,7 +4,7 @@ import { Select } from "@/components/Select";;
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, AlignLeft, ArrowRight, Award, CheckCircle2, CheckSquare, ChevronDown, ChevronUp, CircleDot, Clock, Hash, History, Info, Palette, RefreshCw, ShieldCheck} from "lucide-react";
+import { AlertTriangle, AlignLeft, ArrowRight, Award, Calendar, CheckCircle2, CheckSquare, ChevronDown, ChevronUp, CircleDot, Clock, Hash, History, Info, Palette, RefreshCw, ShieldCheck} from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -59,6 +59,11 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
       if (data) {
         setFormData({
           ...data,
+          days_of_week: data.days_of_week || [],
+          interval_count: data.interval_count || 1,
+          interval_unit: data.interval_unit || 'days',
+          interval_anchor: data.interval_anchor || new Date().toISOString().split('T')[0],
+          flexible_target_count: data.flexible_target_count || 3,
           enable_tol: data.tol_min != null || data.tol_max != null,
           enable_crit: data.crit_min != null || data.crit_max != null,
           use_grace: (data.grace_days || 0) > 0,
@@ -114,6 +119,13 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
     use_soft_grace: false,
     use_escalation: false,
     use_tol_cap: false,
+    // Weekly & Custom Frequencies
+    frequency_type: 'fixed' as string | undefined,
+    days_of_week: [] as number[] | null,
+    interval_count: 1 as number | null,
+    interval_unit: 'days' as string | null,
+    interval_anchor: new Date().toISOString().split('T')[0] as string | null,
+    flexible_target_count: 3 as number | null,
   });
 
   const [groupHabits, setGroupHabits] = useState<{ id: string; habit_name: string; group_order: number }[]>([]);
@@ -193,7 +205,7 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
     }
   };
 
-  const handleChange = (key: string, value: string | number | boolean | null | undefined) => {
+  const handleChange = (key: string, value: string | number | boolean | number[] | null | undefined) => {
     setFormData(prev => {
       const next = { ...prev, [key]: value };
       // If frequency is event, yes/no (boolean) is not allowed
@@ -202,6 +214,18 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
       }
       if (key === 'frequency' && value === 'event') {
         next.unlogged_is_success = false;
+      }
+      if (key === 'frequency') {
+        if (value === 'daily' || value === 'event') {
+          next.frequency_type = 'fixed';
+        } else if (value === 'weekly') {
+          next.frequency_type = 'specific_days';
+          if (!next.days_of_week || next.days_of_week.length === 0) {
+            next.days_of_week = [1, 2, 3, 4, 5]; // Default Mon-Fri
+          }
+        } else if (value === 'custom') {
+          next.frequency_type = 'interval';
+        }
       }
       // Automate condition type for boolean input types
       if (key === 'input_type' && value === 'boolean') {
@@ -272,6 +296,38 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
         escalation_days: formData.use_escalation ? formData.escalation_days : 0,
         tol_cap_days: formData.use_tol_cap ? formData.tol_cap_days : 0,
       };
+
+      // Clean up fields based on frequency
+      if (payload.frequency === 'daily' || payload.frequency === 'event') {
+        payload.frequency_type = 'fixed';
+        payload.days_of_week = null;
+        payload.interval_count = null;
+        payload.interval_unit = null;
+        payload.interval_anchor = null;
+        payload.flexible_target_count = null;
+      } else if (payload.frequency === 'weekly') {
+        if (payload.frequency_type === 'specific_days') {
+          payload.interval_count = null;
+          payload.interval_unit = null;
+          payload.interval_anchor = null;
+          payload.flexible_target_count = null;
+        } else {
+          payload.days_of_week = null;
+          payload.interval_count = null;
+          payload.interval_unit = null;
+          payload.interval_anchor = null;
+        }
+      } else if (payload.frequency === 'custom') {
+        if (payload.frequency_type === 'interval') {
+          payload.days_of_week = null;
+          payload.flexible_target_count = null;
+        } else {
+          payload.days_of_week = null;
+          payload.interval_count = null;
+          payload.interval_unit = null;
+          payload.interval_anchor = null;
+        }
+      }
 
       if (payload.condition_type === 'between') {
         if (payload.suc_min !== undefined && payload.suc_max !== undefined && parseFloat(String(payload.suc_min)) > parseFloat(String(payload.suc_max))) {
@@ -439,7 +495,9 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
                       <span className="text-[10px] font-black uppercase tracking-[0.2em]">Tracking Log</span>
                    </div>
                    <div className="flex gap-2">
-                      <div className="px-2 py-1 rounded bg-background border border-border/40 text-[9px] font-black uppercase tracking-widest">{formData.frequency === 'daily' ? 'Daily' : 'Event'}</div>
+                      <div className="px-2 py-1 rounded bg-background border border-border/40 text-[9px] font-black uppercase tracking-widest">
+                        {formData.frequency === 'daily' ? 'Daily' : formData.frequency === 'weekly' ? 'Weekly' : formData.frequency === 'custom' ? 'Custom' : 'Event'}
+                      </div>
                       <div className="px-2 py-1 rounded bg-background border border-border/40 text-[9px] font-black uppercase tracking-widest">{formData.input_type}</div>
                    </div>
                 </div>
@@ -448,6 +506,173 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
                 </div>
               </CardContent>
             </Card>
+
+            {/* EDITABLE SUB-SCHEDULE FOR WEEKLY/CUSTOM */}
+            {(formData.frequency === 'weekly' || formData.frequency === 'custom') && (
+              <Card className="rounded-2xl border border-border/40 shadow-sm bg-card transition-all">
+                <CardContent className="p-6 space-y-4">
+                  <div className="flex items-center gap-2 text-primary">
+                     <Calendar size={14} className="fill-current" />
+                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">Schedule Settings</span>
+                  </div>
+
+                  {formData.frequency === 'weekly' && (
+                    <div className="space-y-4">
+                      <Label className="text-xs font-black text-muted-foreground/60 uppercase tracking-[0.15em] block">Weekly Mode</Label>
+                      <div className="flex bg-muted/60 rounded-lg p-1 gap-1 w-full">
+                        <button
+                          type="button"
+                          onClick={() => handleChange('frequency_type', 'specific_days')}
+                          className={`flex-1 h-8 rounded-md text-xs font-bold transition-all active:scale-95 ${formData.frequency_type === 'specific_days' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground/70 hover:text-foreground'}`}
+                        >
+                          Specific Days
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleChange('frequency_type', 'flexible_weekly')}
+                          className={`flex-1 h-8 rounded-md text-xs font-bold transition-all active:scale-95 ${formData.frequency_type === 'flexible_weekly' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground/70 hover:text-foreground'}`}
+                        >
+                          Flexible Target
+                        </button>
+                      </div>
+
+                      {formData.frequency_type === 'specific_days' && (
+                        <div className="space-y-2">
+                          <Label className="text-xs font-bold text-muted-foreground/60 block">Days of the Week</Label>
+                          <div className="flex justify-between gap-1 mt-1">
+                            {[
+                              { label: 'M', value: 1 },
+                              { label: 'T', value: 2 },
+                              { label: 'W', value: 3 },
+                              { label: 'T', value: 4 },
+                              { label: 'F', value: 5 },
+                              { label: 'S', value: 6 },
+                              { label: 'S', value: 0 }
+                            ].map((day) => {
+                              const active = formData.days_of_week?.includes(day.value);
+                              return (
+                                <button
+                                  key={day.value}
+                                  type="button"
+                                  onClick={() => {
+                                    const current = formData.days_of_week || [];
+                                    const updated = current.includes(day.value)
+                                      ? current.filter(d => d !== day.value)
+                                      : [...current, day.value];
+                                    handleChange('days_of_week', updated);
+                                  }}
+                                  className={`w-9 h-9 rounded-full font-black text-xs transition-all ${
+                                    active
+                                      ? 'bg-primary text-primary-foreground scale-105 shadow-sm'
+                                      : 'bg-muted text-muted-foreground/60 hover:bg-muted/80'
+                                  }`}
+                                >
+                                  {day.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {formData.frequency_type === 'flexible_weekly' && (
+                        <div className="space-y-2">
+                          <Label className="text-xs font-bold text-muted-foreground/60 block">Target sessions per week</Label>
+                          <div className="flex items-center gap-3 mt-1">
+                            <Input
+                              type="number"
+                              min={1}
+                              max={7}
+                              value={formData.flexible_target_count || 3}
+                              onChange={(e) => handleChange('flexible_target_count', parseInt(e.target.value) || 1)}
+                              className="w-20 h-10 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/20 shadow-inner"
+                            />
+                            <span className="text-xs font-bold text-muted-foreground/60">times a week</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {formData.frequency === 'custom' && (
+                    <div className="space-y-4">
+                      <Label className="text-xs font-black text-muted-foreground/60 uppercase tracking-[0.15em] block">Custom Frequency Mode</Label>
+                      <div className="flex bg-muted/60 rounded-lg p-1 gap-1 w-full">
+                        <button
+                          type="button"
+                          onClick={() => handleChange('frequency_type', 'interval')}
+                          className={`flex-1 h-8 rounded-md text-xs font-bold transition-all active:scale-95 ${formData.frequency_type === 'interval' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground/70 hover:text-foreground'}`}
+                        >
+                          Interval (Every N days)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleChange('frequency_type', 'flexible_monthly')}
+                          className={`flex-1 h-8 rounded-md text-xs font-bold transition-all active:scale-95 ${formData.frequency_type === 'flexible_monthly' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground/70 hover:text-foreground'}`}
+                        >
+                          Flexible Monthly Target
+                        </button>
+                      </div>
+
+                      {formData.frequency_type === 'interval' && (
+                        <div className="space-y-3 mt-2">
+                          <div className="flex gap-4">
+                            <div className="space-y-2 flex-1">
+                              <Label className="text-xs font-bold text-muted-foreground/60 block">Interval (N)</Label>
+                              <Input
+                                type="number"
+                                min={1}
+                                value={formData.interval_count || 1}
+                                onChange={(e) => handleChange('interval_count', parseInt(e.target.value) || 1)}
+                                className="w-full h-10 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/20 shadow-inner"
+                              />
+                            </div>
+                            <div className="space-y-2 flex-1">
+                              <Label className="text-xs font-bold text-muted-foreground/60 block">Unit</Label>
+                              <Select
+                                value={formData.interval_unit || 'days'}
+                                onChange={(e) => handleChange('interval_unit', e.target.value)}
+                                className="w-full h-10 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/20 shadow-inner cursor-pointer"
+                              >
+                                <option value="days">Days</option>
+                                <option value="weeks">Weeks</option>
+                                <option value="months">Months</option>
+                              </Select>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-xs font-bold text-muted-foreground/60 block">Anchor (Start Date)</Label>
+                            <Input
+                              type="date"
+                              value={formData.interval_anchor || ''}
+                              onChange={(e) => handleChange('interval_anchor', e.target.value)}
+                              className="w-full h-10 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/20 shadow-inner"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {formData.frequency_type === 'flexible_monthly' && (
+                        <div className="space-y-2">
+                          <Label className="text-xs font-bold text-muted-foreground/60 block">Target sessions per month</Label>
+                          <div className="flex items-center gap-3 mt-1">
+                            <Input
+                              type="number"
+                              min={1}
+                              max={31}
+                              value={formData.flexible_target_count || 4}
+                              onChange={(e) => handleChange('flexible_target_count', parseInt(e.target.value) || 1)}
+                              className="w-20 h-10 bg-muted border-none rounded-md px-3 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary/20 shadow-inner"
+                            />
+                            <span className="text-xs font-bold text-muted-foreground/60">times a month</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
             {/* Unit Card */}
             {formData.input_type !== 'boolean' && (

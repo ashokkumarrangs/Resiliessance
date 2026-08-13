@@ -104,3 +104,13 @@ CREATE TABLE IF NOT EXISTS scheduled_workout (
 ALTER TABLE scheduled_workout ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow anonymous read/write on scheduled_workout"
 ON scheduled_workout FOR ALL USING (true) WITH CHECK (true);
+
+-- Weekly & Custom Frequency Habit support columns
+ALTER TABLE habit_config 
+ADD COLUMN IF NOT EXISTS frequency_type TEXT DEFAULT 'fixed',
+ADD COLUMN IF NOT EXISTS days_of_week INTEGER[] DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS interval_count INTEGER DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS interval_unit TEXT DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS interval_anchor DATE DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS flexible_target_count INTEGER DEFAULT NULL;
+
