@@ -2,6 +2,7 @@ import React from "react";
 import {
   Archive,
     Bookmark,
+  BookOpen,
   Box,
   BarChart2,
     CalendarDays,
@@ -22,6 +23,7 @@ import {
   LineChart,
   ListTodo,
   PlusCircle,
+  RefreshCw,
   Sliders,
   Star,
   Target,
@@ -88,6 +90,13 @@ export const SKILL_TABS = [
   { title: "Focus", href: "/skills/focus", icon: <Target size={16} /> },
   { title: "Plan", href: "/skills/plan", icon: <CalendarDays size={16} /> },
   { title: "Archive", href: "/skills/archive", icon: <Archive size={16} /> },
+];
+
+// ─── Second Brain ─────────────────────────────────────────────────────────────
+export const BRAIN_TABS = [
+  { title: "Cards", href: "/second-brain/cards", icon: <BookOpen size={16} /> },
+  { title: "Inbox", href: "/second-brain/inbox", icon: <Inbox size={16} /> },
+  { title: "Review", href: "/second-brain/review", icon: <RefreshCw size={16} /> },
 ];
 
 // ─── Reports ──────────────────────────────────────────────────────────────────

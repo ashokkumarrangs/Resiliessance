@@ -1,5 +1,6 @@
 import {
   Bike,
+  Brain,
   Car,
   CheckCircle2,
   FileCheck,
@@ -79,6 +80,9 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           <NavItem href="/squareshift" icon={<FileCheck size={20} />} title="SquareShift" onClick={onClose} />
           <NavItem href="/skills" icon={<GraduationCap size={20} />} title="Skills" onClick={onClose} />
           
+          {/* Second Brain */}
+          <NavItem href="/second-brain" icon={<Brain size={20} />} title="Second Brain" onClick={onClose} />
+
           {/* Inventory */}
           <NavItem href="/inventory" icon={<PackageCheck size={20} />} title="Inventory" onClick={onClose} />
 

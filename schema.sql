@@ -114,3 +114,35 @@ ADD COLUMN IF NOT EXISTS interval_unit TEXT DEFAULT NULL,
 ADD COLUMN IF NOT EXISTS interval_anchor DATE DEFAULT NULL,
 ADD COLUMN IF NOT EXISTS flexible_target_count INTEGER DEFAULT NULL;
 
+-- Second Brain: Knowledge Base
+CREATE TABLE IF NOT EXISTS brain_cards (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'idea',
+  -- types: 'fleeting' | 'idea' | 'book_note' | 'quote' | 'article' | 'insight' | 'concept'
+  body TEXT,
+  source TEXT,
+  tags TEXT[] DEFAULT '{}',
+  icon TEXT DEFAULT '💡',
+  next_review_date DATE DEFAULT (CURRENT_DATE + INTERVAL '7 days'),
+  review_interval_days INT DEFAULT 7,
+  review_count INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE brain_cards ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow anonymous read/write on brain_cards"
+ON brain_cards FOR ALL USING (true) WITH CHECK (true);
+
+CREATE TABLE IF NOT EXISTS brain_links (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  from_card_id UUID REFERENCES brain_cards(id) ON DELETE CASCADE,
+  to_card_id UUID REFERENCES brain_cards(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(from_card_id, to_card_id)
+);
+
+ALTER TABLE brain_links ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow anonymous read/write on brain_links"
+ON brain_links FOR ALL USING (true) WITH CHECK (true);
