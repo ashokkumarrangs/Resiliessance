@@ -146,3 +146,40 @@ CREATE TABLE IF NOT EXISTS brain_links (
 ALTER TABLE brain_links ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow anonymous read/write on brain_links"
 ON brain_links FOR ALL USING (true) WITH CHECK (true);
+
+-- ─── Savings Goals & Allocations ────────────────────────────────────────────────
+-- Add tags support to liquidity accounts
+ALTER TABLE liquidity ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+
+-- Savings Goals Table
+CREATE TABLE IF NOT EXISTS savings_goals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  name TEXT NOT NULL,
+  target_amount NUMERIC(12, 2) NOT NULL,
+  target_date DATE,
+  category TEXT NOT NULL DEFAULT 'General',
+  status TEXT NOT NULL DEFAULT 'active', -- 'active', 'completed', 'paused'
+  notes TEXT
+);
+
+-- Enable RLS for savings_goals
+ALTER TABLE savings_goals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow anonymous read/write on savings_goals"
+ON savings_goals FOR ALL USING (true) WITH CHECK (true);
+
+-- Savings Allocations Table (Envelope allocations)
+CREATE TABLE IF NOT EXISTS savings_allocations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  goal_id UUID NOT NULL REFERENCES savings_goals(id) ON DELETE CASCADE,
+  account_name TEXT NOT NULL REFERENCES liquidity(account_name) ON UPDATE CASCADE ON DELETE CASCADE,
+  allocated_amount NUMERIC(12, 2) NOT NULL DEFAULT 0.00,
+  UNIQUE(goal_id, account_name)
+);
+
+-- Enable RLS for savings_allocations
+ALTER TABLE savings_allocations ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow anonymous read/write on savings_allocations"
+ON savings_allocations FOR ALL USING (true) WITH CHECK (true);
+

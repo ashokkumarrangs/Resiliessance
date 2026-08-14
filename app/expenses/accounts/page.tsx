@@ -1,7 +1,7 @@
 "use client";
 import { Select } from "@/components/Select";
 
-import { Banknote, ChevronDown, CreditCard, FileText, Landmark, Settings2, StickyNote, Trash2 } from "lucide-react";
+import { Banknote, ChevronDown, CreditCard, FileText, Landmark, Settings2, StickyNote, Trash2, Tag } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect, Suspense } from "react";
 import { supabase } from "@/lib/supabase";
@@ -23,6 +23,9 @@ function AccountPageContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
   const [accountTypes, setAccountTypes] = useState<string[]>([]);
+  const [allExistingTags, setAllExistingTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [originalAccountName, setOriginalAccountName] = useState<string | null>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({
@@ -33,13 +36,15 @@ function AccountPageContent() {
     account_no: "",
     card_no: "",
     card_pin: "",
+    card_cvv: "",
     nb_user: "",
     nb_pass: "",
     nb_txn: "",
     mb_pass: "",
     mb_mpin: "",
     mb_txn: "",
-    notes: ""
+    notes: "",
+    tags: []
   });
 
   useEffect(() => {
@@ -50,11 +55,19 @@ function AccountPageContent() {
   }, [initialName]);
 
   async function fetchAccounts() {
-    const { data } = await supabase.from('liquidity').select('account_name, type');
+    const { data } = await supabase.from('liquidity').select('account_name, type, tags');
     if (data) {
       setAccounts(data.map(a => a.account_name));
       const types = Array.from(new Set(data.map(a => a.type).filter(Boolean))) as string[];
       setAccountTypes(types);
+      
+      const allTags = new Set<string>();
+      data.forEach(a => {
+        if (a.tags && Array.isArray(a.tags)) {
+          a.tags.forEach(t => allTags.add(t));
+        }
+      });
+      setAllExistingTags(Array.from(allTags));
     }
   }
 
@@ -70,8 +83,9 @@ function AccountPageContent() {
       
       if (error) throw error;
       if (data) {
+        setOriginalAccountName(data.account_name);
         setFormData({
-          id: data.id,
+          id: data.id || null,
           account_name: data.account_name,
           type: data.type || "Savings",
           balance: data.balance?.toString() || "0",
@@ -85,7 +99,8 @@ function AccountPageContent() {
           mb_pass: data.mb_pass || "",
           mb_mpin: data.mb_mpin || "",
           mb_txn: data.mb_txn || "",
-          notes: data.notes || ""
+          notes: data.notes || "",
+          tags: data.tags || []
         });
       }
     } catch (error: any) {
@@ -94,6 +109,18 @@ function AccountPageContent() {
       setIsLoading(false);
     }
   }
+
+  const handleAddTag = (val: string) => {
+    const trimmed = val.trim();
+    if (!trimmed) return;
+    if (!(formData.tags || []).includes(trimmed)) {
+      setFormData({
+        ...formData,
+        tags: [...(formData.tags || []), trimmed]
+      });
+    }
+    setTagInput("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,8 +139,8 @@ function AccountPageContent() {
       const { id, ...updatePayload } = payload;
 
       let error;
-      if (id) {
-        const res = await supabase.from('liquidity').update(updatePayload).eq('id', id);
+      if (originalAccountName) {
+        const res = await supabase.from('liquidity').update(updatePayload).eq('account_name', originalAccountName);
         error = res.error;
       } else {
         const res = await supabase.from('liquidity').insert([updatePayload]);
@@ -136,10 +163,9 @@ function AccountPageContent() {
     if (!(await confirm("Are you sure you want to delete this account?"))) return;
 
     try {
-      const query = formData.id 
-        ? supabase.from('liquidity').delete().eq('id', formData.id)
-        : supabase.from('liquidity').delete().eq('account_name', formData.account_name);
-      const { error } = await query;
+      const targetName = originalAccountName || formData.account_name;
+      const { error } = await supabase.from('liquidity').delete().eq('account_name', targetName);
+      const { error: err } = { error }; // placeholder for backward compatibility
       if (error) throw error;
       toast.success("Account deleted");
       router.push("/expenses/liquidity");
@@ -339,6 +365,83 @@ function AccountPageContent() {
               className="w-full h-11 bg-muted border-none rounded-lg px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30" 
               placeholder="Record any account specifics here..."
             />
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
+              <Tag size={16} /> Account Tags
+            </label>
+            
+            <div className="flex flex-wrap gap-2">
+              {(formData.tags || []).map((tag: string) => (
+                <span 
+                  key={tag} 
+                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent/10 border border-accent/20 text-accent text-xs font-black rounded-full"
+                >
+                  {tag}
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setFormData({
+                        ...formData,
+                        tags: (formData.tags || []).filter((t: string) => t !== tag)
+                      });
+                    }}
+                    className="hover:text-rose-500 font-bold transition-colors ml-1"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              {(formData.tags || []).length === 0 && (
+                <span className="text-xs text-muted-foreground/40 font-bold italic">No tags added yet. Type below to add tags like "Savings".</span>
+              )}
+            </div>
+
+            <div className="relative">
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTag(tagInput);
+                    }
+                  }}
+                  className="flex-1 h-11 bg-muted border-none rounded-lg px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30" 
+                  placeholder="Type tag (e.g. Savings) and press Enter or Add..."
+                />
+                <button
+                  type="button"
+                  onClick={() => handleAddTag(tagInput)}
+                  className="px-4 bg-muted hover:bg-accent/10 hover:text-accent rounded-lg text-xs font-black uppercase tracking-wider transition-all border border-transparent hover:border-accent/20 active:scale-95"
+                >
+                  Add
+                </button>
+              </div>
+
+              {tagInput.trim() !== "" && (
+                <div className="absolute left-0 right-0 mt-1.5 bg-card border border-border/80 rounded-lg shadow-xl z-50 max-h-40 overflow-y-auto">
+                  {allExistingTags
+                    .filter(t => t.toLowerCase().includes(tagInput.toLowerCase()) && !(formData.tags || []).includes(t))
+                    .map(t => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => {
+                          handleAddTag(t);
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-muted text-xs font-bold text-foreground transition-colors"
+                      >
+                        {t}
+                      </button>
+                    ))
+                  }
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex gap-4 pt-4">

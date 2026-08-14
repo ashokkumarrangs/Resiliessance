@@ -44,6 +44,7 @@ export const EXPENSE_TABS = [
   { title: "Liabilities", href: "/expenses/view-liability", icon: <Eye size={16} /> },
   { title: "Receivables", href: "/expenses/view-receivable", icon: <HandCoins size={16} /> },
   { title: "Assets", href: "/expenses/view-assets", icon: <Box size={16} /> },
+  { title: "Savings", href: "/expenses/savings", icon: <Target size={16} /> },
   { title: "Budget", href: "/expenses/current-budget", icon: <BarChart2 size={16} /> },
   { title: "Net Worth", href: "/expenses/net-worth", icon: <TrendingUp size={16} /> },
 ];
