@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { 
-    Folder, Notebook, Plus, Check, Edit3, Trash2, GripVertical, List, Eye, EyeOff, ChevronUp, ChevronDown, MoreVertical, Calendar, Flame, PlusSquare, Star
+    Folder, Notebook, Plus, Check, Edit3, Trash2, GripVertical, List, Eye, EyeOff, ChevronUp, ChevronDown, MoreVertical, Calendar, Flame, PlusSquare, Star, Repeat
 } from "lucide-react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -12,6 +12,9 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { TaskCompletionModal } from "@/components/TaskCompletionModal";
 import { useDialog } from "@/components/dialog-provider";
+import { TaskEditModal } from "@/components/TaskEditModal";
+import { calculateNextOccurrence, processTaskDeadlines } from "@/lib/task-recurrence";
+import { format, parseISO, isValid, isToday, startOfDay } from "date-fns";
 
 const NOTES_ID = "__notes__";
 
@@ -32,6 +35,10 @@ export default function SquareShiftProjectPage() {
   const [activeTask, setActiveTask] = useState<any | null>(null);
   const [newTaskText, setNewTaskText] = useState("");
   const [activeMenuTaskId, setActiveMenuTaskId] = useState<string | null>(null);
+
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<any | null>(null);
 
   useEffect(() => {
     Promise.all([fetchProjects(), fetchTasks()]).then(() => setIsLoading(false));
@@ -54,12 +61,17 @@ export default function SquareShiftProjectPage() {
   const fetchTasks = async () => {
     const { data } = await supabase.from("action_tasks").select("*").order("sort_order");
     if (data) {
-      setTasks(data.filter(t => t.project_id === projectId));
+      // Process deadlines and auto-today logic
+      const processed = await processTaskDeadlines(data, true, async (id, updates) => {
+        await supabase.from("action_tasks").update(updates).eq("id", id);
+      });
+
+      setTasks(processed.filter(t => t.project_id === projectId));
       
       // Calculate open task counts per project
       const counts: Record<string, number> = {};
       let todayCount = 0;
-      data.forEach(t => {
+      processed.forEach(t => {
         if (!t.completed) {
           if (t.is_today) todayCount++;
           const pid = t.project_id || NOTES_ID;
@@ -99,18 +111,78 @@ export default function SquareShiftProjectPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const executeStatusChange = async (task: any, completed: boolean, completedAt: string | null) => {
-    const { error } = await supabase
-      .from('action_tasks')
-      .update({ 
-        completed,
-        completed_at: completedAt
-      })
-      .eq('id', task.id);
-    if (!error) {
-      fetchTasks();
-    } else {
-      console.error("Error updating status:", error);
-      toast.error("Failed to update task status");
+    try {
+      if (completed && task.recurrence_type && task.recurrence_type !== 'none') {
+        const nextDate = calculateNextOccurrence(task.due_date || task.due, {
+          recurrenceType: task.recurrence_type,
+          recurrenceInterval: task.recurrence_interval,
+          recurrenceDays: task.recurrence_days,
+          recurrenceAnchor: task.recurrence_anchor,
+        });
+
+        if (nextDate) {
+          const nextDueDateStr = format(nextDate, 'yyyy-MM-dd');
+          const nextTask = {
+            id: crypto.randomUUID(),
+            text: task.text,
+            project_id: task.project_id,
+            completed: false,
+            sort_order: (task.sort_order || 0) + 1,
+            is_today: nextDueDateStr === format(new Date(), 'yyyy-MM-dd'),
+            is_high_priority: task.is_high_priority || false,
+            due_date: nextDueDateStr,
+            due: nextDueDateStr,
+            recurrence_type: task.recurrence_type,
+            recurrence_interval: task.recurrence_interval,
+            recurrence_days: task.recurrence_days,
+            recurrence_anchor: task.recurrence_anchor
+          };
+
+          // Mark current task completed and clear recurrence
+          const { error: updateError } = await supabase
+            .from('action_tasks')
+            .update({ 
+              completed: true,
+              completed_at: completedAt,
+              recurrence_type: 'none',
+              recurrence_interval: null,
+              recurrence_days: null,
+              recurrence_anchor: null
+            })
+            .eq('id', task.id);
+
+          if (updateError) throw updateError;
+
+          // Insert new recurring task instance
+          const { error: insertError } = await supabase
+            .from('action_tasks')
+            .insert(nextTask);
+
+          if (insertError) throw insertError;
+
+          toast.success(`Task completed! Next occurrence scheduled for ${nextDueDateStr}`);
+          fetchTasks();
+          return;
+        }
+      }
+
+      // Standard non-recurring or marking pending
+      const { error } = await supabase
+        .from('action_tasks')
+        .update({ 
+          completed,
+          completed_at: completedAt
+        })
+        .eq('id', task.id);
+
+      if (!error) {
+        fetchTasks();
+      } else {
+        throw error;
+      }
+    } catch (err: any) {
+      console.error("Error updating status:", err);
+      toast.error(`Failed to update task status: ${err.message || err}`);
     }
   };
 
@@ -137,11 +209,42 @@ export default function SquareShiftProjectPage() {
     if (!error) fetchTasks();
   };
 
-  const handleRename = async (task: any) => {
-    const newName = await prompt("Rename task:", task.text);
-    if (newName && newName.trim()) {
-        await supabase.from('action_tasks').update({ text: newName.trim() }).eq('id', task.id);
-        fetchTasks();
+  const handleOpenEditModal = (task: any) => {
+    setEditingTask({
+      id: task.id,
+      title: task.text || "",
+      due_date: task.due_date || task.due,
+      recurrence_type: task.recurrence_type,
+      recurrence_interval: task.recurrence_interval,
+      recurrence_days: task.recurrence_days,
+      recurrence_anchor: task.recurrence_anchor,
+      ...task
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveTaskDetails = async (updates: any) => {
+    if (!editingTask) return;
+    try {
+      const { error } = await supabase
+        .from('action_tasks')
+        .update({
+          text: updates.title,
+          due_date: updates.due_date,
+          due: updates.due_date, // support both columns
+          recurrence_type: updates.recurrence_type,
+          recurrence_interval: updates.recurrence_interval,
+          recurrence_days: updates.recurrence_days,
+          recurrence_anchor: updates.recurrence_anchor,
+        })
+        .eq('id', editingTask.id);
+
+      if (error) throw error;
+      toast.success("Task updated successfully");
+      fetchTasks();
+    } catch (err) {
+      console.error("Error updating task details:", err);
+      toast.error("Failed to update task details");
     }
   };
 
@@ -180,17 +283,21 @@ export default function SquareShiftProjectPage() {
 
   const handleDeleteProject = async () => {
     if (!currentProject) return;
-    const confirmed = await confirm(`Are you sure you want to delete the project "${currentProject.name}" and all its tasks? This action cannot be undone.`);
-    if (!confirmed) return;
-    const { error } = await supabase
-      .from('action_projects')
-      .delete()
-      .eq('id', projectId);
-    if (!error) {
+    if (!(await confirm(`Delete project "${currentProject.name}" and all its tasks?`))) return;
+    
+    setIsLoading(true);
+    try {
+      const { error: tasksErr } = await supabase.from('action_tasks').delete().eq('project_id', projectId);
+      if (tasksErr) throw tasksErr;
+      const { error: projErr } = await supabase.from('action_projects').delete().eq('id', projectId);
+      if (projErr) throw projErr;
+      
       toast.success(`Project "${currentProject.name}" deleted`);
       router.push('/squareshift/notes');
-    } else {
+    } catch (error) {
+      console.error("Error deleting project:", error);
       toast.error("Failed to delete project");
+      setIsLoading(false);
     }
   };
 
@@ -276,7 +383,7 @@ export default function SquareShiftProjectPage() {
             </button>
             <button
               type="button"
-              onClick={() => { handleRename(task); setActiveMenuTaskId(null); }}
+              onClick={() => { handleOpenEditModal(task); setActiveMenuTaskId(null); }}
               className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
             >
               <Edit3 size={13} className="text-muted-foreground/40" />
@@ -413,6 +520,9 @@ export default function SquareShiftProjectPage() {
           <div className="space-y-3">
             {tasks.filter(t => !t.completed).map(task => {
                 const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60 bg-card';
+                const hasDue = task.due_date || task.due;
+                const hasRecur = task.recurrence_type && task.recurrence_type !== 'none';
+                
                 return (
                   <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-10'}`}>
                       <div className={`flex items-center gap-2 border border-border/40 border-l-4 ${accentClass} rounded-xl px-3 h-14 shadow-sm transition-all group`}>
@@ -424,11 +534,40 @@ export default function SquareShiftProjectPage() {
                                   <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                               </button>
                           </div>
-                          <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
-                              <span className={`text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 ${task.is_high_priority ? 'text-foreground font-black' : 'font-bold text-foreground/90'}`}>
-                                  {task.is_high_priority && <Flame size={12} className="text-rose-500 fill-rose-500 shrink-0" />}
-                                  {task.text}
-                              </span>
+                          
+                          <div className="flex-1 min-w-0 pr-2 flex flex-col justify-center text-left">
+                              <div className="flex items-center gap-1.5">
+                                  <span className={`text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 ${task.is_high_priority ? 'text-foreground font-black' : 'font-bold text-foreground/90'}`}>
+                                      {task.is_high_priority && <Flame size={12} className="text-rose-500 fill-rose-500 shrink-0" />}
+                                      {task.text}
+                                  </span>
+                              </div>
+                              
+                              {/* Recurrence & Due Date indicators */}
+                              {(hasDue || hasRecur) && (
+                                <div className="flex items-center gap-2 mt-0.5 text-[9px] font-bold text-muted-foreground/60">
+                                  {hasRecur && (
+                                    <span className="flex items-center gap-0.5 text-primary">
+                                      <Repeat size={10} />
+                                      {task.recurrence_type === 'weekly' && task.recurrence_days 
+                                        ? `Weekly (${task.recurrence_days.map((d: number) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d]).join(', ')})`
+                                        : task.recurrence_type}
+                                    </span>
+                                  )}
+                                  {hasDue && (
+                                    <span className={`flex items-center gap-0.5 ${
+                                      new Date(task.due_date || task.due) < startOfDay(new Date()) 
+                                        ? 'text-rose-500 bg-rose-500/10 px-1 rounded' 
+                                        : isToday(parseISO(task.due_date || task.due))
+                                        ? 'text-amber-500 bg-amber-500/10 px-1 rounded'
+                                        : ''
+                                    }`}>
+                                      <Calendar size={10} />
+                                      {format(parseISO(task.due_date || task.due), 'MMM d, yyyy')}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
                           </div>
                           
                           {renderDropdown(task)}
@@ -499,6 +638,16 @@ export default function SquareShiftProjectPage() {
           setActiveTask(null);
         }}
         taskTitle={activeTask?.text || ""}
+      />
+
+      <TaskEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingTask(null);
+        }}
+        onSave={handleSaveTaskDetails}
+        task={editingTask || { title: "" }}
       />
     </PageWrapper>
   );

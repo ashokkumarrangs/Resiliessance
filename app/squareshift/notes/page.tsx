@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { 
-    Folder, Notebook, Plus, Check, Edit3, Trash2, GripVertical, List, Eye, EyeOff, MoreVertical, Calendar, Flame, PlusSquare, Star, ChevronUp, ChevronDown
+    Folder, Notebook, Plus, Check, Edit3, Trash2, GripVertical, List, Eye, EyeOff, MoreVertical, Calendar, Flame, PlusSquare, Star, ChevronUp, ChevronDown, Repeat
 } from "lucide-react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { LoadingScreen } from "@/components/LoadingScreen";
@@ -12,6 +12,9 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { TaskCompletionModal } from "@/components/TaskCompletionModal";
 import { useDialog } from "@/components/dialog-provider";
+import { TaskEditModal } from "@/components/TaskEditModal";
+import { calculateNextOccurrence, processTaskDeadlines } from "@/lib/task-recurrence";
+import { format, parseISO, isValid, isToday, startOfDay } from "date-fns";
 
 const NOTES_ID = "__notes__";
 
@@ -30,6 +33,10 @@ export default function SquareShiftNotesPage() {
   const [activeTask, setActiveTask] = useState<any | null>(null);
   const [newTaskText, setNewTaskText] = useState("");
   const [activeMenuTaskId, setActiveMenuTaskId] = useState<string | null>(null);
+
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<any | null>(null);
 
   useEffect(() => {
     Promise.all([fetchProjects(), fetchTasks()]).then(() => setIsLoading(false));
@@ -52,12 +59,18 @@ export default function SquareShiftNotesPage() {
   const fetchTasks = async () => {
     const { data } = await supabase.from("action_tasks").select("*").order("sort_order");
     if (data) {
-      setTasks(data.filter(t => !t.project_id || t.project_id === NOTES_ID));
+      // Process deadlines and auto-today logic
+      const processed = await processTaskDeadlines(data, true, async (id, updates) => {
+        await supabase.from("action_tasks").update(updates).eq("id", id);
+      });
+
+      // Show tasks where project_id is null
+      setTasks(processed.filter(t => t.project_id === null));
       
-      // Calculate open task counts per project
+      // Calculate open task counts per category
       const counts: Record<string, number> = {};
       let todayCount = 0;
-      data.forEach(t => {
+      processed.forEach(t => {
         if (!t.completed) {
           if (t.is_today) todayCount++;
           const pid = t.project_id || NOTES_ID;
@@ -81,11 +94,7 @@ export default function SquareShiftNotesPage() {
     }).select();
     if (!error && data) {
         setNewTaskText("");
-        toast.success("Note added");
         fetchTasks();
-    } else if (error) {
-        console.error("Error adding note:", error);
-        toast.error(`Failed to add note: ${error.message}`);
     }
   };
 
@@ -101,18 +110,78 @@ export default function SquareShiftNotesPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const executeStatusChange = async (task: any, completed: boolean, completedAt: string | null) => {
-    const { error } = await supabase
-      .from('action_tasks')
-      .update({ 
-        completed,
-        completed_at: completedAt
-      })
-      .eq('id', task.id);
-    if (!error) {
-      fetchTasks();
-    } else {
-      console.error("Error updating status:", error);
-      toast.error("Failed to update status");
+    try {
+      if (completed && task.recurrence_type && task.recurrence_type !== 'none') {
+        const nextDate = calculateNextOccurrence(task.due_date || task.due, {
+          recurrenceType: task.recurrence_type,
+          recurrenceInterval: task.recurrence_interval,
+          recurrenceDays: task.recurrence_days,
+          recurrenceAnchor: task.recurrence_anchor,
+        });
+
+        if (nextDate) {
+          const nextDueDateStr = format(nextDate, 'yyyy-MM-dd');
+          const nextTask = {
+            id: crypto.randomUUID(),
+            text: task.text,
+            project_id: task.project_id,
+            completed: false,
+            sort_order: (task.sort_order || 0) + 1,
+            is_today: nextDueDateStr === format(new Date(), 'yyyy-MM-dd'),
+            is_high_priority: task.is_high_priority || false,
+            due_date: nextDueDateStr,
+            due: nextDueDateStr,
+            recurrence_type: task.recurrence_type,
+            recurrence_interval: task.recurrence_interval,
+            recurrence_days: task.recurrence_days,
+            recurrence_anchor: task.recurrence_anchor
+          };
+
+          // Mark current task completed and clear recurrence
+          const { error: updateError } = await supabase
+            .from('action_tasks')
+            .update({ 
+              completed: true,
+              completed_at: completedAt,
+              recurrence_type: 'none',
+              recurrence_interval: null,
+              recurrence_days: null,
+              recurrence_anchor: null
+            })
+            .eq('id', task.id);
+
+          if (updateError) throw updateError;
+
+          // Insert new recurring task instance
+          const { error: insertError } = await supabase
+            .from('action_tasks')
+            .insert(nextTask);
+
+          if (insertError) throw insertError;
+
+          toast.success(`Task completed! Next occurrence scheduled for ${nextDueDateStr}`);
+          fetchTasks();
+          return;
+        }
+      }
+
+      // Standard non-recurring or marking pending
+      const { error } = await supabase
+        .from('action_tasks')
+        .update({ 
+          completed,
+          completed_at: completedAt
+        })
+        .eq('id', task.id);
+
+      if (!error) {
+        fetchTasks();
+      } else {
+        throw error;
+      }
+    } catch (err: any) {
+      console.error("Error updating status:", err);
+      toast.error(`Failed to update task status: ${err.message || err}`);
     }
   };
 
@@ -134,16 +203,47 @@ export default function SquareShiftNotesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if(!(await confirm("Delete this note?"))) return;
+    if(!(await confirm("Delete this task?"))) return;
     const { error } = await supabase.from('action_tasks').delete().eq('id', id);
     if (!error) fetchTasks();
   };
 
-  const handleRename = async (task: any) => {
-    const newName = await prompt("Rename note:", task.text);
-    if (newName && newName.trim()) {
-        await supabase.from('action_tasks').update({ text: newName.trim() }).eq('id', task.id);
-        fetchTasks();
+  const handleOpenEditModal = (task: any) => {
+    setEditingTask({
+      id: task.id,
+      title: task.text || "",
+      due_date: task.due_date || task.due,
+      recurrence_type: task.recurrence_type,
+      recurrence_interval: task.recurrence_interval,
+      recurrence_days: task.recurrence_days,
+      recurrence_anchor: task.recurrence_anchor,
+      ...task
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveTaskDetails = async (updates: any) => {
+    if (!editingTask) return;
+    try {
+      const { error } = await supabase
+        .from('action_tasks')
+        .update({
+          text: updates.title,
+          due_date: updates.due_date,
+          due: updates.due_date, // support both
+          recurrence_type: updates.recurrence_type,
+          recurrence_interval: updates.recurrence_interval,
+          recurrence_days: updates.recurrence_days,
+          recurrence_anchor: updates.recurrence_anchor,
+        })
+        .eq('id', editingTask.id);
+
+      if (error) throw error;
+      toast.success("Task updated successfully");
+      fetchTasks();
+    } catch (err) {
+      console.error("Error updating task details:", err);
+      toast.error("Failed to update task details");
     }
   };
 
@@ -194,7 +294,7 @@ export default function SquareShiftNotesPage() {
             setActiveMenuTaskId(isOpen ? null : task.id);
           }}
           className="p-1.5 text-muted-foreground/50 hover:text-primary hover:bg-muted rounded-md transition-colors cursor-pointer dropdown-trigger flex items-center justify-center"
-          title="Note Options"
+          title="Task Options"
         >
           <MoreVertical size={16} />
         </button>
@@ -243,7 +343,7 @@ export default function SquareShiftNotesPage() {
             </button>
             <button
               type="button"
-              onClick={() => { handleRename(task); setActiveMenuTaskId(null); }}
+              onClick={() => { handleOpenEditModal(task); setActiveMenuTaskId(null); }}
               className="w-full text-left px-3 py-2 text-xs font-bold text-foreground hover:bg-muted transition-colors flex items-center gap-2"
             >
               <Edit3 size={13} className="text-muted-foreground/40" />
@@ -280,7 +380,7 @@ export default function SquareShiftNotesPage() {
     >
 
         {isLoading ? (
-          <LoadingScreen message="Synthesizing quick notes..." />
+          <LoadingScreen message="Loading Notes project..." />
         ) : (
           <>
             <div className="-mt-2 mb-6">
@@ -312,16 +412,18 @@ export default function SquareShiftNotesPage() {
           ]} />
         </div>
 
-        {/* Quick Notes Header */}
-        <div className="flex items-center gap-2.5 mb-5">
-          <div className="w-8 h-8 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-center shrink-0">
-            <Notebook size={15} className="text-primary" />
-          </div>
-          <div>
-            <h2 className="text-sm font-black text-foreground leading-none">Quick Notes</h2>
-            <p className="text-[10px] text-muted-foreground/50 font-medium mt-0.5 uppercase tracking-wide">
-              {openCounts[NOTES_ID] ?? 0} open note{openCounts[NOTES_ID] !== 1 ? 's' : ''}
-            </p>
+        {/* Project Header */}
+        <div className="flex items-center justify-between mb-5 group">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-indigo-500/10 border border-indigo-500/20 rounded-lg flex items-center justify-center shrink-0">
+              <Notebook size={15} className="text-indigo-500" />
+            </div>
+            <div className="text-left">
+              <h2 className="text-sm font-black text-foreground leading-none">Uncategorized Notes</h2>
+              <p className="text-[10px] text-muted-foreground/50 font-medium mt-0.5 uppercase tracking-wide">
+                {tasks.filter(t => !t.completed).length} pending item{tasks.filter(t => !t.completed).length !== 1 ? 's' : ''}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -331,7 +433,7 @@ export default function SquareShiftNotesPage() {
                 <input 
                     id="squareshift-note-input"
                     type="text" 
-                    placeholder="Capture a quick note..."
+                    placeholder="Capture a quick task note..."
                     value={newTaskText}
                     onChange={(e) => setNewTaskText(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && addTask()}
@@ -360,6 +462,9 @@ export default function SquareShiftNotesPage() {
           <div className="space-y-3">
             {tasks.filter(t => !t.completed).map(task => {
                 const accentClass = task.is_high_priority ? 'border-l-rose-500 bg-rose-500/5' : 'border-l-primary/60 bg-card';
+                const hasDue = task.due_date || task.due;
+                const hasRecur = task.recurrence_type && task.recurrence_type !== 'none';
+
                 return (
                   <div key={task.id} className={`w-full relative ${activeMenuTaskId === task.id ? 'z-50' : 'z-10'}`}>
                       <div className={`flex items-center gap-2 border border-border/40 border-l-4 ${accentClass} rounded-xl px-3 h-14 shadow-sm transition-all group`}>
@@ -371,11 +476,40 @@ export default function SquareShiftNotesPage() {
                                   <Check size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                               </button>
                           </div>
-                          <div className="flex-1 min-w-0 pr-2 flex items-center gap-1.5">
-                              <span className={`text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 ${task.is_high_priority ? 'text-foreground font-black' : 'font-bold text-foreground/90'}`}>
-                                  {task.is_high_priority && <Flame size={12} className="text-rose-500 fill-rose-500 shrink-0" />}
-                                  {task.text}
-                              </span>
+                          
+                          <div className="flex-1 min-w-0 pr-2 flex flex-col justify-center text-left">
+                              <div className="flex items-center gap-1.5">
+                                  <span className={`text-xs leading-tight block truncate cursor-pointer hover:text-primary transition-colors flex items-center gap-1.5 ${task.is_high_priority ? 'text-foreground font-black' : 'font-bold text-foreground/90'}`}>
+                                      {task.is_high_priority && <Flame size={12} className="text-rose-500 fill-rose-500 shrink-0" />}
+                                      {task.text}
+                                  </span>
+                              </div>
+                              
+                              {/* Recurrence & Due Date indicators */}
+                              {(hasDue || hasRecur) && (
+                                <div className="flex items-center gap-2 mt-0.5 text-[9px] font-bold text-muted-foreground/60">
+                                  {hasRecur && (
+                                    <span className="flex items-center gap-0.5 text-primary">
+                                      <Repeat size={10} />
+                                      {task.recurrence_type === 'weekly' && task.recurrence_days 
+                                        ? `Weekly (${task.recurrence_days.map((d: number) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d]).join(', ')})`
+                                        : task.recurrence_type}
+                                    </span>
+                                  )}
+                                  {hasDue && (
+                                    <span className={`flex items-center gap-0.5 ${
+                                      new Date(task.due_date || task.due) < startOfDay(new Date()) 
+                                        ? 'text-rose-500 bg-rose-500/10 px-1 rounded' 
+                                        : isToday(parseISO(task.due_date || task.due))
+                                        ? 'text-amber-500 bg-amber-500/10 px-1 rounded'
+                                        : ''
+                                    }`}>
+                                      <Calendar size={10} />
+                                      {format(parseISO(task.due_date || task.due), 'MMM d, yyyy')}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
                           </div>
                           
                           {renderDropdown(task)}
@@ -423,8 +557,8 @@ export default function SquareShiftNotesPage() {
               <div className="w-16 h-16 bg-card border border-border/40 text-primary/70 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-sm">
                 <List size={32} />
               </div>
-              <h3 className="text-foreground font-black">Quick Notes is empty</h3>
-              <p className="text-muted-foreground/60 font-medium text-sm mt-2">Start adding notes above!</p>
+              <h3 className="text-foreground font-black">No task notes</h3>
+              <p className="text-muted-foreground/60 font-medium text-sm mt-2">Start adding tasks or notes above!</p>
             </div>
           )}
         </div>
@@ -446,6 +580,16 @@ export default function SquareShiftNotesPage() {
           setActiveTask(null);
         }}
         taskTitle={activeTask?.text || ""}
+      />
+
+      <TaskEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingTask(null);
+        }}
+        onSave={handleSaveTaskDetails}
+        task={editingTask || { title: "" }}
       />
     </PageWrapper>
   );

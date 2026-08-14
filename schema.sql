@@ -183,3 +183,21 @@ ALTER TABLE savings_allocations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow anonymous read/write on savings_allocations"
 ON savings_allocations FOR ALL USING (true) WITH CHECK (true);
 
+
+-- ─── Tasks & SquareShift Recurrence & Deadlines ────────────────────────────────
+
+-- Upgrade SquareShift (action_tasks) table
+ALTER TABLE action_tasks 
+ADD COLUMN IF NOT EXISTS due_date DATE DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS recurrence_type TEXT DEFAULT 'none',
+ADD COLUMN IF NOT EXISTS recurrence_interval INTEGER DEFAULT 1,
+ADD COLUMN IF NOT EXISTS recurrence_days INTEGER[] DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS recurrence_anchor DATE DEFAULT NULL;
+
+-- Upgrade General Task Manager (tasks) table
+ALTER TABLE tasks 
+ADD COLUMN IF NOT EXISTS due_date DATE DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS recurrence_type TEXT DEFAULT 'none',
+ADD COLUMN IF NOT EXISTS recurrence_interval INTEGER DEFAULT 1,
+ADD COLUMN IF NOT EXISTS recurrence_days INTEGER[] DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS recurrence_anchor DATE DEFAULT NULL;
