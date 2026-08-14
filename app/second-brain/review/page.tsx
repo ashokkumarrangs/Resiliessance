@@ -1,17 +1,20 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { BRAIN_TABS } from "@/lib/navigation";
-import { useBrain, CARD_TYPE_CONFIG, BrainCard, ReviewRating } from "@/hooks/useBrain";
-import { Loader2, CheckCircle2, AlertCircle, Eye, CornerDownRight, ExternalLink } from "lucide-react";
+import { useBrain, CARD_TYPE_CONFIG, BrainCard, ReviewRating, CardType } from "@/hooks/useBrain";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
+import { Loader2, Eye, ExternalLink, Link as LinkIcon, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 export default function ReviewPage() {
   const {
     fetchCards,
     getReviewDueCards,
     rateCard,
+    getNonFleetingCards,
     loading
   } = useBrain();
 
@@ -19,6 +22,11 @@ export default function ReviewPage() {
   const [showBody, setShowBody] = useState(false);
   const [rating, setRating] = useState<ReviewRating | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  
+  // Link states
+  const [activeCardLinks, setActiveCardLinks] = useState<{ id: string; title: string; type: CardType; icon: string }[]>([]);
+
+  const allCards = getNonFleetingCards();
 
   useEffect(() => {
     fetchCards();
@@ -26,6 +34,49 @@ export default function ReviewPage() {
 
   const dueCards = getReviewDueCards();
   const currentCard: BrainCard | undefined = dueCards[activeCardIndex];
+
+  const loadCardLinks = useCallback(async (cardId: string) => {
+    try {
+      const { data: linksData, error: linksError } = await supabase
+        .from("brain_links")
+        .select("*")
+        .or(`from_card_id.eq.${cardId},to_card_id.eq.${cardId}`);
+
+      if (linksError) throw linksError;
+      if (!linksData || linksData.length === 0) {
+        setActiveCardLinks([]);
+        return;
+      }
+
+      const linkedIds = linksData.map((l) => (l.from_card_id === cardId ? l.to_card_id : l.from_card_id));
+      
+      const { data: cardsData, error: cardsError } = await supabase
+        .from("brain_cards")
+        .select("id, title, type, icon")
+        .in("id", linkedIds);
+
+      if (cardsError) throw cardsError;
+
+      const matchedLinks = (cardsData || []).map((c) => ({
+        id: c.id,
+        title: c.title,
+        type: c.type as CardType,
+        icon: c.icon || "💡"
+      }));
+
+      setActiveCardLinks(matchedLinks);
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentCard) {
+      loadCardLinks(currentCard.id);
+    } else {
+      setActiveCardLinks([]);
+    }
+  }, [currentCard, loadCardLinks]);
 
   const handleRate = async (rateValue: ReviewRating) => {
     if (!currentCard || submitting) return;
@@ -42,8 +93,6 @@ export default function ReviewPage() {
     } else {
       toast.success("Card scheduled! 🃏");
       setShowBody(false);
-      // If we are at the end, fetchCards will update the array length,
-      // and we shouldn't overflow
       if (activeCardIndex >= dueCards.length - 1) {
         setActiveCardIndex(0);
       }
@@ -137,8 +186,28 @@ export default function ReviewPage() {
 
                   {/* Body details hidden until reveal */}
                   {showBody ? (
-                    <div className="pt-3 border-t border-border/20 text-[13px] text-foreground leading-relaxed font-medium break-words whitespace-pre-wrap animate-in fade-in slide-in-from-top-1 duration-200">
-                      {currentCard.body || <span className="text-muted-foreground italic">No details written on this card.</span>}
+                    <div className="pt-3 border-t border-border/20 text-[13px] text-foreground leading-relaxed font-medium break-words space-y-4 animate-in fade-in slide-in-from-top-1 duration-200">
+                      {/* Markdown rendering! */}
+                      <MarkdownRenderer content={currentCard.body || ""} />
+
+                      {/* Display bidirectional links connected to this review card */}
+                      {activeCardLinks.length > 0 && (
+                        <div className="border-t border-border/10 pt-3 space-y-1.5">
+                          <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest flex items-center gap-1">
+                            <LinkIcon className="w-3 h-3" /> Linked Cards
+                          </span>
+                          <div className="flex flex-wrap gap-1">
+                            {activeCardLinks.map((link) => (
+                              <span
+                                key={link.id}
+                                className="bg-primary/5 text-primary border border-primary/20 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider"
+                              >
+                                {link.icon} {link.title}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       
                       {currentCard.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-4">
@@ -155,7 +224,7 @@ export default function ReviewPage() {
                     </div>
                   ) : (
                     <div className="py-6 flex items-center justify-center border-t border-border/10 border-dashed">
-                      <p className="text-[11px] text-muted-foreground/60 italic">Click Show Details to reveal content</p>
+                      <p className="text-[11px] text-muted-foreground/60 italic font-semibold">Click Show Details to reveal content</p>
                     </div>
                   )}
                 </div>
@@ -174,7 +243,7 @@ export default function ReviewPage() {
               {/* Rating Actions */}
               {showBody && (
                 <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="text-[10px] font-black uppercase text-muted-foreground text-center tracking-wider">
+                  <div className="text-[10px] font-black uppercase text-muted-foreground text-center tracking-wider font-semibold">
                     How well did you remember this?
                   </div>
                   <div className="flex gap-2">

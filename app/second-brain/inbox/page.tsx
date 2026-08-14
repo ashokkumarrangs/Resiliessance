@@ -145,7 +145,7 @@ export default function InboxPage() {
         <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 text-[11px] text-muted-foreground flex gap-2 leading-relaxed">
           <span className="text-primary font-bold">💡 Tip:</span>
           <span>
-            Use Fleeting Notes for raw, incomplete ideas (e.g. tattoo drafts, links, snippets).
+            Use Fleeting Notes for raw, incomplete ideas (e.g. quick bookmarks, article links, snippets).
             Promote them to full Knowledge Cards later when you have time to organize them.
           </span>
         </div>
@@ -229,7 +229,7 @@ export default function InboxPage() {
                     required
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
-                    placeholder="e.g. My Forearm Tattoo idea"
+                    placeholder="e.g. Design review summary"
                     className="mt-1 w-full bg-muted/30 border border-border/30 rounded-xl px-3 py-2.5 text-[13px] font-bold text-foreground focus:outline-none focus:border-primary/50"
                   />
                 </div>
@@ -253,7 +253,7 @@ export default function InboxPage() {
                               setFormType(type);
                               setFormIcon(cfg.icon);
                             }}
-                            className={`py-2 rounded-xl text-[10px] font-black transition-all border text-center flex flex-col items-center justify-center gap-1 ${
+                            className={`py-2 rounded-xl text-[10px] font-black transition-all border text-center flex flex-col items-center justify-center gap-1 cursor-pointer ${
                               isSelected
                                 ? "bg-primary/10 border-primary text-primary"
                                 : "bg-muted/20 border-transparent text-muted-foreground"
@@ -289,7 +289,7 @@ export default function InboxPage() {
                       type="text"
                       value={formTagsString}
                       onChange={(e) => setFormTagsString(e.target.value)}
-                      placeholder="tattoo, ideas, inspiration"
+                      placeholder="e.g. productivity, work, study"
                       className="mt-1 w-full bg-muted/30 border border-border/30 rounded-xl px-3 py-2.5 text-[13px] font-bold text-foreground focus:outline-none focus:border-primary/50"
                     />
                   </div>
@@ -304,7 +304,7 @@ export default function InboxPage() {
                     type="text"
                     value={formSource}
                     onChange={(e) => setFormSource(e.target.value)}
-                    placeholder="e.g. Pin link, book, podcast"
+                    placeholder="e.g. Bookmark, book, podcast"
                     className="mt-1 w-full bg-muted/30 border border-border/30 rounded-xl px-3 py-2.5 text-[13px] font-bold text-foreground focus:outline-none focus:border-primary/50"
                   />
                 </div>
@@ -328,7 +328,7 @@ export default function InboxPage() {
                   type="submit"
                   disabled={saving}
                   style={{ backgroundColor: "var(--primary)", color: "var(--primary-foreground)" }}
-                  className="w-full font-black text-[14px] py-3.5 rounded-xl transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm"
+                  className="w-full font-black text-[14px] py-3.5 rounded-xl transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm cursor-pointer"
                 >
                   {saving ? (
                     <Loader2 size={16} className="animate-spin" />
