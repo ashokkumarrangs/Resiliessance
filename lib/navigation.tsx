@@ -62,6 +62,7 @@ export const VEHICLE_TABS = [
   { title: "Fuel", href: "/vehicles/fuel", icon: <Fuel size={16} /> },
   { title: "Service", href: "/vehicles/service", icon: <Wrench size={16} /> },
   { title: "Mileage", href: "/vehicles/mileage", icon: <Gauge size={16} /> },
+  { title: "Components", href: "/vehicles/components", icon: <Sliders size={16} /> },
   { title: "Add Vehicle", href: "/vehicles/master", icon: <Activity size={16} /> },
 ];
 

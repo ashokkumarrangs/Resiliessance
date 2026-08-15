@@ -206,3 +206,63 @@ ADD COLUMN IF NOT EXISTS recurrence_anchor DATE DEFAULT NULL;
 ALTER TABLE habit_config 
 ADD COLUMN IF NOT EXISTS joker_days_limit INTEGER DEFAULT 0;
 
+
+-- ─── Vehicle Component Age Tracker ──────────────────────────────────────────
+
+-- Track individual vehicle components and their lifespans
+CREATE TABLE IF NOT EXISTS vehicle_components (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vehicle_id UUID NOT NULL REFERENCES vehicle_config(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  
+  -- Component Details
+  component_name TEXT NOT NULL,         -- e.g., "Engine Oil", "Front Brake Pads", "Cabin Air Filter"
+  category TEXT NOT NULL,               -- 'Fluids' | 'Brakes' | 'Filters' | 'Electrical' | 'Tires' | 'Belts' | 'Other'
+  brand_model TEXT,                     -- e.g., "Mobil1 5W-30", "Brembo Ceramic"
+  cost NUMERIC(12, 2) DEFAULT 0.00,
+  notes TEXT,
+  
+  -- Lifespan Baseline (Installation State)
+  installed_date DATE NOT NULL,
+  installed_odometer INT NOT NULL,
+  
+  -- Lifespan Thresholds (Limits)
+  limit_odometer INT,                   -- e.g., 10000 (km/miles) until replacement
+  limit_months INT,                     -- e.g., 12 (months) until replacement
+  
+  -- Current Lifecycle Metadata
+  is_active BOOLEAN NOT NULL DEFAULT true
+);
+
+ALTER TABLE vehicle_components ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous read/write on vehicle_components"
+ON vehicle_components FOR ALL USING (true) WITH CHECK (true);
+
+-- Component Life Cycle History
+CREATE TABLE IF NOT EXISTS vehicle_component_history (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  component_id UUID REFERENCES vehicle_components(id) ON DELETE SET NULL,
+  vehicle_id UUID NOT NULL REFERENCES vehicle_config(id) ON DELETE CASCADE,
+  component_name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  brand_model TEXT,
+  
+  -- Lifespan achieved
+  installed_date DATE NOT NULL,
+  installed_odometer INT NOT NULL,
+  replaced_date DATE NOT NULL,
+  replaced_odometer INT NOT NULL,
+  
+  -- Performance
+  distance_traveled INT NOT NULL,
+  months_in_service INT NOT NULL,
+  cost NUMERIC(12, 2) DEFAULT 0.00,
+  replacement_reason TEXT               -- 'Scheduled', 'Wear/Failure', 'Upgrade'
+);
+
+ALTER TABLE vehicle_component_history ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous read/write on vehicle_component_history"
+ON vehicle_component_history FOR ALL USING (true) WITH CHECK (true);
+
