@@ -17,7 +17,7 @@ export const sumDurations = (d1: string, d2: string) => {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 };
 
-export type HabitStatus = 'Success' | 'Tolerance' | 'Critical' | 'Failure' | 'Not Entered';
+export type HabitStatus = 'Success' | 'Tolerance' | 'Critical' | 'Failure' | 'Joker' | 'Not Entered';
 
 export interface HabitConfig {
   habit_name: string;
@@ -39,6 +39,7 @@ export interface HabitConfig {
   interval_unit?: string | null;
   interval_anchor?: string | null;
   flexible_target_count?: number | null;
+  joker_days_limit?: number;
 }
 
 export function isHabitActiveOnDate(config: HabitConfig, dateStr: string): boolean {

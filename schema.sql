@@ -201,3 +201,8 @@ ADD COLUMN IF NOT EXISTS recurrence_type TEXT DEFAULT 'none',
 ADD COLUMN IF NOT EXISTS recurrence_interval INTEGER DEFAULT 1,
 ADD COLUMN IF NOT EXISTS recurrence_days INTEGER[] DEFAULT NULL,
 ADD COLUMN IF NOT EXISTS recurrence_anchor DATE DEFAULT NULL;
+
+-- Habit Streak Protection: Joker Cards support
+ALTER TABLE habit_config 
+ADD COLUMN IF NOT EXISTS joker_days_limit INTEGER DEFAULT 0;
+

@@ -70,6 +70,7 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
           use_soft_grace: (data.soft_grace_days || 0) > 0,
           use_escalation: (data.escalation_days || 0) > 0,
           use_tol_cap: (data.tol_cap_days || 0) > 0,
+          use_joker: (data.joker_days_limit || 0) > 0,
         });
         setOriginalName(data.habit_name);
       }
@@ -113,12 +114,14 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
     soft_grace_days: 0,
     escalation_days: 0,
     tol_cap_days: 0,
+    joker_days_limit: 0,
     enable_tol: false,
     enable_crit: false,
     use_grace: false,
     use_soft_grace: false,
     use_escalation: false,
     use_tol_cap: false,
+    use_joker: false,
     // Weekly & Custom Frequencies
     frequency_type: 'fixed' as string | undefined,
     days_of_week: [] as number[] | null,
@@ -295,6 +298,7 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
         soft_grace_days: formData.use_soft_grace ? formData.soft_grace_days : 0,
         escalation_days: formData.use_escalation ? formData.escalation_days : 0,
         tol_cap_days: formData.use_tol_cap ? formData.tol_cap_days : 0,
+        joker_days_limit: formData.use_joker ? formData.joker_days_limit : 0,
       };
 
       // Clean up fields based on frequency
@@ -351,6 +355,8 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
       delete payload.use_escalation;
       // @ts-ignore
       delete payload.use_tol_cap;
+      // @ts-ignore
+      delete payload.use_joker;
       // @ts-ignore
       delete payload.enable_tol;
       // @ts-ignore
@@ -1099,6 +1105,16 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
                         onDaysChange={(v) => handleChange('tol_cap_days', v)}
                         daysLabel="consecutive tolerance days"
                       />
+                      <RuleToggle 
+                        icon="🃏" 
+                        title="Streak Protection" 
+                        desc={<span>use a <span className="bg-amber-500/10 text-amber-600 px-1.5 rounded-md font-mono font-bold">Joker Card</span> to freeze your streak on missed days</span>}
+                        active={formData.use_joker} 
+                        days={formData.joker_days_limit}
+                        onToggle={(v) => handleChange('use_joker', v)}
+                        onDaysChange={(v) => handleChange('joker_days_limit', v)}
+                        daysLabel="skips per calendar month"
+                      />
                    </div>
                 </CardContent>
              </Card>
@@ -1270,6 +1286,7 @@ export default function EditHabitPage({ params }: { params: Promise<{ id: string
                     <SummaryRow label="Condition" value={formData.condition_type ? formData.condition_type.replace('_', ' ') : 'None'} />
                     {formData.use_grace && <SummaryRow label="Grace" value={`After ${formData.grace_days} successes`} color="text-accent" />}
                     {formData.use_escalation && <SummaryRow label="Escalation" value={`After ${formData.escalation_days} failures`} color="text-primary" />}
+                    {formData.use_joker && <SummaryRow label="Joker Cards" value={`${formData.joker_days_limit} per month`} color="text-amber-500" />}
                  </CardContent>
               </Card>
            </div>

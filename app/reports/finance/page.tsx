@@ -735,10 +735,10 @@ export default function ReportsPage() {
     const gMap: Record<string, { success: number, fail: number }> = {};
     (habitData || []).filter(h => h.date >= format(subDays(today, 60), "yyyy-MM-dd")).forEach(h => { if (!gMap[h.habit]) gMap[h.habit] = { success: 0, fail: 0 }; if (h.status === 'Success') gMap[h.habit].success++; else if (h.status === 'Failure' || h.status === 'Critical') gMap[h.habit].fail++; });
     setHabitGravityData(Object.entries(gMap).map(([name, v]) => { const total = v.success + v.fail; const rate = total > 0 ? Math.round((v.fail / total) * 100) : 0; return { name, rate }; }).filter(g => g.rate > 0).sort((a,b)=>b.rate - a.rate).slice(0, 5));
-    const hmMap: Record<string, { total: number, success: number }> = {};
-    eachDayOfInterval({ start: subDays(today, 364), end: today }).forEach(d => hmMap[format(d, "yyyy-MM-dd")] = { total: 0, success: 0 });
-    (habitData || []).forEach(h => { if (hmMap[h.date]) { hmMap[h.date].total++; if (h.status === 'Success') hmMap[h.date].success++; } });
-    setHabitHeatmapData(Object.entries(hmMap).map(([date, v]) => ({ date, score: v.total > 0 ? (v.success / v.total) : 0 })));
+    const hmMap: Record<string, { total: number, success: number, joker: number }> = {};
+    eachDayOfInterval({ start: subDays(today, 364), end: today }).forEach(d => hmMap[format(d, "yyyy-MM-dd")] = { total: 0, success: 0, joker: 0 });
+    (habitData || []).forEach(h => { if (hmMap[h.date]) { hmMap[h.date].total++; if (h.status === 'Success') hmMap[h.date].success++; else if (h.status === 'Joker') hmMap[h.date].joker++; } });
+    setHabitHeatmapData(Object.entries(hmMap).map(([date, v]) => ({ date, score: v.total > 0 ? (v.success / v.total) : 0, joker: v.joker })));
 
     const streaks: Record<string, { current: number; max: number; success: number; failure: number; tolerance: number; critical: number; consistency: number; recoveries: number }> = {};
     (habitCfg || []).forEach(cfg => {
@@ -751,15 +751,19 @@ export default function ReportsPage() {
         if (log.status === 'Success') {
           runningStreak++;
           if (runningStreak > maxStreak) maxStreak = runningStreak;
+        } else if (log.status === 'Joker') {
+          // Freeze
         } else runningStreak = 0;
       });
       let checkDate = new Date();
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 365; i++) {
         const dStr = format(checkDate, "yyyy-MM-dd");
         const log = hLogs.find(l => l.date === dStr);
         if (log) {
           if (log.status === 'Success') currentStreak++;
-          else break;
+          else if (log.status === 'Joker') {
+            // Freeze
+          } else break;
         } else if (i > 0) break;
         checkDate = subDays(checkDate, 1);
       }
@@ -2181,7 +2185,13 @@ export default function ReportsPage() {
                 </div>
               </SectionCard>
               <SectionCard title="Yearly Heatmap" icon={<Grid3X3 size={18} />}>
-                <div className="flex flex-wrap gap-[3px] overflow-hidden">{habitHeatmapData.map((d, i) => { let color = "bg-muted/10"; if (d.score > 0.1) color = "bg-emerald-500/20"; if (d.score > 0.4) color = "bg-emerald-500/40"; if (d.score > 0.7) color = "bg-emerald-500/70"; if (d.score > 0.9) color = "bg-emerald-500"; return <div key={i} className={`w-[7px] h-[7px] rounded-[1px] ${color} transition-colors hover:scale-125 cursor-help`} title={`${format(new Date(d.date), "dd MMM yyyy")}: ${Math.round(d.score * 100)}%`} />; })}</div>
+                <div className="flex flex-wrap gap-[3px] overflow-hidden">{habitHeatmapData.map((d, i) => { let color = "bg-muted/10"; if (d.joker > 0) color = "bg-amber-500"; else if (d.score > 0.1) color = "bg-emerald-500/20"; else if (d.score > 0.4) color = "bg-emerald-500/40"; else if (d.score > 0.7) color = "bg-emerald-500/70"; else if (d.score > 0.9) color = "bg-emerald-500"; return <div key={i} className={`w-[7px] h-[7px] rounded-[1px] ${color} transition-colors hover:scale-125 cursor-help`} title={`${format(new Date(d.date), "dd MMM yyyy")}: ${d.joker > 0 ? 'Joker (Streak Freeze)' : Math.round(d.score * 100) + '%'}`} />; })}</div>
+                <div className="mt-2.5 flex items-center justify-end gap-3 text-[8px] font-black text-muted-foreground/60 uppercase tracking-wider">
+                  <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-[1px] bg-muted/10" /> Missed</div>
+                  <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-[1px] bg-amber-500" /> Joker (Freeze)</div>
+                  <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-[1px] bg-emerald-500/40" /> Partial</div>
+                  <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-[1px] bg-emerald-500" /> Complete</div>
+                </div>
               </SectionCard>
             </div>
 

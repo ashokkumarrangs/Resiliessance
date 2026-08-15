@@ -75,6 +75,8 @@ export default function HabitDailyPage() {
   )
   const [allMonthLogs, setAllMonthLogs] = useState<any[]>([])
   const [activeTab, setActiveTab] = useState<'daily' | 'off_days'>('daily')
+  const [multiSelectActive, setMultiSelectActive] = useState(false)
+  const [selectedHabitsForJoker, setSelectedHabitsForJoker] = useState<string[]>([])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -215,6 +217,66 @@ export default function HabitDailyPage() {
     }
   }
 
+  const todayStr = format(new Date(), "yyyy-MM-dd")
+  const yesterdayStr = format(subDays(new Date(), 1), "yyyy-MM-dd")
+  const isTodayOrYesterday = selectedDate === todayStr || selectedDate === yesterdayStr
+
+  const getRemainingJokers = (habitName: string, limit: number) => {
+    if (!limit) return 0
+    const usedThisMonth = allMonthLogs.filter(
+      (l) => l.habit === habitName && l.status === 'Joker' && l.date !== selectedDate
+    ).length
+    return Math.max(0, limit - usedThisMonth)
+  }
+
+  const handlePlayJoker = (habitName: string) => {
+    const config = configs.find(c => c.habit_name === habitName)
+    if (!config) return
+    const remaining = getRemainingJokers(habitName, config.joker_days_limit || 0)
+    if (remaining <= 0) {
+      toast.error("No Joker Cards left for this habit this month!")
+      return
+    }
+    setDailyData(prev => ({ ...prev, [habitName]: "" }))
+    setStatusMap(prev => ({ ...prev, [habitName]: "Joker" }))
+    toast.success(`Joker Card played for ${habitName}!`)
+  }
+
+  const handleReclaimJoker = (habitName: string) => {
+    setDailyData(prev => ({ ...prev, [habitName]: "" }))
+    const config = configs.find(c => c.habit_name === habitName)
+    const defaultStatus = config?.unlogged_is_success ? "Success" : "Not Entered"
+    setStatusMap(prev => ({ ...prev, [habitName]: defaultStatus }))
+    toast.success(`Joker Card reclaimed for ${habitName}.`)
+  }
+
+  const handleBatchPlayJokers = () => {
+    let playedCount = 0
+    const newDailyData = { ...dailyData }
+    const newStatusMap = { ...statusMap }
+
+    selectedHabitsForJoker.forEach(habitName => {
+      const config = configs.find(c => c.habit_name === habitName)
+      if (!config) return
+      const remaining = getRemainingJokers(habitName, config.joker_days_limit || 0)
+      if (remaining > 0) {
+        newDailyData[habitName] = ""
+        newStatusMap[habitName] = "Joker"
+        playedCount++
+      }
+    })
+
+    if (playedCount > 0) {
+      setDailyData(newDailyData)
+      setStatusMap(newStatusMap)
+      toast.success(`Applied Joker Cards to ${playedCount} habits! Click 'Save Daily Log' to finalize.`)
+      setSelectedHabitsForJoker([])
+      setMultiSelectActive(false)
+    } else {
+      toast.error("No selected habits had remaining Joker Cards.")
+    }
+  }
+
   const handleInputChange = (habitName: string, value: string) => {
     setDailyData((prev) => ({ ...prev, [habitName]: value }))
 
@@ -293,19 +355,20 @@ export default function HabitDailyPage() {
       )
       const allRecords = saveableConfigs.map((c) => {
         const val = dailyData[c.habit_name] || ""
+        const isJoker = statusMap[c.habit_name] === 'Joker'
         return {
           date: selectedDate,
           group_name: c.group_name,
           habit: c.habit_name,
-          value: String(val),
+          value: isJoker ? "Joker" : String(val),
           unit: c.unit || "",
           source: "daily",
-          status: calculateHabitStatus(c, val),
+          status: isJoker ? "Joker" : calculateHabitStatus(c, val),
         }
       })
 
-      const inserts = allRecords.filter((r) => r.value !== "")
-      const allHabits = allRecords.map((r) => r.habit)
+      const inserts = allRecords.filter((r) => r.value !== "" || r.status === "Joker")
+      const deletes = allRecords.filter((r) => r.value === "" && r.status !== "Joker")
 
       // 1. Upsert active values atomically to prevent loss on network failure
       if (inserts.length > 0) {
@@ -314,6 +377,18 @@ export default function HabitDailyPage() {
           .upsert(inserts, { onConflict: "date,habit" })
 
         if (upsertError) throw upsertError
+      }
+
+      // 2. Delete cleared logs to clean up DB
+      if (deletes.length > 0) {
+        const habitNamesToDelete = deletes.map(d => d.habit)
+        const { error: deleteError } = await supabase
+          .from("habit_data")
+          .delete()
+          .eq("date", selectedDate)
+          .in("habit", habitNamesToDelete)
+
+        if (deleteError) throw deleteError
       }
 
       toast.success("Habit Tracker updated!")
@@ -399,6 +474,40 @@ export default function HabitDailyPage() {
               </button>
             </div>
           </div>
+
+          {isTodayOrYesterday && configs.some(c => c.joker_days_limit && c.joker_days_limit > 0) && (
+            <div className="flex justify-center mb-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setMultiSelectActive(!multiSelectActive);
+                  setSelectedHabitsForJoker([]);
+                }}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all select-none border active:scale-[0.98] ${
+                  multiSelectActive
+                    ? "bg-amber-500 text-white border-transparent shadow-lg shadow-amber-500/20"
+                    : "bg-card text-foreground border-border/40 hover:bg-muted/50"
+                }`}
+              >
+                🃏 {multiSelectActive ? "Cancel Batch" : "Batch Play Jokers"}
+              </button>
+            </div>
+          )}
+
+          {multiSelectActive && selectedHabitsForJoker.length > 0 && (
+            <div className="flex flex-col items-center gap-2 p-4 rounded-2xl border border-amber-500/20 bg-amber-500/5 max-w-sm mx-auto mb-6 shadow-sm">
+              <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
+                {selectedHabitsForJoker.length} habit{selectedHabitsForJoker.length > 1 ? 's' : ''} selected
+              </span>
+              <button
+                type="button"
+                onClick={handleBatchPlayJokers}
+                className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-amber-500 text-white text-xs font-black uppercase tracking-wider hover:bg-amber-600 transition-all shadow-md active:scale-95"
+              >
+                🃏 Apply Jokers to Selected
+              </button>
+            </div>
+          )}
 
           {totalFilteredHabitsCount === 0 && (
             <div className="rounded-2xl border border-border/40 bg-card p-12 text-center shadow-sm max-w-lg mx-auto">
@@ -525,6 +634,20 @@ export default function HabitDailyPage() {
                             className={`group/row flex flex-col gap-2 rounded-xl p-3.5 transition-all ${styles.bg} ${styles.anim}`}
                           >
                             <div className="flex items-center gap-2 w-full">
+                              {multiSelectActive && isTodayOrYesterday && habit.joker_days_limit && habit.joker_days_limit > 0 && (status === 'Failure' || status === 'Not Entered') && (
+                                <input
+                                  type="checkbox"
+                                  checked={selectedHabitsForJoker.includes(habit.habit_name)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setSelectedHabitsForJoker(prev => [...prev, habit.habit_name]);
+                                    } else {
+                                      setSelectedHabitsForJoker(prev => prev.filter(name => name !== habit.habit_name));
+                                    }
+                                  }}
+                                  className="w-4 h-4 rounded border-border bg-card text-amber-500 focus:ring-amber-500/20 mr-2 cursor-pointer transition-all animate-in fade-in zoom-in duration-200"
+                                />
+                              )}
                               <div className="flex w-8 shrink-0 flex-col items-center opacity-50">
                                 <span className="text-lg">{habit.emoji}</span>
                               </div>
@@ -626,124 +749,145 @@ export default function HabitDailyPage() {
                                     </div>
                                   </div>
                                 ) : (
-                                  <div className="flex w-25 shrink-0 justify-end">
-                                    {habit.input_type === "boolean" ? (
-                                      <Select
-                                        value={dailyData[habit.habit_name] || ""}
-                                        onChange={(e) =>
-                                          handleInputChange(
-                                            habit.habit_name,
-                                            e.target.value
-                                          )
-                                        }
-                                        className="h-8 w-full rounded-lg border-none bg-muted px-2 text-xs font-bold text-foreground shadow-inner transition-all focus:ring-2 focus:ring-primary/10 cursor-pointer"
+                                  <div className="flex items-center gap-2">
+                                    {isTodayOrYesterday && habit.joker_days_limit && habit.joker_days_limit > 0 && (status === 'Failure' || status === 'Not Entered') && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handlePlayJoker(habit.habit_name)}
+                                        className="flex h-8 items-center gap-1.5 rounded-lg bg-amber-500/10 px-2.5 text-[10px] font-black text-amber-600 hover:bg-amber-500/20 transition-all select-none border border-amber-500/25 active:scale-95"
                                       >
-                                        <option value="">
-                                          —
-                                        </option>
-                                        <option value="Yes">Yes</option>
-                                        <option value="No">No</option>
-                                      </Select>
-                                    ) : habit.input_type === "duration" ? (
-                                      <div className="flex w-full items-center justify-end gap-1">
-                                        <input
-                                          type="number"
-                                          placeholder="0"
-                                          value={
-                                            parseDurationStr(
-                                              dailyData[habit.habit_name] || ""
-                                            ).hrs
-                                          }
-                                          onChange={(e) => {
-                                            const current = parseDurationStr(
-                                              dailyData[habit.habit_name] || ""
-                                            )
-                                            handleInputChange(
-                                              habit.habit_name,
-                                              formatDurationStr(
-                                                e.target.value,
-                                                current.mins
-                                              )
-                                            )
-                                          }}
-                                          inputMode="numeric"
-                                          className="h-8 w-7 rounded-lg border-none bg-muted p-0.5 text-center text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 shadow-inner"
-                                          min="0"
-                                        />
-                                        <span className="text-[9px] font-bold opacity-40">
-                                          h
-                                        </span>
-                                        <input
-                                          type="number"
-                                          placeholder="00"
-                                          value={
-                                            parseDurationStr(
-                                              dailyData[habit.habit_name] || ""
-                                            ).mins
-                                          }
-                                          onChange={(e) => {
-                                            const current = parseDurationStr(
-                                              dailyData[habit.habit_name] || ""
-                                            )
-                                            handleInputChange(
-                                              habit.habit_name,
-                                              formatDurationStr(
-                                                current.hrs,
+                                        🃏 Use Joker ({getRemainingJokers(habit.habit_name, habit.joker_days_limit)} left)
+                                      </button>
+                                    )}
+                                    {status === 'Joker' ? (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleReclaimJoker(habit.habit_name)}
+                                        className="flex h-8 items-center gap-1.5 rounded-lg bg-muted px-2.5 text-[10px] font-black text-muted-foreground hover:bg-muted/80 transition-all select-none active:scale-95 uppercase tracking-wider"
+                                      >
+                                        Reclaim Card
+                                      </button>
+                                    ) : (
+                                      <div className="flex w-25 shrink-0 justify-end">
+                                        {habit.input_type === "boolean" ? (
+                                          <Select
+                                            value={dailyData[habit.habit_name] || ""}
+                                            onChange={(e) =>
+                                              handleInputChange(
+                                                habit.habit_name,
                                                 e.target.value
                                               )
-                                            )
-                                          }}
-                                          inputMode="numeric"
-                                          className="h-8 w-7 rounded-lg border-none bg-muted p-0.5 text-center text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 shadow-inner"
-                                          min="0"
-                                          max="59"
-                                        />
-                                        <span className="text-[9px] font-bold opacity-40">
-                                          m
-                                        </span>
+                                            }
+                                            className="h-8 w-full rounded-lg border-none bg-muted px-2 text-xs font-bold text-foreground shadow-inner transition-all focus:ring-2 focus:ring-primary/10 cursor-pointer"
+                                          >
+                                            <option value="">
+                                              —
+                                            </option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                          </Select>
+                                        ) : habit.input_type === "duration" ? (
+                                          <div className="flex w-full items-center justify-end gap-1">
+                                            <input
+                                              type="number"
+                                              placeholder="0"
+                                              value={
+                                                parseDurationStr(
+                                                  dailyData[habit.habit_name] || ""
+                                                ).hrs
+                                              }
+                                              onChange={(e) => {
+                                                const current = parseDurationStr(
+                                                  dailyData[habit.habit_name] || ""
+                                                )
+                                                handleInputChange(
+                                                  habit.habit_name,
+                                                  formatDurationStr(
+                                                    e.target.value,
+                                                    current.mins
+                                                  )
+                                                )
+                                              }}
+                                              inputMode="numeric"
+                                              className="h-8 w-7 rounded-lg border-none bg-muted p-0.5 text-center text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 shadow-inner"
+                                              min="0"
+                                            />
+                                            <span className="text-[9px] font-bold opacity-40">
+                                              h
+                                            </span>
+                                            <input
+                                              type="number"
+                                              placeholder="00"
+                                              value={
+                                                parseDurationStr(
+                                                  dailyData[habit.habit_name] || ""
+                                                ).mins
+                                              }
+                                              onChange={(e) => {
+                                                const current = parseDurationStr(
+                                                  dailyData[habit.habit_name] || ""
+                                                )
+                                                handleInputChange(
+                                                  habit.habit_name,
+                                                  formatDurationStr(
+                                                    current.hrs,
+                                                    e.target.value
+                                                  )
+                                                )
+                                              }}
+                                              inputMode="numeric"
+                                              className="h-8 w-7 rounded-lg border-none bg-muted p-0.5 text-center text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 shadow-inner"
+                                              min="0"
+                                              max="59"
+                                            />
+                                            <span className="text-[9px] font-bold opacity-40">
+                                              m
+                                            </span>
+                                          </div>
+                                        ) : habit.input_type === "time" ? (
+                                          <div className="group relative w-full">
+                                            <Input
+                                              type="time"
+                                              value={
+                                                dailyData[habit.habit_name] || ""
+                                              }
+                                              onChange={(e) =>
+                                                handleInputChange(
+                                                  habit.habit_name,
+                                                  e.target.value
+                                                )
+                                              }
+                                              className="h-8 w-full appearance-none rounded-lg border-none bg-muted px-2 text-center text-xs font-bold text-foreground shadow-inner transition-all focus:ring-2 focus:ring-primary/10"
+                                            />
+                                            <Clock
+                                              size={10}
+                                              className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground/30 transition-colors group-hover:text-primary"
+                                            />
+                                          </div>
+                                        ) : (
+                                          <Input
+                                            type={
+                                              habit.input_type === "number"
+                                                ? "number"
+                                                : "text"
+                                            }
+                                            value={dailyData[habit.habit_name] || ""}
+                                            onChange={(e) =>
+                                              handleInputChange(
+                                                habit.habit_name,
+                                                e.target.value
+                                              )
+                                            }
+                                            className="h-8 w-full rounded-lg border-none bg-muted text-center text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 shadow-inner"
+                                            placeholder="--"
+                                            inputMode={
+                                              habit.input_type === "number"
+                                                ? "decimal"
+                                                : undefined
+                                            }
+                                          />
+                                        )}
                                       </div>
-                                    ) : habit.input_type === "time" ? (
-                                      <div className="group relative w-full">
-                                        <Input
-                                          type="time"
-                                          value={
-                                            dailyData[habit.habit_name] || ""
-                                          }
-                                          onChange={(e) =>
-                                            handleInputChange(
-                                              habit.habit_name,
-                                              e.target.value
-                                            )
-                                          }
-                                          className="h-8 w-full appearance-none rounded-lg border-none bg-muted px-2 text-center text-xs font-bold text-foreground shadow-inner transition-all focus:ring-2 focus:ring-primary/10"
-                                        />
-                                        <Clock
-                                          size={10}
-                                          className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground/30 transition-colors group-hover:text-primary"
-                                        />
-                                      </div>
-                                    ) : (
-                                      <Input
-                                        type={
-                                          habit.input_type === "number"
-                                            ? "number"
-                                            : "text"
-                                        }
-                                        value={dailyData[habit.habit_name] || ""}
-                                        onChange={(e) =>
-                                          handleInputChange(
-                                            habit.habit_name,
-                                            e.target.value
-                                          )
-                                        }
-                                        className="h-8 w-full rounded-lg border-none bg-muted text-center text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/10 shadow-inner"
-                                        placeholder="--"
-                                        inputMode={
-                                          habit.input_type === "number"
-                                            ? "decimal"
-                                            : undefined
-                                        }
-                                      />
                                     )}
                                   </div>
                                 )}
