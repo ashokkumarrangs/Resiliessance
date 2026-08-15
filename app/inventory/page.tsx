@@ -3,19 +3,23 @@ import { Select } from "@/components/Select";
 
 import React, { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
-import { ArrowLeft, ArrowRightLeft, Check, ChevronRight, Gift, History, Home, IndianRupee, Move, Package, Plus, PlusCircle, Search, Share2, Trash2, Users, X } from "lucide-react";
+import { 
+  ArrowLeft, ArrowRightLeft, Check, ChevronRight, Gift, History, Home, 
+  IndianRupee, Move, Package, Plus, PlusCircle, Search, Share2, Trash2, 
+  Users, X, ShieldAlert, Wrench, Heart, ExternalLink, Save, Calendar, Clock, Sparkles
+} from "lucide-react";
 import { toast } from "sonner";
 import { PageWrapper } from "@/components/PageWrapper";
 import { useDialog } from "@/components/dialog-provider";
 import { LoadingScreen } from "@/components/LoadingScreen";
-import { format} from "date-fns";
+import { format } from "date-fns";
 
 // --- Types ---
 
 type OriginType = 'bought' | 'gifted_in' | 'borrowed';
 type ItemStatus = 'active' | 'lent_out' | 'retired';
 type RetiredReason = 'worn_out' | 'gifted_out' | 'lost' | 'stolen' | 'sold' | 'returned';
-type ViewMode = 'HOME' | 'LOCATION' | 'PEOPLE' | 'RETIRED' | 'SEARCH';
+type ViewMode = 'HOME' | 'LOCATION' | 'PEOPLE' | 'RETIRED' | 'SEARCH' | 'WISHLIST' | 'WARRANTIES' | 'MAINTENANCE';
 
 interface Location {
   id: string;
@@ -46,6 +50,15 @@ interface Item {
   retired_at: string | null;
   retired_to_person: string | null;
   created_at: string;
+
+  // Warranty extensions
+  warranty_provider?: string | null;
+  serial_number?: string | null;
+  model_number?: string | null;
+  warranty_duration_months?: number | null;
+  warranty_expiry_date?: string | null;
+  enable_warranty_alerts?: boolean;
+  warranty_alert_days_before?: number[] | null;
 }
 
 // --- Helper Components ---
@@ -103,6 +116,58 @@ export default function InventoryPage() {
   const [movePath, setMovePath] = useState<{id: string | null, name: string}[]>([]);
   const [moveDestinations, setMoveDestinations] = useState<Location[]>([]);
 
+  // Wishlist State
+  const [wishlist, setWishlist] = useState<any[]>([]);
+  const [savingsGoals, setSavingsGoals] = useState<any[]>([]);
+  const [savingsAllocations, setSavingsAllocations] = useState<any[]>([]);
+  const [showAddWishlistModal, setShowAddWishlistModal] = useState(false);
+  const [wishlistToAcquire, setWishlistToAcquire] = useState<any | null>(null);
+
+  // Maintenance State
+  const [maintenanceSchedules, setMaintenanceSchedules] = useState<any[]>([]);
+  const [maintenanceLogs, setMaintenanceLogs] = useState<any[]>([]);
+  const [globalMaintenanceSchedules, setGlobalMaintenanceSchedules] = useState<any[]>([]);
+
+  // Item Overlay Sub-Tab State
+  const [selectedSubTab, setSelectedSubTab] = useState<'details' | 'warranty' | 'maintenance'>('details');
+
+  // Form States for Wishlist
+  const [wishName, setWishName] = useState("");
+  const [wishPrice, setWishPrice] = useState("");
+  const [wishPriority, setWishPriority] = useState<'high' | 'medium' | 'low'>('medium');
+  const [wishUrl, setWishUrl] = useState("");
+  const [wishLocationId, setWishLocationId] = useState("");
+  const [wishSavingsGoalId, setWishSavingsGoalId] = useState("");
+  const [wishNotes, setWishNotes] = useState("");
+
+  // Acquire form states
+  const [acquireLocationId, setAcquireLocationId] = useState("");
+  const [acquireCondition, setAcquireCondition] = useState("new");
+  const [acquirePrice, setAcquirePrice] = useState("");
+  const [completeSavingsGoal, setCompleteSavingsGoal] = useState(true);
+
+  // Form States for Warranty
+  const [editWarrantyProvider, setEditWarrantyProvider] = useState("");
+  const [editSerialNumber, setEditSerialNumber] = useState("");
+  const [editModelNumber, setEditModelNumber] = useState("");
+  const [editWarrantyDuration, setEditWarrantyDuration] = useState("");
+  const [editWarrantyExpiry, setEditWarrantyExpiry] = useState("");
+  const [editEnableAlerts, setEditEnableAlerts] = useState(true);
+
+  // Form States for Maintenance
+  const [showAddScheduleModal, setShowAddScheduleModal] = useState(false);
+  const [maintTaskName, setMaintTaskName] = useState("");
+  const [maintFreqValue, setMaintFreqValue] = useState("1");
+  const [maintFreqUnit, setMaintFreqUnit] = useState("months");
+  const [maintNotes, setMaintNotes] = useState("");
+  const [maintLastPerformed, setMaintLastPerformed] = useState(format(new Date(), 'yyyy-MM-dd'));
+
+  // Log completion form states
+  const [showLogMaintModal, setShowLogMaintModal] = useState<any | null>(null);
+  const [logMaintNotes, setLogMaintNotes] = useState("");
+  const [logMaintCost, setLogMaintCost] = useState("");
+  const [logMaintDate, setLogMaintDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+
   // Form States
   const [newLocName, setNewLocName] = useState("");
   const [newLocIcon, setNewLocIcon] = useState("📦");
@@ -130,6 +195,42 @@ export default function InventoryPage() {
   useEffect(() => {
     fetchData();
   }, [view, currentLocationId, showAllNested]);
+
+  // Fetch item maintenance schedules and logs
+  useEffect(() => {
+    if (selectedItem) {
+      fetchItemMaintenance(selectedItem.id);
+      setEditWarrantyProvider(selectedItem.warranty_provider || "");
+      setEditSerialNumber(selectedItem.serial_number || "");
+      setEditModelNumber(selectedItem.model_number || "");
+      setEditWarrantyDuration(selectedItem.warranty_duration_months ? String(selectedItem.warranty_duration_months) : "");
+      setEditWarrantyExpiry(selectedItem.warranty_expiry_date || "");
+      setEditEnableAlerts(selectedItem.enable_warranty_alerts !== false);
+      setSelectedSubTab('details'); // Reset sub tab
+    }
+  }, [selectedItem]);
+
+  const fetchItemMaintenance = async (itemId: string) => {
+    try {
+      const { data: schedules, error: schedError } = await supabase
+        .from('asset_maintenance_schedules')
+        .select('*')
+        .eq('item_id', itemId)
+        .order('next_due_at', { ascending: true });
+      if (schedError) throw schedError;
+      setMaintenanceSchedules(schedules || []);
+
+      const { data: logs, error: logError } = await supabase
+        .from('asset_maintenance_logs')
+        .select('*')
+        .eq('item_id', itemId)
+        .order('performed_at', { ascending: false });
+      if (logError) throw logError;
+      setMaintenanceLogs(logs || []);
+    } catch (e: any) {
+      console.error("Failed to fetch maintenance details", e);
+    }
+  };
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -171,6 +272,50 @@ export default function InventoryPage() {
         const { data: retItems, error: retError } = await supabase.from('inventory_items').select('*').eq('status', 'retired').order('retired_at', { ascending: false });
         if (retError) throw retError;
         setItems(retItems || []);
+      }
+      else if (view === 'WISHLIST') {
+        const { data: wishData, error: wishError } = await supabase
+          .from('inventory_wishlist')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (wishError) throw wishError;
+        setWishlist(wishData || []);
+
+        const { data: goalsData } = await supabase
+          .from('savings_goals')
+          .select('*')
+          .eq('status', 'active');
+        setSavingsGoals(goalsData || []);
+
+        const { data: allocData } = await supabase
+          .from('savings_allocations')
+          .select('*');
+        setSavingsAllocations(allocData || []);
+
+        const { data: allLocs } = await supabase
+          .from('inventory_locations')
+          .select('*')
+          .order('name');
+        setLocations(allLocs || []);
+      }
+      else if (view === 'WARRANTIES') {
+        const { data: warItems, error: warError } = await supabase
+          .from('inventory_items')
+          .select('*')
+          .eq('status', 'active')
+          .not('warranty_expiry_date', 'is', null)
+          .order('warranty_expiry_date', { ascending: true });
+        if (warError) throw warError;
+        setItems(warItems || []);
+      }
+      else if (view === 'MAINTENANCE') {
+        const { data: schedData, error: schedError } = await supabase
+          .from('asset_maintenance_schedules')
+          .select('*, inventory_items(name, status)')
+          .order('next_due_at', { ascending: true });
+        if (schedError) throw schedError;
+        const activeScheds = (schedData || []).filter((s: any) => s.inventory_items?.status === 'active');
+        setGlobalMaintenanceSchedules(activeScheds);
       }
     } catch (error: any) {
       console.error("Inventory Fetch Error:", error);
@@ -419,6 +564,231 @@ export default function InventoryPage() {
     }
   };
 
+  const handleSaveWarranty = async () => {
+    if (!selectedItem) return;
+    try {
+      const payload = {
+        warranty_provider: editWarrantyProvider || null,
+        serial_number: editSerialNumber || null,
+        model_number: editModelNumber || null,
+        warranty_duration_months: editWarrantyDuration ? parseInt(editWarrantyDuration) : null,
+        warranty_expiry_date: editWarrantyExpiry || null,
+        enable_warranty_alerts: editEnableAlerts
+      };
+
+      const { error } = await supabase
+        .from('inventory_items')
+        .update(payload)
+        .eq('id', selectedItem.id);
+
+      if (error) throw error;
+      toast.success("Warranty details updated successfully");
+      setSelectedItem({ ...selectedItem, ...payload });
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update warranty");
+    }
+  };
+
+  const handleAddMaintenanceSchedule = async () => {
+    if (!selectedItem || !maintTaskName.trim()) return;
+    try {
+      const val = parseInt(maintFreqValue);
+      const lastPerfDate = new Date(maintLastPerformed);
+      const nextDue = new Date(lastPerfDate);
+      if (maintFreqUnit === 'days') {
+        nextDue.setDate(nextDue.getDate() + val);
+      } else if (maintFreqUnit === 'weeks') {
+        nextDue.setDate(nextDue.getDate() + val * 7);
+      } else if (maintFreqUnit === 'months') {
+        nextDue.setMonth(nextDue.getMonth() + val);
+      } else if (maintFreqUnit === 'years') {
+        nextDue.setFullYear(nextDue.getFullYear() + val);
+      }
+
+      const payload = {
+        item_id: selectedItem.id,
+        task_name: maintTaskName,
+        frequency_value: val,
+        frequency_unit: maintFreqUnit,
+        last_performed_at: new Date(maintLastPerformed).toISOString(),
+        next_due_at: nextDue.toISOString(),
+        notes: maintNotes || null
+      };
+
+      const { error } = await supabase
+        .from('asset_maintenance_schedules')
+        .insert(payload);
+
+      if (error) throw error;
+      toast.success("Maintenance schedule added");
+      setShowAddScheduleModal(false);
+      setMaintTaskName("");
+      setMaintNotes("");
+      fetchItemMaintenance(selectedItem.id);
+    } catch (e: any) {
+      toast.error(e.message || "Failed to add schedule");
+    }
+  };
+
+  const handleLogMaintenanceCompletion = async () => {
+    if (!showLogMaintModal || !selectedItem) return;
+    try {
+      const schedule = showLogMaintModal;
+      const logPayload = {
+        schedule_id: schedule.id,
+        item_id: selectedItem.id,
+        performed_at: new Date(logMaintDate).toISOString(),
+        notes: logMaintNotes || null,
+        cost: logMaintCost ? parseFloat(logMaintCost) : 0.00
+      };
+
+      const { error: logError } = await supabase
+        .from('asset_maintenance_logs')
+        .insert(logPayload);
+
+      if (logError) throw logError;
+
+      const val = schedule.frequency_value;
+      const perfDate = new Date(logMaintDate);
+      const nextDue = new Date(perfDate);
+      if (schedule.frequency_unit === 'days') {
+        nextDue.setDate(nextDue.getDate() + val);
+      } else if (schedule.frequency_unit === 'weeks') {
+        nextDue.setDate(nextDue.getDate() + val * 7);
+      } else if (schedule.frequency_unit === 'months') {
+        nextDue.setMonth(nextDue.getMonth() + val);
+      } else if (schedule.frequency_unit === 'years') {
+        nextDue.setFullYear(nextDue.getFullYear() + val);
+      }
+
+      const { error: schedError } = await supabase
+        .from('asset_maintenance_schedules')
+        .update({
+          last_performed_at: new Date(logMaintDate).toISOString(),
+          next_due_at: nextDue.toISOString()
+        })
+        .eq('id', schedule.id);
+
+      if (schedError) throw schedError;
+
+      toast.success("Maintenance logged successfully");
+      setShowLogMaintModal(null);
+      setLogMaintNotes("");
+      setLogMaintCost("");
+      fetchItemMaintenance(selectedItem.id);
+    } catch (e: any) {
+      toast.error(e.message || "Failed to log maintenance");
+    }
+  };
+
+  const handleDeleteMaintenanceSchedule = async (scheduleId: string) => {
+    const confirmed = await confirm("Delete this maintenance schedule?");
+    if (!confirmed) return;
+    try {
+      const { error } = await supabase
+        .from('asset_maintenance_schedules')
+        .delete()
+        .eq('id', scheduleId);
+      if (error) throw error;
+      toast.success("Schedule deleted");
+      if (selectedItem) fetchItemMaintenance(selectedItem.id);
+    } catch (e: any) {
+      toast.error("Failed to delete schedule");
+    }
+  };
+
+  const handleAddWishlist = async () => {
+    if (!wishName.trim()) return;
+    try {
+      const payload = {
+        name: wishName,
+        estimated_price: wishPrice ? parseFloat(wishPrice) : 0.00,
+        priority: wishPriority,
+        buy_url: wishUrl || null,
+        location_id: wishLocationId || null,
+        savings_goal_id: wishSavingsGoalId || null,
+        notes: wishNotes || null
+      };
+
+      const { error } = await supabase
+        .from('inventory_wishlist')
+        .insert(payload);
+
+      if (error) throw error;
+      toast.success("Added to Wishlist");
+      setShowAddWishlistModal(false);
+      setWishName("");
+      setWishPrice("");
+      setWishPriority("medium");
+      setWishUrl("");
+      setWishLocationId("");
+      setWishSavingsGoalId("");
+      setWishNotes("");
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Failed to add wishlist item");
+    }
+  };
+
+  const handleAcquireWishlist = async () => {
+    if (!wishlistToAcquire) return;
+    try {
+      const { data: itemData, error: itemError } = await supabase
+        .from('inventory_items')
+        .insert({
+          name: wishlistToAcquire.name,
+          location_id: acquireLocationId || null,
+          purchase_price: acquirePrice ? parseFloat(acquirePrice) : (wishlistToAcquire.estimated_price || null),
+          condition: acquireCondition,
+          status: 'active',
+          origin_type: 'bought',
+          acquired_date: format(new Date(), 'yyyy-MM-dd')
+        })
+        .select()
+        .single();
+
+      if (itemError) throw itemError;
+
+      const { error: delError } = await supabase
+        .from('inventory_wishlist')
+        .delete()
+        .eq('id', wishlistToAcquire.id);
+
+      if (delError) throw delError;
+
+      if (completeSavingsGoal && wishlistToAcquire.savings_goal_id) {
+        const { error: goalError } = await supabase
+          .from('savings_goals')
+          .update({ status: 'completed' })
+          .eq('id', wishlistToAcquire.savings_goal_id);
+        if (goalError) console.error("Failed to complete savings goal:", goalError);
+      }
+
+      toast.success(`Successfully promoted ${wishlistToAcquire.name} to active inventory!`);
+      setWishlistToAcquire(null);
+      fetchData();
+    } catch (e: any) {
+      toast.error(e.message || "Acquire failed");
+    }
+  };
+
+  const handleDeleteWishlistItem = async (id: string) => {
+    const confirmed = await confirm("Remove this item from your wishlist?");
+    if (!confirmed) return;
+    try {
+      const { error } = await supabase
+        .from('inventory_wishlist')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+      toast.success("Removed from wishlist");
+      fetchData();
+    } catch (e: any) {
+      toast.error("Failed to delete wishlist item");
+    }
+  };
+
   // --- Render Sections ---
 
   const renderHome = () => (
@@ -461,20 +831,41 @@ export default function InventoryPage() {
         </button>
       </div>
 
-      <div className="flex gap-3 pt-4">
+      <div className="grid grid-cols-2 gap-3 pt-4">
         <button 
           onClick={() => setView('PEOPLE')}
-          className="flex-1 bg-card rounded-2xl p-4 border border-border/40 flex items-center justify-center gap-2 shadow-sm hover:bg-muted transition-all"
+          className="bg-card rounded-2xl p-4 border border-border/40 flex items-center justify-center gap-2 shadow-sm hover:bg-muted transition-all"
         >
           <Users size={18} className="text-accent" />
           <span className="text-xs font-black">People</span>
         </button>
         <button 
           onClick={() => setView('RETIRED')}
-          className="flex-1 bg-card rounded-2xl p-4 border border-border/40 flex items-center justify-center gap-2 shadow-sm hover:bg-muted transition-all"
+          className="bg-card rounded-2xl p-4 border border-border/40 flex items-center justify-center gap-2 shadow-sm hover:bg-muted transition-all"
         >
           <History size={18} className="text-primary" />
-          <span className="text-xs font-black">Retired</span>
+          <span className="text-xs font-black">Retired Logs</span>
+        </button>
+        <button 
+          onClick={() => setView('WISHLIST')}
+          className="bg-card rounded-2xl p-4 border border-border/40 flex items-center justify-center gap-2 shadow-sm hover:bg-muted transition-all hover:border-pink-200 group"
+        >
+          <Heart size={18} className="text-pink-500 fill-pink-500/10 group-hover:scale-110 transition-transform" />
+          <span className="text-xs font-black">Wishlist</span>
+        </button>
+        <button 
+          onClick={() => setView('WARRANTIES')}
+          className="bg-card rounded-2xl p-4 border border-border/40 flex items-center justify-center gap-2 shadow-sm hover:bg-muted transition-all hover:border-emerald-200 group"
+        >
+          <ShieldAlert size={18} className="text-emerald-500 group-hover:rotate-12 transition-transform" />
+          <span className="text-xs font-black">Warranties</span>
+        </button>
+        <button 
+          onClick={() => setView('MAINTENANCE')}
+          className="col-span-2 bg-card rounded-2xl p-4 border border-border/40 flex items-center justify-center gap-2 shadow-sm hover:bg-muted transition-all hover:border-blue-200 group"
+        >
+          <Wrench size={18} className="text-blue-500 group-hover:scale-110 transition-transform" />
+          <span className="text-xs font-black">Asset Maintenance Upkeep</span>
         </button>
       </div>
     </div>
@@ -743,6 +1134,418 @@ export default function InventoryPage() {
     </div>
   );
 
+  const renderWishlist = () => {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        {/* Header */}
+        <div className="flex items-center justify-between pb-2 border-b border-border/10 mb-4">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setView('HOME')} className="p-3 bg-card rounded-xl border border-border/40 shadow-sm hover:bg-muted transition-all"><ArrowLeft size={18} /></button>
+            <div>
+              <h2 className="text-2xl font-black">Aspirational Wishlist</h2>
+              <div className="text-[10px] text-muted-foreground font-black uppercase tracking-wider">Future Purchases & Savings Goals</div>
+            </div>
+          </div>
+          <button 
+            onClick={() => setShowAddWishlistModal(true)}
+            className="h-11 px-4 bg-pink-500 text-white rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-pink-500/25 hover:bg-pink-600 font-bold text-xs transition-all"
+          >
+            <Plus size={16} />
+            Add Wish
+          </button>
+        </div>
+
+        {/* Wishlist Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {wishlist.map(item => {
+            const goal = savingsGoals.find(g => g.id === item.savings_goal_id);
+            let savedAmt = 0;
+            let targetAmt = goal?.target_amount || 0;
+            let pct = 0;
+            if (goal) {
+              const allocs = savingsAllocations.filter(a => a.goal_id === goal.id);
+              savedAmt = allocs.reduce((sum, a) => sum + (parseFloat(a.allocated_amount) || 0), 0);
+              pct = targetAmt > 0 ? Math.min(100, Math.round((savedAmt / targetAmt) * 100)) : 0;
+            }
+
+            return (
+              <div 
+                key={item.id} 
+                className="bg-card border-2 border-dashed border-border/40 hover:border-pink-500/40 rounded-3xl p-6 transition-all hover:shadow-zenith flex flex-col justify-between group"
+              >
+                <div className="space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-base font-black truncate max-w-[200px]">{item.name}</h3>
+                      {item.estimated_price > 0 && (
+                        <div className="text-sm font-black text-foreground mt-0.5">
+                          Est: ₹{parseFloat(item.estimated_price).toLocaleString('en-IN')}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`text-[8px] font-black px-2 py-0.5 rounded border uppercase tracking-wider
+                        ${item.priority === 'high' ? 'bg-rose-50 text-rose-600 border-rose-200' : 
+                          item.priority === 'low' ? 'bg-slate-50 text-slate-600 border-slate-200' : 
+                          'bg-blue-50 text-blue-600 border-blue-200'}`}
+                      >
+                        {item.priority}
+                      </span>
+                    </div>
+                  </div>
+
+                  {item.notes && (
+                    <div className="text-[11px] text-muted-foreground italic leading-relaxed">
+                      "{item.notes}"
+                    </div>
+                  )}
+
+                  {/* Savings goal progress bar */}
+                  {goal && (
+                    <div className="bg-muted/30 p-3 rounded-2xl border border-border/20 space-y-1">
+                      <div className="flex justify-between text-[10px] font-bold text-muted-foreground">
+                        <span className="truncate max-w-[150px]">Goal: {goal.name}</span>
+                        <span>{pct}% Saved</span>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                        <div className="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                      </div>
+                      <div className="flex justify-between text-[9px] text-muted-foreground/60 font-bold">
+                        <span>₹{savedAmt.toLocaleString('en-IN')} saved</span>
+                        <span>Target: ₹{targetAmt.toLocaleString('en-IN')}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-2 border-t border-border/10 pt-4 mt-4">
+                  <button 
+                    onClick={() => {
+                      setWishlistToAcquire(item);
+                      setAcquireLocationId(item.location_id || "");
+                      setAcquireCondition("new");
+                      setAcquirePrice(item.estimated_price ? String(item.estimated_price) : "");
+                      setCompleteSavingsGoal(true);
+                    }}
+                    className="flex-1 h-10 bg-pink-500 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-pink-500/10 hover:bg-pink-600 transition-all"
+                  >
+                    <Sparkles size={14} /> Promote (Acquire)
+                  </button>
+                  {item.buy_url && (
+                    <a 
+                      href={item.buy_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-2 border border-border/40 hover:border-pink-300 rounded-xl text-muted-foreground hover:text-pink-500 flex items-center justify-center bg-card hover:bg-muted/50 transition-all"
+                      title="Buy URL Link"
+                    >
+                      <ExternalLink size={14} />
+                    </a>
+                  )}
+                  <button 
+                    onClick={() => handleDeleteWishlistItem(item.id)}
+                    className="p-2 border border-border/40 hover:border-rose-200 rounded-xl text-muted-foreground hover:text-rose-500 flex items-center justify-center bg-card hover:bg-rose-50 transition-all"
+                    title="Delete Wish"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          {wishlist.length === 0 && (
+            <div className="col-span-1 md:col-span-2 text-center py-24 border-2 border-dashed border-muted/50 rounded-[32px] text-muted-foreground/40 font-bold text-sm bg-muted/5">
+              Your wishlist is currently empty.<br />Add items you plan to acquire in the future!
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderWarranties = () => {
+    const criticalExpiries = items.filter(i => {
+      if (!i.warranty_expiry_date) return false;
+      const days = Math.ceil((new Date(i.warranty_expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      return days > 0 && days <= 30;
+    });
+
+    const activeWarranties = items.filter(i => {
+      if (!i.warranty_expiry_date) return false;
+      const days = Math.ceil((new Date(i.warranty_expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      return days > 30;
+    });
+
+    const expiredWarranties = items.filter(i => {
+      if (!i.warranty_expiry_date) return false;
+      const days = Math.ceil((new Date(i.warranty_expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      return days <= 0;
+    });
+
+    return (
+      <div className="space-y-6 animate-fade-in">
+        {/* Header */}
+        <div className="flex items-center gap-4 pb-2 border-b border-border/10 mb-4">
+          <button onClick={() => setView('HOME')} className="p-3 bg-card rounded-xl border border-border/40 shadow-sm hover:bg-muted transition-all"><ArrowLeft size={18} /></button>
+          <div>
+            <h2 className="text-2xl font-black">Warranty Coverage Registry</h2>
+            <div className="text-[10px] text-muted-foreground font-black uppercase tracking-wider">Manufacturer & Extended Protection Plans</div>
+          </div>
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-card border border-border/40 rounded-2xl p-4 text-center">
+            <div className="text-xl font-black text-emerald-500">{activeWarranties.length + criticalExpiries.length}</div>
+            <div className="text-[9px] font-black text-muted-foreground uppercase tracking-tight">Active</div>
+          </div>
+          <div className="bg-card border border-border/40 rounded-2xl p-4 text-center">
+            <div className="text-xl font-black text-amber-500 animate-pulse">{criticalExpiries.length}</div>
+            <div className="text-[9px] font-black text-muted-foreground uppercase tracking-tight">Under 30 Days</div>
+          </div>
+          <div className="bg-card border border-border/40 rounded-2xl p-4 text-center">
+            <div className="text-xl font-black text-slate-400">{expiredWarranties.length}</div>
+            <div className="text-[9px] font-black text-muted-foreground uppercase tracking-tight">Expired</div>
+          </div>
+        </div>
+
+        {/* Listing Sections */}
+        <div className="space-y-6">
+          {/* Critical Warnings */}
+          {criticalExpiries.length > 0 && (
+            <div className="space-y-3">
+              <span className="text-[10px] font-black text-rose-500 uppercase tracking-wider block ml-1">Expires Soon (Critical)</span>
+              <div className="space-y-2">
+                {criticalExpiries.map(i => {
+                  const days = Math.ceil((new Date(i.warranty_expiry_date!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                  return (
+                    <div 
+                      key={i.id} 
+                      onClick={() => { setSelectedItem(i); setSelectedSubTab('warranty'); }}
+                      className="bg-card border border-rose-200 rounded-2xl p-4 flex justify-between items-center cursor-pointer hover:bg-rose-50/20 transition-all hover:scale-[1.01]"
+                    >
+                      <div className="space-y-0.5">
+                        <div className="text-xs font-black uppercase text-foreground">{i.name}</div>
+                        <div className="text-[9px] font-bold text-muted-foreground">
+                          Provider: {i.warranty_provider || 'Unknown'} • SN: {i.serial_number || 'N/A'}
+                        </div>
+                      </div>
+                      <span className="text-[9px] font-black bg-rose-50 text-rose-600 px-2.5 py-1 rounded-lg border border-rose-200 animate-pulse">
+                        {days} Days Left
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Active Warranties */}
+          <div className="space-y-3">
+            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-wider block ml-1">Active Warranties</span>
+            <div className="space-y-2">
+              {activeWarranties.map(i => {
+                const days = Math.ceil((new Date(i.warranty_expiry_date!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                return (
+                  <div 
+                    key={i.id} 
+                    onClick={() => { setSelectedItem(i); setSelectedSubTab('warranty'); }}
+                    className="bg-card border border-border/40 rounded-2xl p-4 flex justify-between items-center cursor-pointer hover:border-emerald-300 transition-all hover:scale-[1.01]"
+                  >
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-black uppercase text-foreground">{i.name}</div>
+                      <div className="text-[9px] font-bold text-muted-foreground">
+                        Provider: {i.warranty_provider || 'Unknown'} • SN: {i.serial_number || 'N/A'}
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-black bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-lg border border-emerald-200">
+                      {days} Days Left
+                    </span>
+                  </div>
+                );
+              })}
+              {activeWarranties.length === 0 && criticalExpiries.length === 0 && (
+                <div className="text-center py-12 border border-dashed border-border/40 rounded-2xl text-[10px] font-bold text-muted-foreground/40 bg-muted/5">
+                  No active warranties found
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Expired Warranties */}
+          {expiredWarranties.length > 0 && (
+            <div className="space-y-3">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider block ml-1">Expired Warranties</span>
+              <div className="space-y-2">
+                {expiredWarranties.map(i => (
+                  <div 
+                    key={i.id} 
+                    onClick={() => { setSelectedItem(i); setSelectedSubTab('warranty'); }}
+                    className="bg-card border border-border/40 opacity-60 rounded-2xl p-4 flex justify-between items-center cursor-pointer hover:opacity-100 transition-all hover:scale-[1.01]"
+                  >
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-black uppercase text-foreground">{i.name}</div>
+                      <div className="text-[9px] font-bold text-muted-foreground">
+                        Provider: {i.warranty_provider || 'Unknown'} • Expired: {format(new Date(i.warranty_expiry_date!), 'dd MMM yyyy')}
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-black bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg border border-slate-200">
+                      Expired
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderMaintenance = () => {
+    const overdueTasks = globalMaintenanceSchedules.filter(s => new Date(s.next_due_at) < new Date());
+    const upcomingTasks = globalMaintenanceSchedules.filter(s => {
+      const nextDate = new Date(s.next_due_at);
+      return nextDate >= new Date() && (nextDate.getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000;
+    });
+    const stableTasks = globalMaintenanceSchedules.filter(s => {
+      const nextDate = new Date(s.next_due_at);
+      return nextDate >= new Date() && (nextDate.getTime() - new Date().getTime()) >= 7 * 24 * 60 * 60 * 1000;
+    });
+
+    return (
+      <div className="space-y-6 animate-fade-in">
+        {/* Header */}
+        <div className="flex items-center gap-4 pb-2 border-b border-border/10 mb-4">
+          <button onClick={() => setView('HOME')} className="p-3 bg-card rounded-xl border border-border/40 shadow-sm hover:bg-muted transition-all"><ArrowLeft size={18} /></button>
+          <div>
+            <h2 className="text-2xl font-black">Upkeep & Maintenance Hub</h2>
+            <div className="text-[10px] text-muted-foreground font-black uppercase tracking-wider">Asset Performance Interval Alerts</div>
+          </div>
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-card border border-border/40 rounded-2xl p-4 text-center">
+            <div className="text-xl font-black text-rose-500 animate-pulse">{overdueTasks.length}</div>
+            <div className="text-[9px] font-black text-muted-foreground uppercase tracking-tight">Overdue</div>
+          </div>
+          <div className="bg-card border border-border/40 rounded-2xl p-4 text-center">
+            <div className="text-xl font-black text-amber-500">{upcomingTasks.length}</div>
+            <div className="text-[9px] font-black text-muted-foreground uppercase tracking-tight">Due Soon</div>
+          </div>
+          <div className="bg-card border border-border/40 rounded-2xl p-4 text-center">
+            <div className="text-xl font-black text-emerald-500">{stableTasks.length}</div>
+            <div className="text-[9px] font-black text-muted-foreground uppercase tracking-tight">Upkeep OK</div>
+          </div>
+        </div>
+
+        {/* Listing Sections */}
+        <div className="space-y-6">
+          {/* Overdue Section */}
+          {overdueTasks.length > 0 && (
+            <div className="space-y-3">
+              <span className="text-[10px] font-black text-rose-500 uppercase tracking-wider block ml-1">Overdue Tasks</span>
+              <div className="space-y-2">
+                {overdueTasks.map(sched => (
+                  <div 
+                    key={sched.id}
+                    onClick={async () => {
+                      const { data: itemData } = await supabase.from('inventory_items').select('*').eq('id', sched.item_id).single();
+                      if (itemData) {
+                        setSelectedItem(itemData);
+                        setSelectedSubTab('maintenance');
+                      }
+                    }}
+                    className="bg-card border border-rose-200 rounded-2xl p-4 flex justify-between items-center cursor-pointer hover:bg-rose-50/20 transition-all hover:scale-[1.01]"
+                  >
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-black uppercase text-foreground">{sched.task_name}</div>
+                      <div className="text-[9px] font-bold text-muted-foreground">
+                        Asset: <span className="text-primary font-black uppercase">{sched.inventory_items?.name || 'Unknown'}</span> • Overdue: {format(new Date(sched.next_due_at), 'dd MMM yyyy')}
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-black bg-rose-500 text-white px-2.5 py-1 rounded-lg animate-bounce">
+                      Log Completion
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Due Soon Section */}
+          {upcomingTasks.length > 0 && (
+            <div className="space-y-3">
+              <span className="text-[10px] font-black text-amber-500 uppercase tracking-wider block ml-1">Due in Next 7 Days</span>
+              <div className="space-y-2">
+                {upcomingTasks.map(sched => (
+                  <div 
+                    key={sched.id}
+                    onClick={async () => {
+                      const { data: itemData } = await supabase.from('inventory_items').select('*').eq('id', sched.item_id).single();
+                      if (itemData) {
+                        setSelectedItem(itemData);
+                        setSelectedSubTab('maintenance');
+                      }
+                    }}
+                    className="bg-card border border-border/40 rounded-2xl p-4 flex justify-between items-center cursor-pointer hover:border-amber-300 transition-all hover:scale-[1.01]"
+                  >
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-black uppercase text-foreground">{sched.task_name}</div>
+                      <div className="text-[9px] font-bold text-muted-foreground">
+                        Asset: <span className="text-primary font-black uppercase">{sched.inventory_items?.name || 'Unknown'}</span> • Due: {format(new Date(sched.next_due_at), 'dd MMM yyyy')}
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-black bg-amber-50 text-amber-600 px-2.5 py-1 rounded-lg border border-amber-200">
+                      Due Soon
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Upkeep OK Section */}
+          <div className="space-y-3">
+            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-wider block ml-1">Stable Tasks</span>
+            <div className="space-y-2">
+              {stableTasks.map(sched => (
+                <div 
+                  key={sched.id}
+                  onClick={async () => {
+                    const { data: itemData } = await supabase.from('inventory_items').select('*').eq('id', sched.item_id).single();
+                    if (itemData) {
+                      setSelectedItem(itemData);
+                      setSelectedSubTab('maintenance');
+                    }
+                  }}
+                  className="bg-card border border-border/40 rounded-2xl p-4 flex justify-between items-center cursor-pointer hover:border-emerald-300 transition-all hover:scale-[1.01]"
+                >
+                  <div className="space-y-0.5">
+                    <div className="text-xs font-black uppercase text-foreground">{sched.task_name}</div>
+                    <div className="text-[9px] font-bold text-muted-foreground">
+                      Asset: <span className="text-primary font-black uppercase">{sched.inventory_items?.name || 'Unknown'}</span> • Next due: {format(new Date(sched.next_due_at), 'dd MMM yyyy')}
+                    </div>
+                  </div>
+                  <span className="text-[9px] font-black bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-lg border border-emerald-200">
+                    Active
+                  </span>
+                </div>
+              ))}
+              {globalMaintenanceSchedules.length === 0 && (
+                <div className="text-center py-20 border border-dashed border-border/40 rounded-[32px] text-[10px] font-bold text-muted-foreground/40 bg-muted/5">
+                  No active recurring tasks in upkeep system.<br />Navigate to any item details to configure maintenance schedules!
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // --- Modals ---
 
   return (
@@ -761,76 +1564,322 @@ export default function InventoryPage() {
           {view === 'PEOPLE' && renderPeople()}
           {view === 'RETIRED' && renderRetired()}
           {view === 'SEARCH' && renderSearch()}
+          {view === 'WISHLIST' && renderWishlist()}
+          {view === 'WARRANTIES' && renderWarranties()}
+          {view === 'MAINTENANCE' && renderMaintenance()}
         </>
       )}
 
       {/* --- Detail Overlay --- */}
       {selectedItem && !showRetireModal && !showLendModal && (
         <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm flex items-end justify-center p-4">
-          <div className="bg-card w-full max-w-md rounded-t-[40px] shadow-2xl border-t border-x border-border/40 p-8 space-y-8">
+          <div className="bg-card w-full max-w-md rounded-t-[40px] shadow-2xl border-t border-x border-border/40 p-8 space-y-6 flex flex-col max-h-[85vh]">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <div className="text-[10px] font-bold text-muted-foreground">Item Identity</div>
-                <h2 className="text-3xl font-bold leading-none">{selectedItem.name}</h2>
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Asset Workspace</div>
+                <h2 className="text-2xl font-bold leading-none truncate max-w-[280px]">{selectedItem.name}</h2>
               </div>
-              <button onClick={() => setSelectedItem(null)} className="p-3 bg-muted rounded-2xl"><X size={20} /></button>
+              <button onClick={() => setSelectedItem(null)} className="p-3 bg-muted hover:bg-muted/80 rounded-2xl transition-all"><X size={20} /></button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
-                <div className="text-[9px] font-bold text-muted-foreground/60 mb-2">Origin</div>
-                <div className="flex items-center gap-2">
-                  {selectedItem.origin_type === 'bought' ? <IndianRupee size={14} className="text-primary" /> : <Gift size={14} className="text-accent" />}
-                  <span className="text-sm font-bold">{selectedItem.origin_type.replace('_', ' ')}</span>
-                </div>
-                {selectedItem.origin_person && <div className="text-[10px] font-bold text-muted-foreground mt-1">{selectedItem.origin_person}</div>}
-              </div>
-              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
-                <div className="text-[9px] font-bold text-muted-foreground/60 mb-2">Condition</div>
-                <Select 
-                  value={selectedItem.condition} 
-                  onChange={(e) => handleUpdateCondition(e.target.value)}
-                  className="w-full bg-transparent border-none p-0 text-sm font-bold focus:ring-0 appearance-none cursor-pointer"
+            {/* Sub Tabs Navigation */}
+            <div className="flex border-b border-border/10">
+              {(['details', 'warranty', 'maintenance'] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setSelectedSubTab(tab)}
+                  className={`flex-1 pb-3 text-[10px] font-black uppercase tracking-wider border-b-2 transition-all ${selectedSubTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground/50 hover:text-foreground'}`}
                 >
-                  {['new', 'good', 'fair', 'poor'].map(c => <option key={c} value={c}>{c}</option>)}
-                </Select>
-                <div className="text-[10px] font-bold text-muted-foreground mt-1">Tap to change</div>
-              </div>
+                  {tab}
+                </button>
+              ))}
             </div>
 
-            {selectedItem.notes && (
-              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
-                <div className="text-[9px] font-bold text-muted-foreground/60 mb-2">Notes</div>
-                <div className="text-xs font-medium text-muted-foreground leading-relaxed italic">"{selectedItem.notes}"</div>
-              </div>
-            )}
+            {/* Sub Tabs Content Container */}
+            <div className="flex-1 overflow-y-auto no-scrollbar space-y-5 pr-1">
+              
+              {/* DETAILS SUB TAB */}
+              {selectedSubTab === 'details' && (
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                      <div className="text-[9px] font-bold text-muted-foreground/60 mb-2">Origin</div>
+                      <div className="flex items-center gap-2">
+                        {selectedItem.origin_type === 'bought' ? <IndianRupee size={14} className="text-primary" /> : <Gift size={14} className="text-accent" />}
+                        <span className="text-sm font-bold uppercase">{selectedItem.origin_type.replace('_', ' ')}</span>
+                      </div>
+                      {selectedItem.origin_person && <div className="text-[10px] font-bold text-muted-foreground mt-1">{selectedItem.origin_person}</div>}
+                    </div>
+                    <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                      <div className="text-[9px] font-bold text-muted-foreground/60 mb-2">Condition</div>
+                      <Select 
+                        value={selectedItem.condition} 
+                        onChange={(e) => handleUpdateCondition(e.target.value)}
+                        className="w-full bg-transparent border-none p-0 text-sm font-bold focus:ring-0 appearance-none cursor-pointer"
+                      >
+                        {['new', 'good', 'fair', 'poor'].map(c => <option key={c} value={c}>{c}</option>)}
+                      </Select>
+                      <div className="text-[10px] font-bold text-muted-foreground mt-1">Tap to change</div>
+                    </div>
+                  </div>
 
-            <div className="grid grid-cols-3 gap-3">
-              <button 
-                onClick={() => setShowLendModal(true)}
-                className="h-16 bg-accent text-white rounded-2xl flex flex-col items-center justify-center gap-1 shadow-lg shadow-accent/20 hover:scale-[1.02] transition-all"
-              >
-                <Share2 size={20} />
-                <span className="text-[9px] font-bold">Lend</span>
-              </button>
-              <button 
-                onClick={() => {
-                  setMovePath([]);
-                  loadMoveFolder(null);
-                  setShowMoveModal(true);
-                }}
-                className="h-16 bg-card border border-border/40 rounded-2xl flex flex-col items-center justify-center gap-1 shadow-sm hover:bg-muted transition-all"
-              >
-                <Move size={20} className="text-muted-foreground" />
-                <span className="text-[9px] font-bold">Move</span>
-              </button>
-              <button 
-                onClick={() => setShowRetireModal(true)}
-                className="h-16 bg-rose-50 text-rose-500 border border-rose-100 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-rose-100 transition-all"
-              >
-                <Trash2 size={20} />
-                <span className="text-[9px] font-bold">Retire</span>
-              </button>
+                  {selectedItem.notes && (
+                    <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                      <div className="text-[9px] font-bold text-muted-foreground/60 mb-2">Notes</div>
+                      <div className="text-xs font-medium text-muted-foreground leading-relaxed italic">"{selectedItem.notes}"</div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-3 gap-3 pt-2">
+                    <button 
+                      onClick={() => setShowLendModal(true)}
+                      className="h-16 bg-accent text-white rounded-2xl flex flex-col items-center justify-center gap-1 shadow-lg shadow-accent/20 hover:scale-[1.02] transition-all"
+                    >
+                      <Share2 size={20} />
+                      <span className="text-[9px] font-bold">Lend</span>
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setMovePath([]);
+                        loadMoveFolder(null);
+                        setShowMoveModal(true);
+                      }}
+                      className="h-16 bg-card border border-border/40 rounded-2xl flex flex-col items-center justify-center gap-1 shadow-sm hover:bg-muted transition-all"
+                    >
+                      <Move size={20} className="text-muted-foreground" />
+                      <span className="text-[9px] font-bold">Move</span>
+                    </button>
+                    <button 
+                      onClick={() => setShowRetireModal(true)}
+                      className="h-16 bg-rose-50 text-rose-500 border border-rose-100 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-rose-100 transition-all"
+                    >
+                      <Trash2 size={20} />
+                      <span className="text-[9px] font-bold">Retire</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* WARRANTY SUB TAB */}
+              {selectedSubTab === 'warranty' && (
+                <div className="space-y-4">
+                  {/* Warranty Expiry Indicator */}
+                  {selectedItem.warranty_expiry_date ? (() => {
+                    const daysLeft = Math.ceil((new Date(selectedItem.warranty_expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                    const isActive = daysLeft > 0;
+                    return (
+                      <div className={`p-4 rounded-2xl border flex items-center justify-between ${isActive ? 'bg-emerald-50/50 border-emerald-100 text-emerald-800' : 'bg-rose-50/50 border-rose-100 text-rose-800'}`}>
+                        <div className="flex items-center gap-2">
+                          <ShieldAlert size={18} className={isActive ? 'text-emerald-500' : 'text-rose-500'} />
+                          <div>
+                            <div className="text-xs font-black uppercase tracking-wider">{isActive ? 'Active Coverage' : 'Coverage Expired'}</div>
+                            <div className="text-[10px] opacity-80 font-medium">
+                              {isActive ? `${daysLeft} days remaining` : `Expired on ${format(new Date(selectedItem.warranty_expiry_date), 'dd MMM yyyy')}`}
+                            </div>
+                          </div>
+                        </div>
+                        {isActive && (
+                          <div className="text-xs font-black bg-emerald-500 text-white px-2 py-0.5 rounded-md">
+                            OK
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })() : (
+                    <div className="p-4 rounded-2xl border border-dashed border-border/40 text-center text-muted-foreground/60 text-xs font-bold bg-muted/10">
+                      No warranty details registered
+                    </div>
+                  )}
+
+                  {/* Warranty Inputs */}
+                  <div className="space-y-3 bg-muted/10 p-4 rounded-2xl border border-border/20">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[9px] font-black text-muted-foreground/60 block mb-1">PROVIDER</label>
+                        <input 
+                          type="text"
+                          value={editWarrantyProvider}
+                          onChange={e => setEditWarrantyProvider(e.target.value)}
+                          placeholder="e.g. AppleCare+"
+                          className="w-full bg-card border border-border/40 rounded-xl px-3 py-1.5 text-xs font-bold outline-none focus:ring-1 focus:ring-primary"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[9px] font-black text-muted-foreground/60 block mb-1">EXPIRY DATE</label>
+                        <input 
+                          type="date"
+                          value={editWarrantyExpiry}
+                          onChange={e => setEditWarrantyExpiry(e.target.value)}
+                          className="w-full bg-card border border-border/40 rounded-xl px-3 py-1.5 text-xs font-bold outline-none focus:ring-1 focus:ring-primary"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[9px] font-black text-muted-foreground/60 block mb-1">SERIAL NUMBER</label>
+                        <div className="relative">
+                          <input 
+                            type="text"
+                            value={editSerialNumber}
+                            onChange={e => setEditSerialNumber(e.target.value)}
+                            placeholder="SN..."
+                            className="w-full bg-card border border-border/40 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold outline-none focus:ring-1 focus:ring-primary font-mono"
+                          />
+                          {editSerialNumber && (
+                            <button 
+                              onClick={() => {
+                                navigator.clipboard.writeText(editSerialNumber);
+                                toast.success("Serial Number copied!");
+                              }}
+                              className="absolute right-2 top-2 text-muted-foreground/60 hover:text-primary"
+                              title="Copy to Clipboard"
+                            >
+                              <Check size={12} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[9px] font-black text-muted-foreground/60 block mb-1">MODEL NUMBER</label>
+                        <input 
+                          type="text"
+                          value={editModelNumber}
+                          onChange={e => setEditModelNumber(e.target.value)}
+                          placeholder="Model..."
+                          className="w-full bg-card border border-border/40 rounded-xl px-3 py-1.5 text-xs font-bold outline-none focus:ring-1 focus:ring-primary"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[9px] font-black text-muted-foreground/60 block mb-1">DURATION (MONTHS)</label>
+                        <input 
+                          type="number"
+                          value={editWarrantyDuration}
+                          onChange={e => setEditWarrantyDuration(e.target.value)}
+                          placeholder="24"
+                          className="w-full bg-card border border-border/40 rounded-xl px-3 py-1.5 text-xs font-bold outline-none focus:ring-1 focus:ring-primary"
+                        />
+                      </div>
+                      <div className="flex flex-col justify-end">
+                        <label className="flex items-center gap-2 text-xs font-bold text-muted-foreground cursor-pointer py-2">
+                          <input 
+                            type="checkbox" 
+                            checked={editEnableAlerts} 
+                            onChange={e => setEditEnableAlerts(e.target.checked)}
+                            className="rounded border-border/40 accent-primary" 
+                          />
+                          <span>Enable Expiry Alerts</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <button 
+                      onClick={handleSaveWarranty}
+                      className="w-full h-11 bg-primary text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-primary/10 hover:opacity-90 transition-all mt-2"
+                    >
+                      <Save size={14} />
+                      Save Coverage Details
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* MAINTENANCE SUB TAB */}
+              {selectedSubTab === 'maintenance' && (
+                <div className="space-y-4">
+                  {/* Maintenance Header */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-muted-foreground/60 uppercase">Recurring Upkeeps</span>
+                    <button 
+                      onClick={() => setShowAddScheduleModal(true)}
+                      className="flex items-center gap-1 text-[10px] font-black text-primary border border-primary/20 px-2.5 py-1 rounded-lg bg-primary/5 hover:bg-primary/10 transition-all"
+                    >
+                      <Plus size={12} /> Add Upkeep Task
+                    </button>
+                  </div>
+
+                  {/* Schedules List */}
+                  <div className="space-y-2">
+                    {maintenanceSchedules.map(sched => {
+                      const nextDate = new Date(sched.next_due_at);
+                      const isOverdue = nextDate < new Date();
+                      const isSoon = !isOverdue && (nextDate.getTime() - new Date().getTime()) < 7 * 24 * 60 * 60 * 1000;
+                      
+                      return (
+                        <div key={sched.id} className="bg-card border border-border/40 rounded-2xl p-4 shadow-sm flex flex-col gap-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="text-xs font-black uppercase tracking-tight text-foreground">{sched.task_name}</div>
+                              <div className="text-[9px] font-bold text-muted-foreground mt-0.5">
+                                Interval: Every {sched.frequency_value} {sched.frequency_unit}
+                              </div>
+                            </div>
+                            <span className={`text-[8px] font-black px-2 py-0.5 rounded border ${isOverdue ? 'bg-rose-50 text-rose-600 border-rose-200 animate-pulse' : isSoon ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'}`}>
+                              {isOverdue ? 'OVERDUE' : isSoon ? 'DUE SOON' : 'UPKEEP OK'}
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-[10px] border-t border-border/10 pt-2 text-muted-foreground">
+                            <div>
+                              Next due: <span className={`font-black ${isOverdue ? 'text-rose-500' : 'text-foreground'}`}>{format(nextDate, 'dd MMM yyyy')}</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <button 
+                                onClick={() => {
+                                  setShowLogMaintModal(sched);
+                                  setLogMaintNotes("");
+                                  setLogMaintCost("");
+                                  setLogMaintDate(format(new Date(), 'yyyy-MM-dd'));
+                                }}
+                                className="flex items-center gap-1 text-[9px] font-black bg-blue-500 text-white px-2.5 py-1 rounded-lg hover:bg-blue-600 transition-all shadow-sm shadow-blue-500/10"
+                                title="Mark Completed"
+                              >
+                                <Wrench size={10} /> Mark Done
+                              </button>
+                              <button 
+                                onClick={() => handleDeleteMaintenanceSchedule(sched.id)}
+                                className="p-1 hover:bg-rose-50 text-rose-500 rounded-lg transition-all border border-border/30 hover:border-rose-200"
+                                title="Delete Task"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {maintenanceSchedules.length === 0 && (
+                      <div className="p-6 text-center border border-dashed border-border/40 rounded-2xl text-[10px] font-bold text-muted-foreground/40 bg-muted/5">
+                        No recurring upkeep registered for this item
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Logs / History List */}
+                  {maintenanceLogs.length > 0 && (
+                    <div className="space-y-2 pt-2">
+                      <span className="text-[10px] font-black text-muted-foreground/60 uppercase block">Upkeep History</span>
+                      <div className="bg-muted/10 border border-border/20 rounded-2xl p-4 space-y-3 max-h-[200px] overflow-y-auto no-scrollbar">
+                        {maintenanceLogs.map(log => (
+                          <div key={log.id} className="text-[10px] flex justify-between items-start border-b border-border/10 last:border-0 pb-2 last:pb-0">
+                            <div>
+                              <div className="font-bold text-foreground">{format(new Date(log.performed_at), 'dd MMM yyyy')}</div>
+                              {log.notes && <div className="text-[9px] text-muted-foreground italic mt-0.5">"{log.notes}"</div>}
+                            </div>
+                            {parseFloat(log.cost) > 0 && (
+                              <span className="font-black text-emerald-600">₹{parseFloat(log.cost).toLocaleString('en-IN')}</span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1152,6 +2201,297 @@ export default function InventoryPage() {
             </div>
           </div>
         </div>
+      )}
+      {/* --- Add Wishlist Item Modal --- */}
+      {showAddWishlistModal && (
+        <Modal title="Add to Wishlist" onClose={() => setShowAddWishlistModal(false)}>
+          <div className="space-y-4 max-h-[60vh] overflow-y-auto no-scrollbar pr-1">
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+              <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Item Name</label>
+              <input 
+                autoFocus
+                type="text" 
+                value={wishName}
+                onChange={e => setWishName(e.target.value)}
+                placeholder="e.g. Robot Vacuum"
+                className="w-full bg-transparent border-none p-0 text-lg font-black focus:ring-0"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Est. Price (₹)</label>
+                <input 
+                  type="number" 
+                  value={wishPrice}
+                  onChange={e => setWishPrice(e.target.value)}
+                  placeholder="0"
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0"
+                />
+              </div>
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Priority</label>
+                <Select 
+                  value={wishPriority} 
+                  onChange={e => setWishPriority(e.target.value as any)}
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0 appearance-none cursor-pointer"
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </Select>
+              </div>
+            </div>
+
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+              <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Buy URL Link</label>
+              <input 
+                type="text" 
+                value={wishUrl}
+                onChange={e => setWishUrl(e.target.value)}
+                placeholder="https://amazon.in/..."
+                className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Target Location</label>
+                <Select 
+                  value={wishLocationId} 
+                  onChange={e => setWishLocationId(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0 appearance-none cursor-pointer"
+                >
+                  <option value="">Unassigned</option>
+                  {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </Select>
+              </div>
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Linked Savings Goal</label>
+                <Select 
+                  value={wishSavingsGoalId} 
+                  onChange={e => setWishSavingsGoalId(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0 appearance-none cursor-pointer"
+                >
+                  <option value="">No goal linked</option>
+                  {savingsGoals.map(sg => <option key={sg.id} value={sg.id}>{sg.name}</option>)}
+                </Select>
+              </div>
+            </div>
+
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+              <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Aspirational Notes</label>
+              <textarea 
+                value={wishNotes}
+                onChange={e => setWishNotes(e.target.value)}
+                placeholder="Why do I want this?"
+                className="w-full bg-transparent border-none p-0 text-xs font-bold focus:ring-0 resize-none h-16"
+              />
+            </div>
+
+            <button 
+              onClick={handleAddWishlist}
+              disabled={!wishName}
+              className="w-full h-14 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl font-black uppercase tracking-wider shadow-xl shadow-pink-500/20 disabled:opacity-50 transition-all"
+            >
+              Add to Wishlist
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {/* --- Acquire Wishlist Item Modal --- */}
+      {wishlistToAcquire && (
+        <Modal title="Acquire Wishlist Item" onClose={() => setWishlistToAcquire(null)}>
+          <div className="space-y-4">
+            <p className="text-xs text-muted-foreground font-bold leading-relaxed mb-1">
+              Move <span className="text-primary font-black uppercase">"{wishlistToAcquire.name}"</span> into physical active inventory.
+            </p>
+
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+              <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Actual Purchase Price (₹)</label>
+              <input 
+                type="number" 
+                value={acquirePrice}
+                onChange={e => setAcquirePrice(e.target.value)}
+                placeholder="₹"
+                className="w-full bg-transparent border-none p-0 text-base font-black focus:ring-0"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Initial Location</label>
+                <Select 
+                  value={acquireLocationId} 
+                  onChange={e => setAcquireLocationId(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0 appearance-none cursor-pointer"
+                >
+                  <option value="">Unassigned</option>
+                  {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </Select>
+              </div>
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Condition</label>
+                <Select 
+                  value={acquireCondition} 
+                  onChange={e => setAcquireCondition(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0 appearance-none cursor-pointer"
+                >
+                  <option value="new">New</option>
+                  <option value="good">Good</option>
+                  <option value="fair">Fair</option>
+                  <option value="poor">Poor</option>
+                </Select>
+              </div>
+            </div>
+
+            {wishlistToAcquire.savings_goal_id && (
+              <label className="flex items-center gap-2 text-xs font-bold text-muted-foreground cursor-pointer bg-muted/20 p-4 rounded-2xl border border-border/20">
+                <input 
+                  type="checkbox" 
+                  checked={completeSavingsGoal} 
+                  onChange={e => setCompleteSavingsGoal(e.target.checked)}
+                  className="rounded border-border/40 accent-primary" 
+                />
+                <div>
+                  <span className="font-black text-foreground">Mark linked Savings Goal as Completed</span>
+                  <p className="text-[10px] text-muted-foreground/80 mt-0.5">This will update status in Savings Goals.</p>
+                </div>
+              </label>
+            )}
+
+            <button 
+              onClick={handleAcquireWishlist}
+              className="w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-wider shadow-xl shadow-emerald-500/20 transition-all"
+            >
+              Confirm Acquisition
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {/* --- Add Maintenance Schedule Modal --- */}
+      {showAddScheduleModal && (
+        <Modal title="Add Recurring Maintenance" onClose={() => setShowAddScheduleModal(false)}>
+          <div className="space-y-4">
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+              <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Task Name</label>
+              <input 
+                autoFocus
+                type="text" 
+                value={maintTaskName}
+                onChange={e => setMaintTaskName(e.target.value)}
+                placeholder="e.g. Descale Espresso Maker"
+                className="w-full bg-transparent border-none p-0 text-base font-black focus:ring-0"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Frequency Interval</label>
+                <input 
+                  type="number" 
+                  value={maintFreqValue}
+                  onChange={e => setMaintFreqValue(e.target.value)}
+                  placeholder="3"
+                  className="w-full bg-transparent border-none p-0 text-sm font-black focus:ring-0"
+                />
+              </div>
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Unit</label>
+                <Select 
+                  value={maintFreqUnit} 
+                  onChange={e => setMaintFreqUnit(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-sm font-black focus:ring-0 appearance-none cursor-pointer"
+                >
+                  <option value="days">Days</option>
+                  <option value="weeks">Weeks</option>
+                  <option value="months">Months</option>
+                  <option value="years">Years</option>
+                </Select>
+              </div>
+            </div>
+
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+              <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Last Upkeep Date</label>
+              <input 
+                type="date" 
+                value={maintLastPerformed}
+                onChange={e => setMaintLastPerformed(e.target.value)}
+                className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0"
+              />
+            </div>
+
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+              <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Special Instructions / Notes</label>
+              <textarea 
+                value={maintNotes}
+                onChange={e => setMaintNotes(e.target.value)}
+                placeholder="Step by step upkeep directions..."
+                className="w-full bg-transparent border-none p-0 text-xs font-bold focus:ring-0 resize-none h-16"
+              />
+            </div>
+
+            <button 
+              onClick={handleAddMaintenanceSchedule}
+              disabled={!maintTaskName}
+              className="w-full h-14 bg-primary text-white rounded-2xl font-black uppercase tracking-wider shadow-xl shadow-primary/20 disabled:opacity-50 transition-all"
+            >
+              Add Schedule
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {/* --- Log Maintenance Completion Modal --- */}
+      {showLogMaintModal && (
+        <Modal title="Log Completed Maintenance" onClose={() => setShowLogMaintModal(null)}>
+          <div className="space-y-4">
+            <p className="text-xs text-muted-foreground font-bold leading-relaxed mb-1">
+              Log execution detail for task <span className="text-primary font-black uppercase">"{showLogMaintModal.task_name}"</span>.
+            </p>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Performed Date</label>
+                <input 
+                  type="date" 
+                  value={logMaintDate}
+                  onChange={e => setLogMaintDate(e.target.value)}
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0"
+                />
+              </div>
+              <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+                <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Maintenance Cost (₹)</label>
+                <input 
+                  type="number" 
+                  value={logMaintCost}
+                  onChange={e => setLogMaintCost(e.target.value)}
+                  placeholder="0"
+                  className="w-full bg-transparent border-none p-0 text-xs font-black focus:ring-0"
+                />
+              </div>
+            </div>
+
+            <div className="bg-muted/30 p-4 rounded-2xl border border-border/20">
+              <label className="text-[9px] font-black text-muted-foreground/60 block mb-2">Completion Notes / Log details</label>
+              <textarea 
+                value={logMaintNotes}
+                onChange={e => setLogMaintNotes(e.target.value)}
+                placeholder="Log details, parts replaced, tech info..."
+                className="w-full bg-transparent border-none p-0 text-xs font-bold focus:ring-0 resize-none h-20"
+              />
+            </div>
+
+            <button 
+              onClick={handleLogMaintenanceCompletion}
+              className="w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-wider shadow-xl shadow-emerald-500/20 transition-all"
+            >
+              Log Upkeep Completion
+            </button>
+          </div>
+        </Modal>
       )}
 
     </PageWrapper>

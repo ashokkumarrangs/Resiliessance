@@ -266,3 +266,77 @@ ALTER TABLE vehicle_component_history ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow anonymous read/write on vehicle_component_history"
 ON vehicle_component_history FOR ALL USING (true) WITH CHECK (true);
 
+
+-- ─── Inventory Warranty Tracker ──────────────────────────────────────────────
+
+-- Extend inventory_items table for Warranty features
+ALTER TABLE inventory_items 
+ADD COLUMN IF NOT EXISTS warranty_provider TEXT,
+ADD COLUMN IF NOT EXISTS serial_number TEXT,
+ADD COLUMN IF NOT EXISTS model_number TEXT,
+ADD COLUMN IF NOT EXISTS warranty_duration_months INTEGER,
+ADD COLUMN IF NOT EXISTS warranty_expiry_date DATE,
+ADD COLUMN IF NOT EXISTS enable_warranty_alerts BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS warranty_alert_days_before INTEGER[] DEFAULT '{30,7}';
+
+
+-- ─── Inventory Asset Maintenance Interval Alerts ────────────────────────────────
+
+-- Maintenance Schedules table
+CREATE TABLE IF NOT EXISTS asset_maintenance_schedules (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  item_id UUID NOT NULL REFERENCES inventory_items(id) ON DELETE CASCADE,
+  task_name TEXT NOT NULL,
+  frequency_value INTEGER NOT NULL,
+  frequency_unit TEXT NOT NULL, -- 'days', 'weeks', 'months', 'years'
+  last_performed_at TIMESTAMPTZ DEFAULT now(),
+  next_due_at TIMESTAMPTZ NOT NULL,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Enable RLS and add policies
+ALTER TABLE asset_maintenance_schedules ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous read/write on maintenance_schedules"
+ON asset_maintenance_schedules FOR ALL USING (true) WITH CHECK (true);
+
+-- Maintenance Logs table
+CREATE TABLE IF NOT EXISTS asset_maintenance_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  schedule_id UUID REFERENCES asset_maintenance_schedules(id) ON DELETE CASCADE,
+  item_id UUID REFERENCES inventory_items(id) ON DELETE CASCADE,
+  performed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  notes TEXT,
+  cost NUMERIC(12, 2) DEFAULT 0.00
+);
+
+-- Enable RLS and add policies
+ALTER TABLE asset_maintenance_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous read/write on maintenance_logs"
+ON asset_maintenance_logs FOR ALL USING (true) WITH CHECK (true);
+
+
+-- ─── Inventory Wishlist ────────────────────────────────────────────────────────
+
+-- Wishlist items table
+CREATE TABLE IF NOT EXISTS inventory_wishlist (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  estimated_price NUMERIC(12, 2) DEFAULT 0.00,
+  priority TEXT DEFAULT 'medium', -- 'high' | 'medium' | 'low'
+  buy_url TEXT,
+  location_id UUID REFERENCES inventory_locations(id) ON DELETE SET NULL,
+  savings_goal_id UUID REFERENCES savings_goals(id) ON DELETE SET NULL,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Enable RLS and add policies
+ALTER TABLE inventory_wishlist ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous read/write on wishlist"
+ON inventory_wishlist FOR ALL USING (true) WITH CHECK (true);
+
+
