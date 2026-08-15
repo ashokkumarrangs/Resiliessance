@@ -34,6 +34,8 @@ import {
   Activity,
   HandCoins,
   Apple,
+  Timer,
+  Clock,
   } from "lucide-react";
 
 // ─── Finance ──────────────────────────────────────────────────────────────────
@@ -70,6 +72,8 @@ export const VEHICLE_TABS = [
 export const WORKOUT_TABS = [
   { title: "Logger", href: "/workout", icon: <PlusCircle size={16} /> },
   { title: "Templates", href: "/workout/templates", icon: <ClipboardList size={16} /> },
+  { title: "Stopwatch", href: "/workout/stopwatch", icon: <Clock size={16} /> },
+  { title: "Rest Timer", href: "/workout/timer", icon: <Timer size={16} /> },
   { title: "History", href: "/workout/history", icon: <CalendarDays size={16} /> },
 ];
 
