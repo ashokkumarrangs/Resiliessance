@@ -8,56 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
   <style>
-    :root, [data-theme="nordic"] {
+    :root {
       --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --background: #f4f7f5;
-      --foreground: #1e251f;
-      --card: #ffffff;
-      --card-foreground: #1e251f;
-      --popover: #ffffff;
-      --popover-foreground: #1e251f;
-      --primary: #7f9a82;
-      --primary-foreground: #ffffff;
-      --secondary: #e6ede8;
-      --secondary-foreground: #1e251f;
-      --muted: #e6ede8;
-      --muted-foreground: #5c6b5e;
-      --accent: #a98f7f;
-      --accent-foreground: #ffffff;
-      --border: #d2ded5;
-      --input: #d2ded5;
-      --ring: #7f9a82;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --shadow-premium: 0 4px 20px -2px rgba(127,154,130,0.08), 0 2px 8px -1px rgba(127,154,130,0.04);
-    }
-
-    [data-theme="terracotta"] {
-      --background: #fbf9f6;
-      --foreground: #2d2621;
-      --card: #ffffff;
-      --card-foreground: #2d2621;
-      --popover: #ffffff;
-      --popover-foreground: #2d2621;
-      --primary: #c87a53;
-      --primary-foreground: #ffffff;
-      --secondary: #f4eee8;
-      --secondary-foreground: #2d2621;
-      --muted: #f4eee8;
-      --muted-foreground: #7c6e64;
-      --accent: #5d7c68;
-      --accent-foreground: #ffffff;
-      --border: #e6ded5;
-      --input: #e6ded5;
-      --ring: #c87a53;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --shadow-premium: 0 4px 20px -2px rgba(200,122,83,0.08), 0 2px 8px -1px rgba(200,122,83,0.04);
-    }
-
-    [data-theme="ocean"] {
       --background: #f0f4f8;
       --foreground: #1c2a38;
       --card: #ffffff;
@@ -79,30 +31,6 @@
       --radius-md: 12px;
       --radius-lg: 16px;
       --shadow-premium: 0 4px 20px -2px rgba(43,92,143,0.08), 0 2px 8px -1px rgba(43,92,143,0.04);
-    }
-
-    [data-theme="lavender"] {
-      --background: #f5f3f7;
-      --foreground: #2d2433;
-      --card: #ffffff;
-      --card-foreground: #2d2433;
-      --popover: #ffffff;
-      --popover-foreground: #2d2433;
-      --primary: #7c5c99;
-      --primary-foreground: #ffffff;
-      --secondary: #eeeaf0;
-      --secondary-foreground: #2d2433;
-      --muted: #eeeaf0;
-      --muted-foreground: #746380;
-      --accent: #995c7c;
-      --accent-foreground: #ffffff;
-      --border: #e2dae6;
-      --input: #e2dae6;
-      --ring: #7c5c99;
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --shadow-premium: 0 4px 20px -2px rgba(124,92,153,0.08), 0 2px 8px -1px rgba(124,92,153,0.04);
     }
 
     * {
@@ -226,7 +154,7 @@
       margin: 0 auto;
       padding: 0 24px;
       display: grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns: 280px 1fr;
       gap: 32px;
       align-items: start;
     }
@@ -325,6 +253,8 @@
       align-items: center;
       justify-content: space-between;
       color: var(--foreground);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
     }
 
     .category-title span {
@@ -372,7 +302,7 @@
       font-family: monospace;
     }
 
-    .feature-tag {
+    .feature-tag, .bug-tag {
       font-size: 9px;
       font-weight: 900;
       letter-spacing: 0.05em;
@@ -383,9 +313,29 @@
       color: var(--muted-foreground);
     }
 
-    .feature-tag.intelligence {
-      background-color: rgba(124, 92, 153, 0.1);
-      color: var(--primary);
+    .feature-tag.intelligence, .bug-tag.critical {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .bug-tag.timezone {
+      background-color: rgba(245, 158, 11, 0.1);
+      color: #d97706;
+    }
+
+    .bug-tag.integrity {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: #059669;
+    }
+
+    .bug-tag.ui-ux {
+      background-color: rgba(99, 102, 241, 0.1);
+      color: #4f46e5;
+    }
+
+    .bug-tag.performance {
+      background-color: rgba(139, 92, 246, 0.1);
+      color: #7c3aed;
     }
 
     .feature-title, .bug-title {
@@ -402,6 +352,24 @@
       font-weight: 500;
       line-height: 1.6;
       margin-bottom: 16px;
+    }
+
+    .user-perspective {
+      background-color: rgba(225, 232, 240, 0.4);
+      border-left: 4px solid var(--primary);
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 12.5px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .user-perspective strong {
+      font-weight: 800;
+      color: var(--primary);
+      display: block;
+      margin-bottom: 2px;
     }
 
     .feature-bullets, .bug-bullets {
@@ -427,7 +395,6 @@
       font-weight: 900;
     }
 
-    /* Sub-section plans inside feature cards */
     .flow-plan {
       background-color: var(--background);
       border: 1px solid var(--border);
@@ -441,7 +408,7 @@
       font-weight: 900;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--primary);
       margin-bottom: 6px;
     }
 
@@ -456,119 +423,6 @@
       font-weight: 600;
       margin-bottom: 4px;
       line-height: 1.4;
-    }
-
-    /* Empty State */
-    .empty-state-container {
-      background: var(--card);
-      border: 1px dashed var(--border);
-      border-radius: var(--radius-lg);
-      padding: 60px 40px;
-      text-align: center;
-      max-width: 600px;
-      margin: 40px auto;
-      box-shadow: var(--shadow-premium);
-    }
-
-    .empty-state-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-
-    .empty-state-title {
-      font-size: 18px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    .empty-state-desc {
-      font-size: 13px;
-      color: var(--muted-foreground);
-      line-height: 1.6;
-    }
-
-    .theme-switcher-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 200;
-    }
-
-    .theme-switcher-btn {
-      width: 56px;
-      height: 56px;
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-      border-radius: 50%;
-      border: 4px solid var(--background);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-
-    .theme-switcher-btn:hover {
-      transform: scale(1.05);
-    }
-
-    .theme-dropdown {
-      position: absolute;
-      bottom: 72px;
-      right: 0;
-      background-color: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      width: 190px;
-    }
-
-    .theme-dropdown-title {
-      font-size: 9px;
-      text-transform: uppercase;
-      font-weight: 900;
-      letter-spacing: 0.1em;
-      color: var(--muted-foreground);
-      text-align: center;
-      margin: 4px 0 8px;
-    }
-
-    .theme-option {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      background: none;
-      border: none;
-      color: var(--foreground);
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      text-align: left;
-      transition: all 0.2s;
-    }
-
-    .theme-option:hover {
-      background-color: var(--secondary);
-    }
-
-    .theme-option.active {
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-    }
-
-    .color-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,0,0,0.15);
     }
 
     .hidden {
@@ -602,12 +456,12 @@
           <span class="emoji-icon">🐛</span> Open Bugs
         </button>
         <button id="features-tab" class="switcher-btn active" onclick="switchView('features')">
-          <span class="emoji-icon">🚀</span> Upcoming Features
+          <span class="emoji-icon">🚀</span> Active Features
         </button>
       </div>
 
       <div>
-        <span class="version-tag" style="opacity: 0.7;">V1.new</span>
+        <span class="version-tag" style="opacity: 0.7;">V1.2.9</span>
       </div>
     </div>
   </header>
@@ -631,75 +485,351 @@
       
       <!-- Search and Filters -->
       <div class="controls" id="search-controls-bar">
-        <input type="text" id="search-bar" class="search-input" placeholder="Search upcoming features..." onkeyup="handleSearch()">
+        <input type="text" id="search-bar" class="search-input" placeholder="Search features..." onkeyup="handleSearch()">
       </div>
 
       <!-- Bugs Section -->
       <div id="bugs-section-view" class="hidden">
-        <!-- Empty State since 0 open bugs exist -->
-        <div class="empty-state-container">
-          <div class="empty-state-icon">🎉</div>
-          <h3 class="empty-state-title">0 Active Open Bugs!</h3>
-          <p class="empty-state-desc">The workspace is fully verified, healthy, and compiled clean. When active bugs are identified, they will appear here to track work progress; once fixed, they will be removed immediately.</p>
-        </div>
-      </div>
-
-      <!-- Features Section -->
-      <div id="features-section-view">
         
-        <!-- FINANCE -->
-        <div class="category-section" id="section-finance">
-          <h2 class="category-title">💰 Finance & Budget <span>1 Feature</span></h2>
-          <div class="features-grid">
+        <!-- SECTION 1: CRITICAL / DATA LOSS -->
+        <div class="category-section" id="section-critical">
+          <h2 class="category-title">🚨 Critical &amp; Data Loss Bugs <span>5 Bugs</span></h2>
+          <div class="grid-layout">
             
-            <div class="feature-card">
+            <div class="bug-card">
               <div class="card-header">
-                <span class="feature-id">Finance 1.1</span>
-                <span class="feature-tag">Savings</span>
+                <span class="bug-id">BUG 1.1</span>
+                <span class="bug-tag critical">Data Loss</span>
               </div>
-              <h3 class="feature-title">Savings Goals Tracker</h3>
-              <p class="feature-description">Define specific financial savings targets like "Save ₹5L for trip" and monitor progress dynamically against your total liquidity.</p>
-              <ul class="feature-bullets">
-                <li>Track progress dynamically against liquid accounts balances.</li>
-                <li>Visual progress percentages with projection timelines of when you'll reach targets.</li>
+              <h3 class="bug-title">Daily Workout Log Overwrite</h3>
+              <p class="bug-description">Saving a workout deletes all existing records on that date from the database before adding the new entries.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "If I log my morning run, and later in the evening I log a gym session, my morning run is completely wiped out without any warning. I can only save one workout per day."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/workout/page.tsx">app/workout/page.tsx</a> (line 509)</li>
+                <li>Root Cause: `supabase.from('workout_log').delete().eq('date', date)` deletes the entire day's logs before inserting new sets.</li>
               </ul>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Tap "+ New Goal" in your dashboard finance card.</li>
-                  <li>Enter Goal Name, Target Amount, Target Date, and select contributing liquidity accounts.</li>
-                  <li>A progress bar updates balances dynamically and calculates savings velocity.</li>
-                </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 1.2</span>
+                <span class="bug-tag critical">Data Loss</span>
               </div>
+              <h3 class="bug-title">Second Brain Quote Truncation</h3>
+              <p class="bug-description">The block parser parser discards subsequent lines of blockquote notes during deserialization.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "When I write a multi-line quote in my notes, the next time I open that note, all lines after the first line have vanished. My data is permanently lost."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/lib/blockParser.ts">lib/blockParser.ts</a> (line 156)</li>
+                <li>Root Cause: Split-line quote parser reads only index `0` and ignores multi-line quote markers.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 1.3</span>
+                <span class="bug-tag critical">Formatting</span>
+              </div>
+              <h3 class="bug-title">Bold Text to List Conversion</h3>
+              <p class="bug-description">Paragraph blocks starting with bold markdown characters (asterisk/dash) are mistranslated as bullet lists.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "Whenever I write a paragraph starting with bold markdown text like `* This is bold *`, the editor turns the entire paragraph into a bullet list item when I reopen it."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/lib/blockParser.ts">lib/blockParser.ts</a> (line 123)</li>
+                <li>Root Cause: Pattern match evaluates any block starting with `* ` or `- ` as lists, ignoring bold markdown text tags.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 1.4</span>
+                <span class="bug-tag critical">Data Loss</span>
+              </div>
+              <h3 class="bug-title">Recurring Task Subtasks Discard</h3>
+              <p class="bug-description">Checking a recurring parent task complete creates the next scheduled task instance but abandons its checklist subtasks.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "When I complete a recurring task, it schedules the next occurrence, but all of its subtask checklists disappear. The new task is empty, meaning I have to re-enter all my subtasks every time."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/tasks/today/page.tsx">app/tasks/today/page.tsx</a> (line 320)</li>
+                <li>Root Cause: Cloned recurrence creation lacks subtask copying logic, leaving subtasks associated with the completed parent ID.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 1.5</span>
+                <span class="bug-tag critical">Logic</span>
+              </div>
+              <h3 class="bug-title">Streaks Preserved via Unlogged Days</h3>
+              <p class="bug-description">Habit consistency reports iterate only over entered logs, allowing users to preserve streaks by not entering data on failed days.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "If I skip my habit on Tuesday and simply do not log it, my streak continues on Wednesday as if Tuesday never happened. My streak calculation is fake because it ignores days I forgot to log."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/reports/habits/page.tsx">app/reports/habits/page.tsx</a> (line 856)</li>
+                <li>Root Cause: Stretches are evaluated based on logs present in the DB rather than consecutive calendar dates.</li>
+              </ul>
             </div>
 
           </div>
         </div>
 
-        <!-- HABITS -->
-        <div class="category-section" id="section-habits">
-          <h2 class="category-title">🎯 Habits <span>3 Features</span></h2>
-          <div class="features-grid">
+        <!-- SECTION 2: TIMEZONE & CALENDAR -->
+        <div class="category-section" id="section-timezone">
+          <h2 class="category-title">📅 Timezone &amp; Calendar Bugs <span>3 Bugs</span></h2>
+          <div class="grid-layout">
             
-            <div class="feature-card">
+            <div class="bug-card">
               <div class="card-header">
-                <span class="feature-id">Habit 2.1</span>
-                <span class="feature-tag">Streaks</span>
+                <span class="bug-id">BUG 2.1</span>
+                <span class="bug-tag timezone">Timezone</span>
               </div>
-              <h3 class="feature-title">Streak Freeze Joker Cards</h3>
-              <p class="feature-description">Mechanisms to avoid breaking streaks due to travel, sickness, or rest days.</p>
-              <ul class="feature-bullets">
-                <li>Monthly configurable "Joker Days" allowance to skip logs without breaking streaks.</li>
+              <h3 class="bug-title">Subscription Billing Due Date Drift</h3>
+              <p class="bug-description">Date objects parsed from strings without timezone offset default to UTC midnight, causing drift in western timezones.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "Every time I record a payment for my monthly bills, the next due date shifts backward by one day (e.g. from the 15th to the 14th). This means my bills keep showing up as due earlier and earlier."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/expenses/subscriptions/page.tsx">app/expenses/subscriptions/page.tsx</a> (line 234)</li>
+                <li>Root Cause: `new Date(currentDateStr)` parses as UTC, evaluating to the previous calendar day local time in negative timezone offsets (e.g., US).</li>
               </ul>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Enable streak protection in settings and set monthly card limit (e.g. 2 skips).</li>
-                  <li>On missed habits, tap "Use Joker" before midnight to freeze streak.</li>
-                </ul>
-              </div>
             </div>
 
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 2.2</span>
+                <span class="bug-tag timezone">Timezone</span>
+              </div>
+              <h3 class="bug-title">Warranty Expiry Date Shift</h3>
+              <p class="bug-description">Warranty expiration remaining days is computed based on local client vs UTC dates, showing incorrect expired states.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "My item's warranty expiry date displays in the app as one day earlier than what I typed in, and the app tells me it is expired hours before the day actually ends."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/inventory/page.tsx">app/inventory/page.tsx</a> (line 1270)</li>
+                <li>Root Cause: Calculations do not handle timezones or normalize offsets, causing local rendering shift on UTC date inputs.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 2.3</span>
+                <span class="bug-tag timezone">Calendar</span>
+              </div>
+              <h3 class="bug-title">Monthly Habit Anchor Drift</h3>
+              <p class="bug-description">Habits anchored on the 31st do not trigger during shorter months, breaking streaks.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "If I have a monthly habit set for the 31st of the month, it never triggers in months like April, June, or February. This breaks my habit streaks and logs."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/lib/habit-scoring.ts">lib/habit-scoring.ts</a> (line 77)</li>
+                <li>Root Cause: Strict equality matching: `date.getDate() === anchor.getDate()` does not check if the date exceeds the month limit.</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 3: DATABASE INTEGRITY -->
+        <div class="category-section" id="section-integrity">
+          <h2 class="category-title">🔒 Database Integrity Bugs <span>2 Bugs</span></h2>
+          <div class="grid-layout">
+            
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 3.1</span>
+                <span class="bug-tag integrity">Integrity</span>
+              </div>
+              <h3 class="bug-title">Desynced Ledger Balances</h3>
+              <p class="bug-description">Expense entries and liquidity balance updates are executed sequentially on the client without transaction protection.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "Sometimes when I record an expense or pay a subscription, the money is deducted from my account but the expense log is not created, or the log is created but my balance is unchanged, throwing off my net worth."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/expenses/transactions/TransactionsForm.tsx">TransactionsForm.tsx</a> (line 267)</li>
+                <li>Root Cause: Sequential async updates can fail halfway due to network drops, failing database atomic constraints.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 3.2</span>
+                <span class="bug-tag integrity">Integrity</span>
+              </div>
+              <h3 class="bug-title">Odometer Calculations Reset to Zero</h3>
+              <p class="bug-description">Calculations for average daily mileage and active vehicle odometer fallback incorrectly when component wear lists are empty.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "My vehicle dashboard shows my current odometer reading as 0 or fails to predict my component wear if my parts do not have a specific distance limit set."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/vehicles/components/page.tsx">app/vehicles/components/page.tsx</a> (line 210)</li>
+                <li>Root Cause: `getCurrentVehicleOdo` sets values to 0 if a component has no limit set, ignoring initial registration configurations.</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 4: UI/UX & FORMS -->
+        <div class="category-section" id="section-ui-ux">
+          <h2 class="category-title">⚡ UI/UX &amp; Form Bugs <span>3 Bugs</span></h2>
+          <div class="grid-layout">
+            
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 4.1</span>
+                <span class="bug-tag ui-ux">UX</span>
+              </div>
+              <h3 class="bug-title">Save Race Condition on Searchable Selects</h3>
+              <p class="bug-description">Commit callback values in dropdown selections lag behind immediate form submission calls.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "When I type a new category/subcategory and click save immediately, the page rejects my entry and tells me the field is required, even though I just typed it in."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/components/SearchableSelect.tsx">components/SearchableSelect.tsx</a> (line 140)</li>
+                <li>Root Cause: 200ms timeout on input blur executes after the save button's click handler, failing initial validations.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 4.2</span>
+                <span class="bug-tag ui-ux">UX</span>
+              </div>
+              <h3 class="bug-title">Blocked Weight inputs on Bodyweight Workouts</h3>
+              <p class="bug-description">Workout saves enforce positive float formatting values for weights, prohibiting common shorthand.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "When I try to log bodyweight exercises like pullups and write 'BW' or leave the weight blank, the app displays a weight validation error and rejects my log, forcing me to enter a fake weight."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/workout/page.tsx">app/workout/page.tsx</a> (line 480)</li>
+                <li>Root Cause: The form validation enforces `parseFloat(s.weight)` must be a valid number, which prevents text inputs like `"BW"`.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 4.3</span>
+                <span class="bug-tag ui-ux">UX</span>
+              </div>
+              <h3 class="bug-title">Invisible Second Brain Links</h3>
+              <p class="bug-description">Connections created between knowledge base cards are never fetched or displayed in the UI details panel.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "I can click to link notes together in the second brain, but these connections are completely invisible and never show up on my notes or cards page."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/hooks/useBrain.ts">hooks/useBrain.ts</a> (line 178)</li>
+                <li>Root Cause: Hook function `getLinks` fetches cards connections from the DB, but it is never referenced or rendered on the cards page.</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 5: PERFORMANCE & SCALE -->
+        <div class="category-section" id="section-performance">
+          <h2 class="category-title">📊 Performance &amp; Scale Bugs <span>4 Bugs</span></h2>
+          <div class="grid-layout">
+            
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 5.1</span>
+                <span class="bug-tag performance">Performance</span>
+              </div>
+              <h3 class="bug-title">Page Load Stutter (Sequential Updates)</h3>
+              <p class="bug-description">Task updates evaluated on page load execute database PATCH updates sequentially within a loop.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "Whenever I load my tasks or open the app dashboard, the app freezes or stutters for a second because it runs multiple database operations in a slow, consecutive loop."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/lib/task-recurrence.ts">lib/task-recurrence.ts</a> (line 102)</li>
+                <li>Root Cause: The code updates `is_today` and `is_week` flags for multiple tasks sequentially in a `for` loop on mount, hitting network congestion.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 5.2</span>
+                <span class="bug-tag performance">Performance</span>
+              </div>
+              <h3 class="bug-title">Sluggish Cards Dashboard Load</h3>
+              <p class="bug-description">Opening the Second Brain retrieves the entire database links list to construct counts in client memory.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "As my Second Brain grows, opening the cards dashboard becomes slower and slower, making the app feel heavy and laggy."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/second-brain/cards/page.tsx">app/second-brain/cards/page.tsx</a> (line 194)</li>
+                <li>Root Cause: `loadAllLinksCount` fetches the entire `brain_links` table into memory to map card connections, leading to high data overhead.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 5.3</span>
+                <span class="bug-tag performance">Analytics</span>
+              </div>
+              <h3 class="bug-title">Statistical Bias (Excluded Zero Values)</h3>
+              <p class="bug-description">Correlation charts filter out `0` values from calculations, inflating averages and skewing reports.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "My health and finance reports display inflated averages and skewed charts because days where I spent zero money or logged 0 steps/water are ignored in calculations rather than counted as zero."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/reports/correlations/page.tsx">app/reports/correlations/page.tsx</a> (line 128)</li>
+                <li>Root Cause: `xVal > 0` checks exclude `0` values from correlations, and `parseFloat(row.value) || null` treats `0` logs as missing values.</li>
+              </ul>
+            </div>
+
+            <div class="bug-card">
+              <div class="card-header">
+                <span class="bug-id">BUG 5.4</span>
+                <span class="bug-tag performance">Crash Risk</span>
+              </div>
+              <h3 class="bug-title">Edge Subrequest Send Limits Exceeded</h3>
+              <p class="bug-description">Broadcast notifications dispatch push requests concurrently via `Promise.all` which triggers rate limit issues on Edge.</p>
+              <div class="user-perspective">
+                <strong>User's Point of View:</strong>
+                "When notifications are sent out, many of my registered devices do not receive them, or the system crashes halfway through sending."
+              </div>
+              <ul class="bug-bullets">
+                <li>Affected File: <a href="file:///Volumes/SquareShift/Projects/Resiliessance/app/api/push/send/route.ts">app/api/push/send/route.ts</a> (line 112)</li>
+                <li>Root Cause: Cloudflare Worker subrequest limits restrict concurrent fetches. Resolving notifications via `Promise.all` breaks worker constraints.</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Features Section -->
+      <div id="features-section-view">
+        
+        <!-- HABITS -->
+        <div class="category-section" id="section-habits">
+          <h2 class="category-title">🎯 Habits <span>1 Feature</span></h2>
+          <div class="features-grid">
+            
             <div class="feature-card">
               <div class="card-header">
                 <span class="feature-id">Habit 2.2</span>
@@ -714,161 +844,14 @@
               </ul>
             </div>
 
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Habit 2.3</span>
-                <span class="feature-tag">Visuals</span>
-              </div>
-              <h3 class="feature-title">Habit Consistency Heatmap</h3>
-              <p class="feature-description">A contribution-style habit log grid overlay showing daily progress patterns.</p>
-              <ul class="feature-bullets">
-                <li>GitHub-style contribution grid displaying 52-week year-round consistency inside reports.</li>
-              </ul>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Grid represents completions: Dark Green (Done), Light Green (Partial), Amber (Joker), Grey (Rest).</li>
-                </ul>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- TASKS -->
-        <div class="category-section" id="section-tasks">
-          <h2 class="category-title">📝 Tasks <span>1 Feature</span></h2>
-          <div class="features-grid">
-            
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Task 3.1</span>
-                <span class="feature-tag">Automation</span>
-              </div>
-              <h3 class="feature-title">Recurring Task Schedules</h3>
-              <p class="feature-description">Support for recurring tasks that recreate themselves upon completion.</p>
-              <ul class="feature-bullets">
-                <li>Setup daily, weekly, or monthly repetitions.</li>
-              </ul>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Define recurrence rules on task creation. Checking it complete auto-schedules the next copy.</li>
-                </ul>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- WORKOUT -->
-        <div class="category-section" id="section-workout">
-          <h2 class="category-title">🏋️ Workout & Fitness <span>1 Feature</span></h2>
-          <div class="features-grid">
-            
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Workout 4.1</span>
-                <span class="feature-tag">Timers</span>
-              </div>
-              <h3 class="feature-title">Workout Rest Timer</h3>
-              <p class="feature-description">A set-stop countdown stopwatch showing alerts on set completions.</p>
-              <ul class="feature-bullets">
-                <li>Integrate directly into the active session lifter screen.</li>
-              </ul>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Tapping a completed set triggers rest stopwatch countdown.</li>
-                  <li>Plays soft tone/vibrates at 0s, with quick options to extend (+30s) or skip rest.</li>
-                </ul>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- VEHICLES -->
-        <div class="category-section" id="section-vehicles">
-          <h2 class="category-title">🚗 Vehicles <span>1 Feature</span></h2>
-          <div class="features-grid">
-            
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Vehicle 5.1</span>
-                <span class="feature-tag">Diagnostics</span>
-              </div>
-              <h3 class="feature-title">Vehicle Component Age Tracker</h3>
-              <p class="feature-description">Track active ages, installation dates, and mileage logs for tires, batteries, spark plugs, and brake pads.</p>
-              <ul class="feature-bullets">
-                <li>Visual age and wear indicators for key fleet parts.</li>
-                <li>Proactive alerts before components reach failure thresholds.</li>
-              </ul>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Add part entry: installation date (age in days) and active odometer (mileage).</li>
-                  <li>Wear meters calculate lifetime limits (e.g. 5 years or 40k km for tires).</li>
-                  <li>Triggers dashboard alerts when parts reach critical age or wear limits.</li>
-                </ul>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- INVENTORY -->
-        <div class="category-section" id="section-inventory">
-          <h2 class="category-title">📦 Inventory <span>3 Features</span></h2>
-          <div class="features-grid">
-            
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Inventory 6.1</span>
-                <span class="feature-tag">Alerts</span>
-              </div>
-              <h3 class="feature-title">Warranty Tracker & Expiry Alerts</h3>
-              <p class="feature-description">Store digital warranties and trigger alerts before they expire.</p>
-              <ul class="feature-bullets">
-                <li>Attach invoice photos and set warranty years fields.</li>
-              </ul>
-            </div>
-
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Inventory 6.2</span>
-                <span class="feature-tag">Alerts</span>
-              </div>
-              <h3 class="feature-title">Asset Maintenance Interval Alerts</h3>
-              <p class="feature-description">Configure regular service timelines for assets (e.g. AC unit, water filter).</p>
-            </div>
-
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Inventory 6.3</span>
-                <span class="feature-tag">Shopping</span>
-              </div>
-              <h3 class="feature-title">Asset Wishlist</h3>
-              <p class="feature-description">Draft lists of items you want to buy with price tracking.</p>
-            </div>
-
           </div>
         </div>
 
         <!-- PETS -->
         <div class="category-section" id="section-pets">
-          <h2 class="category-title">🐾 Pets <span>2 Features</span></h2>
+          <h2 class="category-title">🐾 Pets <span>1 Feature</span></h2>
           <div class="features-grid">
             
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Pets 7.1</span>
-                <span class="feature-tag">Alerts</span>
-              </div>
-              <h3 class="feature-title">Pet Medication & Vaccine Alerts</h3>
-              <p class="feature-description">Push alerts for vaccination schedules and medication routines.</p>
-            </div>
-
             <div class="feature-card">
               <div class="card-header">
                 <span class="feature-id">Pets 7.2</span>
@@ -876,6 +859,10 @@
               </div>
               <h3 class="feature-title">Pet Expense Linking</h3>
               <p class="feature-description">Link pet food or vet costs directly to the daily finance tracker.</p>
+              <ul class="feature-bullets">
+                <li>Log pet expenses with auto-linking to the transaction ledger.</li>
+                <li>Categorize pet spending in budget reports.</li>
+              </ul>
             </div>
 
           </div>
@@ -883,18 +870,9 @@
 
         <!-- SYSTEM & PLATFORM -->
         <div class="category-section" id="section-system">
-          <h2 class="category-title">🔧 System & Platform <span>2 Features</span></h2>
+          <h2 class="category-title">🔧 System &amp; Platform <span>1 Feature</span></h2>
           <div class="features-grid">
             
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">System 8.1</span>
-                <span class="feature-tag">Data</span>
-              </div>
-              <h3 class="feature-title">JSON Data Backup & Exporter</h3>
-              <p class="feature-description">Download complete database records as a single portable JSON file.</p>
-            </div>
-
             <div class="feature-card">
               <div class="card-header">
                 <span class="feature-id">System 8.2</span>
@@ -996,65 +974,15 @@
           </div>
         </div>
 
-        <!-- PROPOSED INTEGRATIONS -->
-        <div class="category-section" id="section-integrations">
-          <h2 class="category-title">🌟 Proposed Integrations <span>1 Feature</span></h2>
-          <div class="features-grid">
-            
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Integrations 11.1</span>
-                <span class="feature-tag">IoT</span>
-              </div>
-              <h3 class="feature-title">Wearable & Biometric Sync</h3>
-              <p class="feature-description">Import physical health metrics (sleep quality, HRV, active calories, resting heart rate) automatically from watches/wearables.</p>
-            </div>
-
-          </div>
-        </div>
-
       </div>
 
     </div>
   </div>
 
-  <!-- Interactive Floating Theme Switcher -->
-  <div class="theme-switcher-container">
-    <div id="theme-dropdown" class="theme-dropdown hidden">
-      <div class="theme-dropdown-title">Select Theme</div>
-      <button class="theme-option active" onclick="changeTheme('nordic')">
-        <span>🌿 Nordic Sage</span>
-        <div class="color-dot" style="background-color: #f0f4f1;"></div>
-      </button>
-      <button class="theme-option" onclick="changeTheme('terracotta')">
-        <span>🏜️ Terracotta</span>
-        <div class="color-dot" style="background-color: #fbf9f6;"></div>
-      </button>
-      <button class="theme-option" onclick="changeTheme('ocean')">
-        <span>🌊 Ocean Mist</span>
-        <div class="color-dot" style="background-color: #f0f4f8;"></div>
-      </button>
-      <button class="theme-option" onclick="changeTheme('lavender')">
-        <span>🌸 Lavender</span>
-        <div class="color-dot" style="background-color: #f5f3f7;"></div>
-      </button>
-    </div>
-    <button class="theme-switcher-btn" onclick="toggleThemeDropdown()">
-      <!-- Palette Icon -->
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.35626 19.5 5.56839 20.2189 5.37877 20.8931L5.22222 21.4504C5.07471 21.9768 5.47466 22 6 22H12Z"/>
-        <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/>
-        <circle cx="11.5" cy="7.5" r="1.5" fill="currentColor"/>
-        <circle cx="16.5" cy="9.5" r="1.5" fill="currentColor"/>
-        <circle cx="15.5" cy="14.5" r="1.5" fill="currentColor"/>
-      </svg>
-    </button>
-  </div>
-
   <!-- Footer -->
   <footer>
     <p>Consolidated Master Report • Resiliessance Life OS Platform Console</p>
-    <p style="margin-top: 4px; font-size: 11px; opacity: 0.7;">21 Core Planned Upgrades &amp; Enhancements Registered</p>
+    <p style="margin-top: 4px; font-size: 11px; opacity: 0.7;">9 Core Active Upgrades &amp; 17 Open Bugs Registered</p>
   </footer>
 
   <script>
@@ -1063,55 +991,26 @@
 
     // Navigation configurations
     const bugNavItems = [
-      { id: 'all-bugs', label: 'All Open Bugs', emoji: '🐛' }
+      { id: 'critical', label: 'Critical & Data Loss', emoji: '🚨' },
+      { id: 'timezone', label: 'Timezone & Calendar', emoji: '📅' },
+      { id: 'integrity', label: 'Database Integrity', emoji: '🔒' },
+      { id: 'ui-ux', label: 'UI/UX & Forms', emoji: '⚡' },
+      { id: 'performance', label: 'Performance & Scale', emoji: '📊' }
     ];
 
     const featureNavItems = [
-      { id: 'finance', label: 'Finance & Budget', emoji: '💰' },
       { id: 'habits', label: 'Habits', emoji: '🎯' },
-      { id: 'tasks', label: 'Tasks', emoji: '📝' },
-      { id: 'workout', label: 'Workout & Fitness', emoji: '🏋️' },
-      { id: 'vehicles', label: 'Vehicles', emoji: '🚗' },
-      { id: 'inventory', label: 'Inventory', emoji: '📦' },
       { id: 'pets', label: 'Pets', emoji: '🐾' },
       { id: 'system', label: 'System & Platform', emoji: '🔧' },
       { id: 'gamification', label: 'Gamification', emoji: '🎮' },
-      { id: 'ai-analytics', label: 'Advanced AI Analytics', emoji: '🤖' },
-      { id: 'integrations', label: 'Proposed Integrations', emoji: '🌟' }
+      { id: 'ai-analytics', label: 'Advanced AI Analytics', emoji: '🤖' }
     ];
 
     // Initialize Page
     document.addEventListener("DOMContentLoaded", () => {
-      // Load saved theme or default to nordic
-      const savedTheme = localStorage.getItem("resiliessance_ui_theme") || "nordic";
-      changeTheme(savedTheme);
-      
       // Default initial view
       switchView('features');
     });
-
-    // Theme Switcher Functions
-    function toggleThemeDropdown() {
-      const dropdown = document.getElementById("theme-dropdown");
-      dropdown.classList.toggle("hidden");
-    }
-
-    // Change visual theme
-    function changeTheme(themeId) {
-      document.documentElement.setAttribute("data-theme", themeId);
-      localStorage.setItem("resiliessance_ui_theme", themeId);
-      
-      // Update active options in the theme picker dropdown
-      const options = document.querySelectorAll(".theme-option");
-      options.forEach(opt => opt.classList.remove("active"));
-      
-      const themeIndices = { 'nordic': 0, 'terracotta': 1, 'ocean': 2, 'lavender': 3 };
-      if (themeId in themeIndices) {
-        options[themeIndices[themeId]].classList.add("active");
-      }
-      
-      document.getElementById("theme-dropdown").classList.add("hidden");
-    }
 
     // Switch view tabs
     function switchView(view) {
@@ -1141,11 +1040,13 @@
         bugsView.classList.remove("hidden");
         document.getElementById("hero-title").innerText = "Bug Report Console";
         document.getElementById("hero-subtitle").innerText = "A diagnostic tracking log of identified open bugs in the Resiliessance workspace.";
+        searchInput.placeholder = "Search bugs...";
+        searchControls.classList.remove("hidden");
       } else if (view === 'features') {
         featuresTab.classList.add("active");
         featuresView.classList.remove("hidden");
         searchControls.classList.remove("hidden");
-        searchInput.placeholder = "Search upcoming features...";
+        searchInput.placeholder = "Search features...";
         document.getElementById("hero-title").innerText = "Upcoming Features Registry";
         document.getElementById("hero-subtitle").innerText = "A master registry of proposed capabilities and product upgrades for the Resiliessance Life OS.";
       }
@@ -1175,7 +1076,6 @@
 
     // Smooth Scroll Navigation
     function scrollToSection(id) {
-      if (currentView === 'bugs') return;
       const elementId = 'section-' + id;
       const element = document.getElementById(elementId);
       if (element) {
@@ -1186,10 +1086,9 @@
     // Active Sidebar Highlight based on Scroll Position (Throttled)
     let isTicking = false;
     window.addEventListener('scroll', () => {
-      if (currentView === 'bugs') return;
       if (!isTicking) {
         window.requestAnimationFrame(() => {
-          const sections = document.querySelectorAll('.category-section');
+          const sections = document.querySelectorAll('.category-section:not(.hidden)');
           const navItems = document.querySelectorAll('.nav-item');
           let currentSectionId = '';
 
@@ -1203,7 +1102,7 @@
           if (currentSectionId) {
             navItems.forEach(item => {
               item.classList.remove('active');
-              if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(currentSectionId)) {
+              if (item.innerText && item.innerText.toLowerCase().includes(currentSectionId.split('-')[0].toLowerCase())) {
                 item.classList.add('active');
               }
             });
@@ -1214,20 +1113,28 @@
       }
     });
 
-    // Features Search Filter
-    function applyFeatureFilters() {
+    // Universal Search Filter (Works for Features & Bugs)
+    function applyFilters() {
       const query = document.getElementById('search-bar').value.toLowerCase();
-      const cards = document.querySelectorAll('.feature-card');
-      const sections = document.querySelectorAll('#features-section-view .category-section');
+      const selector = currentView === 'features' ? '.feature-card' : '.bug-card';
+      const cards = document.querySelectorAll(selector);
+      const activeSectionId = currentView === 'features' ? '#features-section-view' : '#bugs-section-view';
+      const sections = document.querySelectorAll(`${activeSectionId} .category-section`);
 
       cards.forEach(card => {
-        const title = card.querySelector('.feature-title').innerText.toLowerCase();
-        const desc = card.querySelector('.feature-description').innerText.toLowerCase();
-        let bullets = '';
-        const bulletEls = card.querySelectorAll('.feature-bullets li');
-        bulletEls.forEach(li => bullets += li.innerText.toLowerCase() + ' ');
+        const titleText = card.querySelector(currentView === 'features' ? '.feature-title' : '.bug-title').innerText.toLowerCase();
+        const descText = card.querySelector(currentView === 'features' ? '.feature-description' : '.bug-description').innerText.toLowerCase();
+        
+        let extraText = '';
+        if (currentView === 'features') {
+          const bullets = card.querySelectorAll('.feature-bullets li');
+          bullets.forEach(li => extraText += li.innerText.toLowerCase() + ' ');
+        } else {
+          const userPersp = card.querySelector('.user-perspective').innerText.toLowerCase();
+          extraText = userPersp;
+        }
 
-        if (title.includes(query) || desc.includes(query) || bullets.includes(query)) {
+        if (titleText.includes(query) || descText.includes(query) || extraText.includes(query)) {
           card.classList.remove('hidden');
         } else {
           card.classList.add('hidden');
@@ -1235,8 +1142,9 @@
       });
 
       sections.forEach(sec => {
-        const visibleCards = sec.querySelectorAll('.feature-card:not(.hidden)');
-        if (visibleCards.length === 0) {
+        const itemSelector = currentView === 'features' ? '.feature-card:not(.hidden)' : '.bug-card:not(.hidden)';
+        const visibleItems = sec.querySelectorAll(itemSelector);
+        if (visibleItems.length === 0) {
           sec.classList.add('hidden');
         } else {
           sec.classList.remove('hidden');
@@ -1245,9 +1153,7 @@
     }
 
     function handleSearch() {
-      if (currentView === 'features') {
-        applyFeatureFilters();
-      }
+      applyFilters();
     }
   </script>
 

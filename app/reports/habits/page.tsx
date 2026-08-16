@@ -853,35 +853,49 @@ export default function ReportsPage() {
           }
         }
       } else {
-        const activeLogs = hLogs.filter(log => isHabitActiveOnDate(cfg as any, log.date));
         let runningStreak = 0;
         let maxStr = 0;
-        activeLogs.forEach(log => {
-          if (log.status === 'Success') {
-            runningStreak++;
-            if (runningStreak > maxStr) maxStr = runningStreak;
-          } else if (log.status === 'Joker') {
-            // Freeze
-          } else {
-            runningStreak = 0;
-          }
-        });
-        maxStreak = maxStr;
-        
         let current = 0;
-        const reversedActive = [...activeLogs].reverse();
-        if (reversedActive.length > 0) {
-          for (let i = 0; i < reversedActive.length; i++) {
-            if (reversedActive[i].status === 'Success') {
-              current++;
-            } else if (reversedActive[i].status === 'Joker') {
+
+        if (hLogs.length > 0) {
+          const startDateStr = hLogs[0].date;
+          const todayStr = format(new Date(), "yyyy-MM-dd");
+          const start = new Date(startDateStr + "T00:00:00");
+          const end = new Date(todayStr + "T00:00:00");
+          const daysBetween = eachDayOfInterval({ start, end });
+
+          const logMap = new globalThis.Map<string, string>();
+          hLogs.forEach(log => {
+            logMap.set(log.date, log.status);
+          });
+
+          daysBetween.forEach(day => {
+            const dateStr = format(day, "yyyy-MM-dd");
+            const isActive = isHabitActiveOnDate(cfg as any, dateStr);
+            if (!isActive) return;
+
+            const status = logMap.get(dateStr);
+            if (status === 'Success') {
+              runningStreak++;
+              if (runningStreak > maxStr) maxStr = runningStreak;
+            } else if (status === 'Joker') {
               // Freeze
+            } else if (status) {
+              runningStreak = 0;
             } else {
-              break;
+              // Unlogged day
+              if (dateStr === todayStr) {
+                // Today is not logged yet, don't break the streak but don't increment it.
+              } else {
+                runningStreak = 0;
+              }
             }
-          }
-          currentStreak = current;
+          });
+
+          maxStreak = maxStr;
+          current = runningStreak;
         }
+        currentStreak = current;
       }
 
       let success = 0;

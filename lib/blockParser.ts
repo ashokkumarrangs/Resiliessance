@@ -121,16 +121,22 @@ export function deserializeMarkdownToBlocks(markdown: string | null): EditorBloc
 
     // 2. List Check
     if (!parsedBlock && (blockStrTrimmed.startsWith("- ") || blockStrTrimmed.startsWith("* "))) {
-      const listItems = blockStrTrimmed
-        .split("\n")
-        .map((line) => {
-          const tLine = line.trim();
-          if (tLine.startsWith("- ")) return tLine.substring(2);
-          if (tLine.startsWith("* ")) return tLine.substring(2);
-          return tLine;
-        });
+      // Avoid treating bold/italic styled paragraphs like "* This is bold *" as a list
+      const isItalicOrBoldPattern = 
+        (blockStrTrimmed.startsWith("* ") && (blockStrTrimmed.endsWith(" *") || blockStrTrimmed.endsWith("*")));
       
-      parsedBlock = { type: "list", listItems };
+      if (!isItalicOrBoldPattern) {
+        const listItems = blockStrTrimmed
+          .split("\n")
+          .map((line) => {
+            const tLine = line.trim();
+            if (tLine.startsWith("- ")) return tLine.substring(2);
+            if (tLine.startsWith("* ")) return tLine.substring(2);
+            return tLine;
+          });
+        
+        parsedBlock = { type: "list", listItems };
+      }
     }
 
     // 3. Link Check (standalone block: [text](url))
@@ -155,14 +161,27 @@ export function deserializeMarkdownToBlocks(markdown: string | null): EditorBloc
     // 5. Quote Check
     if (!parsedBlock && blockStrTrimmed.startsWith("> ")) {
       const lines = blockStrTrimmed.split("\n").map((l) => l.trim());
-      const quoteText = lines[0].substring(2);
       let author = "";
+      let quoteLines = [...lines];
       
-      if (lines.length > 1 && lines[1].startsWith("—")) {
-        author = lines[1].substring(1).trim();
-      } else if (lines.length > 1 && lines[1].startsWith("-")) {
-        author = lines[1].substring(1).trim();
+      if (lines.length > 1) {
+        const lastLine = lines[lines.length - 1];
+        if (lastLine.startsWith("—") || lastLine.startsWith("-")) {
+          author = lastLine.substring(1).trim();
+          quoteLines = lines.slice(0, -1);
+        }
       }
+      
+      const quoteText = quoteLines
+        .map((line) => {
+          if (line.startsWith("> ")) {
+            return line.substring(2);
+          } else if (line.startsWith(">")) {
+            return line.substring(1);
+          }
+          return line;
+        })
+        .join("\n");
       
       parsedBlock = { type: "quote", text: quoteText, author };
     }

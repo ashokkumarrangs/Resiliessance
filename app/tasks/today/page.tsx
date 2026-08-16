@@ -359,6 +359,34 @@ export default function TaskManagerPage() {
 
           if (insertError) throw insertError;
 
+          // Clone subtasks for the new recurring task
+          const subtasks = tasks.filter(t => t.parent_id === task.id);
+          if (subtasks.length > 0) {
+            const nextSubtasks = subtasks.map(st => ({
+              id: crypto.randomUUID(),
+              parent_id: nextTask.id,
+              task: st.task,
+              status: 'Pending',
+              is_today: nextTask.is_today,
+              is_week: nextTask.is_week,
+              is_high_priority: st.is_high_priority || false,
+              is_inbox: nextTask.is_inbox,
+              notes: st.notes || null,
+              sort_order: st.sort_order || 0,
+              due_date: nextTask.due_date,
+              recurrence_type: 'none',
+              recurrence_interval: null,
+              recurrence_days: null,
+              recurrence_anchor: null
+            }));
+
+            const { error: subtaskInsertError } = await supabase
+              .from('tasks')
+              .insert(nextSubtasks);
+            
+            if (subtaskInsertError) throw subtaskInsertError;
+          }
+
           toast.success(`Task completed! Next occurrence scheduled for ${nextDueDateStr}`);
           loadTasks();
           return;
