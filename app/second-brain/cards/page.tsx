@@ -88,6 +88,7 @@ export default function CardsPage() {
     deleteCard,
     rateCard,
     addLink,
+    getLinks,
     loading
   } = useBrain();
 
@@ -154,15 +155,11 @@ export default function CardsPage() {
   };
 
   const cards = getNonFleetingCards();
+  const cardIdsStr = cards.map((c) => c.id).sort().join(",");
 
   const loadCardLinks = useCallback(async (cardId: string) => {
     try {
-      const { data: linksData, error: linksError } = await supabase
-        .from("brain_links")
-        .select("*")
-        .or(`from_card_id.eq.${cardId},to_card_id.eq.${cardId}`);
-
-      if (linksError) throw linksError;
+      const linksData = await getLinks(cardId);
       if (!linksData || linksData.length === 0) {
         setActiveCardLinks([]);
         return;
@@ -189,29 +186,40 @@ export default function CardsPage() {
     } catch (err) {
       console.error("Failed to load links:", err);
     }
-  }, []);
+  }, [getLinks]);
 
   const loadAllLinksCount = useCallback(async () => {
+    if (!cardIdsStr) {
+      setLinksCountMap({});
+      return;
+    }
     try {
-      const { data, error } = await supabase.from("brain_links").select("from_card_id, to_card_id");
+      const cardIds = cardIdsStr.split(",");
+      const { data, error } = await supabase
+        .from("brain_links")
+        .select("from_card_id, to_card_id")
+        .or(`from_card_id.in.(${cardIds.join(",")}),to_card_id.in.(${cardIds.join(",")})`);
       if (error) throw error;
       if (!data) return;
 
       const countMap: Record<string, number> = {};
       data.forEach((l) => {
-        countMap[l.from_card_id] = (countMap[l.from_card_id] || 0) + 1;
-        countMap[l.to_card_id] = (countMap[l.to_card_id] || 0) + 1;
+        if (l.from_card_id) countMap[l.from_card_id] = (countMap[l.from_card_id] || 0) + 1;
+        if (l.to_card_id) countMap[l.to_card_id] = (countMap[l.to_card_id] || 0) + 1;
       });
       setLinksCountMap(countMap);
     } catch (err) {
       console.error("Failed to load links count:", err);
     }
-  }, []);
+  }, [cardIdsStr]);
 
   useEffect(() => {
     fetchCards();
+  }, [fetchCards]);
+
+  useEffect(() => {
     loadAllLinksCount();
-  }, [fetchCards, loadAllLinksCount]);
+  }, [cardIdsStr, loadAllLinksCount]);
 
   useEffect(() => {
     if (editingCard) {

@@ -109,28 +109,34 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, message: 'No subscriptions found in database to notify.' });
     }
 
-    const results = await Promise.all(
-      dbSubscriptions.map(async (dbSub) => {
-        try {
-          await sendPushNotification(dbSub, payloadData);
-          return { endpoint: dbSub.endpoint, status: 'success' };
-        } catch (err: any) {
-          console.error(`Error sending notification to endpoint ${dbSub.endpoint}:`, err);
-          
-          // If the subscription is expired or unregistered, remove it from our database
-          if (err.message.includes('410') || err.message.includes('404')) {
-            console.log(`Removing expired subscription: ${dbSub.endpoint}`);
-            await supabase
-              .from('push_subscriptions')
-              .delete()
-              .eq('endpoint', dbSub.endpoint);
-            return { endpoint: dbSub.endpoint, status: 'removed_expired' };
+    const results = [];
+    const batchSize = 4; // safe concurrency limit for Edge/Workers
+    for (let i = 0; i < dbSubscriptions.length; i += batchSize) {
+      const batch = dbSubscriptions.slice(i, i + batchSize);
+      const batchResults = await Promise.all(
+        batch.map(async (dbSub) => {
+          try {
+            await sendPushNotification(dbSub, payloadData);
+            return { endpoint: dbSub.endpoint, status: 'success' };
+          } catch (err: any) {
+            console.error(`Error sending notification to endpoint ${dbSub.endpoint}:`, err);
+            
+            // If the subscription is expired or unregistered, remove it from our database
+            if (err.message.includes('410') || err.message.includes('404')) {
+              console.log(`Removing expired subscription: ${dbSub.endpoint}`);
+              await supabase
+                .from('push_subscriptions')
+                .delete()
+                .eq('endpoint', dbSub.endpoint);
+              return { endpoint: dbSub.endpoint, status: 'removed_expired' };
+            }
+            
+            return { endpoint: dbSub.endpoint, status: 'failed', error: err.message };
           }
-          
-          return { endpoint: dbSub.endpoint, status: 'failed', error: err.message };
-        }
-      })
-    );
+        })
+      );
+      results.push(...batchResults);
+    }
 
     return NextResponse.json({ success: true, results });
   } catch (error: any) {

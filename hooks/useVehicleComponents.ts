@@ -18,6 +18,7 @@ export interface VehicleComponent {
   
   // Enriched fields calculated at runtime
   health?: ComponentHealth;
+  current_vehicle_odometer?: number;
 }
 
 export interface ComponentHistoryRecord {
@@ -98,7 +99,8 @@ export function useVehicleComponents() {
 
       return {
         ...comp,
-        health
+        health,
+        current_vehicle_odometer: currentOdometer
       } as VehicleComponent;
     });
 

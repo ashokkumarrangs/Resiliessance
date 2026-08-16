@@ -208,8 +208,11 @@ function VehicleComponentsContent() {
 
   // Helper to find the current odometer of selected vehicle from calculation results
   const getCurrentVehicleOdo = () => {
-    if (components.length > 0 && components[0].health) {
-      return components[0].health.componentId ? components[0].installed_odometer + Math.round(components[0].health.odometerWear * (components[0].limit_odometer || 0)) : 0;
+    if (components.length > 0) {
+      const firstWithOdo = components.find(c => c.current_vehicle_odometer !== undefined);
+      if (firstWithOdo && firstWithOdo.current_vehicle_odometer !== undefined) {
+        return firstWithOdo.current_vehicle_odometer;
+      }
     }
     const currentVeh = vehicles.find(v => v.id === selectedVehicle);
     return currentVeh?.initial_odometer || 0;

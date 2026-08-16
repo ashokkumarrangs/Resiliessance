@@ -477,7 +477,8 @@ function WorkoutPageContent() {
         return;
       }
       for (const s of ex.sets) {
-        const w = parseFloat(s.weight);
+        const isBW = !s.weight || s.weight.toString().trim() === "" || s.weight.toString().toLowerCase().trim() === "bw";
+        const w = isBW ? 0 : parseFloat(s.weight);
         const r = parseInt(s.reps);
         if (isNaN(w) || w < 0) {
           toast.error(`Invalid weight for ${ex.name}`);

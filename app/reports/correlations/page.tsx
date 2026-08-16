@@ -108,8 +108,9 @@ export default function CorrelationsPage() {
     const dateList=Array.from({length:days},(_,i)=>format(subDays(new Date(),i),"yyyy-MM-dd"));
     const getHabit=(date:string,name:string):number|null=>{
       const row=rawData.habits.find((h) =>h.date===date&&h.habit===name);
-      if(!row||!row.value) return null;
-      return parseFloat(row.value)||null;
+      if(!row || row.value === undefined || row.value === null || row.value === "") return null;
+      const parsed = parseFloat(row.value);
+      return isNaN(parsed) ? null : parsed;
     };
     const getWorkoutVol=(date:string):number=>rawData.workouts.filter((w) =>w.date===date).reduce((s:number, w)=>s+((parseFloat(w.weight)||0)*(parseInt(w.reps)||0)),0);
     const getDailyExpense=(date:string):number=>rawData.expenses.filter((e) =>e.date===date).reduce((s:number, e)=>s+(parseFloat(e.amount)||0),0);
@@ -125,7 +126,7 @@ export default function CorrelationsPage() {
     for(const date of dateList){
       const xVal=getValue(activePair.xKey,date);
       const yVal=getValue(activePair.yKey,date);
-      if(xVal!==null&&xVal>0&&yVal!==null){
+      if(xVal!==null&&yVal!==null){
         const d=new Date(date+"T00:00:00");
         points.push({x:xVal,y:yVal,date,dow:d.getDay()});
       }

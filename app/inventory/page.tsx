@@ -85,6 +85,20 @@ const Modal = ({ title, children, onClose }: { title: string, children: React.Re
 
 export default function InventoryPage() {
   const { confirm } = useDialog();
+
+  const parseWarrantyDate = (dateStr: string): Date => {
+    return new Date(dateStr + "T00:00:00");
+  };
+
+  const getWarrantyDaysLeft = (expiryDateStr: string | null | undefined): number => {
+    if (!expiryDateStr) return 0;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const expiry = parseWarrantyDate(expiryDateStr);
+    const diffTime = expiry.getTime() - todayStart.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
   // Navigation & View State
   const [view, setView] = useState<ViewMode>('HOME');
   const [currentLocationId, setCurrentLocationId] = useState<string | null>(null);
@@ -1267,19 +1281,19 @@ export default function InventoryPage() {
   const renderWarranties = () => {
     const criticalExpiries = items.filter(i => {
       if (!i.warranty_expiry_date) return false;
-      const days = Math.ceil((new Date(i.warranty_expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      const days = getWarrantyDaysLeft(i.warranty_expiry_date);
       return days > 0 && days <= 30;
     });
 
     const activeWarranties = items.filter(i => {
       if (!i.warranty_expiry_date) return false;
-      const days = Math.ceil((new Date(i.warranty_expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      const days = getWarrantyDaysLeft(i.warranty_expiry_date);
       return days > 30;
     });
 
     const expiredWarranties = items.filter(i => {
       if (!i.warranty_expiry_date) return false;
-      const days = Math.ceil((new Date(i.warranty_expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+      const days = getWarrantyDaysLeft(i.warranty_expiry_date);
       return days <= 0;
     });
 
@@ -1318,7 +1332,7 @@ export default function InventoryPage() {
               <span className="text-[10px] font-black text-rose-500 uppercase tracking-wider block ml-1">Expires Soon (Critical)</span>
               <div className="space-y-2">
                 {criticalExpiries.map(i => {
-                  const days = Math.ceil((new Date(i.warranty_expiry_date!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                  const days = getWarrantyDaysLeft(i.warranty_expiry_date);
                   return (
                     <div 
                       key={i.id} 
@@ -1346,7 +1360,7 @@ export default function InventoryPage() {
             <span className="text-[10px] font-black text-emerald-500 uppercase tracking-wider block ml-1">Active Warranties</span>
             <div className="space-y-2">
               {activeWarranties.map(i => {
-                const days = Math.ceil((new Date(i.warranty_expiry_date!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                const days = getWarrantyDaysLeft(i.warranty_expiry_date);
                 return (
                   <div 
                     key={i.id} 
@@ -1387,7 +1401,7 @@ export default function InventoryPage() {
                     <div className="space-y-0.5">
                       <div className="text-xs font-black uppercase text-foreground">{i.name}</div>
                       <div className="text-[9px] font-bold text-muted-foreground">
-                        Provider: {i.warranty_provider || 'Unknown'} • Expired: {format(new Date(i.warranty_expiry_date!), 'dd MMM yyyy')}
+                        Provider: {i.warranty_provider || 'Unknown'} • Expired: {format(parseWarrantyDate(i.warranty_expiry_date!), 'dd MMM yyyy')}
                       </div>
                     </div>
                     <span className="text-[9px] font-black bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg border border-slate-200">
@@ -1665,7 +1679,7 @@ export default function InventoryPage() {
                 <div className="space-y-4">
                   {/* Warranty Expiry Indicator */}
                   {selectedItem.warranty_expiry_date ? (() => {
-                    const daysLeft = Math.ceil((new Date(selectedItem.warranty_expiry_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                    const daysLeft = getWarrantyDaysLeft(selectedItem.warranty_expiry_date);
                     const isActive = daysLeft > 0;
                     return (
                       <div className={`p-4 rounded-2xl border flex items-center justify-between ${isActive ? 'bg-emerald-50/50 border-emerald-100 text-emerald-800' : 'bg-rose-50/50 border-rose-100 text-rose-800'}`}>
@@ -1674,7 +1688,7 @@ export default function InventoryPage() {
                           <div>
                             <div className="text-xs font-black uppercase tracking-wider">{isActive ? 'Active Coverage' : 'Coverage Expired'}</div>
                             <div className="text-[10px] opacity-80 font-medium">
-                              {isActive ? `${daysLeft} days remaining` : `Expired on ${format(new Date(selectedItem.warranty_expiry_date), 'dd MMM yyyy')}`}
+                              {isActive ? `${daysLeft} days remaining` : `Expired on ${format(parseWarrantyDate(selectedItem.warranty_expiry_date), 'dd MMM yyyy')}`}
                             </div>
                           </div>
                         </div>

@@ -232,7 +232,7 @@ export default function SubscriptionsPage() {
 
   // Helper to calculate next billing date based on frequency
   const calculateNextBillingDate = (currentDateStr: string, frequency: "weekly" | "bi-weekly" | "monthly" | "bi-monthly" | "quarterly" | "yearly"): string => {
-    const cur = new Date(currentDateStr);
+    const cur = new Date(currentDateStr + "T00:00:00");
     let nextDate = new Date();
     if (frequency === "weekly") {
       nextDate = addDays(cur, 7);
@@ -312,48 +312,74 @@ export default function SubscriptionsPage() {
       particular: particularVal,
       vendor: sub.vendor || sub.name,
       place: "",
-      tags: tagVal,
+      tags: tagVal.split(",").map(t => t.trim()).filter(Boolean),
       notes: notesVal
     };
 
-    const { error: expError } = await supabase
-      .from("history_expenses")
-      .insert([expensePayload]);
-    if (expError) throw expError;
+    let insertedExpId: string | null = null;
+    let insertedLogId: string | null = null;
 
-    // 2. Post to activity_logs
-    const logPayload = {
-      activity: activityVal,
-      date: dateStr,
-      time: timeStr,
-      occasion: "Recurring Bill Payment",
-      notes: `Logged automatically from Subscriptions manager. Paid via ${sub.account}.`,
-      created_at: new Date().toISOString()
-    };
-    await supabase.from("activity_logs").insert([logPayload]); // best effort
+    try {
+      // 1. Insert into history_expenses
+      const { data: insertedExp, error: expError } = await supabase
+        .from("history_expenses")
+        .insert([expensePayload])
+        .select("id")
+        .single();
+      if (expError) throw expError;
+      if (insertedExp) insertedExpId = (insertedExp as any).id;
 
-    // 3. Deduct Account Balance from Liquidity
-    const { data: acc } = await supabase
-      .from("liquidity")
-      .select("balance")
-      .eq("account_name", sub.account)
-      .single();
+      // 2. Post to activity_logs
+      const logPayload = {
+        activity: activityVal,
+        date: dateStr,
+        time: timeStr,
+        occasion: "Recurring Bill Payment",
+        notes: `Logged automatically from Subscriptions manager. Paid via ${sub.account}.`,
+        created_at: new Date().toISOString()
+      };
+      const { data: insertedLog, error: logError } = await supabase
+        .from("activity_logs")
+        .insert([logPayload])
+        .select("id")
+        .single();
+      if (logError) throw logError;
+      if (insertedLog) insertedLogId = (insertedLog as any).id;
 
-    if (acc) {
-      const newBal = (parseFloat(acc.balance) || 0) - sub.amount;
-      await supabase
+      // 3. Deduct Account Balance from Liquidity
+      const { data: acc, error: accError } = await supabase
         .from("liquidity")
-        .update({ balance: newBal.toFixed(2) })
-        .eq("account_name", sub.account);
-    }
+        .select("balance")
+        .eq("account_name", sub.account)
+        .single();
+      if (accError) throw accError;
 
-    // 4. Update next due date in subscriptions table
-    const nextDate = calculateNextBillingDate(sub.next_due_date, sub.frequency);
-    const { error: subUpdateError } = await supabase
-      .from("subscriptions")
-      .update({ next_due_date: nextDate })
-      .eq("id", sub.id);
-    if (subUpdateError) throw subUpdateError;
+      if (acc) {
+        const newBal = (parseFloat(acc.balance) || 0) - sub.amount;
+        const { error: balError } = await supabase
+          .from("liquidity")
+          .update({ balance: newBal.toFixed(2) })
+          .eq("account_name", sub.account);
+        if (balError) throw balError;
+      }
+
+      // 4. Update next due date in subscriptions table
+      const nextDate = calculateNextBillingDate(sub.next_due_date, sub.frequency);
+      const { error: subUpdateError } = await supabase
+        .from("subscriptions")
+        .update({ next_due_date: nextDate })
+        .eq("id", sub.id);
+      if (subUpdateError) throw subUpdateError;
+    } catch (err) {
+      // Rollback on any failure
+      if (insertedExpId) {
+        await supabase.from("history_expenses").delete().eq("id", insertedExpId);
+      }
+      if (insertedLogId) {
+        await supabase.from("activity_logs").delete().eq("id", insertedLogId);
+      }
+      throw err;
+    }
   };
 
   const handleSelectToggle = (id: string) => {

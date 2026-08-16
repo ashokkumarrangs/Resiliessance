@@ -77,7 +77,12 @@ export function isHabitActiveOnDate(config: HabitConfig, dateStr: string): boole
       } else if (unit === 'months') {
         const monthsDiff = (date.getFullYear() - anchor.getFullYear()) * 12 + (date.getMonth() - anchor.getMonth());
         if (monthsDiff >= 0 && monthsDiff % count === 0) {
-          return date.getDate() === anchor.getDate();
+          const anchorDay = anchor.getDate();
+          const lastDayOfDateMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+          if (anchorDay > lastDayOfDateMonth) {
+            return date.getDate() === lastDayOfDateMonth;
+          }
+          return date.getDate() === anchorDay;
         }
         return false;
       }

@@ -138,21 +138,22 @@ export function SearchableSelect({
             setIsOpen(true);
           }}
           onBlur={() => {
+            // Commit selection/match synchronously so parent form sees it immediately
+            if (!isManualEntry) {
+              const match = safeOptions.find(opt => opt?.toLowerCase() === search?.trim().toLowerCase());
+              if (match) {
+                onChange(match);
+                setSearch(match);
+              } else {
+                setSearch(value);
+              }
+            }
+
             blurTimerRef.current = setTimeout(() => {
               setIsOpen(false);
               setIsTyping(false);
               setIsManualEntry(false);
               setFocusedIndex(-1);
-              
-              if (!isManualEntry) {
-                const match = safeOptions.find(opt => opt?.toLowerCase() === search?.trim().toLowerCase());
-                if (match) {
-                  onChange(match);
-                  setSearch(match);
-                } else {
-                  setSearch(value);
-                }
-              }
             }, 200);
           }}
           className="w-full min-w-0 h-11 bg-muted border-none rounded-lg px-4 pr-10 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30 font-sans cursor-text"

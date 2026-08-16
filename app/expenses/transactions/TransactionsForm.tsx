@@ -259,32 +259,66 @@ export default function TransactionsForm({ type }: TransactionsFormProps) {
         particular: isTransfer ? `Transfer to ${formData.to_account}` : formData.particular,
         vendor: isTransfer ? "" : formData.vendor,
         place: isTransfer ? "" : formData.place,
-        tags: isTransfer ? "transfer" : formData.tags,
+        tags: isTransfer 
+          ? ["transfer"] 
+          : formData.tags 
+            ? formData.tags.split(",").map(t => t.trim()).filter(Boolean) 
+            : [],
         notes: isTransfer ? `${formData.notes ? formData.notes + ' | ' : ''}Transferred to ${formData.to_account}` : formData.notes
       };
 
       // 1. Insert into history
-      const { error: histErr } = await supabase.from('history_expenses').insert(payload);
+      const { data: insertedHist, error: histErr } = await supabase
+        .from('history_expenses')
+        .insert(payload)
+        .select('id')
+        .single();
       if (histErr) throw histErr;
 
-      // 2. Update balance for source account
-      const { data: acc } = await supabase.from('liquidity').select('balance').eq('account_name', formData.account).single();
-      if (acc) {
+      try {
+        // 2. Update balance for source account
+        const { data: acc, error: accErr } = await supabase
+          .from('liquidity')
+          .select('balance')
+          .eq('account_name', formData.account)
+          .single();
+        if (accErr) throw accErr;
+        if (!acc) throw new Error("Account not found");
+
         let newBal = parseFloat(acc.balance) || 0;
         if (type === 'Expense' || type === 'Transfer') newBal -= amount;
         else if (type === 'Income') newBal += amount;
 
-        await supabase.from('liquidity').update({ balance: newBal }).eq('account_name', formData.account);
-      }
+        const { error: updErr } = await supabase
+          .from('liquidity')
+          .update({ balance: newBal })
+          .eq('account_name', formData.account);
+        if (updErr) throw updErr;
 
-      // 3. If Transfer, update balance for destination account
-      if (isTransfer && formData.to_account) {
-        const { data: toAcc } = await supabase.from('liquidity').select('balance').eq('account_name', formData.to_account).single();
-        if (toAcc) {
+        // 3. If Transfer, update balance for destination account
+        if (isTransfer && formData.to_account) {
+          const { data: toAcc, error: toAccErr } = await supabase
+            .from('liquidity')
+            .select('balance')
+            .eq('account_name', formData.to_account)
+            .single();
+          if (toAccErr) throw toAccErr;
+          if (!toAcc) throw new Error("Destination account not found");
+
           let toBal = parseFloat(toAcc.balance) || 0;
           toBal += amount;
-          await supabase.from('liquidity').update({ balance: toBal }).eq('account_name', formData.to_account);
+          const { error: toUpdErr } = await supabase
+            .from('liquidity')
+            .update({ balance: toBal })
+            .eq('account_name', formData.to_account);
+          if (toUpdErr) throw toUpdErr;
         }
+      } catch (err) {
+        // ROLLBACK: Delete the inserted transaction log since the account balance update failed!
+        if (insertedHist?.id) {
+          await supabase.from('history_expenses').delete().eq('id', insertedHist.id);
+        }
+        throw err;
       }
 
       toast.success("Entry saved successfully");

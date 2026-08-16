@@ -106,6 +106,7 @@ export async function processTaskDeadlines(
 ): Promise<any[]> {
   const updatedTasks = tasks.map(t => ({ ...t }));
   const now = startOfDay(new Date());
+  const updatePromises: Promise<void>[] = [];
 
   for (let i = 0; i < updatedTasks.length; i++) {
     const t = updatedTasks[i];
@@ -126,7 +127,7 @@ export async function processTaskDeadlines(
         const shouldBeToday = isToday(dueDate) || dueDate < now;
         if (shouldBeToday && !t.is_today) {
           t.is_today = true;
-          await updateTaskInDb(t.id, { is_today: true });
+          updatePromises.push(updateTaskInDb(t.id, { is_today: true }));
         }
       } else {
         // Task Manager Rule:
@@ -152,12 +153,16 @@ export async function processTaskDeadlines(
         }
 
         if (changed) {
-          await updateTaskInDb(t.id, updates);
+          updatePromises.push(updateTaskInDb(t.id, updates));
         }
       }
     } catch (e) {
       console.error("Error processing task deadline for task ID:", t.id, e);
     }
+  }
+
+  if (updatePromises.length > 0) {
+    await Promise.all(updatePromises);
   }
 
   return updatedTasks;
