@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { WORKOUT_TABS } from "@/lib/navigation";
 import { 
@@ -64,6 +64,12 @@ export default function WorkoutTimerPage() {
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const endTimeRef = useRef<number | null>(null);
   const pausedTimeLeftRef = useRef<number | null>(null);
+  const lastBeepSecondRef = useRef<number | null>(null);
+
+  const loadTemplateIntoEditor = (template: SequenceTemplate) => {
+    setEditorName(template.name);
+    setEditorPhases(template.phases.map(p => ({ ...p })));
+  };
 
   // Load custom templates on mount
   useEffect(() => {
@@ -84,10 +90,7 @@ export default function WorkoutTimerPage() {
     }
   }, []);
 
-  const loadTemplateIntoEditor = (template: SequenceTemplate) => {
-    setEditorName(template.name);
-    setEditorPhases(template.phases.map(p => ({ ...p })));
-  };
+
 
   const handleSelectTemplate = (id: string) => {
     setSelectedTemplateId(id);
@@ -200,7 +203,7 @@ export default function WorkoutTimerPage() {
   };
 
   // Web Audio Alert Synthesizer
-  const initAudio = () => {
+  const initAudio = useCallback(() => {
     if (!audioCtxRef.current && typeof window !== "undefined") {
       const AudioCtxClass = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioCtxClass) {
@@ -210,9 +213,9 @@ export default function WorkoutTimerPage() {
     if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
       audioCtxRef.current.resume();
     }
-  };
+  }, []);
 
-  const playTone = (toneType: 'tick' | 'go' | 'victory') => {
+  const playTone = useCallback((toneType: 'tick' | 'go' | 'victory') => {
     if (!soundEnabled) return;
     try {
       initAudio();
@@ -246,13 +249,13 @@ export default function WorkoutTimerPage() {
     } catch (e) {
       console.warn("Audio Context failed", e);
     }
-  };
+  }, [soundEnabled, initAudio]);
 
-  const triggerVibrate = (pattern: number | number[]) => {
+  const triggerVibrate = useCallback((pattern: number | number[]) => {
     if (vibrateEnabled && typeof navigator !== 'undefined' && navigator.vibrate) {
       navigator.vibrate(pattern);
     }
-  };
+  }, [vibrateEnabled]);
 
   // Playback Control logic
   const startPlayback = () => {
@@ -282,35 +285,7 @@ export default function WorkoutTimerPage() {
     triggerVibrate([200, 100, 200]);
   };
 
-  useEffect(() => {
-    if (timerState === 'play' && !isPaused) {
-      timerIntervalRef.current = setInterval(() => {
-        if (endTimeRef.current) {
-          const now = Date.now();
-          const diff = Math.max(0, Math.ceil((endTimeRef.current - now) / 1000));
-
-          // Beep at final 3 seconds
-          if (diff > 0 && diff <= 3 && diff !== timeLeft) {
-            playTone('tick');
-            triggerVibrate(50);
-          }
-
-          setTimeLeft(diff);
-
-          if (diff <= 0) {
-            clearInterval(timerIntervalRef.current!);
-            handlePhaseTransition();
-          }
-        }
-      }, 100);
-    }
-
-    return () => {
-      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-    };
-  }, [timerState, isPaused, timeLeft, currentPhaseIndex, activeTemplate]);
-
-  const handlePhaseTransition = () => {
+  const handlePhaseTransition = useCallback(() => {
     if (!activeTemplate) return;
     const nextIndex = currentPhaseIndex + 1;
 
@@ -328,7 +303,36 @@ export default function WorkoutTimerPage() {
       playTone('victory');
       triggerVibrate([500, 100, 500]);
     }
-  };
+  }, [activeTemplate, currentPhaseIndex, playTone, triggerVibrate]);
+
+  useEffect(() => {
+    if (timerState === 'play' && !isPaused) {
+      timerIntervalRef.current = setInterval(() => {
+        if (endTimeRef.current) {
+          const now = Date.now();
+          const diff = Math.max(0, Math.ceil((endTimeRef.current - now) / 1000));
+
+          // Beep at final 3 seconds
+          if (diff > 0 && diff <= 3 && diff !== lastBeepSecondRef.current) {
+            lastBeepSecondRef.current = diff;
+            playTone('tick');
+            triggerVibrate(50);
+          }
+
+          setTimeLeft(diff);
+
+          if (diff <= 0) {
+            clearInterval(timerIntervalRef.current!);
+            handlePhaseTransition();
+          }
+        }
+      }, 100);
+    }
+
+    return () => {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+    };
+  }, [timerState, isPaused, currentPhaseIndex, activeTemplate, playTone, triggerVibrate, handlePhaseTransition]);
 
   const togglePause = () => {
     if (isPaused) {

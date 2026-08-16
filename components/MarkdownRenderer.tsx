@@ -40,10 +40,12 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           if (closeParen !== -1) {
             const displayText = text.substring(i + 1, closeBracket);
             const linkUrl = text.substring(closeBracket + 2, closeParen);
+            const isUnsafe = /^\s*(javascript|data|vbscript):/i.test(linkUrl);
+            const sanitizedUrl = isUnsafe ? "#" : linkUrl;
             tokens.push(
               <a
                 key={i}
-                href={linkUrl}
+                href={sanitizedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline font-black inline-flex items-center gap-0.5"

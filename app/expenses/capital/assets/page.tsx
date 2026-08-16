@@ -45,9 +45,7 @@ function AssetsContent() {
     places: [] as string[]
   });
 
-  useEffect(() => {
-    fetchOptions();
-  }, []);
+
 
   // Handle URL deep-linking
   useEffect(() => {
@@ -98,6 +96,10 @@ function AssetsContent() {
       toast.error("Failed to load options");
     }
   };
+
+  useEffect(() => {
+    fetchOptions();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -215,19 +217,7 @@ function AssetsContent() {
     router.push(`/expenses/capital/${val.toLowerCase()}`);
   };
 
-  const PillToggle = ({ label, options: opts, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) => (
-    <div className="space-y-2">
-      <label className="text-sm font-black text-muted-foreground/60 leading-none">{label}</label>
-      <div className="flex bg-muted rounded-lg p-1 gap-1">
-        {opts.map(o => (
-          <button key={o} type="button" onClick={() => onChange(o)}
-            className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 ${value === o ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}>
-            {o}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+
 
   const directionBanner = formData.action === 'Sell'
     ? { isIn: true, text: '↑ Money IN · Account balance will increase' }
@@ -456,3 +446,17 @@ export default function AssetsPage() {
     </Suspense>
   );
 }
+
+const PillToggle = ({ label, options: opts, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) => (
+  <div className="space-y-2">
+    <label className="text-sm font-black text-muted-foreground/60 leading-none">{label}</label>
+    <div className="flex bg-muted rounded-lg p-1 gap-1">
+      {opts.map(o => (
+        <button key={o} type="button" onClick={() => onChange(o)}
+          className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 ${value === o ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}>
+          {o}
+        </button>
+      ))}
+    </div>
+  </div>
+);

@@ -11,8 +11,7 @@ export async function GET() {
   } catch (error: any) {
     console.error('Error in config API:', error);
     return NextResponse.json({
-      error: error.message,
-      stack: error.stack,
+      error: 'Internal Server Error',
     }, { status: 500 });
   }
 }

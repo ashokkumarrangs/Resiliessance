@@ -71,6 +71,7 @@ export function Select({
       role="combobox"
       aria-expanded={isOpen}
       aria-haspopup="listbox"
+      aria-controls={isOpen ? "select-options" : undefined}
       tabIndex={disabled ? -1 : 0}
       onKeyDown={handleKeyDown}
       className={`relative z-30 flex cursor-pointer items-center justify-between outline-none select-none ${disabled ? "pointer-events-none cursor-not-allowed opacity-50" : ""} ${className || "h-11 w-full rounded-md border border-border bg-muted px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20"}`}
@@ -90,7 +91,9 @@ export function Select({
 
       {isOpen && (
         <div
-          className={`absolute top-full right-0 left-auto z-[100] mt-1 max-h-72 w-max max-w-[260px] min-w-[130px] overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-md before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 ${dropdownClassName || ""}`}
+          id="select-options"
+          role="listbox"
+          className={`absolute top-full left-0 z-[100] mt-1 max-h-72 w-max min-w-full max-w-[260px] overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-md before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150 ${dropdownClassName || ""}`}
         >
           {options.map((opt, i) => (
             <div

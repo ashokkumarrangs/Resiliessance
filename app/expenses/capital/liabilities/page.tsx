@@ -41,16 +41,7 @@ function LiabilitiesContent() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [partyDetail, setPartyDetail] = useState<any>(null);
 
-  useEffect(() => {
-    fetchOptions();
-  }, []);
 
-  useEffect(() => {
-    const urlParty = searchParams.get('party');
-    if (urlParty) {
-      handlePartySelect(urlParty);
-    }
-  }, [searchParams, options.parties]);
 
   const fetchOptions = async () => {
     try {
@@ -83,6 +74,17 @@ function LiabilitiesContent() {
       setPartyDetail(null);
     }
   };
+
+  useEffect(() => {
+    fetchOptions();
+  }, []);
+
+  useEffect(() => {
+    const urlParty = searchParams.get('party');
+    if (urlParty) {
+      handlePartySelect(urlParty);
+    }
+  }, [searchParams, options.parties]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,19 +193,7 @@ function LiabilitiesContent() {
     ? { isIn: true, text: '↑ Money IN · Account balance will increase' }
     : { isIn: false, text: '↓ Money OUT · Account balance will decrease' };
 
-  const PillToggle = ({ label, options: opts, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) => (
-    <div className="space-y-2">
-      <label className="text-sm font-black text-muted-foreground/60 leading-none">{label}</label>
-      <div className="flex bg-muted rounded-lg p-1 gap-1">
-        {opts.map(o => (
-          <button key={o} type="button" onClick={() => onChange(o)}
-            className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 ${value === o ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}>
-            {o}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+
 
   return (
     <PageWrapper title="Capital" reportHref="/reports/finance" sectionTabs={EXPENSE_TABS}>
@@ -322,3 +312,17 @@ export default function LiabilitiesPage() {
     </Suspense>
   );
 }
+
+const PillToggle = ({ label, options: opts, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) => (
+  <div className="space-y-2">
+    <label className="text-sm font-black text-muted-foreground/60 leading-none">{label}</label>
+    <div className="flex bg-muted rounded-lg p-1 gap-1">
+      {opts.map(o => (
+        <button key={o} type="button" onClick={() => onChange(o)}
+          className={`flex-1 h-9 rounded-md text-xs font-black transition-all active:scale-95 ${value === o ? 'bg-card text-primary shadow-sm border border-border/40' : 'text-muted-foreground/60 hover:text-foreground'}`}>
+          {o}
+        </button>
+      ))}
+    </div>
+  </div>
+);

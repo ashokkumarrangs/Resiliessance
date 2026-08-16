@@ -80,9 +80,7 @@ function BudgetPlanContent() {
 
   const [globalChangePct, setGlobalChangePct] = useState("0");
 
-  useEffect(() => {
-    fetchData();
-  }, [targetMonth, planCompMonth, actualCompMonth]);
+
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -169,6 +167,10 @@ function BudgetPlanContent() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [targetMonth, planCompMonth, actualCompMonth]);
 
   const handleValChange = (cat: string, sub: string, val: string) => {
     let num = parseFloat(val);

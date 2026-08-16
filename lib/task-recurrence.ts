@@ -128,6 +128,9 @@ export async function processTaskDeadlines(
         if (shouldBeToday && !t.is_today) {
           t.is_today = true;
           updatePromises.push(updateTaskInDb(t.id, { is_today: true }));
+        } else if (!shouldBeToday && t.is_today) {
+          t.is_today = false;
+          updatePromises.push(updateTaskInDb(t.id, { is_today: false }));
         }
       } else {
         // Task Manager Rule:
@@ -139,16 +142,16 @@ export async function processTaskDeadlines(
         let changed = false;
         const updates: any = {};
 
-        if (shouldBeToday && !t.is_today) {
-          t.is_today = true;
-          updates.is_today = true;
+        if (shouldBeToday !== t.is_today) {
+          t.is_today = shouldBeToday;
+          updates.is_today = shouldBeToday;
           changed = true;
         }
 
         const targetIsWeek = shouldBeToday || shouldBeWeek;
-        if (targetIsWeek && !t.is_week) {
-          t.is_week = true;
-          updates.is_week = true;
+        if (targetIsWeek !== t.is_week) {
+          t.is_week = targetIsWeek;
+          updates.is_week = targetIsWeek;
           changed = true;
         }
 

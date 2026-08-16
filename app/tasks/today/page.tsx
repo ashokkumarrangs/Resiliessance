@@ -81,8 +81,10 @@ export default function TaskManagerPage() {
     const currentOrder = task.sort_order ?? index;
     const siblingOrder = sibling.sort_order ?? targetIndex;
     
-    await supabase.from('tasks').update({ sort_order: siblingOrder }).eq('id', task.id);
-    await supabase.from('tasks').update({ sort_order: currentOrder }).eq('id', sibling.id);
+    await Promise.all([
+      supabase.from('tasks').update({ sort_order: siblingOrder }).eq('id', task.id),
+      supabase.from('tasks').update({ sort_order: currentOrder }).eq('id', sibling.id)
+    ]);
     loadTasks();
   };
 

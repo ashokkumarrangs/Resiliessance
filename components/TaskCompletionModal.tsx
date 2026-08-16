@@ -18,18 +18,16 @@ export function TaskCompletionModal({
   onConfirm,
   taskTitle
 }: TaskCompletionModalProps) {
-  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   const [option, setOption] = useState<"now" | "15m" | "1h" | "custom">("now");
   const [customDateTime, setCustomDateTime] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
 
-  if (isOpen !== prevIsOpen) {
-    setPrevIsOpen(isOpen);
+  useEffect(() => {
     if (isOpen) {
       setOption("now");
       setCustomDateTime(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
     }
-  }
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;

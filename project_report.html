@@ -488,20 +488,24 @@
         <input type="text" id="search-bar" class="search-input" placeholder="Search features..." onkeyup="handleSearch()">
       </div>
 
+
+      
+
+
       <!-- Bugs Section -->
       <div id="bugs-section-view" class="hidden">
-        <div class="category-section" style="text-align: center; padding: 60px 20px; background: rgba(var(--accent-rgb), 0.05); border: 1px dashed rgba(var(--accent-rgb), 0.2); border-radius: 16px; margin: 40px auto; max-width: 800px;">
+        <div class="category-section" style="text-align: center; padding: 60px 20px; background: rgba(16, 185, 129, 0.05); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 16px; margin: 40px auto; max-width: 800px;">
           <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
-          <h2 style="font-size: 24px; font-weight: 900; color: var(--primary-color); margin-bottom: 10px;">All Bugs Resolved!</h2>
+          <h2 style="font-size: 24px; font-weight: 900; color: #10b981; margin-bottom: 10px;">All Bugs Resolved!</h2>
           <p style="font-size: 14px; color: var(--text-muted); max-width: 500px; margin: 0 auto 30px; line-height: 1.6;">
             The QA team and development engine have successfully debugged and verified all registered data loss, timezone, database integrity, UI/UX, and performance issues. The platform is running at optimal capacity.
           </p>
-          <div style="display: inline-block; padding: 8px 16px; background: var(--primary-color); color: var(--primary-foreground); font-weight: 800; border-radius: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">
+          <div style="display: inline-block; padding: 8px 16px; background: #10b981; color: white; font-weight: 800; border-radius: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">
             0 Open Bugs Remaining
           </div>
         </div>
       </div>
-      
+
       <!-- Features Section -->
       <div id="features-section-view">
         
@@ -669,7 +673,6 @@
     // State Tracking
     let currentView = 'features';
 
-    // Navigation configurations
     // Navigation configurations
     const bugNavItems = [];
 

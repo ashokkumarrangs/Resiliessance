@@ -7,17 +7,19 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "react-hooks/immutability": "warn",
-      "react-hooks/set-state-in-effect": "warn"
+      "@typescript-eslint/no-explicit-any": "off"
     }
   },
   // Override default ignores of eslint-config-next.
   globalIgnores([
-    // Default ignores of eslint-config-next:
+    "node_modules/**",
+    "**/node_modules/**",
     ".next/**",
     "out/**",
     "build/**",
+    ".wrangler/**",
+    ".open-next/**",
+    ".pnpm-store/**",
     "next-env.d.ts",
   ]),
 ]);
