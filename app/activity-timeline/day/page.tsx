@@ -32,7 +32,7 @@ function formatDisplayDate(dateStr: string): string {
 
 // ── Sub-nav tabs ──────────────────────────────────────────────────────────────
 const SUB_TABS = [
-  { title:"Timeline",        href:"/activity-timeline",              icon:<Activity size={15}/> },
+  { title:"Timeline",        href:"/activity-timeline/timeline",              icon:<Activity size={15}/> },
   { title:"Day at a Glance", href:"/activity-timeline/day",          icon:<Clock size={15}/> },
   { title:"Add Activity",    href:"/activity-timeline/add-activity", icon:<Plus size={15}/> },
 ];

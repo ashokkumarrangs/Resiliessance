@@ -12,9 +12,14 @@ import {
   ChevronRight,
   Calendar,
   CalendarDays,
+  CalendarRange,
   KanbanSquare,
   FileCheck,
-  GraduationCap
+  GraduationCap,
+  TrendingUp,
+  Utensils,
+  HeartPulse,
+  Brain
 } from "lucide-react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { TabItem } from "@/components/SectionNav";
@@ -36,10 +41,19 @@ export default function DailyQuickAddPage() {
     {
       title: "Expense Entry",
       description: "Log expenses/income",
-      href: "/expenses/daily-entry?type=Expense",
+      href: "/finance/daily-entry?type=Expense",
       icon: <Wallet size={20} />,
       colorClass: "text-rose-500",
       bgGlowClass: "from-rose-500/10 to-rose-500/0",
+      category: "Finance",
+    },
+    {
+      title: "Income Entry",
+      description: "Log incoming payments & income",
+      href: "/finance/daily-entry?type=Income",
+      icon: <TrendingUp size={20} />,
+      colorClass: "text-emerald-500",
+      bgGlowClass: "from-emerald-500/10 to-emerald-500/0",
       category: "Finance",
     },
     {
@@ -88,6 +102,33 @@ export default function DailyQuickAddPage() {
       category: "Vehicles",
     },
     {
+      title: "Nutrition Log",
+      description: "Log meals & food intake",
+      href: "/nutrition/logs",
+      icon: <Utensils size={20} />,
+      colorClass: "text-teal-500",
+      bgGlowClass: "from-teal-500/10 to-teal-500/0",
+      category: "Health",
+    },
+    {
+      title: "Biometrics",
+      description: "Record weight & body stats",
+      href: "/nutrition/biometrics",
+      icon: <HeartPulse size={20} />,
+      colorClass: "text-rose-400",
+      bgGlowClass: "from-rose-400/10 to-rose-400/0",
+      category: "Health",
+    },
+    {
+      title: "Quick Capture",
+      description: "Capture fleeting thoughts & notes",
+      href: "/second-brain/inbox",
+      icon: <Brain size={20} />,
+      colorClass: "text-indigo-400",
+      bgGlowClass: "from-indigo-400/10 to-indigo-400/0",
+      category: "Notes",
+    },
+    {
       title: "Task Manager",
       description: "Add pending checklist tasks",
       href: "/tasks",
@@ -119,6 +160,12 @@ export default function DailyQuickAddPage() {
       icon: <CalendarDays className="w-5 h-5" />,
       isActive: false,
       onClick: () => router.push("/quick-add/weekly"),
+    },
+    {
+      title: "Monthly",
+      icon: <CalendarRange className="w-5 h-5" />,
+      isActive: false,
+      onClick: () => router.push("/quick-add/monthly"),
     },
   ];
 

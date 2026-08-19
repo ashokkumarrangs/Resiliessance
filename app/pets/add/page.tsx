@@ -50,7 +50,7 @@ export default function AddPetPage() {
       }
       
       toast.success(`${formData.name} added successfully!`);
-      router.push("/pets");
+      router.push("/pets/pets");
     } catch (err) {
       toast.error("An error occurred while adding the pet.");
     } finally {
@@ -60,7 +60,7 @@ export default function AddPetPage() {
 
   return (
     <PageWrapper
-      title="Add Pet"
+      title="Add Pet Profile"
       reportHref="/reports/pets"
       sectionTabs={PET_TABS}
       activePath="/pets/add"
@@ -73,7 +73,7 @@ export default function AddPetPage() {
             activeItem=""
             onChange={(val) => {
               const p = allPets.find(x => x.name === val);
-              if (p) router.push(`/pets/${p.id}`);
+              if (p) router.push(`/pets/pets/${p.id}`);
             }}
             className="!mb-0 !mx-0"
           />

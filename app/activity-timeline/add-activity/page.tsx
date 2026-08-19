@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect, KeyboardEvent } from "react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { SectionNav } from "@/components/SectionNav";
 import { SaveButton } from "@/components/ui/SaveButton";
-import { supabase } from "@/lib/supabase";
+import { activityService } from "@/lib/services/activity";
 import {
   MapPin,
   Users,
@@ -32,7 +32,7 @@ const MOODS = [
 ];
 
 const NAV_TABS = [
-  { title: "Timeline",        href: "/activity-timeline",             icon: <Activity size={15} /> },
+  { title: "Timeline",        href: "/activity-timeline/timeline",             icon: <Activity size={15} /> },
   { title: "Day at a Glance", href: "/activity-timeline/day",        icon: <Clock size={15} /> },
   { title: "Add Activity",    href: "/activity-timeline/add-activity", icon: <Plus size={15} /> },
 ];
@@ -374,9 +374,9 @@ export default function AddActivityPage() {
 
   const fetchPastActivities = async () => {
     try {
-      const { data } = await supabase.from("activity_logs").select("activity");
-      if (data) {
-        const unique = Array.from(new Set(data.map((d) => d.activity).filter(Boolean))) as string[];
+      const logs = await activityService.getActivityLogs();
+      if (logs) {
+        const unique = Array.from(new Set(logs.map((d) => d.activity).filter(Boolean))) as string[];
         setPastActivities(unique);
       }
     } catch (err) {
@@ -395,19 +395,13 @@ export default function AddActivityPage() {
     if (!activity) return;
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("activity_logs").insert({
+      const newLog = await activityService.addActivityLog({
         activity,
-        location:  location || null,
-        people:    people.length > 0 ? people.join(", ") : null,
-        occasion:  occasion  || null,
+        notes: notes || null,
         date,
-        time:      time      || null,
-        duration:  duration  || null,
-        mood:      mood      || null,
-        notes:     notes     || null,
         created_at: new Date().toISOString(),
-      });
-      if (error) throw error;
+      } as any);
+      if (!newLog) throw new Error("Failed to create log");
       // Reset form
       setActivity(""); setLocation(""); setPeople([]); setOccasion("");
       setDate(todayStr()); setTime(nowTimeStr()); setDuration("");

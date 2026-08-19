@@ -8,7 +8,12 @@ import {
   Flame,
   ChevronRight,
   Calendar,
-  CalendarDays
+  CalendarDays,
+  CalendarRange,
+  BarChart3,
+  Layers,
+  Wrench,
+  Dumbbell
 } from "lucide-react";
 import { PageWrapper } from "@/components/PageWrapper";
 import { TabItem } from "@/components/SectionNav";
@@ -30,7 +35,7 @@ export default function WeeklyQuickAddPage() {
     {
       title: "Budget Plan",
       description: "Update planned allowances",
-      href: "/expenses/budget-plan",
+      href: "/finance/budget-plan",
       icon: <TrendingUp size={20} />,
       colorClass: "text-emerald-500",
       bgGlowClass: "from-emerald-500/10 to-emerald-500/0",
@@ -44,6 +49,42 @@ export default function WeeklyQuickAddPage() {
       colorClass: "text-amber-500",
       bgGlowClass: "from-amber-500/10 to-amber-500/0",
       category: "Vehicles",
+    },
+    {
+      title: "Weekly Summary",
+      description: "Review weekly metrics & progress",
+      href: "/reports/summary/weekly",
+      icon: <BarChart3 size={20} />,
+      colorClass: "text-indigo-500",
+      bgGlowClass: "from-indigo-500/10 to-indigo-500/0",
+      category: "Reports",
+    },
+    {
+      title: "Habit Groups",
+      description: "Manage weekly habit routines",
+      href: "/habits/manage/groups",
+      icon: <Layers size={20} />,
+      colorClass: "text-violet-500",
+      bgGlowClass: "from-violet-500/10 to-violet-500/0",
+      category: "Habits & Skills",
+    },
+    {
+      title: "Vehicle Service",
+      description: "Log vehicle maintenance & service",
+      href: "/vehicles/service",
+      icon: <Wrench size={20} />,
+      colorClass: "text-sky-500",
+      bgGlowClass: "from-sky-500/10 to-sky-500/0",
+      category: "Vehicles",
+    },
+    {
+      title: "Workout Templates",
+      description: "Manage weekly workout templates",
+      href: "/workout/templates",
+      icon: <Dumbbell size={20} />,
+      colorClass: "text-rose-500",
+      bgGlowClass: "from-rose-500/10 to-rose-500/0",
+      category: "Work & Workout",
     },
   ];
 
@@ -59,6 +100,12 @@ export default function WeeklyQuickAddPage() {
       icon: <CalendarDays className="w-5 h-5" />,
       isActive: true,
       onClick: () => router.push("/quick-add/weekly"),
+    },
+    {
+      title: "Monthly",
+      icon: <CalendarRange className="w-5 h-5" />,
+      isActive: false,
+      onClick: () => router.push("/quick-add/monthly"),
     },
   ];
 

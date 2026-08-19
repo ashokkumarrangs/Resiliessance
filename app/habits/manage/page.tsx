@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { habitService } from '@/lib/services/habits';
 import { useRouter } from 'next/navigation';
 import { Settings2, Trash2, Edit3, Archive, Plus, Pause} from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -42,14 +42,8 @@ export default function HabitManagePage() {
   const fetchConfigs = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('habit_config')
-        .select('*')
-        .order('group_order')
-        .order('daily_habit_order');
-
-      if (error) throw error;
-      setConfigs(data || []);
+      const data = await habitService.getConfigs();
+      setConfigs(data as any || []);
     } catch (err: any) {
       toast.error(err.message || 'Failed to load habit configurations');
     } finally {
@@ -59,8 +53,8 @@ export default function HabitManagePage() {
 
   const handleStateChange = async (id: string, name: string, field: 'is_paused' | 'is_archived' | 'is_deleted', value: boolean, msg: string) => {
     try {
-      const { error } = await supabase.from('habit_config').update({ [field]: value }).eq('id', id);
-      if (error) throw error;
+      const success = await habitService.saveConfig({ id, [field]: value } as any);
+      if (!success) throw new Error("Failed to update habit");
       toast.success(msg);
       fetchConfigs();
     } catch (err: any) {
@@ -71,8 +65,8 @@ export default function HabitManagePage() {
   const handleHardDelete = async (id: string, name: string) => {
     if (!(await confirm(`PERMANENTLY delete "${name}"?\n\nThis cannot be undone and will wipe all history.`))) return;
     try {
-      const { error } = await supabase.from('habit_config').delete().eq('id', id);
-      if (error) throw error;
+      const success = await habitService.deleteConfig(id);
+      if (!success) throw new Error("Failed to delete");
       toast.success(`Permanently deleted ${name}`);
       fetchConfigs();
     } catch (err: any) {

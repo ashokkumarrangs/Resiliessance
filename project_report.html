@@ -338,6 +338,43 @@
       color: #7c3aed;
     }
 
+    
+    .feature-tag.blocker {
+      background-color: rgba(168, 68, 58, 0.12);
+      color: #a8443a;
+      border: 1px solid rgba(168, 68, 58, 0.3);
+    }
+    .feature-tag.dofirst {
+      background-color: rgba(28, 95, 120, 0.12);
+      color: #1c5f78;
+      border: 1px solid rgba(28, 95, 120, 0.3);
+    }
+    .feature-tag.then {
+      background-color: rgba(61, 84, 100, 0.12);
+      color: #3d5464;
+      border: 1px solid rgba(61, 84, 100, 0.2);
+    }
+    .feature-tag.later {
+      background-color: rgba(116, 137, 154, 0.12);
+      color: #74899a;
+      border: 1px solid rgba(116, 137, 154, 0.2);
+    }
+    .feature-tag.cut {
+      background-color: rgba(141, 99, 22, 0.12);
+      color: #8d6316;
+      border: 1px solid rgba(141, 99, 22, 0.3);
+    }
+    .feature-card.cut {
+      border-color: rgba(141, 99, 22, 0.3);
+    }
+    .feature-card.cut .user-perspective {
+      border-left-color: #8d6316;
+      background-color: rgba(141, 99, 22, 0.05);
+    }
+    .feature-card.cut .user-perspective strong {
+      color: #8d6316;
+    }
+
     .feature-title, .bug-title {
       font-size: 16px;
       font-weight: 900;
@@ -508,385 +545,703 @@
 
       <!-- Features Section -->
       <div id="features-section-view">
-        
 
-        <!-- PETS -->
-        <div class="category-section" id="section-pets">
-          <h2 class="category-title">🐾 Pets <span>1 Feature</span></h2>
+        <!-- PART 1 HEADER -->
+        <div class="part-header" style="margin-bottom: 24px; padding: 24px; background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: var(--radius-md); box-shadow: var(--shadow-premium);">
+
+        <!-- GROUP G1 -->
+        <div class="category-section" id="section-g1">
+          <h2 class="category-title">🛡️ Group 01 · Foundation & Safety <span>5 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">None of these are features anyone asks for. All of them are the reason the rest can exist.</p>
           <div class="features-grid">
-            
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">Pets 7.2</span>
-                <span class="feature-tag">Finance</span>
+                <span class="feature-id">Feature #1</span>
+                <span class="feature-tag blocker">Blocker</span>
               </div>
-              <h3 class="feature-title">Pet Expense Linking</h3>
-              <p class="feature-description">Link pet food or vet costs directly to the daily finance tracker.</p>
-              <ul class="feature-bullets">
-                <li>Log pet expenses with auto-linking to the transaction ledger.</li>
-                <li>Categorize pet spending in budget reports.</li>
-              </ul>
+              <h3 class="feature-title">Log in with an account</h3>
+              <p class="feature-description">The app has no login at all. Add sign-in, so the app knows who you are and only shows your data.</p>
+              <div class="flow-plan" style="margin-bottom: 12px; padding: 8px 12px; background: rgba(0,0,0,0.02); border: 1px solid var(--border); border-radius: 6px;">
+                <div class="flow-plan-title" style="font-size: 9.5px; opacity: 0.8;">📌 Technical Note</div>
+                <div style="font-size: 11.5px; color: var(--muted-foreground); font-weight: 600;">Today: no auth layer anywhere in the codebase.</div>
+              </div>
             </div>
-
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #2</span>
+                <span class="feature-tag blocker">Blocker</span>
+              </div>
+              <h3 class="feature-title">Lock the database</h3>
+              <p class="feature-description">The security rules on every table are currently set to "allow everyone." Anyone who finds the web address can read and change everything in it.</p>
+              <div class="flow-plan" style="margin-bottom: 12px; padding: 8px 12px; background: rgba(0,0,0,0.02); border: 1px solid var(--border); border-radius: 6px;">
+                <div class="flow-plan-title" style="font-size: 9.5px; opacity: 0.8;">📌 Technical Note</div>
+                <div style="font-size: 11.5px; color: var(--muted-foreground); font-weight: 600;">Every RLS policy reads <code>USING (true)</code> with the public key shipped to the browser.</div>
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #3</span>
+                <span class="feature-tag blocker">Blocker</span>
+              </div>
+              <h3 class="feature-title">Replace the leaked keys</h3>
+              <p class="feature-description">Three secret keys are written directly into a file that ships with the code, including one that lets anyone send notifications to your phone. Generate new ones and store them properly.</p>
+              <div class="flow-plan" style="margin-bottom: 12px; padding: 8px 12px; background: rgba(0,0,0,0.02); border: 1px solid var(--border); border-radius: 6px;">
+                <div class="flow-plan-title" style="font-size: 9.5px; opacity: 0.8;">📌 Technical Note</div>
+                <div style="font-size: 11.5px; color: var(--muted-foreground); font-weight: 600;">Supabase URL, anon key and the VAPID private key are all in <code>wrangler.jsonc</code>.</div>
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #4</span>
+                <span class="feature-tag blocker">Blocker</span>
+              </div>
+              <h3 class="feature-title">Keep working without internet</h3>
+              <p class="feature-description">Save entries on the phone when there's no signal and send them up automatically when there is.</p>
+              <div class="flow-plan" style="margin-bottom: 12px; padding: 8px 12px; background: rgba(0,0,0,0.02); border: 1px solid var(--border); border-radius: 6px;">
+                <div class="flow-plan-title" style="font-size: 9.5px; opacity: 0.8;">📌 Technical Note</div>
+                <div style="font-size: 11.5px; color: var(--muted-foreground); font-weight: 600;">The service worker handles push only — no caching, no background sync.</div>
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #5</span>
+                <span class="feature-tag blocker">Blocker</span>
+              </div>
+              <h3 class="feature-title">Back up and download everything</h3>
+              <p class="feature-description">Automatic backups, plus a button that gives you your entire history as a file you can keep.</p>
+            </div>
           </div>
         </div>
 
-        <!-- SYSTEM & PLATFORM -->
-        <div class="category-section" id="section-system">
-          <h2 class="category-title">🔧 System &amp; Platform <span>1 Feature</span></h2>
+
+        <!-- GROUP G2 -->
+        <div class="category-section" id="section-g2">
+          <h2 class="category-title">⚡ Group 02 · Faster Logging <span>4 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Entering ₹1,200 stops involving a full minute of navigation, four screen taps and two keyboard opens.</p>
           <div class="features-grid">
-            
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">System 8.2</span>
-                <span class="feature-tag">Visuals</span>
+                <span class="feature-id">Feature #6</span>
+                <span class="feature-tag dofirst">Do first</span>
               </div>
-              <h3 class="feature-title">Unified Master Calendar</h3>
-              <p class="feature-description">A central calendar overlay displaying workouts, task due dates, vehicle renewals, and expenses together.</p>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Merged monthly grid displaying color dots for tasks, workouts, renewals, and renewals together.</li>
-                </ul>
-              </div>
+              <h3 class="feature-title">Type one line to log anything</h3>
+              <p class="feature-description">One box on the home screen. Type <em>"petrol 1200 shell odo 42150"</em> and the app files it as a fuel entry, an expense and an odometer reading — all at once, no forms.</p>
             </div>
-
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #7</span>
+                <span class="feature-tag dofirst">Do first</span>
+              </div>
+              <h3 class="feature-title">Say it instead of typing it</h3>
+              <p class="feature-description">Hold a button, speak the entry, done.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #8</span>
+                <span class="feature-tag dofirst">Do first</span>
+              </div>
+              <h3 class="feature-title">Pull in data from your watch and phone</h3>
+              <p class="feature-description">Connect Apple Health or Google Fit for sleep, steps, heart rate and weight.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #9</span>
+                <span class="feature-tag dofirst">Do first</span>
+              </div>
+              <h3 class="feature-title">Remember what you usually enter</h3>
+              <p class="feature-description">Pre-fill the fields with your last values, and offer a "same as yesterday" button.</p>
+            </div>
           </div>
         </div>
 
-        <!-- GAMIFICATION -->
-        <div class="category-section" id="section-gamification">
-          <h2 class="category-title">🎮 Gamification <span>1 Feature</span></h2>
+
+        <!-- GROUP G3 -->
+        <div class="category-section" id="section-g3">
+          <h2 class="category-title">🔗 Group 03 · Joining the Modules Up <span>4 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Data flows between modules automatically instead of needing manual entry in three separate places.</p>
           <div class="features-grid">
-            
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">Game 9.1</span>
-                <span class="feature-tag">RPG</span>
+                <span class="feature-id">Feature #10</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">Life RPG Gamification Engine</h3>
-              <p class="feature-description">Turn your daily life and habits into a role-playing game with custom stats, XP leveling, reward stores, and monthly boss battles.</p>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Earn XP for logging habits. Redeem in a custom rewards store for real-life incentives.</li>
-                  <li>Fight boss battles representing big monthly focus challenges.</li>
-                </ul>
-              </div>
+              <h3 class="feature-title">One shared record of everything that happens</h3>
+              <p class="feature-description">Instead of fifteen modules each keeping their own separate history, everything also writes to one common list: what happened, when, in which area, and what it cost.</p>
             </div>
-
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #11</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">A single page for every thing you own or care for</h3>
+              <p class="feature-description">Your dog, your bike, your fridge, a project — each gets one page showing its whole story: everything spent on it, everything done to it, everything coming up.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #12</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Tag anything, search everything</h3>
+              <p class="feature-description">One search box that looks across all modules at once, plus tags that work everywhere.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #13</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Undo, and a recycle bin</h3>
+              <p class="feature-description">Deletions go to a bin for thirty days instead of vanishing, and recent actions can be reversed.</p>
+            </div>
           </div>
         </div>
 
-        <!-- ADVANCED AI ANALYTICS -->
-        <div class="category-section" id="section-ai-analytics">
-          <h2 class="category-title">🤖 Advanced AI Analytics <span>5 Features</span></h2>
+
+        <!-- GROUP G4 -->
+        <div class="category-section" id="section-g4">
+          <h2 class="category-title">🎯 Group 04 · Planning Ahead <span>3 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">The app helps you look forward rather than only recording what already happened.</p>
           <div class="features-grid">
-            
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">AI 10.1</span>
-                <span class="feature-tag intelligence">Generative</span>
+                <span class="feature-id">Feature #14</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">The "What-If" Scenario Simulator</h3>
-              <p class="feature-description">Adjust sliders to simulate the future (savings projection, fitness levels) based on behavioral tweaks.</p>
+              <h3 class="feature-title">Goals that connect to your daily logs</h3>
+              <p class="feature-description">Set a yearly goal, break it into quarters and months, and link the habits, tasks and savings that feed it — so progress is measured from what you already log.</p>
             </div>
-
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">AI 10.2</span>
-                <span class="feature-tag intelligence">Diagnostic</span>
+                <span class="feature-id">Feature #15</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">Multi-Variate Root Cause Analysis (RCA)</h3>
-              <p class="feature-description">Scans across all modules (Habits, Finance, Nutrition, Sleep) looking for invisible triggers and correlations.</p>
+              <h3 class="feature-title">One calendar for everything</h3>
+              <p class="feature-description">Workouts, task deadlines, bills, vehicle renewals and pet appointments on a single month view — and you can drag things to reschedule, not just look at them.</p>
             </div>
-
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">AI 10.3</span>
-                <span class="feature-tag intelligence">Conversational</span>
+                <span class="feature-id">Feature #16</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">Natural Language Data Interrogation</h3>
-              <p class="feature-description">Talk to your data: ask complex questions like "Why did I save less money in July?" and get direct answers backed by custom charts.</p>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Ask questions in plain English chat; AI retrieves data and renders dynamic analysis graphs.</li>
-                </ul>
-              </div>
+              <h3 class="feature-title">A guided weekly and monthly review</h3>
+              <p class="feature-description">A short, structured screen: what went well, what slipped, what you're committing to next. Not a blank page — actual questions with your own numbers already filled in.</p>
             </div>
-
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">AI 10.4</span>
-                <span class="feature-tag intelligence">NLP</span>
-              </div>
-              <h3 class="feature-title">Unstructured Journal Sentiment Extraction</h3>
-              <p class="feature-description">Runs NLP over retro notes and journals, charting qualitative emotional mood against quantitative metrics.</p>
-            </div>
-
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">AI 10.5</span>
-                <span class="feature-tag intelligence">Prescriptive</span>
-              </div>
-              <h3 class="feature-title">Automated Prescriptive Nudges</h3>
-              <p class="feature-description">An autonomous coach that suggests micro-adjustments for the upcoming week based on last week's performance data.</p>
-            </div>
-
           </div>
         </div>
 
-        <!-- USER GUIDE -->
-        <div class="category-section" id="section-user-guide">
-          <h2 class="category-title">📖 User Guide <span>1 Feature</span></h2>
+
+        <!-- GROUP G5 -->
+        <div class="category-section" id="section-g5">
+          <h2 class="category-title">🤖 Group 05 · Insight & AI <span>4 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">The app explains patterns in your data and answers questions in plain English.</p>
           <div class="features-grid">
-            
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">Guide 11.1</span>
-                <span class="feature-tag">Onboarding</span>
+                <span class="feature-id">Feature #17</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">Interactive Universal User Guide &amp; Knowledge Base</h3>
-              <p class="feature-description">A complete interactive help center and guided onboarding wizard designed to help users master every module, formula, and customization across the platform.</p>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Step-by-step interactive product tours for first-time onboarding and feature upgrades.</li>
-                  <li>Context-sensitive inline tooltips &amp; quick-reference info overlays for complex metrics.</li>
-                  <li>Searchable inline help drawer with instant module FAQs and cheatsheets.</li>
-                </ul>
-              </div>
+              <h3 class="feature-title">Tell people how sure the number is</h3>
+              <p class="feature-description">Every score and chart shows how much data it's based on. "Consistency 82% — from 19 of 30 days logged."</p>
             </div>
-
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #18</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Flag anything unusual</h3>
+              <p class="feature-description">Simple, reliable alerts when something is well outside your normal range — "grocery spend is far above your six-month average."</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #19</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">A single Life Score</h3>
+              <p class="feature-description">One 0–100 number combining habits, money, fitness, tasks and upkeep — with the formula shown, weights you can change, and hidden when there isn't enough data to be honest.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #20</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Ask questions in plain English</h3>
+              <p class="feature-description">Type "why did I spend more in July?" and get a written answer with the chart that supports it.</p>
+            </div>
           </div>
         </div>
 
-        <!-- SCORING SYSTEM -->
-        <div class="category-section" id="section-scoring">
-          <h2 class="category-title">⭐ Life Score Engine <span>2 Features</span></h2>
+
+        <!-- GROUP G6 -->
+        <div class="category-section" id="section-g6">
+          <h2 class="category-title">🔔 Group 06 · Reminders That Work <span>3 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Notifications arrive at the right moment and let you take action without opening the full app.</p>
           <div class="features-grid">
-            
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">Score 12.1</span>
-                <span class="feature-tag">Core Engine</span>
+                <span class="feature-id">Feature #21</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">Holistic Life Score Engine (All-Input Aggregation)</h3>
-              <p class="feature-description">Calculates a dynamic 0-100 real-time composite Life Score derived from all platform inputs including habits, tasks, finances, fitness, sleep, pet care, vehicle upkeep, and mood.</p>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Weighted domain algorithm continuously aggregates completed habits, financial savings rate, physical recovery, task velocity, and maintenance compliance.</li>
-                  <li>Displays real-time score widgets on the main dashboard with daily deltas and trend vectors.</li>
-                </ul>
-              </div>
+              <h3 class="feature-title">Something that sends notifications on a schedule</h3>
+              <p class="feature-description">Right now notifications can only be fired by hand from the settings screen. There's no timer, no rules, nothing that runs on its own. This builds that.</p>
             </div>
-
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">Score 12.2</span>
-                <span class="feature-tag">Analytics</span>
+                <span class="feature-id">Feature #22</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">Domain Sub-Score Breakdown &amp; Balance Radar</h3>
-              <p class="feature-description">Deconstructs your overall Life Score into dedicated sub-scores (Financial Stability, Physical Vitality, Habit Consistency, Operational Discipline, and Care Compliance).</p>
-              <ul class="feature-bullets">
-                <li>Interactive 360° radar chart visualising strengths and personal growth areas.</li>
-                <li>Historical score logs with daily, weekly, and monthly trend comparison charts.</li>
-                <li>Gamified milestone alerts when crossing key score thresholds (e.g., 80+ Gold Tier).</li>
-              </ul>
+              <h3 class="feature-title">A morning brief</h3>
+              <p class="feature-description">One notification at 7am: today's habits, what's due, what's on the calendar, what's left in the budget, anything expiring soon.</p>
             </div>
-
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #23</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Streak rescue and quiet hours</h3>
+              <p class="feature-description">A nudge before a streak breaks, and controls so notifications don't arrive at 11pm or arrive six at a time.</p>
+            </div>
           </div>
         </div>
 
-        <!-- NOTIFICATIONS -->
-        <div class="category-section" id="section-notifications">
-          <h2 class="category-title">🔔 Notifications <span>2 Features</span></h2>
+
+        <!-- GROUP G7 -->
+        <div class="category-section" id="section-g7">
+          <h2 class="category-title">💰 Group 07 · Deeper Money Tools <span>0 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">All features in this group have been removed or deferred.</p>
           <div class="features-grid">
-            
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Notify 13.1</span>
-                <span class="feature-tag">Automation</span>
-              </div>
-              <h3 class="feature-title">Intelligent Multi-Channel Notification Hub</h3>
-              <p class="feature-description">Centralised notification engine delivering timely, context-aware reminders via Web Push, Email, and in-app drawer toasts.</p>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Configurable notification preferences per module (Habit streak alerts, Vehicle service deadlines, Pet vet/medication schedules, Financial budget caps).</li>
-                  <li>Do-Not-Disturb scheduling and smart batching to prevent notification fatigue.</li>
-                </ul>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Notify 13.2</span>
-                <span class="feature-tag">Triggers</span>
-              </div>
-              <h3 class="feature-title">Contextual Event Triggers &amp; Emergency Alerts</h3>
-              <p class="feature-description">Automated real-time event triggers for urgent vehicle renewals, streak freeze rescue reminders, overspending warnings, and pet health schedules.</p>
-              <ul class="feature-bullets">
-                <li>Predictive notifications triggered ahead of upcoming renewal dates or low habits score.</li>
-                <li>Interactive notification cards allowing direct inline action (e.g., 'Log Habit Now' or 'Snooze').</li>
-              </ul>
-            </div>
-
           </div>
         </div>
 
-        <!-- CROSS FEATURES -->
-        <div class="category-section" id="section-cross-features">
-          <h2 class="category-title">🔗 Cross-Module Features <span>3 Features</span></h2>
+
+        <!-- GROUP G8 -->
+        <div class="category-section" id="section-g8">
+          <h2 class="category-title">👥 Group 08 · More Than One Person <span>2 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Support for shared household accounts and privacy controls.</p>
           <div class="features-grid">
-            
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">Cross 14.1</span>
-                <span class="feature-tag">Cross-Module</span>
+                <span class="feature-id">Feature #24</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">Universal Cross-Module Expense Capture Engine</h3>
-              <p class="feature-description">Automatically routes tagged transaction expenses to their respective domain pages (Pet food/vet bills sync to Pet Expenses, vehicle repairs/fuel sync to Vehicle TCO ledger, health expenses sync to Fitness ledger).</p>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Log an expense tagged with category 'Pet' or 'Vehicle'; system instantly mirrors the transaction in both Finance and the target module's dedicated expense ledger.</li>
-                  <li>Prevents double entry while providing accurate module-specific cost analytics.</li>
-                </ul>
-              </div>
+              <h3 class="feature-title">Household accounts</h3>
+              <p class="feature-description">More than one person, with control over what each can see.</p>
             </div>
-
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">Cross 14.2</span>
-                <span class="feature-tag">Cross-Module</span>
+                <span class="feature-id">Feature #25</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">Cross-Domain Task, Maintenance &amp; Calendar Bridge</h3>
-              <p class="feature-description">Seamlessly links maintenance schedules (vehicle oil changes, pet vaccinations, bill due dates) directly into the Task Manager and Master Calendar.</p>
-              <ul class="feature-bullets">
-                <li>Vehicle service milestones automatically generate actionable items in the main Task List.</li>
-                <li>Pet healthcare schedules sync directly with Master Unified Calendar with color-coded tags.</li>
-              </ul>
+              <h3 class="feature-title">Let other tools connect</h3>
+              <p class="feature-description">A basic API and webhooks so automations can read and write.</p>
             </div>
-
-            <div class="feature-card">
-              <div class="card-header">
-                <span class="feature-id">Cross 14.3</span>
-                <span class="feature-tag">Finance Bridge</span>
-              </div>
-              <h3 class="feature-title">Asset &amp; Asset Lifecycle Financial Integration</h3>
-              <p class="feature-description">Integrates vehicle depreciation and pet lifetime care expenditure directly into overall Net Worth and long-term financial planning reports.</p>
-              <ul class="feature-bullets">
-                <li>Vehicle estimated market value automatically rolls into Net Worth balance sheets.</li>
-                <li>Cumulative pet care costs feed into long-term budget projections and savings forecasts.</li>
-              </ul>
-            </div>
-
           </div>
         </div>
 
-        <!-- MULTI-PERIOD REPORTS -->
-        <div class="category-section" id="section-reports">
-          <h2 class="category-title">📈 Multi-Period Reports <span>3 Features</span></h2>
+
+        <!-- GROUP G9 -->
+        <div class="category-section" id="section-g9">
+          <h2 class="category-title">✂️ Group 09 · What to Drop <span>3 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Features that sound good on paper but add unnecessary complexity.</p>
           <div class="features-grid">
-            
-            <div class="feature-card">
+            <div class="feature-card cut">
               <div class="card-header">
-                <span class="feature-id">Report 15.1</span>
-                <span class="feature-tag">Reporting</span>
+                <span class="feature-id">Feature #26</span>
+                <span class="feature-tag cut">Cut</span>
               </div>
-              <h3 class="feature-title">Daily, Weekly, Monthly, Quarterly &amp; Yearly Reports Engine</h3>
-              <p class="feature-description">A powerful reporting hub featuring dedicated breakdown reports across 5 distinct temporal granularities.</p>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>Daily Reports: Quick daily log audit and key metric summary.</li>
-                  <li>Weekly Reports: Habit consistency, weekly spending review, and workout completion rates.</li>
-                  <li>Monthly Reports: Financial P&amp;L statement, health averages, and Life Score trends.</li>
-                  <li>Quarterly Reports: Macro goal progress, quarterly financial growth, and strategic reviews.</li>
-                  <li>Yearly Reports: Comprehensive Annual Life Recap, total spend audit, and year-over-year growth.</li>
-                </ul>
-              </div>
+              <h3 class="feature-title">The game engine — postpone it</h3>
+              <p class="feature-description">XP, levels, a rewards shop and monthly boss battles. It's a way of making yourself want to log. But wanting to log isn't the problem — logging being slow is.</p>
             </div>
-
-            <div class="feature-card">
+            <div class="feature-card cut">
               <div class="card-header">
-                <span class="feature-id">Report 15.2</span>
-                <span class="feature-tag">Module Reports</span>
+                <span class="feature-id">Feature #27</span>
+                <span class="feature-tag cut">Cut</span>
               </div>
-              <h3 class="feature-title">Dedicated Module &amp; Newly Added Feature Reports</h3>
-              <p class="feature-description">Tailored analytical report templates for newly added features including Pet Cost Analytics, Vehicle TCO Reports, Life Score Historical Progression, and Notification Engagement.</p>
-              <ul class="feature-bullets">
-                <li>Pet Analytics Report: Visualizes medical vs food vs gear spending trends per pet.</li>
-                <li>Vehicle TCO Report: Total cost of ownership per mile/km including maintenance and insurance.</li>
-                <li>Life Score Velocity Report: Deep dive into score fluctuations and contributing factors.</li>
-              </ul>
+              <h3 class="feature-title">Five report timeframes — make it two</h3>
+              <p class="feature-description">Daily, weekly, monthly, quarterly and yearly reports is five separate things to build and maintain. Ship weekly and monthly, see if they get read.</p>
             </div>
-
-            <div class="feature-card">
+            <div class="feature-card cut">
               <div class="card-header">
-                <span class="feature-id">Report 15.3</span>
-                <span class="feature-tag">Export &amp; Custom</span>
+                <span class="feature-id">Feature #28</span>
+                <span class="feature-tag cut">Cut</span>
               </div>
-              <h3 class="feature-title">Interactive Report Builder &amp; PDF/CSV Exporter</h3>
-              <p class="feature-description">Build custom multi-module reports, compare arbitrary timeframes, and export beautiful PDF summaries or CSV raw data.</p>
-              <ul class="feature-bullets">
-                <li>Select custom date ranges and pick specific metrics to build bespoke report cards.</li>
-                <li>One-click export to branded PDF reports and raw CSV data tables for accounting.</li>
-              </ul>
+              <h3 class="feature-title">Stop adding report tabs</h3>
+              <p class="feature-description">There are already eleven. The issue isn't that a report is missing — it's that reports wait for you to visit them, and you don't.</p>
             </div>
-
           </div>
         </div>
 
-        <!-- AI REPORTS GENERATOR -->
-        <div class="category-section" id="section-ai-reports">
-          <h2 class="category-title">🧠 AI Reports Generator <span>2 Features</span></h2>
+
+        <!-- PART 2 HEADER -->
+        <div class="part-header" style="margin: 40px 0 24px; padding: 24px; background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: var(--radius-md); box-shadow: var(--shadow-premium);">
+          <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px;">Part Two · Features 29–63</div>
+          <h2 style="font-size: 22px; font-weight: 900; color: var(--foreground); letter-spacing: -0.02em;">Making the App Easier to Use</h2>
+          <p style="font-size: 13.5px; color: var(--muted-foreground); margin-top: 4px; font-weight: 500; line-height: 1.5;">Same app, same data. These 35 interface and UX refinements change how it feels to open the app twenty times a day.</p>
+        </div>
+
+
+        <!-- GROUP G10 -->
+        <div class="category-section" id="section-g10">
+          <h2 class="category-title">🎨 Group 10 · Text, Weight & Colour <span>5 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Consistent text hierarchy, single colour system, and clean visual weight.</p>
           <div class="features-grid">
-            
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">AI-Rep 16.1</span>
-                <span class="feature-tag intelligence">AI Narrative</span>
+                <span class="feature-id">Feature #29</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">Autonomous Executive AI Narrative Reports</h3>
-              <p class="feature-description">Generates rich natural-language executive reports summarizing your daily, weekly, and monthly performance with predictive trend forecasts.</p>
-              <div class="flow-plan">
-                <div class="flow-plan-title">📋 Target User Flow</div>
-                <ul class="flow-plan-list">
-                  <li>AI synthesizes multi-module data into a structured executive brief detailing top wins, risk areas, and lifestyle trajectory.</li>
-                  <li>Provides forward-looking predictions (e.g., projected monthly savings and health recovery outlook).</li>
-                </ul>
-              </div>
+              <h3 class="feature-title">Pick five text sizes and stick to them</h3>
+              <p class="feature-description">Right now sizes are chosen at random throughout the app, and a lot of them are 9 or 10 pixels &mdash; smaller than the small print on a contract. Settle on roughly five sizes and retire everything below 12.</p>
             </div>
-
             <div class="feature-card">
               <div class="card-header">
-                <span class="feature-id">AI-Rep 16.2</span>
-                <span class="feature-tag intelligence">AI Diagnostic</span>
+                <span class="feature-id">Feature #30</span>
+                <span class="feature-tag then">Then</span>
               </div>
-              <h3 class="feature-title">AI Cross-Domain Correlation &amp; Anomaly Reports</h3>
-              <p class="feature-description">Automated AI diagnostic reports identifying hidden relationships (e.g., 'Late sleep drops habit compliance by 35%' or 'High pet expenses coincided with dining out surge').</p>
-              <ul class="feature-bullets">
-                <li>Identifies negative behavioral cascades and positive multiplier habits automatically.</li>
-                <li>Delivers actionable AI recommendations to optimize weekly schedule and budget allocation.</li>
-              </ul>
+              <h3 class="feature-title">Stop making everything bold</h3>
+              <p class="feature-description">Use three weights &mdash; normal for text, semibold for emphasis, heavy for the one thing that matters most on a screen. Currently the heaviest weight is the default.</p>
             </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #31</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Drop the tiny ALL-CAPS labels</h3>
+              <p class="feature-description">Wide-spaced capitals at 9 pixels appear 433 times. Capitals remove the shape of a word, which is what your eye reads first, so they&rsquo;re the slowest text there is.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #32</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Use one colour system</h3>
+              <p class="feature-description">The app defines proper colours for success, warning and danger, then ignores them &mdash; 134 places use hardcoded colours instead.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #33</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Make all charts look the same</h3>
+              <p class="feature-description">One shared set of colours, fonts and spacing for every graph.</p>
+            </div>
+          </div>
+        </div>
 
+
+        <!-- GROUP G11 -->
+        <div class="category-section" id="section-g11">
+          <h2 class="category-title">🧭 Group 11 · Getting Around the App <span>6 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Bottom tab navigation, header improvements, and fast section jumping.</p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #34</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">A row of tabs along the bottom</h3>
+              <p class="feature-description">Four main destinations plus a big centre button for logging, fixed at the bottom of the screen where your thumb already is. Keep the side menu for everything else.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #35</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Remove the Forward button</h3>
+              <p class="feature-description">Every page shows Home, Back and Forward. A forward button is a web-browser control, not an app one, and the three of them eat about a third of the header on a phone.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #36</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Put the header to better use</h3>
+              <p class="feature-description">The app logo sits in the middle of every screen. In an app you installed yourself, you already know which app it is. Use that space for the page title and search.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #37</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Type-to-jump shortcut</h3>
+              <p class="feature-description">One box that finds any screen, entry or record by name.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #38</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">One tab style, and fix the Reports tabs</h3>
+              <p class="feature-description">There are two different tab components doing the same job, styled differently. Also, Reports has eleven tabs that scroll sideways &mdash; anything off-screen may as well not exist.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #39</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">A proper layout on a computer</h3>
+              <p class="feature-description">On a wide screen the app stretches the frame but keeps content in a narrow phone-width column, leaving large empty margins. Either build a real multi-column layout or stop pretending.</p>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- GROUP G12 -->
+        <div class="category-section" id="section-g12">
+          <h2 class="category-title">📝 Group 12 · The Forms You Use Daily <span>5 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Slide-up modal forms, instant auto-save, and keypad enhancements.</p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #40</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Forms that slide up over the page</h3>
+              <p class="feature-description">Log a habit, expense or set in a panel that appears over what you were looking at, instead of navigating away and back.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #41</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Save instantly, with an undo</h3>
+              <p class="feature-description">Show the entry as saved immediately and finish the actual saving in the background. Put an Undo button on the confirmation.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #42</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Stop the screen zooming when you tap a field</h3>
+              <p class="feature-description">The stylesheet forces every input to 13 pixels. iPhones automatically zoom in on any field smaller than 16, so the page jumps every single time you tap one.</p>
+              <div class="flow-plan" style="margin-bottom: 12px; padding: 8px 12px; background: rgba(0,0,0,0.02); border: 1px solid var(--border); border-radius: 6px;">
+                <div class="flow-plan-title" style="font-size: 9.5px; opacity: 0.8;">📌 Technical Note</div>
+                <div style="font-size: 11.5px; color: var(--muted-foreground); font-weight: 600;">One line in <code>globals.css</code>: inputs are pinned to <code>13px !important</code>.</div>
+              </div>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #43</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Number pad and quick-pick buttons</h3>
+              <p class="feature-description">Amount and weight fields should open a number keypad, with buttons for your recent values.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #44</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Don&rsquo;t lose half-finished entries</h3>
+              <p class="feature-description">Save what&rsquo;s been typed so switching apps mid-form doesn&rsquo;t wipe it.</p>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- GROUP G13 -->
+        <div class="category-section" id="section-g13">
+          <h2 class="category-title">🚀 Group 13 · Speed & Feedback <span>4 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Instant page loading, instant UI feedback, and crisp interaction cues.</p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #45</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Remove the fade-in on every page</h3>
+              <p class="feature-description">Content is deliberately delayed by roughly a third of a second every time you open a screen, and the rule is broad enough to fade things that weren&rsquo;t meant to fade.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #46</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Show the shape of the page while it loads</h3>
+              <p class="feature-description">Instead of blanking the whole screen behind a spinner, show grey placeholder blocks in the layout the content will fill. Twenty screens currently go completely empty.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #47</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Show yesterday&rsquo;s data straight away</h3>
+              <p class="feature-description">Display what was there last time immediately, then quietly update it.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #48</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Move the save message out of the middle of the screen</h3>
+              <p class="feature-description">Confirmation messages are pinned dead centre with a bouncing animation, covering the content, every time you save.</p>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- GROUP G14 -->
+        <div class="category-section" id="section-g14">
+          <h2 class="category-title">📱 Group 14 · Feeling Like a Real App <span>5 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Native gesture support, smooth transitions, and polished responsive layouts.</p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #49</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Keep content clear of the notch and the home bar</h3>
+              <p class="feature-description">There&rsquo;s no handling for the cut-out at the top or the bar at the bottom of modern phones, so content can slide underneath both.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #50</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Fix the dark flash when it opens</h3>
+              <p class="feature-description">The app tells the phone its colour is near-black, then loads a near-white interface. Every launch is a dark screen followed by a white one.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #51</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Pull down to refresh</h3>
+              <p class="feature-description">The standard phone gesture, instead of hunting for a refresh button in the corner.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #52</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">A small vibration when something completes</h3>
+              <p class="feature-description">A tap of feedback when you tick a habit, save an entry or extend a streak.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #53</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Swipe on a row to act on it</h3>
+              <p class="feature-description">Swipe left or right on any list item to complete, edit or delete.</p>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- GROUP G15 -->
+        <div class="category-section" id="section-g15">
+          <h2 class="category-title">👁️ Group 15 · Readability for Everyone <span>4 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Better text contrast, keyboard accessibility, and icon clarity.</p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #54</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Allow pinch to zoom</h3>
+              <p class="feature-description">The app explicitly blocks zooming. Combined with 9-pixel text, that leaves no way out.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #55</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Darken the faint grey text</h3>
+              <p class="feature-description">A lot of secondary text is set at under half opacity, which puts it well below the readable minimum against the pale background.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #56</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Label the buttons and make keyboards work</h3>
+              <p class="feature-description">Icon-only buttons need names, the menu needs to close with Escape, and form fields need properly attached labels and error messages.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #57</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Swap emoji for proper icons</h3>
+              <p class="feature-description">53 emoji are used as interface icons. They&rsquo;re read out oddly by screen readers and look different on every device.</p>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- GROUP G16 -->
+        <div class="category-section" id="section-g16">
+          <h2 class="category-title">🌙 Group 16 · Dark Mode & Themes <span>3 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">System dark mode support and custom theme accent color selection.</p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #58</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Dark mode</h3>
+              <p class="feature-description">A proper dark theme that follows your phone&rsquo;s setting.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #59</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Remove the palette button that does nothing</h3>
+              <p class="feature-description">There&rsquo;s a large floating button near the bottom of every screen offering one theme, which is the theme you&rsquo;re already using.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #60</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Choose your own accent colour</h3>
+              <p class="feature-description">Once dark mode exists, a handful of real palettes costs almost nothing to add.</p>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- GROUP G17 -->
+        <div class="category-section" id="section-g17">
+          <h2 class="category-title">🏠 Group 17 · The Home Screen <span>3 Features</span></h2>
+          <p style="font-size: 13px; color: var(--muted-foreground); margin-bottom: 18px; font-weight: 500; font-style: italic;">Lead with what needs attention and provide clear single-metric dashboard overview.</p>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #61</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Lead with what needs attention</h3>
+              <p class="feature-description">Put overdue, expiring and unlogged items at the top. Everything that&rsquo;s fine goes below.</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #62</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">One number at the top</h3>
+              <p class="feature-description">The first screenful should answer &ldquo;am I on track?&rdquo; without scrolling &mdash; whether that&rsquo;s the Life Score or something as plain as &ldquo;3 of 7 habits, &#8377;4,200 left this month.&rdquo;</p>
+            </div>
+            <div class="feature-card">
+              <div class="card-header">
+                <span class="feature-id">Feature #63</span>
+                <span class="feature-tag then">Then</span>
+              </div>
+              <h3 class="feature-title">Design the empty screens</h3>
+              <p class="feature-description">There&rsquo;s no pattern for what a section looks like before it has data, so new modules simply render blank boxes.</p>
+            </div>
           </div>
         </div>
 
       </div>
-
     </div>
   </div>
+
 
   <!-- Footer -->
   <footer>
     <p>Consolidated Master Report • Resiliessance Life OS Platform Console</p>
-    <p style="margin-top: 4px; font-size: 11px; opacity: 0.7;">21 Core Active Upgrades &amp; 0 Open Bugs Registered</p>
+    <p style="margin-top: 4px; font-size: 11px; opacity: 0.7;">63 Core Active Upgrades &amp; 0 Open Bugs Registered</p>
   </footer>
 
   <script>
@@ -897,16 +1252,23 @@
     const bugNavItems = [];
 
     const featureNavItems = [
-      { id: 'pets', label: 'Pets', emoji: '🐾' },
-      { id: 'system', label: 'System & Platform', emoji: '🔧' },
-      { id: 'gamification', label: 'Gamification', emoji: '🎮' },
-      { id: 'ai-analytics', label: 'Advanced AI Analytics', emoji: '🤖' },
-      { id: 'user-guide', label: 'User Guide', emoji: '📖' },
-      { id: 'scoring', label: 'Life Score Engine', emoji: '⭐' },
-      { id: 'notifications', label: 'Notifications', emoji: '🔔' },
-      { id: 'cross-features', label: 'Cross-Module Features', emoji: '🔗' },
-      { id: 'reports', label: 'Multi-Period Reports', emoji: '📈' },
-      { id: 'ai-reports', label: 'AI Reports Generator', emoji: '🧠' }
+      { id: 'g1', label: '01 · Foundation & Safety', emoji: '🛡️' },
+      { id: 'g2', label: '02 · Faster Logging', emoji: '⚡' },
+      { id: 'g3', label: '03 · Joining the Modules Up', emoji: '🔗' },
+      { id: 'g4', label: '04 · Planning Ahead', emoji: '🎯' },
+      { id: 'g5', label: '05 · Insight & AI', emoji: '🤖' },
+      { id: 'g6', label: '06 · Reminders That Work', emoji: '🔔' },
+      { id: 'g7', label: '07 · Deeper Money Tools', emoji: '💰' },
+      { id: 'g8', label: '08 · More Than One Person', emoji: '👥' },
+      { id: 'g9', label: '09 · What to Drop', emoji: '✂️' },
+      { id: 'g10', label: '10 · Text, Weight & Colour', emoji: '🎨' },
+      { id: 'g11', label: '11 · Getting Around the App', emoji: '🧭' },
+      { id: 'g12', label: '12 · The Forms You Use Daily', emoji: '📝' },
+      { id: 'g13', label: '13 · Speed & Feedback', emoji: '🚀' },
+      { id: 'g14', label: '14 · Feeling Like a Real App', emoji: '📱' },
+      { id: 'g15', label: '15 · Readability for Everyone', emoji: '👁️' },
+      { id: 'g16', label: '16 · Dark Mode & Themes', emoji: '🌙' },
+      { id: 'g17', label: '17 · The Home Screen', emoji: '🏠' }
     ];
 
     // Initialize Page
@@ -1026,17 +1388,17 @@
       const sections = document.querySelectorAll(`${activeSectionId} .category-section`);
 
       cards.forEach(card => {
-        const titleText = card.querySelector(currentView === 'features' ? '.feature-title' : '.bug-title').innerText.toLowerCase();
-        const descText = card.querySelector(currentView === 'features' ? '.feature-description' : '.bug-description').innerText.toLowerCase();
+        const titleElem = card.querySelector(currentView === 'features' ? '.feature-title' : '.bug-title');
+        const descElem = card.querySelector(currentView === 'features' ? '.feature-description' : '.bug-description');
+        const titleText = titleElem ? titleElem.innerText.toLowerCase() : '';
+        const descText = descElem ? descElem.innerText.toLowerCase() : '';
         
         let extraText = '';
-        if (currentView === 'features') {
-          const bullets = card.querySelectorAll('.feature-bullets li');
-          bullets.forEach(li => extraText += li.innerText.toLowerCase() + ' ');
-        } else {
-          const userPersp = card.querySelector('.user-perspective').innerText.toLowerCase();
-          extraText = userPersp;
-        }
+        const userPersp = card.querySelector('.user-perspective');
+        if (userPersp) extraText += userPersp.innerText.toLowerCase() + ' ';
+        
+        const bullets = card.querySelectorAll('.feature-bullets li');
+        bullets.forEach(li => extraText += li.innerText.toLowerCase() + ' ');
 
         if (titleText.includes(query) || descText.includes(query) || extraText.includes(query)) {
           card.classList.remove('hidden');

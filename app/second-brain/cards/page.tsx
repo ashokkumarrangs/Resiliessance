@@ -39,43 +39,34 @@ function getMemoryStrength(card: BrainCard) {
   return { label: "Anchored", color: "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" };
 }
 
-function extractBoxHeadings(markdown: string | null): string[] {
-  if (!markdown) return [];
-  const lines = markdown.split("\n");
-  const headings: string[] = [];
-  lines.forEach((line) => {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("#### ")) {
-      const headingText = trimmed.substring(5).trim();
-      if (headingText) {
-        headings.push(headingText);
-      }
-    }
-  });
-  return headings;
-}
-
 function getBoxHeadingsPreview(card: BrainCard): string[] {
-  const explicitHeadings = extractBoxHeadings(card.body);
-  if (explicitHeadings.length > 0) {
-    return explicitHeadings;
-  }
+  if (!card.body || !card.body.trim()) return [];
   try {
     const blocks = deserializeMarkdownToBlocks(card.body);
-    return blocks.map((b) => {
-      if (b.heading && b.heading.trim()) return b.heading.trim();
-      switch (b.type) {
-        case "paragraph": return "Text details";
-        case "header": return b.text || "Heading";
-        case "list": return "Bullet list";
-        case "table": return "Spreadsheet table";
-        case "quote": return "Inspirational quote";
-        case "link": return `Web link: ${b.text || b.url || "Source"}`;
-        default: return "Content section";
+    const headings: string[] = [];
+
+    blocks.forEach((b) => {
+      if (b.heading && b.heading.trim()) {
+        headings.push(b.heading.trim());
+      } else if (b.type === "header" && b.text && b.text.trim()) {
+        headings.push(b.text.trim());
+      } else if (b.type === "paragraph" && b.text && b.text.trim()) {
+        const clean = b.text.replace(/^#+\s+/, "").trim();
+        if (clean) headings.push(clean);
+      } else if (b.type === "quote" && b.text && b.text.trim()) {
+        headings.push(b.text.trim());
+      } else if (b.type === "link" && (b.text || b.url)) {
+        headings.push(b.text || b.url || "Link");
+      } else if (b.type === "list" && b.listItems && b.listItems.length > 0) {
+        headings.push(b.listItems[0]);
+      } else if (b.type === "table") {
+        headings.push("Table");
       }
     });
+
+    return headings;
   } catch (e) {
-    return ["Content section"];
+    return [];
   }
 }
 
@@ -553,7 +544,7 @@ export default function CardsPage() {
                         {card.title}
                       </h3>
                       <div className="space-y-1">
-                        {getBoxHeadingsPreview(card).slice(0, 3).map((h, hIdx) => (
+                        {getBoxHeadingsPreview(card).map((h, hIdx) => (
                           <div key={hIdx} className="text-[10px] text-muted-foreground/75 flex items-center gap-1.5 font-black uppercase tracking-wider truncate">
                             <span className="w-1.5 h-1.5 rounded-full bg-primary/70 shrink-0" />
                             <span>{h}</span>

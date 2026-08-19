@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { taskService } from "@/lib/services/tasks";
 import { Bookmark, Check, ChevronRight, ChevronUp, ChevronDown, Edit3, Eye, EyeOff, FileText, Flame, GripVertical, Inbox, List, PlusSquare, Star, Trash2, MoreVertical, Calendar, Repeat } from "lucide-react";
 import { toast } from "sonner";
 import { PageWrapper } from "@/components/PageWrapper";
@@ -82,8 +82,8 @@ export default function TaskManagerPage() {
     const siblingOrder = sibling.sort_order ?? targetIndex;
     
     await Promise.all([
-      supabase.from('tasks').update({ sort_order: siblingOrder }).eq('id', task.id),
-      supabase.from('tasks').update({ sort_order: currentOrder }).eq('id', sibling.id)
+      taskService.updateTaskFields(task.id, { sort_order: siblingOrder }),
+      taskService.updateTaskFields(sibling.id, { sort_order: currentOrder })
     ]);
     loadTasks();
   };
@@ -105,19 +105,16 @@ export default function TaskManagerPage() {
   const handleSaveTaskDetails = async (updates: any) => {
     if (!editingTask) return;
     try {
-      const { error } = await supabase
-        .from('tasks')
-        .update({
-          task: updates.title,
-          due_date: updates.due_date,
-          recurrence_type: updates.recurrence_type,
-          recurrence_interval: updates.recurrence_interval,
-          recurrence_days: updates.recurrence_days,
-          recurrence_anchor: updates.recurrence_anchor,
-        })
-        .eq('id', editingTask.id);
+      const success = await taskService.updateTaskFields(editingTask.id, {
+        task: updates.title,
+        due_date: updates.due_date,
+        recurrence_type: updates.recurrence_type,
+        recurrence_interval: updates.recurrence_interval,
+        recurrence_days: updates.recurrence_days,
+        recurrence_anchor: updates.recurrence_anchor,
+      });
 
-      if (error) throw error;
+      if (!success) throw new Error("Update failed");
       toast.success("Task updated successfully");
       loadTasks();
     } catch (err) {
@@ -228,11 +225,10 @@ export default function TaskManagerPage() {
   const loadTasks = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.from('tasks').select('*');
-      if (error) throw error;
+      const data = await taskService.getTasks();
       
       const processed = await processTaskDeadlines(data || [], false, async (id, updates) => {
-        await supabase.from('tasks').update(updates).eq('id', id);
+        await taskService.updateTaskFields(id, updates);
       });
       
       setTasks(processed);
@@ -268,17 +264,15 @@ export default function TaskManagerPage() {
         sort_order: nextSortOrder
       };
 
-      let { data, error } = await supabase.from('tasks').insert(payload).select().single();
-      if (error && error.message?.includes('sort_order')) {
+      let success = await taskService.saveTask(payload);
+      if (!success) {
         delete payload.sort_order;
-        const res = await supabase.from('tasks').insert(payload).select().single();
-        data = res.data;
-        error = res.error;
+        success = await taskService.saveTask(payload);
       }
 
-      if (error) throw error;
+      if (!success) throw new Error("Failed to save task");
 
-      setTasks([...tasks, data]);
+      setTasks([...tasks, payload as any]);
       if (parentId) {
         setNewSubtaskName("");
         setAddingSubtaskToId(null);
@@ -303,12 +297,12 @@ export default function TaskManagerPage() {
     if (nextStatus === 'Completed') {
       setActiveTask(task);
       setTaskModalOpen(true);
-    } else {
-      await executeStatusChange(task, 'Pending', null);
+      return;
     }
+    await processStatusChange(task, 'Pending', null);
   };
 
-  const executeStatusChange = async (task: Task, nextStatus: string, completedAt: string | null) => {
+  const processStatusChange = async (task: Task, nextStatus: string, completedAt: string | null) => {
     const oldTasks = [...tasks];
     try {
       if (nextStatus === 'Completed' && task.recurrence_type && task.recurrence_type !== 'none') {
@@ -340,53 +334,40 @@ export default function TaskManagerPage() {
           };
 
           // Mark current task completed and clear recurrence
-          const { error: updateError } = await supabase
-            .from('tasks')
-            .update({ 
-              status: 'Completed',
-              completed_at: completedAt,
-              recurrence_type: 'none',
-              recurrence_interval: null,
-              recurrence_days: null,
-              recurrence_anchor: null
-            })
-            .eq('id', task.id);
-
-          if (updateError) throw updateError;
+          await taskService.updateTaskFields(task.id, { 
+            status: 'Completed',
+            completed_at: completedAt,
+            recurrence_type: 'none',
+            recurrence_interval: null,
+            recurrence_days: null,
+            recurrence_anchor: null
+          });
 
           // Insert new recurring task instance
-          const { error: insertError } = await supabase
-            .from('tasks')
-            .insert(nextTask);
-
-          if (insertError) throw insertError;
+          await taskService.saveTask(nextTask);
 
           // Clone subtasks for the new recurring task
           const subtasks = tasks.filter(t => t.parent_id === task.id);
           if (subtasks.length > 0) {
-            const nextSubtasks = subtasks.map(st => ({
-              id: crypto.randomUUID(),
-              parent_id: nextTask.id,
-              task: st.task,
-              status: 'Pending',
-              is_today: nextTask.is_today,
-              is_week: nextTask.is_week,
-              is_high_priority: st.is_high_priority || false,
-              is_inbox: nextTask.is_inbox,
-              notes: st.notes || null,
-              sort_order: st.sort_order || 0,
-              due_date: nextTask.due_date,
-              recurrence_type: 'none',
-              recurrence_interval: null,
-              recurrence_days: null,
-              recurrence_anchor: null
-            }));
-
-            const { error: subtaskInsertError } = await supabase
-              .from('tasks')
-              .insert(nextSubtasks);
-            
-            if (subtaskInsertError) throw subtaskInsertError;
+            for (const st of subtasks) {
+              await taskService.saveTask({
+                id: crypto.randomUUID(),
+                parent_id: nextTask.id,
+                task: st.task,
+                status: 'Pending',
+                is_today: nextTask.is_today,
+                is_week: nextTask.is_week,
+                is_high_priority: st.is_high_priority || false,
+                is_inbox: nextTask.is_inbox,
+                notes: st.notes || null,
+                sort_order: st.sort_order || 0,
+                due_date: nextTask.due_date,
+                recurrence_type: 'none',
+                recurrence_interval: null,
+                recurrence_days: null,
+                recurrence_anchor: null
+              });
+            }
           }
 
           toast.success(`Task completed! Next occurrence scheduled for ${nextDueDateStr}`);
@@ -397,15 +378,12 @@ export default function TaskManagerPage() {
 
       // Standard non-recurring or marking pending
       setTasks(tasks.map(t => t.id === task.id ? { ...t, status: nextStatus, completed_at: completedAt } : t));
-      const { error } = await supabase
-        .from('tasks')
-        .update({ 
-          status: nextStatus,
-          completed_at: completedAt
-        })
-        .eq('id', task.id);
+      const success = await taskService.updateTaskFields(task.id, { 
+        status: nextStatus,
+        completed_at: completedAt
+      });
       
-      if (error) throw error;
+      if (!success) throw new Error("Status update failed");
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("Failed to update status");
@@ -415,12 +393,8 @@ export default function TaskManagerPage() {
 
   const toggleFlag = async (id: string, field: 'is_today' | 'is_week' | 'is_high_priority' | 'is_inbox', val: boolean) => {
     try {
-      const { error } = await supabase
-        .from('tasks')
-        .update({ [field]: val })
-        .eq('id', id);
-      
-      if (error) throw error;
+      const success = await taskService.updateTaskFields(id, { [field]: val });
+      if (!success) throw new Error("Flag update failed");
       setTasks(tasks.map(t => t.id === id ? { ...t, [field]: val } : t));
     } catch (error) {
       console.error(`Error updating ${field}:`, error);
@@ -440,8 +414,9 @@ export default function TaskManagerPage() {
       };
       getSubs(id);
 
-      const { error } = await supabase.from('tasks').delete().in('id', idsToDelete);
-      if (error) throw error;
+      for (const idToDelete of idsToDelete) {
+        await taskService.deleteTask(idToDelete);
+      }
       setTasks(tasks.filter(t => !idsToDelete.includes(t.id)));
       toast.success("Tasks deleted");
     } catch (error) {
@@ -466,8 +441,7 @@ export default function TaskManagerPage() {
 
   const saveNotes = async (id: string, notes: string) => {
     try {
-      const { error } = await supabase.from('tasks').update({ notes }).eq('id', id);
-      if (error) throw error;
+      await taskService.updateTaskFields(id, { notes });
       setTasks(tasks.map(t => t.id === id ? { ...t, notes } : t));
     } catch (error) {
       console.error("Error saving notes:", error);
@@ -500,8 +474,8 @@ export default function TaskManagerPage() {
     }));
 
     try {
-      await supabase.from('tasks').update({ sort_order: targetOrder }).eq('id', dragged.id);
-      await supabase.from('tasks').update({ sort_order: dragOrder }).eq('id', target.id);
+      await taskService.updateTaskFields(dragged.id, { sort_order: targetOrder });
+      await taskService.updateTaskFields(target.id, { sort_order: dragOrder });
     } catch (error) {
       console.error("Error saving drag drop order:", error);
     } finally {
@@ -810,7 +784,7 @@ export default function TaskManagerPage() {
         onClose={() => setTaskModalOpen(false)} 
         onConfirm={async (completedAt) => {
           if (activeTask) {
-            await executeStatusChange(activeTask, 'Completed', completedAt);
+            await processStatusChange(activeTask, 'Completed', completedAt);
           }
           setTaskModalOpen(false);
           setActiveTask(null);

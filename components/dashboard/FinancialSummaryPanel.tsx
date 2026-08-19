@@ -25,7 +25,7 @@ export function FinancialSummaryPanel({
   budgetPlanned,
 }: FinancialSummaryPanelProps) {
   return (
-    <Link href="/expenses/net-worth" className="block group">
+    <Link href="/finance/net-worth" className="block group">
       <div className="bg-card rounded-md border border-border/40 shadow-zenith p-6 transition-all group-hover:scale-[1.01]">
         {/* Top Section: Net Worth Hero */}
         <div className="flex justify-between items-start mb-6">

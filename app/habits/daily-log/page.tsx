@@ -427,8 +427,13 @@ export default function HabitDailyPage() {
         activeItem={activeTab === 'daily' ? "Daily Log" : "Off-Day Habits"}
         onChange={(val) => {
           if (val === "Event Log") router.push("/habits/event-log")
-          else if (val === "Off-Day Habits") setActiveTab('off_days')
-          else setActiveTab('daily')
+          else if (val === "Off-Day Habits") {
+            setActiveTab('off_days')
+            router.push("/habits/daily-log?tab=off-day")
+          } else {
+            setActiveTab('daily')
+            router.push("/habits/daily-log")
+          }
         }}
       />
 

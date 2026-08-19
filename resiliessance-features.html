@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resiliessance — Numbered Feature Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14232f; --ink-2:#3d5464; --muted:#74899a;
+    --paper:#eef1f2; --surface:#ffffff;
+    --line:#d8dfe3; --line-soft:#e6ebee;
+    --marine:#1c5f78; --marine-soft:#e4eff3;
+    --brick:#a8443a; --brick-soft:#f7e8e6;
+    --amber:#8d6316;
+    --display:'Archivo',system-ui,-apple-system,sans-serif;
+    --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+    --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto;padding:0 28px}
+
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);font-weight:500}
+  code{font-family:var(--mono);font-size:.82em;background:var(--paper);
+    border:1px solid var(--line-soft);padding:1px 5px;color:var(--ink)}
+
+  /* masthead */
+  .masthead{background:var(--surface);border-bottom:1px solid var(--line);padding:60px 0 40px}
+  .masthead h1{font-family:var(--display);font-weight:700;
+    font-size:clamp(36px,7.5vw,58px);line-height:1;letter-spacing:-.03em;margin:16px 0 0}
+  .masthead .sub{font-size:19px;color:var(--ink-2);max-width:48ch;margin:18px 0 0}
+  .metastrip{display:flex;flex-wrap:wrap;gap:0 26px;margin-top:30px;padding-top:18px;
+    border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .metastrip b{color:var(--ink-2);font-weight:500}
+
+  section{padding:48px 0}
+  .lede{font-size:19px;line-height:1.55;color:var(--ink-2);max-width:62ch;margin:0 0 18px}
+  p{margin:0 0 15px;max-width:68ch}
+
+  /* contents */
+  .toc{background:var(--surface);border:1px solid var(--ink);padding:26px 28px}
+  .toc ol{list-style:none;margin:14px 0 0;padding:0;
+    display:grid;grid-template-columns:1fr 1fr;gap:2px 30px}
+  .toc a{display:flex;justify-content:space-between;gap:14px;
+    text-decoration:none;color:var(--ink-2);padding:6px 0;
+    border-bottom:1px solid var(--line-soft);font-size:16px}
+  .toc a:hover{color:var(--marine)}
+  .toc a span{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+
+  /* part header */
+  .part{border-top:2px solid var(--ink);padding-top:20px;margin-top:20px}
+  .part h2{font-family:var(--display);font-weight:700;
+    font-size:clamp(27px,5vw,38px);letter-spacing:-.025em;line-height:1.05;margin:10px 0 12px}
+
+  /* group header */
+  .grouphead{display:flex;align-items:baseline;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;margin:44px 0 4px;padding-bottom:10px;
+    border-bottom:1px solid var(--line)}
+  .grouphead h3{font-family:var(--display);font-weight:600;font-size:24px;
+    letter-spacing:-.015em;margin:6px 0 0}
+  .groupnote{font-size:16.5px;color:var(--muted);margin:10px 0 0;max-width:64ch}
+
+  /* tags */
+  .tag{font-family:var(--mono);font-size:10.5px;font-weight:500;font-style:normal;
+    letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border:1px solid;white-space:nowrap}
+  .t-block{color:var(--brick);border-color:var(--brick);background:var(--brick-soft)}
+  .t-first{color:var(--marine);border-color:var(--marine);background:var(--marine-soft)}
+  .t-then{color:var(--ink-2);border-color:var(--line);background:var(--paper)}
+  .t-later{color:var(--muted);border-color:var(--line-soft);background:transparent}
+  .t-cut{color:var(--amber);border-color:var(--amber);background:transparent}
+
+  /* feature row */
+  .f{display:grid;grid-template-columns:58px 1fr;gap:0 20px;
+    background:var(--surface);border:1px solid var(--line);
+    padding:22px 26px 22px 20px;margin:14px 0}
+  .fnum{font-family:var(--mono);font-size:19px;font-weight:500;color:var(--marine);
+    line-height:1.25;padding-top:2px}
+  .f h4{font-family:var(--display);font-weight:600;font-size:19.5px;
+    letter-spacing:-.01em;line-height:1.28;margin:0 0 8px}
+  .f > div:last-child > p{margin:0 0 14px;font-size:16.5px;color:var(--ink-2);max-width:64ch}
+  .note{font-family:var(--mono);font-size:12.5px;color:var(--muted);
+    margin:-6px 0 14px;max-width:64ch;line-height:1.55}
+
+  /* the user panel */
+  .you{border-left:3px solid var(--marine);background:var(--marine-soft);padding:13px 17px 14px}
+  .you .eyebrow{color:var(--marine);display:block;margin-bottom:5px}
+  .you p{margin:0;font-size:16.5px;color:var(--ink);max-width:64ch}
+  .you code{background:var(--surface);border-color:#cfe0e7}
+
+  .f.cut .fnum{color:var(--amber)}
+  .f.cut .you{border-left-color:var(--amber);background:#faf5ea}
+  .f.cut .you .eyebrow{color:var(--amber)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 0}
+  .legend span{display:inline-flex;align-items:center;gap:7px;font-size:14px;color:var(--muted)}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 60px;margin-top:36px}
+  footer p{max-width:66ch;font-size:16.5px;color:var(--ink-2)}
+
+  @media (max-width:700px){
+    body{font-size:16.5px}
+    .wrap{padding:0 18px}
+    .toc ol{grid-template-columns:1fr}
+    .f{grid-template-columns:1fr;padding:20px}
+    .fnum{font-size:15px;margin-bottom:2px}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="eyebrow">Numbered feature register</span>
+    <h1>Resiliessance<br>Life&nbsp;OS</h1>
+    <p class="sub">63 proposed changes. Each one described plainly, and each one followed by what it actually changes for the person using the app.</p>
+    <div class="metastrip">
+      <span><b>63</b> features</span>
+      <span><b>17</b> groups</span>
+      <span><b>2</b> parts</span>
+      <span>reviewed against <b>70,380</b> lines</span>
+      <span>v1.new</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">How to read this</span>
+    <p class="lede" style="margin-top:12px">
+      Numbers 1–28 are product features: things the app would be able to do that it can't today.
+      Numbers 29–63 are interface changes: the same app, made easier to use. Every item carries a
+      priority tag, and every item has a blue panel telling you what it feels like from the user's side.
+    </p>
+    <div class="legend">
+      <span><i class="tag t-block">Blocker</i> ship before anything else</span>
+      <span><i class="tag t-first">Do first</i> highest leverage</span>
+      <span><i class="tag t-then">Then</i> depends on the above</span>
+      <span><i class="tag t-later">Later</i> real value, no urgency</span>
+      <span><i class="tag t-cut">Cut</i> defer or drop</span>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="toc">
+      <span class="eyebrow">Contents</span>
+      <ol>
+        <li><a href="#g1">01 · Foundation &amp; safety <span>1–6</span></a></li>
+        <li><a href="#g2">02 · Faster logging <span>7–14</span></a></li>
+        <li><a href="#g3">03 · Joining the modules up <span>15–18</span></a></li>
+        <li><a href="#g4">04 · Planning ahead <span>19–23</span></a></li>
+        <li><a href="#g5">05 · Insight &amp; AI <span>24–28</span></a></li>
+        <li><a href="#g6">06 · Reminders that work <span>29–32</span></a></li>
+        <li><a href="#g7">07 · Deeper money tools <span>33–38</span></a></li>
+        <li><a href="#g8">08 · More than one person <span>39–43</span></a></li>
+        <li><a href="#g9">09 · What to drop <span>44–46</span></a></li>
+        <li><a href="#g10">10 · Text, weight &amp; colour <span>47–51</span></a></li>
+        <li><a href="#g11">11 · Getting around the app <span>52–57</span></a></li>
+        <li><a href="#g12">12 · The forms you use daily <span>58–62</span></a></li>
+        <li><a href="#g13">13 · Speed &amp; feedback <span>63–67</span></a></li>
+        <li><a href="#g14">14 · Feeling like a real app <span>68–72</span></a></li>
+        <li><a href="#g15">15 · Readability for everyone <span>73–76</span></a></li>
+        <li><a href="#g16">16 · Dark mode &amp; themes <span>77–79</span></a></li>
+        <li><a href="#g17">17 · The home screen <span>80–83</span></a></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ PART ONE ════════ -->
+<section>
+  <div class="wrap">
+    <div class="part">
+      <span class="eyebrow">Part one · Features 1–28</span>
+      <h2>What the app should be able to do</h2>
+      <p class="lede">The app records a great deal and asks you to type all of it. These are the things that would change that.</p>
+    </div>
+
+    <!-- G1 -->
+    <div class="grouphead" id="g1">
+      <div><span class="eyebrow">Group 01 · Features 1–6</span><h3>Foundation &amp; safety</h3></div>
+      <span class="tag t-block">Blocker</span>
+    </div>
+    <p class="groupnote">None of these are features anyone asks for. All of them are the reason the rest can exist.</p>
+
+    <div class="f"><div class="fnum">1</div><div>
+      <h4>Log in with an account</h4>
+      <p>The app has no login at all. Add sign-in, so the app knows who you are and only shows your data.</p>
+      <p class="note">Today: no auth layer anywhere in the codebase.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Your data becomes yours. You can open the app on a new phone and everything is there, instead of being tied to whoever happens to open the link.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">2</div><div>
+      <h4>Lock the database</h4>
+      <p>The security rules on every table are currently set to "allow everyone." Anyone who finds the web address can read and change everything in it.</p>
+      <p class="note">Every RLS policy reads <code>USING (true)</code> with the public key shipped to the browser.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Your salary, your net worth, your health logs and your vet bills stop being publicly readable by anyone who stumbles across the URL.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">3</div><div>
+      <h4>Replace the leaked keys</h4>
+      <p>Three secret keys are written directly into a file that ships with the code, including one that lets anyone send notifications to your phone. Generate new ones and store them properly.</p>
+      <p class="note">Supabase URL, anon key and the VAPID private key are all in <code>wrangler.jsonc</code>.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Nobody else can push fake notifications to your lock screen or quietly read your database in the background.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">4</div><div>
+      <h4>Keep working without internet</h4>
+      <p>Save entries on the phone when there's no signal and send them up automatically when there is.</p>
+      <p class="note">The service worker handles push only — no caching, no background sync.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You can log a set in a gym basement or an expense on the metro. The entry saves, and syncs itself later — you never lose one to a dead signal again.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">5</div><div>
+      <h4>Back up and download everything</h4>
+      <p>Automatic backups, plus a button that gives you your entire history as a file you can keep.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Years of daily logging stop being one bad database change away from gone. And if you ever want to leave, you can take it all with you.</p></div>
+    </div></div>
+
+    </div>
+
+    <!-- G2 -->
+    <div class="grouphead" id="g2">
+      <div><span class="eyebrow">Group 02 · Features 7–14</span><h3>Faster logging</h3></div>
+      <span class="tag t-first">Do first</span>
+    </div>
+    <p class="groupnote">Apps like this don't fail because they're missing features. They fail because entering the data becomes a chore. This is the most important group in the document.</p>
+
+    <div class="f"><div class="fnum">6</div><div>
+      <h4>Type one line to log anything</h4>
+      <p>One box on the home screen. Type <em>"petrol 1200 shell odo 42150"</em> and the app files it as a fuel entry, an expense and an odometer reading — all at once, no forms.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>What used to be three modules and two minutes becomes one sentence and five seconds. This is the single biggest change on the list.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">7</div><div>
+      <h4>Say it instead of typing it</h4>
+      <p>Hold a button, speak the entry, done.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You can log a set between reps, a thought while driving, or a grocery total while carrying the bags.</p></div>
+    </div></div>
+
+    </div>
+
+    </div>
+
+    <div class="f"><div class="fnum">8</div><div>
+      <h4>Pull in data from your watch and phone</h4>
+      <p>Connect Apple Health or Google Fit for sleep, steps, heart rate and weight.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Sleep starts being tracked without you doing anything — and sleep turns out to explain more of your habit and mood patterns than almost anything else.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">9</div><div>
+      <h4>Remember what you usually enter</h4>
+      <p>Pre-fill the fields with your last values, and offer a "same as yesterday" button.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Your regular coffee, your usual commute, your standard breakfast — one tap instead of a filled-in form.</p></div>
+    </div></div>
+
+    </div>
+
+    </div>
+
+    <!-- G3 -->
+    <div class="grouphead" id="g3">
+      <div><span class="eyebrow">Group 03 · Features 15–18</span><h3>Joining the modules up</h3></div>
+      <span class="tag t-first">Do first</span>
+    </div>
+    <p class="groupnote">Your roadmap treats this as a feature. It's really the plumbing that groups 04 and 05 need in order to be built at all.</p>
+
+    <div class="f"><div class="fnum">10</div><div>
+      <h4>One shared record of everything that happens</h4>
+      <p>Instead of fifteen modules each keeping their own separate history, everything also writes to one common list: what happened, when, in which area, and what it cost.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You won't see this directly, but it's what makes "why did I save less in July?" answerable. Without it, every insight has to be hand-built one at a time.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">11</div><div>
+      <h4>A single page for every thing you own or care for</h4>
+      <p>Your dog, your bike, your fridge, a project — each gets one page showing its whole story: everything spent on it, everything done to it, everything coming up.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Today your dog exists in four separate places and you can't answer "what has this dog cost me?" After this, one page answers it.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">12</div><div>
+      <h4>Tag anything, search everything</h4>
+      <p>One search box that looks across all modules at once, plus tags that work everywhere.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You stop needing to remember which module a thing lives in. You just search for it.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">13</div><div>
+      <h4>Undo, and a recycle bin</h4>
+      <p>Deletions go to a bin for thirty days instead of vanishing, and recent actions can be reversed.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>A mis-tap stops being permanent. You can be quick and careless with entry, which is exactly what you want in an app you use twenty times a day.</p></div>
+    </div></div>
+
+    <!-- G4 -->
+    <div class="grouphead" id="g4">
+      <div><span class="eyebrow">Group 04 · Features 19–23</span><h3>Planning ahead</h3></div>
+      <span class="tag t-then">Then</span>
+    </div>
+    <p class="groupnote">The app is a very good rear-view mirror. It currently has no windscreen.</p>
+
+    <div class="f"><div class="fnum">14</div><div>
+      <h4>Goals that connect to your daily logs</h4>
+      <p>Set a yearly goal, break it into quarters and months, and link the habits, tasks and savings that feed it — so progress is measured from what you already log.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Your daily ticking starts adding up to something. You can see that this month's habits actually moved the year's goal.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">15</div><div>
+      <h4>One calendar for everything</h4>
+      <p>Workouts, task deadlines, bills, vehicle renewals and pet appointments on a single month view — and you can drag things to reschedule, not just look at them.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You see next week is overloaded before you're inside it, and you can move something there and then.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">16</div><div>
+      <h4>A guided weekly and monthly review</h4>
+      <p>A short, structured screen: what went well, what slipped, what you're committing to next. Not a blank page — actual questions with your own numbers already filled in.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Sunday evening gets a fifteen-minute ritual. This is the thing that keeps people using apps like this for years rather than months.</p></div>
+    </div></div>
+
+    </div>
+
+    </div>
+
+    <!-- G5 -->
+    <div class="grouphead" id="g5">
+      <div><span class="eyebrow">Group 05 · Features 24–28</span><h3>Insight &amp; AI</h3></div>
+      <span class="tag t-then">Then</span>
+    </div>
+    <p class="groupnote">Your existing AI roadmap, reordered. The order is the recommendation: nothing here works well on half-logged data.</p>
+
+    <div class="f"><div class="fnum">17</div><div>
+      <h4>Tell people how sure the number is</h4>
+      <p>Every score and chart shows how much data it's based on. "Consistency 82% — from 19 of 30 days logged."</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You can trust the numbers, because the app admits when it doesn't know. Without this, one wrong-looking score and you stop believing all of them.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">18</div><div>
+      <h4>Flag anything unusual</h4>
+      <p>Simple, reliable alerts when something is well outside your normal range — "grocery spend is far above your six-month average."</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You catch a drifting budget or a slipping habit in week one instead of at the end of the month.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">19</div><div>
+      <h4>A single Life Score</h4>
+      <p>One 0–100 number combining habits, money, fitness, tasks and upkeep — with the formula shown, weights you can change, and hidden when there isn't enough data to be honest.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>One glance tells you whether this week is going well. And because you set the weights, it measures your definition of a good week, not someone else's.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">20</div><div>
+      <h4>Ask questions in plain English</h4>
+      <p>Type "why did I spend more in July?" and get a written answer with the chart that supports it.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You stop hunting through eleven report tabs for the one number you wanted. You just ask.</p></div>
+    </div></div>
+
+    </div>
+
+    <!-- G6 -->
+    <div class="grouphead" id="g6">
+      <div><span class="eyebrow">Group 06 · Features 29–32</span><h3>Reminders that work</h3></div>
+      <span class="tag t-first">Do first</span>
+    </div>
+    <p class="groupnote">Your notification roadmap can't be built yet, because the piece it depends on doesn't exist.</p>
+
+    <div class="f"><div class="fnum">21</div><div>
+      <h4>Something that sends notifications on a schedule</h4>
+      <p>Right now notifications can only be fired by hand from the settings screen. There's no timer, no rules, nothing that runs on its own. This builds that.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Nothing visible on its own — but it's the reason every reminder below can exist. Without it, the app can only speak when you're already looking at it.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">22</div><div>
+      <h4>A morning brief</h4>
+      <p>One notification at 7am: today's habits, what's due, what's on the calendar, what's left in the budget, anything expiring soon.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You stop having to remember to check. One message a day tells you what today needs — the highest-value screen in the whole product.</p></div>
+    </div></div>
+
+    </div>
+
+    <div class="f"><div class="fnum">23</div><div>
+      <h4>Streak rescue and quiet hours</h4>
+      <p>A nudge before a streak breaks, and controls so notifications don't arrive at 11pm or arrive six at a time.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>The app protects the thing you've invested in without becoming the app you mute.</p></div>
+    </div></div>
+
+    <!-- G7 -->
+    <div class="grouphead" id="g7">
+      <div><span class="eyebrow">Group 07 · Features 33–38</span><h3>Deeper money tools</h3></div>
+      <span class="tag t-later">Later</span>
+    </div>
+    <p class="groupnote">Finance is already the strongest module. This is where it becomes genuinely hard to replace with anything off the shelf.</p>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    <!-- G8 -->
+    <div class="grouphead" id="g8">
+      <div><span class="eyebrow">Group 08 · Features 39–43</span><h3>More than one person</h3></div>
+      <span class="tag t-later">Later</span>
+    </div>
+    <p class="groupnote">Everything above assumes one user. This group is the cost of a second — only worth paying if this goes beyond you.</p>
+
+    <div class="f"><div class="fnum">24</div><div>
+      <h4>Household accounts</h4>
+      <p>More than one person, with control over what each can see.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Your partner logs the groceries and the vet visit without seeing your salary. The shared car has one fuel log instead of two half-accurate ones.</p></div>
+    </div></div>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    <div class="f"><div class="fnum">25</div><div>
+      <h4>Let other tools connect</h4>
+      <p>A basic API and webhooks so automations can read and write.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You can wire the app into whatever else you use rather than doing the joining by hand.</p></div>
+    </div></div>
+
+    <!-- G9 -->
+    <div class="grouphead" id="g9">
+      <div><span class="eyebrow">Group 09 · Features 44–46</span><h3>What to drop</h3></div>
+      <span class="tag t-cut">Cut</span>
+    </div>
+    <p class="groupnote">These are already on your roadmap. Saying no to them is what creates room for the rest.</p>
+
+    <div class="f cut"><div class="fnum">26</div><div>
+      <h4>The game engine — postpone it</h4>
+      <p>XP, levels, a rewards shop and monthly boss battles. It's a way of making yourself want to log. But wanting to log isn't the problem — logging being slow is.</p>
+      <div class="you"><span class="eyebrow">Why this helps you</span>
+        <p>Fix the speed first (features 7–14). If you're still skipping days after that, build this — and you'll know it's the right fix rather than guessing.</p></div>
+    </div></div>
+
+    <div class="f cut"><div class="fnum">27</div><div>
+      <h4>Five report timeframes — make it two</h4>
+      <p>Daily, weekly, monthly, quarterly and yearly reports is five separate things to build and maintain. Ship weekly and monthly, see if they get read.</p>
+      <div class="you"><span class="eyebrow">Why this helps you</span>
+        <p>Two reports you actually open beat five you don't. And the weeks saved go into the morning brief instead.</p></div>
+    </div></div>
+
+    <div class="f cut"><div class="fnum">28</div><div>
+      <h4>Stop adding report tabs</h4>
+      <p>There are already eleven. The issue isn't that a report is missing — it's that reports wait for you to visit them, and you don't.</p>
+      <div class="you"><span class="eyebrow">Why this helps you</span>
+        <p>Insights come to you in the morning brief instead of sitting in a tab you'd have to remember to open.</p></div>
+    </div></div>
+
+  </div>
+</section>
+
+<!-- ════════ PART TWO ════════ -->
+<section>
+  <div class="wrap">
+    <div class="part">
+      <span class="eyebrow">Part two · Features 29&ndash;63</span>
+      <h2>Making the app easier to use</h2>
+      <p class="lede">Same app, same data. These change how it feels to open it twenty times a day.</p>
+    </div>
+
+    <!-- G10 -->
+    <div class="grouphead" id="g10">
+      <div><span class="eyebrow">Group 10 &middot; Features 47&ndash;51</span><h3>Text, weight &amp; colour</h3></div>
+      <span class="tag t-first">Do first</span>
+    </div>
+    <p class="groupnote">The heaviest possible text weight is used 2,388 times, and text at 9&ndash;11px appears 1,296 times. When everything is bold and tiny, nothing stands out.</p>
+
+    <div class="f"><div class="fnum">29</div><div>
+      <h4>Pick five text sizes and stick to them</h4>
+      <p>Right now sizes are chosen at random throughout the app, and a lot of them are 9 or 10 pixels &mdash; smaller than the small print on a contract. Settle on roughly five sizes and retire everything below 12.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You can read the app without bringing it closer to your face. Outdoors, tired, at arm&rsquo;s length &mdash; it still works.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">30</div><div>
+      <h4>Stop making everything bold</h4>
+      <p>Use three weights &mdash; normal for text, semibold for emphasis, heavy for the one thing that matters most on a screen. Currently the heaviest weight is the default.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>An overdue insurance renewal stops looking identical to a section heading. Your eye lands on the important thing instead of reading everything equally.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">31</div><div>
+      <h4>Drop the tiny ALL-CAPS labels</h4>
+      <p>Wide-spaced capitals at 9 pixels appear 433 times. Capitals remove the shape of a word, which is what your eye reads first, so they&rsquo;re the slowest text there is.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Labels become something you glance at rather than decipher. Screens get quicker to scan without losing any information.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">32</div><div>
+      <h4>Use one colour system</h4>
+      <p>The app defines proper colours for success, warning and danger, then ignores them &mdash; 134 places use hardcoded colours instead.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Red always means the same thing everywhere. And when dark mode arrives, nothing is left glowing white in the corner of a dark screen.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">33</div><div>
+      <h4>Make all charts look the same</h4>
+      <p>One shared set of colours, fonts and spacing for every graph.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You learn to read one chart style instead of eleven. Comparing two reports stops requiring a mental adjustment.</p></div>
+    </div></div>
+
+    <!-- G11 -->
+    <div class="grouphead" id="g11">
+      <div><span class="eyebrow">Group 11 &middot; Features 52&ndash;57</span><h3>Getting around the app</h3></div>
+      <span class="tag t-first">Do first</span>
+    </div>
+    <p class="groupnote">Sixteen modules and around 110 screens all live behind one menu button in the top-left &mdash; the hardest place on a phone for a thumb to reach.</p>
+
+    <div class="f"><div class="fnum">34</div><div>
+      <h4>A row of tabs along the bottom</h4>
+      <p>Four main destinations plus a big centre button for logging, fixed at the bottom of the screen where your thumb already is. Keep the side menu for everything else.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Logging an expense goes from four taps and a stretch to one tap where your hand already rests.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">35</div><div>
+      <h4>Remove the Forward button</h4>
+      <p>Every page shows Home, Back and Forward. A forward button is a web-browser control, not an app one, and the three of them eat about a third of the header on a phone.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Page titles stop being squeezed and cut off, and there&rsquo;s one less button that does something you never wanted.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">36</div><div>
+      <h4>Put the header to better use</h4>
+      <p>The app logo sits in the middle of every screen. In an app you installed yourself, you already know which app it is. Use that space for the page title and search.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You can always tell where you are, and search is one tap away from anywhere.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">37</div><div>
+      <h4>Type-to-jump shortcut</h4>
+      <p>One box that finds any screen, entry or record by name.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Two letters gets you to fuel logs. With 110 screens, this is the single most useful navigation change on the list.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">38</div><div>
+      <h4>One tab style, and fix the Reports tabs</h4>
+      <p>There are two different tab components doing the same job, styled differently. Also, Reports has eleven tabs that scroll sideways &mdash; anything off-screen may as well not exist.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Tabs behave the same everywhere, and you can see all your reports at once instead of discovering them by accident.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">39</div><div>
+      <h4>A proper layout on a computer</h4>
+      <p>On a wide screen the app stretches the frame but keeps content in a narrow phone-width column, leaving large empty margins. Either build a real multi-column layout or stop pretending.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>On a laptop you see several panels at once instead of scrolling through a phone screen surrounded by grey.</p></div>
+    </div></div>
+
+    <!-- G12 -->
+    <div class="grouphead" id="g12">
+      <div><span class="eyebrow">Group 12 &middot; Features 58&ndash;62</span><h3>The forms you use daily</h3></div>
+      <span class="tag t-first">Do first</span>
+    </div>
+    <p class="groupnote">Every entry currently means leaving the page you were on and filling in a full-screen form. This is the app&rsquo;s busiest surface by far.</p>
+
+    <div class="f"><div class="fnum">40</div><div>
+      <h4>Forms that slide up over the page</h4>
+      <p>Log a habit, expense or set in a panel that appears over what you were looking at, instead of navigating away and back.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You never lose your place. Log three things in a row without re-finding where you were each time.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">41</div><div>
+      <h4>Save instantly, with an undo</h4>
+      <p>Show the entry as saved immediately and finish the actual saving in the background. Put an Undo button on the confirmation.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>No waiting after every tap. And a mistake takes one tap to reverse rather than a hunt through a list.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">42</div><div>
+      <h4>Stop the screen zooming when you tap a field</h4>
+      <p>The stylesheet forces every input to 13 pixels. iPhones automatically zoom in on any field smaller than 16, so the page jumps every single time you tap one.</p>
+      <p class="note">One line in <code>globals.css</code>: inputs are pinned to <code>13px !important</code>.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>The lurch you get twenty times a day disappears. It&rsquo;s a small thing that happens constantly, and it&rsquo;s a real part of why logging feels like work.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">43</div><div>
+      <h4>Number pad and quick-pick buttons</h4>
+      <p>Amount and weight fields should open a number keypad, with buttons for your recent values.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Entering &#8377;1,200 stops involving a full letter keyboard. Common amounts become one tap.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">44</div><div>
+      <h4>Don&rsquo;t lose half-finished entries</h4>
+      <p>Save what&rsquo;s been typed so switching apps mid-form doesn&rsquo;t wipe it.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>A phone call in the middle of logging a workout no longer costs you the workout.</p></div>
+    </div></div>
+
+    <!-- G13 -->
+    <div class="grouphead" id="g13">
+      <div><span class="eyebrow">Group 13 &middot; Features 63&ndash;67</span><h3>Speed &amp; feedback</h3></div>
+      <span class="tag t-then">Then</span>
+    </div>
+    <p class="groupnote">The app doesn&rsquo;t feel slow because it is slow. It feels slow because of what it shows you while it waits.</p>
+
+    <div class="f"><div class="fnum">45</div><div>
+      <h4>Remove the fade-in on every page</h4>
+      <p>Content is deliberately delayed by roughly a third of a second every time you open a screen, and the rule is broad enough to fade things that weren&rsquo;t meant to fade.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>The app becomes noticeably faster without a single query being optimised. You pay that delay hundreds of times a week today.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">46</div><div>
+      <h4>Show the shape of the page while it loads</h4>
+      <p>Instead of blanking the whole screen behind a spinner, show grey placeholder blocks in the layout the content will fill. Twenty screens currently go completely empty.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>No more white flash on every tap. You see where things will be before they arrive, which makes the wait feel much shorter than it is.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">47</div><div>
+      <h4>Show yesterday&rsquo;s data straight away</h4>
+      <p>Display what was there last time immediately, then quietly update it.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Opening the app is instant. The numbers are already there and correct themselves a moment later if anything changed.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">48</div><div>
+      <h4>Move the save message out of the middle of the screen</h4>
+      <p>Confirmation messages are pinned dead centre with a bouncing animation, covering the content, every time you save.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Saving stops interrupting you. The message appears near the bottom, out of the way, with an Undo button on it.</p></div>
+    </div></div>
+
+    </div>
+
+    <!-- G14 -->
+    <div class="grouphead" id="g14">
+      <div><span class="eyebrow">Group 14 &middot; Features 68&ndash;72</span><h3>Feeling like a real app</h3></div>
+      <span class="tag t-then">Then</span>
+    </div>
+    <p class="groupnote">It&rsquo;s installed on a home screen but still behaves like a website in a frame.</p>
+
+    <div class="f"><div class="fnum">49</div><div>
+      <h4>Keep content clear of the notch and the home bar</h4>
+      <p>There&rsquo;s no handling for the cut-out at the top or the bar at the bottom of modern phones, so content can slide underneath both.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Nothing hides behind the camera notch, and the bottom button isn&rsquo;t half-covered by the home indicator.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">50</div><div>
+      <h4>Fix the dark flash when it opens</h4>
+      <p>The app tells the phone its colour is near-black, then loads a near-white interface. Every launch is a dark screen followed by a white one.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>It opens cleanly instead of flashing at you. Cheapest polish on the list.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">51</div><div>
+      <h4>Pull down to refresh</h4>
+      <p>The standard phone gesture, instead of hunting for a refresh button in the corner.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You refresh the way you do in every other app, without looking for a button first.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">52</div><div>
+      <h4>A small vibration when something completes</h4>
+      <p>A tap of feedback when you tick a habit, save an entry or extend a streak.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Completing something feels finished. It sounds trivial, and it&rsquo;s one of the more effective things you can do for habit-building.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">53</div><div>
+      <h4>Swipe on a row to act on it</h4>
+      <p>Swipe left or right on any list item to complete, edit or delete.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Clearing a list of tasks becomes a few swipes rather than a series of taps into and back out of each one.</p></div>
+    </div></div>
+
+    <!-- G15 -->
+    <div class="grouphead" id="g15">
+      <div><span class="eyebrow">Group 15 &middot; Features 73&ndash;76</span><h3>Readability for everyone</h3></div>
+      <span class="tag t-then">Then</span>
+    </div>
+    <p class="groupnote">Zoom is switched off, and there are 35 accessibility labels in 70,000 lines of code.</p>
+
+    <div class="f"><div class="fnum">54</div><div>
+      <h4>Allow pinch to zoom</h4>
+      <p>The app explicitly blocks zooming. Combined with 9-pixel text, that leaves no way out.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You can zoom in on a dense table on a bus, the way you can in every other app.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">55</div><div>
+      <h4>Darken the faint grey text</h4>
+      <p>A lot of secondary text is set at under half opacity, which puts it well below the readable minimum against the pale background.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>Captions, hints and helper text become readable in daylight instead of disappearing into the background.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">56</div><div>
+      <h4>Label the buttons and make keyboards work</h4>
+      <p>Icon-only buttons need names, the menu needs to close with Escape, and form fields need properly attached labels and error messages.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>The app works with a screen reader or a keyboard &mdash; which matters for other people now, and possibly for you in twenty years, when your logging history is far too valuable to abandon.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">57</div><div>
+      <h4>Swap emoji for proper icons</h4>
+      <p>53 emoji are used as interface icons. They&rsquo;re read out oddly by screen readers and look different on every device.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>The app looks the same on your phone as on your laptop, and reads as a product rather than a spreadsheet.</p></div>
+    </div></div>
+
+    <!-- G16 -->
+    <div class="grouphead" id="g16">
+      <div><span class="eyebrow">Group 16 &middot; Features 77&ndash;79</span><h3>Dark mode &amp; themes</h3></div>
+      <span class="tag t-first">Do first</span>
+    </div>
+    <p class="groupnote">There are 34 dark-mode styles in the entire codebase, which is to say none. The groundwork is already about ninety percent done.</p>
+
+    <div class="f"><div class="fnum">58</div><div>
+      <h4>Dark mode</h4>
+      <p>A proper dark theme that follows your phone&rsquo;s setting.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You log habits at night. Right now that means a full-brightness white screen in a dark room &mdash; which is exactly the moment you decide to do it tomorrow instead. This is about whether the last log of the day happens.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">59</div><div>
+      <h4>Remove the palette button that does nothing</h4>
+      <p>There&rsquo;s a large floating button near the bottom of every screen offering one theme, which is the theme you&rsquo;re already using.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>One less button covering your content and promising something it doesn&rsquo;t deliver.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">60</div><div>
+      <h4>Choose your own accent colour</h4>
+      <p>Once dark mode exists, a handful of real palettes costs almost nothing to add.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>The app looks like yours. Small thing, disproportionate effect on wanting to open it.</p></div>
+    </div></div>
+
+    <!-- G17 -->
+    <div class="grouphead" id="g17">
+      <div><span class="eyebrow">Group 17 &middot; Features 60&ndash;63</span><h3>The home screen</h3></div>
+      <span class="tag t-then">Then</span>
+    </div>
+    <p class="groupnote">It&rsquo;s currently nine fixed panels, one per module &mdash; arranged around how the app is built rather than what you need to know.</p>
+
+    <div class="f"><div class="fnum">61</div><div>
+      <h4>Lead with what needs attention</h4>
+      <p>Put overdue, expiring and unlogged items at the top. Everything that&rsquo;s fine goes below.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>You open the app and the first thing you see is the thing you need to do &mdash; instead of scrolling past five healthy modules hunting for the one that changed.</p></div>
+    </div></div>
+
+    </div>
+
+    <div class="f"><div class="fnum">62</div><div>
+      <h4>One number at the top</h4>
+      <p>The first screenful should answer &ldquo;am I on track?&rdquo; without scrolling &mdash; whether that&rsquo;s the Life Score or something as plain as &ldquo;3 of 7 habits, &#8377;4,200 left this month.&rdquo;</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>A two-second check-in becomes possible. Most opens don&rsquo;t need more than that.</p></div>
+    </div></div>
+
+    <div class="f"><div class="fnum">63</div><div>
+      <h4>Design the empty screens</h4>
+      <p>There&rsquo;s no pattern for what a section looks like before it has data, so new modules simply render blank boxes.</p>
+      <div class="you"><span class="eyebrow">What changes for you</span>
+        <p>A section you haven&rsquo;t used yet explains itself and offers a first step, rather than looking broken.</p></div>
+    </div></div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>
+      Of these 83, the ones that decide whether Resiliessance survives a second year of daily use are
+      <b>1, 2, 4, 7, 10, 29, 30</b> from part one and <b>47, 48, 52, 60, 64, 77</b> from part two.
+      Everything else makes it better. Those thirteen make it last.
+    </p>
+    <span class="eyebrow">Resiliessance Life OS &middot; numbered feature register &middot; 83 items &middot; v1.new</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,456 @@
+"use client";
+import { Select } from "@/components/Select";
+
+import { Banknote, ChevronDown, CreditCard, FileText, Landmark, Settings2, StickyNote, Trash2, Tag } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { financeService } from "@/lib/services/finance";
+import { toast } from "sonner";
+import { SaveButton } from "@/components/ui/SaveButton";
+import { SearchableSelect } from "@/components/SearchableSelect";
+import { PageWrapper } from "@/components/PageWrapper";
+import { EXPENSE_TABS } from "@/lib/navigation";
+import { SubNav } from "@/components/SubNav";
+import { useDialog } from "@/components/dialog-provider";
+
+function AccountPageContent() {
+  const router = useRouter();
+  const { confirm } = useDialog();
+  const searchParams = useSearchParams();
+  const initialName = searchParams.get('name');
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [accounts, setAccounts] = useState<string[]>([]);
+  const [accountTypes, setAccountTypes] = useState<string[]>([]);
+  const [allExistingTags, setAllExistingTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [originalAccountName, setOriginalAccountName] = useState<string | null>(null);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [formData, setFormData] = useState<any>({
+    id: null,
+    account_name: "",
+    type: "Savings",
+    balance: "",
+    account_no: "",
+    card_no: "",
+    card_pin: "",
+    card_cvv: "",
+    nb_user: "",
+    nb_pass: "",
+    nb_txn: "",
+    mb_pass: "",
+    mb_mpin: "",
+    mb_txn: "",
+    notes: "",
+    tags: []
+  });
+
+  useEffect(() => {
+    fetchAccounts();
+    if (initialName) {
+      handleAccountSelect(initialName);
+    }
+  }, [initialName]);
+
+  async function fetchAccounts() {
+    const data = await financeService.getAccounts();
+    if (data) {
+      setAccounts(data.map(a => a.account_name));
+      const types = Array.from(new Set(data.map(a => a.type).filter(Boolean))) as string[];
+      setAccountTypes(types);
+      
+      const allTags = new Set<string>();
+      data.forEach(a => {
+        if (a.tags && Array.isArray(a.tags)) {
+          a.tags.forEach(t => allTags.add(t));
+        }
+      });
+      setAllExistingTags(Array.from(allTags));
+    }
+  }
+
+  async function handleAccountSelect(name: string) {
+    if (!name) return;
+    setIsLoading(true);
+    try {
+      const data = await financeService.getAccountByName(name);
+      if (data) {
+        setOriginalAccountName(data.account_name);
+        setFormData({
+          id: data.id || null,
+          account_name: data.account_name,
+          type: data.type || "Savings",
+          balance: data.balance?.toString() || "0",
+          account_no: data.account_no || "",
+          card_no: data.card_no || "",
+          card_pin: data.card_pin || "",
+          card_cvv: data.card_cvv || "",
+          nb_user: data.nb_user || "",
+          nb_pass: data.nb_pass || "",
+          nb_txn: data.nb_txn || "",
+          mb_pass: data.mb_pass || "",
+          mb_mpin: data.mb_mpin || "",
+          mb_txn: data.mb_txn || "",
+          notes: data.notes || "",
+          tags: data.tags || []
+        });
+      }
+    } catch (error: any) {
+      console.error("Error loading account:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const handleAddTag = (val: string) => {
+    const trimmed = val.trim();
+    if (!trimmed) return;
+    if (!(formData.tags || []).includes(trimmed)) {
+      setFormData({
+        ...formData,
+        tags: [...(formData.tags || []), trimmed]
+      });
+    }
+    setTagInput("");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.account_name) {
+      toast.error("Account name is required");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        ...formData,
+        balance: parseFloat(formData.balance) || 0
+      };
+
+      const { id, ...updatePayload } = payload;
+      const success = await financeService.saveAccount(updatePayload, originalAccountName);
+      if (!success) throw new Error("Failed to save account");
+
+      toast.success("Account updated successfully");
+      router.push("/finance/liquidity");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to save account");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!formData.account_name) return;
+    if (!(await confirm("Are you sure you want to delete this account?"))) return;
+
+    try {
+      const targetName = originalAccountName || formData.account_name;
+      const success = await financeService.deleteAccount(targetName);
+      if (!success) throw new Error("Failed to delete account");
+      toast.success("Account deleted");
+      router.push("/finance/liquidity");
+    } catch (error: any) {
+      toast.error("Failed to delete account");
+    }
+  };
+
+  return (
+    <PageWrapper
+      title="Manage Accounts"
+      reportHref="/reports/finance"
+      sectionTabs={EXPENSE_TABS}
+      activePath="/finance/liquidity"
+    >
+        <SubNav 
+          items={["Overview", "Manage Accounts"]}
+          activeItem="Manage Accounts"
+          onChange={(val) => {
+            if (val === "Overview") router.push("/finance/liquidity");
+          }}
+        />
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-6">
+        <div className="bg-card rounded-2xl p-8 shadow-sm border border-border/40 space-y-7">
+          
+          <div className="grid grid-cols-2 gap-7 relative z-50">
+            <SearchableSelect 
+              label="Select Account"
+              headerIcon={<Landmark size={16} />}
+              value={formData.account_name}
+              onChange={(val) => handleAccountSelect(val)}
+              options={accounts}
+            />
+            <div className="space-y-2">
+              <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
+                <FileText size={16} /> Account Name
+              </label>
+              <input 
+                type="text" 
+                placeholder="Custom Label" 
+                value={formData.account_name}
+                onChange={(e) => setFormData({...formData, account_name: e.target.value})}
+                className="w-full h-11 bg-muted border-none rounded-lg px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-7 relative z-40">
+            <div className="space-y-2">
+              <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
+                <Banknote size={16} /> Current Balance
+              </label>
+              <div className="relative group">
+                <input 
+                  type="number" 
+                  step="0.01"
+                  value={formData.balance}
+                  onChange={(e) => setFormData({...formData, balance: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-sm font-black text-primary focus:ring-2 focus:ring-accent/20 shadow-inner transition-all font-mono"
+                />
+                <Banknote size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/30" />
+              </div>
+            </div>
+            <SearchableSelect 
+              label="Account Type"
+              headerIcon={<Settings2 size={16} />}
+              value={formData.type}
+              onChange={(val) => setFormData({...formData, type: val})}
+              options={accountTypes}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
+              <CreditCard size={16} /> Account Number
+            </label>
+            <input 
+              type="text" 
+              value={formData.account_no}
+              onChange={(e) => setFormData({...formData, account_no: e.target.value})}
+              className="w-full h-11 bg-muted border-none rounded-lg px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner tracking-widest placeholder:text-muted-foreground/30"
+              placeholder="XXXX XXXX XXXX XXXX"
+            />
+          </div>
+
+          <div className="border-t border-border/40 pt-6 space-y-4">
+            <div className="text-[10px] font-black uppercase tracking-[3px] text-accent/60 mb-2">Vault & Credentials</div>
+            <div className="grid grid-cols-2 gap-7 relative z-30">
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Card Serial Number</span>
+                <input 
+                  type="text" 
+                  inputMode="decimal"
+                  placeholder="Card No"
+                  value={formData.card_no}
+                  onChange={(e) => setFormData({...formData, card_no: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">CVV</span>
+                <input 
+                  type="password" 
+                  inputMode="decimal"
+                  placeholder="CVV"
+                  value={formData.card_cvv}
+                  onChange={(e) => setFormData({...formData, card_cvv: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Card PIN Number</span>
+                <input 
+                  type="password" 
+                  inputMode="decimal"
+                  placeholder="PIN"
+                  value={formData.card_pin}
+                  onChange={(e) => setFormData({...formData, card_pin: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Netbanking Username</span>
+                <input 
+                  type="text" 
+                  placeholder="Username"
+                  value={formData.nb_user}
+                  onChange={(e) => setFormData({...formData, nb_user: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Netbanking Password</span>
+                <input 
+                  type="password" 
+                  placeholder="Password"
+                  value={formData.nb_pass}
+                  onChange={(e) => setFormData({...formData, nb_pass: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Netbanking Transaction Password</span>
+                <input 
+                  type="password" 
+                  placeholder="Txn Password"
+                  value={formData.nb_txn}
+                  onChange={(e) => setFormData({...formData, nb_txn: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Mobile App Password</span>
+                <input 
+                  type="password" 
+                  inputMode="decimal"
+                  placeholder="App Pass"
+                  value={formData.mb_pass}
+                  onChange={(e) => setFormData({...formData, mb_pass: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Mobile App PIN</span>
+                <input 
+                  type="password" 
+                  inputMode="decimal"
+                  placeholder="PIN"
+                  value={formData.mb_mpin}
+                  onChange={(e) => setFormData({...formData, mb_mpin: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[9px] font-black text-muted-foreground ml-1">Mobile App MPIN</span>
+                <input 
+                  type="password" 
+                  inputMode="decimal"
+                  placeholder="MPIN"
+                  value={formData.mb_txn}
+                  onChange={(e) => setFormData({...formData, mb_txn: e.target.value})}
+                  className="w-full h-11 bg-muted border-none rounded-lg px-4 text-xs font-bold text-foreground shadow-inner"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2 pt-2">
+            <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
+              <StickyNote size={16} /> Executive Notes
+            </label>
+            <input 
+              type="text" 
+              value={formData.notes}
+              onChange={(e) => setFormData({...formData, notes: e.target.value})}
+              className="w-full h-11 bg-muted border-none rounded-lg px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30" 
+              placeholder="Record any account specifics here..."
+            />
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <label className="text-sm font-black text-muted-foreground/60 flex items-center gap-2 leading-none">
+              <Tag size={16} /> Account Tags
+            </label>
+            
+            <div className="flex flex-wrap gap-2">
+              {(formData.tags || []).map((tag: string) => (
+                <span 
+                  key={tag} 
+                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent/10 border border-accent/20 text-accent text-xs font-black rounded-full"
+                >
+                  {tag}
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setFormData({
+                        ...formData,
+                        tags: (formData.tags || []).filter((t: string) => t !== tag)
+                      });
+                    }}
+                    className="hover:text-rose-500 font-bold transition-colors ml-1"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              {(formData.tags || []).length === 0 && (
+                <span className="text-xs text-muted-foreground/40 font-bold italic">No tags added yet. Type below to add tags like "Savings".</span>
+              )}
+            </div>
+
+            <div className="relative">
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTag(tagInput);
+                    }
+                  }}
+                  className="flex-1 h-11 bg-muted border-none rounded-lg px-4 text-sm font-bold text-foreground focus:ring-2 focus:ring-accent/20 shadow-inner transition-all placeholder:text-muted-foreground/30" 
+                  placeholder="Type tag (e.g. Savings) and press Enter or Add..."
+                />
+                <button
+                  type="button"
+                  onClick={() => handleAddTag(tagInput)}
+                  className="px-4 bg-muted hover:bg-accent/10 hover:text-accent rounded-lg text-xs font-black uppercase tracking-wider transition-all border border-transparent hover:border-accent/20 active:scale-95"
+                >
+                  Add
+                </button>
+              </div>
+
+              {tagInput.trim() !== "" && (
+                <div className="absolute left-0 right-0 mt-1.5 bg-card border border-border/80 rounded-lg shadow-xl z-50 max-h-40 overflow-y-auto">
+                  {allExistingTags
+                    .filter(t => t.toLowerCase().includes(tagInput.toLowerCase()) && !(formData.tags || []).includes(t))
+                    .map(t => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => {
+                          handleAddTag(t);
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-muted text-xs font-bold text-foreground transition-colors"
+                      >
+                        {t}
+                      </button>
+                    ))
+                  }
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex gap-4 pt-4">
+            <button 
+              type="button" 
+              onClick={handleDelete}
+              className="w-14 h-12 bg-destructive/5 text-destructive rounded-xl flex items-center justify-center hover:bg-destructive/10 transition-all active:scale-95 border border-destructive/10"
+            >
+              <Trash2 size={20} />
+            </button>
+
+            <div className="flex justify-center pt-8 flex-1">
+            <SaveButton type="submit" isSaving={isSubmitting} disabled={isSubmitting} label={formData.id ? "Update Account" : "Save Account"} className="w-full max-w-xs h-12 bg-emerald-600 text-white rounded-xl font-black text-sm shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:bg-muted" />
+          </div>
+          </div>
+        </div>
+      </form>
+      </PageWrapper>
+  );
+}
+
+export default function AccountPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-muted-foreground font-black tracking-widest uppercase text-xs">Synchronizing...</div>}>
+      <AccountPageContent />
+    </Suspense>
+  );
+}

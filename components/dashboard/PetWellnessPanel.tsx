@@ -57,7 +57,7 @@ export function PetWellnessPanel({
         }}
       >
         {petsData.map((pet) => (
-          <Link key={pet.id} href={`/pets/${pet.id}`} className="min-w-full snap-center block space-y-4">
+          <Link key={pet.id} href={`/pets/pets/${pet.id}`} className="min-w-full snap-center block space-y-4">
             {/* Pet Header Profile */}
             <div className="flex items-center justify-between pb-3 border-b border-border/10">
               <div className="flex items-center gap-3">

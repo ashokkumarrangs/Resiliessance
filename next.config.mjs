@@ -4,7 +4,21 @@ const nextConfig = {
   devIndicators: {
     appIsrStatus: false,
     buildActivity: false,
-  }
+  },
+  async redirects() {
+    return [
+      {
+        source: '/expenses',
+        destination: '/finance',
+        permanent: true,
+      },
+      {
+        source: '/expenses/:path*',
+        destination: '/finance/:path*',
+        permanent: true,
+      },
+    ];
+  },
 }
 
 export default nextConfig

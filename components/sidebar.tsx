@@ -50,7 +50,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           {/* Dashboard */}
           <NavItem href="/" icon={<LayoutDashboard size={20} />} title="Dashboard" onClick={onClose} />
           {/* Reports */}
-          <NavItem href="/reports" icon={<BarChart size={20} />} title="Reports" onClick={onClose} />
+          <NavItem href="/reports/all" icon={<BarChart size={20} />} title="Reports" onClick={onClose} />
           {/* Quick Add */}
           <NavItem href="/quick-add" icon={<PlusCircle size={20} />} title="Quick Add" onClick={onClose} />
           {/* Activity Timeline */}
@@ -60,13 +60,13 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           <div className="h-px bg-slate-100 my-[14px] mx-4" />
 
           {/* Finance */}
-          <NavItem href="/expenses/daily-entry?type=Expense" icon={<Wallet size={20} />} title="Finance" onClick={onClose} />
+          <NavItem href="/finance/daily-entry?type=Expense" icon={<Wallet size={20} />} title="Finance" onClick={onClose} />
 
           {/* Habits */}
           <NavItem href="/habits/daily-log" icon={<CheckCircle2 size={20} />} title="Habits" onClick={onClose} />
 
           {/* Workout */}
-          <NavItem href="/workout" icon={<Bike size={20} />} title="Workout" onClick={onClose} />
+          <NavItem href="/workout/logger" icon={<Bike size={20} />} title="Workout" onClick={onClose} />
 
           {/* Nutrition */}
           <NavItem href="/nutrition" icon={<Apple size={20} />} title="Nutrition" onClick={onClose} />
